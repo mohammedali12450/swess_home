@@ -1,0 +1,41 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:swesshome/core/exceptions/fields_exception.dart';
+import 'package:swesshome/core/exceptions/unknown_exception.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/user_register_bloc/user_register_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/user_register_bloc/user_register_state.dart';
+import 'package:swesshome/modules/data/models/user.dart';
+import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+
+class UserRegisterBloc extends Bloc<UserRegisterEvent, UserRegisterState> {
+  UserAuthenticationRepository userAuthenticationRepository;
+
+  UserRegisterBloc(this.userAuthenticationRepository)
+      : super(UserRegisterNone()) {
+    on<UserRegisterStarted>((event, emit) async {
+      emit(UserRegisterProgress());
+
+      try {
+        User registeredUser =
+            await userAuthenticationRepository.register(event.register);
+        emit(UserRegisterComplete(user: registeredUser));
+      } catch (e, stack) {
+        if (e is FieldsException) {
+          emit(
+            UserRegisterError(
+                errorResponse: (e.jsonErrorFields["errors"] != null)
+                    ? e.jsonErrorFields["errors"] as Map<String, dynamic>
+                    : null,
+                errorMessage: e.jsonErrorFields["message"]),
+          );
+        }
+        if (e is UnknownException) {
+          emit(
+            UserRegisterError(errorMessage: "خطأ غير معروف"),
+          );
+        }
+        print(e);
+        print(stack);
+      }
+    });
+  }
+}

@@ -1,0 +1,2 @@
+abstract class InteriorStatusesEvent{}
+class InteriorStatusesFetchStarted extends InteriorStatusesEvent{}

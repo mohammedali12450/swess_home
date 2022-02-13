@@ -1,0 +1,2 @@
+abstract class EstateOfferTypesEvent{}
+class EstateOfferTypesFetchStarted extends EstateOfferTypesEvent{}

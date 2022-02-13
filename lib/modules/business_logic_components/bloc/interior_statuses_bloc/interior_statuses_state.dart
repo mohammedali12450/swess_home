@@ -1,0 +1,5 @@
+abstract class InteriorStatusesState{}
+class InteriorStatusesFetchComplete extends InteriorStatusesState{}
+class InteriorStatusesFetchError extends InteriorStatusesState{}
+class InteriorStatusesFetchProgress extends InteriorStatusesState{}
+class InteriorStatusesFetchNone extends InteriorStatusesState{}

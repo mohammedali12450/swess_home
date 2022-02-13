@@ -1,0 +1,6 @@
+abstract class EstateOfferTypesState{}
+
+class EstateOfferTypesFetchComplete extends EstateOfferTypesState{}
+class EstateOfferTypesFetchError extends EstateOfferTypesState{}
+class EstateOfferTypesFetchProgress extends EstateOfferTypesState{}
+class EstateOfferTypesFetchNone extends EstateOfferTypesState{}
