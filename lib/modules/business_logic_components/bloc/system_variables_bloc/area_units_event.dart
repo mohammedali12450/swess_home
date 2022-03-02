@@ -1,0 +1,2 @@
+abstract class SystemVariablesEvent{}
+class SystemVariablesFetchStarted extends SystemVariablesEvent{}

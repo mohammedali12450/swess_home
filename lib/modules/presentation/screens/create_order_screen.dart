@@ -20,6 +20,7 @@ import 'package:swesshome/modules/data/models/price_domain.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/presentation/screens/after_estate_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
@@ -82,7 +83,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       listener: (_, estateOrderState) {
         if (estateOrderState is SendEstateOrderComplete) {
           Navigator.pushNamed(context, AfterEstateOrderScreen.id);
-        } else if (estateOrderState is SendEstateOrderError) {
+        }
+        else if (estateOrderState is SendEstateOrderError) {
           if (estateOrderState.isAuthorizationError) {
             showWonderfulAlertDialog(
               context,
@@ -154,7 +156,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   Icons.history,
                   color: white,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, RecentEstateOrdersScreen.id) ;
+                },
               ),
             ),
           ),
@@ -280,7 +284,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       border: Border.all(color: Colors.black),
                     ),
                     child: TextField(
-                      maxLength: 150,
                       style: textStyling(S.s16, W.w5, C.bl),
                       controller: notesController,
                       textDirection: TextDirection.rtl,
@@ -325,9 +328,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       EstateOrder estateOrder = EstateOrder(
                         locationId: selectedLocation!.id,
                         estateTypeId: selectedEstateTypeId,
-                        estateOfferTypeId: selectedEstateOfferTypeId,
+                        estateOfferId: selectedEstateOfferTypeId,
                         priceDomainId: selectedPriceDomainId,
-                        notes: (notesController.text.isEmpty)
+                        description: (notesController.text.isEmpty)
                             ? null
                             : notesController.text,
                       );

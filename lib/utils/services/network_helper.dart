@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:swesshome/constants/api_paths.dart';
+import 'package:swesshome/core/exceptions/connection_exception.dart';
 
 class NetworkHelper {
   final Dio _dioInstance = Dio();
@@ -82,6 +83,9 @@ class NetworkHelper {
     try {
       response = await _dioInstance.get(url, queryParameters: queryParameters);
     } on DioError catch (e) {
+      if(e.type == DioErrorType.other){
+        throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
+      }
       if (kDebugMode) {
         print(e.message);
       }
@@ -123,6 +127,9 @@ class NetworkHelper {
         },
       );
     } on DioError catch (e) {
+      if(e.type == DioErrorType.other){
+        throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
+      }
       if (kDebugMode) {
         print(e.message);
       }
@@ -156,6 +163,9 @@ class NetworkHelper {
       response = await _dioInstance.patch(url,
           data: fromData, queryParameters: queryParameters);
     } on DioError catch (e) {
+      if(e.type == DioErrorType.other){
+        throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
+      }
       if (kDebugMode) {
         print(e.message);
       }
@@ -190,6 +200,9 @@ class NetworkHelper {
       response = await _dioInstance.delete(url,
           data: fromData, queryParameters: queryParameters);
     } on DioError catch (e) {
+      if(e.type == DioErrorType.other){
+        throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
+      }
       if (kDebugMode) {
         print(e.message);
       }

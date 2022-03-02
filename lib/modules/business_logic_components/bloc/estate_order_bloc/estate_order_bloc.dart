@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_event.dart';
@@ -13,13 +14,15 @@ class EstateOrderBloc extends Bloc<EstateOrderEvent, EstateOrderState> {
       emit(SendEstateOrderProgress());
 
       try {
-        await estateOrderRepository.sendEstateOrder(event.order , event.token);
+        await estateOrderRepository.sendEstateOrder(event.order, event.token);
         emit(SendEstateOrderComplete());
+      } on ConnectionException catch (e) {
+        emit(SendEstateOrderError(error: e.errorMessage));
       } catch (e, stack) {
         if (e is GeneralException) {
           emit(SendEstateOrderError(error: e.errorMessage));
         } else if (e is UnauthorizedException) {
-          emit(SendEstateOrderError(error: e.message , isAuthorizationError: true));
+          emit(SendEstateOrderError(error: e.message, isAuthorizationError: true));
         }
         print(e);
         print(stack);

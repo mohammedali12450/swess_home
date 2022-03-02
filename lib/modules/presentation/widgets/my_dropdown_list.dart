@@ -9,12 +9,11 @@ import 'res_text.dart';
 class MyDropdownList extends StatefulWidget {
   final List<dynamic> elementsList;
   final void Function(dynamic index) onSelect;
+  final bool? isOnChangeNull;
 
-  const MyDropdownList({
-    Key? key,
-    required this.elementsList,
-    required this.onSelect,
-  }) : super(key: key);
+  const MyDropdownList(
+      {Key? key, required this.elementsList, required this.onSelect, this.isOnChangeNull = false})
+      : super(key: key);
 
   @override
   _MyDropdownListState createState() => _MyDropdownListState();
@@ -30,7 +29,6 @@ class _MyDropdownListState extends State<MyDropdownList> {
     // initializing:
     _elementSelectCubit = ChannelCubit(widget.elementsList.elementAt(0));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +56,12 @@ class _MyDropdownListState extends State<MyDropdownList> {
               );
             },
           ).toList(),
-          onChanged: (selectedElement) {
-            _elementSelectCubit.setState(selectedElement);
-            widget.onSelect(widget.elementsList.indexOf(selectedElement));
-          },
+          onChanged: (widget.isOnChangeNull == true)
+              ? null
+              : (selectedElement) {
+                  _elementSelectCubit.setState(selectedElement);
+                  widget.onSelect(widget.elementsList.indexOf(selectedElement));
+                },
         );
       },
     );

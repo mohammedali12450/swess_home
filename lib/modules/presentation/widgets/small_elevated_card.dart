@@ -7,10 +7,11 @@ import 'package:swesshome/utils/helpers/responsive.dart';
 
 class SmallElevatedCard extends StatelessWidget {
   final String content;
-  final void Function(String content) onDelete;
+  final void Function(String content)? onDelete;
+  final bool isRemovable ;
 
   const SmallElevatedCard(
-      {Key? key, required this.content, required this.onDelete})
+      {Key? key, required this.content, this.onDelete , this.isRemovable = true })
       : super(key: key);
 
   @override
@@ -47,10 +48,13 @@ class SmallElevatedCard extends StatelessWidget {
               textStyle: textStyling(S.s14, W.w4, C.wh),
               textAlign: TextAlign.center,
             ),
-            IconButton(
+            if(isRemovable)
+              IconButton(
               padding: EdgeInsets.zero,
               onPressed: () {
-                onDelete(content);
+                if(onDelete != null){
+                  onDelete!(content);
+                }
               },
               icon: const Icon(
                 Icons.close,

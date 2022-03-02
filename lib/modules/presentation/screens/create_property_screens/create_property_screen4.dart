@@ -9,6 +9,7 @@ import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/interior_statuses_bloc/interior_statuses_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/ownership_type_bloc/ownership_type_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/interior_status.dart';
 import 'package:swesshome/modules/data/models/ownership_type.dart';
@@ -54,10 +55,10 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    int estateType = widget.currentOffer.estateType!.id;
+    int estateType = widget.currentOffer.estateType.id;
     isLands = (estateType == landsPropertyTypeNumber);
     isShops = (estateType == shopsPropertyTypeNumber);
-    isSell = widget.currentOffer.estateOfferType!.id == sellOfferTypeNumber;
+    isSell = widget.currentOffer.estateOfferType.id == sellOfferTypeNumber;
     isFarmsOrVacations = (estateType == farmsPropertyTypeNumber) ||
         (estateType == vacationsPropertyTypeNumber);
     isHouse = (estateType == housePropertyTypeNumber);
@@ -73,8 +74,8 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
       widget.currentOffer.interiorStatus = interiorStatuses.first;
     }
     if (isFarmsOrVacations) {
-      widget.currentOffer.swimmingPool = false;
-      widget.currentOffer.onBeach = false;
+      widget.currentOffer.hasSwimmingPool = false;
+      widget.currentOffer.isOnBeach = false;
     }
     if (!isLands && !isShops) {
       widget.currentOffer.isFurnished = false;
@@ -88,46 +89,49 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
           (isLands || isShops) ? imageOutlineIconPath : chairOutlineIconPath,
       headerText: "الخطوة الرابعة",
       body: (isLands || isShops)
-          ? Column(
-              children: [
-                buildImagesSelectors(
-                  onPropertyImagesSelected: (images) {
-                    propertyImages = images;
-                  },
-                  onFloorPlanImagesSelected: (images) {
-                    floorPlanPropertyImage =
-                        (images.isEmpty) ? null : images.first;
-                  },
-                  onStreetImagesSelected: (images) {
-                    streetPropertyImages = (images.isEmpty) ? null : images;
-                  },
-                ),
-                kHe36,
-                MyButton(
-                  child: ResText(
-                    "التالي",
-                    textStyle: textStyling(S.s16, W.w5, C.wh),
+          ? SingleChildScrollView(
+            child: Column(
+                children: [
+                  buildImagesSelectors(
+                    onPropertyImagesSelected: (images) {
+                      propertyImages = (images == null)? null : images.map((e) => e as File).toList() ;
+                    },
+                    onStreetImagesSelected: (images) {
+                      streetPropertyImages = (images == null)? null : images.map((e) => e as File).toList() ;
+                    },
+                    onFloorPlanImagesSelected: (images) {
+                      floorPlanPropertyImage = (images == null) ? null : images.first;
+                    },
                   ),
-                  width: Res.width(240),
-                  height: Res.height(56),
-                  color: secondaryColor,
-                  onPressed: () {
-                    if (!landsAndShopsValidateDate()) return;
-                    widget.currentOffer.estateImages = propertyImages;
-                    widget.currentOffer.streetImages = streetPropertyImages;
-                    widget.currentOffer.floorPlanImage =
-                        floorPlanPropertyImage;
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => CreatePropertyScreen5(
-                            currentOffer: widget.currentOffer),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            )
+                  kHe36,
+                  MyButton(
+                    child: ResText(
+                      "التالي",
+                      textStyle: textStyling(S.s16, W.w5, C.wh),
+                    ),
+                    width: Res.width(240),
+                    height: Res.height(56),
+                    color: secondaryColor,
+                    onPressed: () {
+                      widget.currentOffer.estateImages = propertyImages!;
+                      widget.currentOffer.streetImages = streetPropertyImages;
+                      widget.currentOffer.floorPlanImage = floorPlanPropertyImage;
+                      widget.currentOffer.floorPlanImage =
+                          floorPlanPropertyImage;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CreatePropertyScreen5(
+                              currentOffer: widget.currentOffer),
+                        ),
+                      );
+                    },
+                  ),
+                  kHe24,
+
+                ],
+              ),
+          )
           : Column(
               children: [
                 if (isSell & isHouse) ...[
@@ -183,7 +187,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                     content: "هل العقار مطل على الشاطئ؟",
                     switcherContent: "نعم",
                     onSelected: (isPressed) {
-                      widget.currentOffer.onBeach = isPressed;
+                      widget.currentOffer.isOnBeach = isPressed;
                     },
                   ),
                   kHe28,
@@ -191,7 +195,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                     content: "هل العقار يحوي مسبح؟",
                     switcherContent: "نعم",
                     onSelected: (isPressed) {
-                      widget.currentOffer.swimmingPool = isPressed;
+                      widget.currentOffer.hasSwimmingPool = isPressed;
                     },
                   ),
                 ],
@@ -220,15 +224,27 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
   }
 
   bool landsAndShopsValidateDate() {
-    bool isValidate = true;
-    if (propertyImages == null) {
-      Fluttertoast.showToast(msg: "يجب تحديد خمس صور للعقار على الأقل");
+    int minimumEstateImagesCount =
+        BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.minimumCountOfEstateImages;
+    int? minimumStreetImagesCount =
+        BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.minimumCountOfStreetImages;
+
+    if (propertyImages == null || propertyImages!.length < minimumEstateImagesCount) {
+      Fluttertoast.showToast(
+          msg: "يجب تحديد " + minimumEstateImagesCount.toString() + " صور للعقار على الأقل!");
       return false;
     }
-    if (propertyImages!.length < 5) {
-      Fluttertoast.showToast(msg: "يجب تحديد خمس صور للعقار على الأقل");
-      isValidate = false;
+    if (minimumStreetImagesCount != null) {
+      if (streetPropertyImages == null ||
+          streetPropertyImages!.length < minimumStreetImagesCount) {
+        Fluttertoast.showToast(
+            msg: "يجب تحديد " +
+                minimumStreetImagesCount.toString() +
+                " صور لشارع العقار على الأقل!");
+        return false;
+      }
     }
-    return isValidate;
+
+    return true;
   }
 }

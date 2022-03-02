@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 Future<File> compressFile(File file) async {
   final dir = await path_provider.getTemporaryDirectory();
@@ -12,9 +12,8 @@ Future<File> compressFile(File file) async {
   var result = await FlutterImageCompress.compressAndGetFile(
     file.absolute.path,
     dir.absolute.path + file.path.split('/').last,
-    quality: 30,
-    minHeight: 640,
-    minWidth: 640,
+    minHeight: 800,
+    minWidth: 800,
     format: compressFormat,
   );
   return result!;

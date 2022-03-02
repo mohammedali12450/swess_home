@@ -1,7 +1,7 @@
 import 'package:swesshome/modules/data/models/location.dart';
 
 class EstateOffice {
-  int? id;
+  int id;
   String? name;
 
   String? logo;
@@ -19,8 +19,11 @@ class EstateOffice {
 
   int? contractId;
 
+  bool isLiked;
+
   EstateOffice(
-      {this.id,
+      {required this.id,
+      required this.isLiked,
       this.name,
       this.logo,
       this.longitude,
@@ -38,6 +41,7 @@ class EstateOffice {
       logo: jsonMap["logo"],
       name: jsonMap['name'],
       id: jsonMap["id"],
+      isLiked : jsonMap["is_liked"] ,
       contractId: jsonMap["contract_id"],
       mobile: jsonMap["mobile"],
       location: Location.fromJson(jsonMap["location"]),

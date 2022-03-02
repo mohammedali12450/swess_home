@@ -10,6 +10,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/l
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate_office.dart';
 import 'package:swesshome/modules/data/models/location.dart';
@@ -17,8 +18,10 @@ import 'package:swesshome/modules/data/repositories/estate_offices_repository.da
 import 'package:swesshome/modules/presentation/screens/estate_office_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_office_card.dart';
+import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/offices_list_shimmer.dart';
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/responsive.dart';
 
 class OfficeSearchScreen extends StatefulWidget {
@@ -44,12 +47,17 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
 
   late List<Location> locations;
   LocationViewer? selectedLocation;
+  String? token;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     locations = BlocProvider.of<LocationsBloc>(context).locations ?? [];
+
+    if (BlocProvider.of<UserLoginBloc>(context).user != null) {
+      token = BlocProvider.of<UserLoginBloc>(context).user!.token;
+    }
   }
 
   @override
@@ -67,10 +75,9 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                   return InkWell(
                     onTap: () {
                       textFieldController.clear();
-                      searchTypeCubit.setState(
-                          (searchType == OfficeSearchType.name)
-                              ? OfficeSearchType.area
-                              : OfficeSearchType.name);
+                      searchTypeCubit.setState((searchType == OfficeSearchType.name)
+                          ? OfficeSearchType.area
+                          : OfficeSearchType.name);
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -84,9 +91,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         border: Border.all(color: white),
                       ),
                       child: ResText(
-                        (searchType == OfficeSearchType.name)
-                            ? "بحث بالاسم"
-                            : "بحث بالمنطقة",
+                        (searchType == OfficeSearchType.name) ? "بحث بالاسم" : "بحث بالمنطقة",
                         textStyle: textStyling(S.s14, W.w4, C.wh),
                       ),
                     ),
@@ -129,29 +134,27 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                             builder: (_) => const SearchLocationScreen(),
                           ),
                         ) as LocationViewer;
+                        // unfocused text field :
+                        FocusScope.of(context).unfocus();
                         if (selectedLocation != null) {
                           searchOfficesBloc.add(
                             SearchOfficesByLocationStarted(
-                                locationId: selectedLocation!.id),
+                                locationId: selectedLocation!.id, token: token),
                           );
-                          textFieldController.text =
-                              selectedLocation!.getLocationName();
-                          // unfocused text field :
-                          FocusScope.of(context).unfocus();
+                          textFieldController.text = selectedLocation!.getLocationName();
                         }
                         return;
                       }
-                      if (textFieldController.text.isEmpty &&
-                          searchType == OfficeSearchType.name) {
+                      if (textFieldController.text.isEmpty && searchType == OfficeSearchType.name) {
                         searchOfficesBloc.add(
-                          SearchOfficesByNameStarted(name: ""),
+                          SearchOfficesByNameStarted(name: "", token: token),
                         );
                       }
                     },
                     onChanged: (newValue) {
                       if (searchType == OfficeSearchType.name) {
                         searchOfficesBloc.add(
-                          SearchOfficesByNameStarted(name: newValue),
+                          SearchOfficesByNameStarted(name: newValue, token: token),
                         );
                       }
                     },
@@ -182,13 +185,10 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
           child: BlocBuilder<ChannelCubit, dynamic>(
             bloc: searchTypeCubit,
             builder: (_, searchType) {
-              if (searchType == OfficeSearchType.area &&
-                  selectedLocation == null) {
+              if (searchType == OfficeSearchType.area && selectedLocation == null) {
                 return Container();
               }
-              if (searchType == OfficeSearchType.name) {
-                searchOfficesBloc.add(SearchOfficesByNameStarted(name: ""));
-              }
+
               return buildResultsList();
             },
           ),
@@ -197,15 +197,38 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
     );
   }
 
-  BlocBuilder buildResultsList() {
-    return BlocBuilder<SearchOfficesBloc, SearchOfficesStates>(
+  BlocConsumer buildResultsList() {
+    return BlocConsumer<SearchOfficesBloc, SearchOfficesStates>(
       bloc: searchOfficesBloc,
+      listener: (_, searchResultsState) {
+        if (searchResultsState is SearchOfficesFetchError) {
+          showWonderfulAlertDialog(
+            context,
+            "خطأ",
+            searchResultsState.errorMessage,
+            onDefaultButtonPressed: () {
+              int count = 0;
+              Navigator.popUntil(context, (route) => count++ == 2);
+            },
+          );
+        }
+      },
       builder: (_, searchResultsState) {
         if (searchResultsState is SearchOfficesFetchProgress) {
           return const OfficesListShimmer();
         }
-        if (searchResultsState is! SearchOfficesFetchComplete) {
+        if (searchResultsState is SearchOfficesFetchNone) {
+          searchOfficesBloc.add(
+            SearchOfficesByNameStarted(name: "", token: token),
+          );
           return Container();
+        }
+        if (searchResultsState is! SearchOfficesFetchComplete) {
+          return SizedBox(
+            width: screenWidth,
+            height: screenHeight - Res.height(75),
+            child: const FetchResult(content: "حدث خطأ أثناء تنفيذ العملية"),
+          );
         }
         List<EstateOffice> results = searchResultsState.results;
 
@@ -246,7 +269,6 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                 kHe24,
               ],
               ListView.separated(
-
                   physics: const ClampingScrollPhysics(),
                   shrinkWrap: true,
                   itemBuilder: (_, index) {
@@ -256,11 +278,10 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         Navigator.push(
                           context,
                           PageRouteBuilder(
-                            pageBuilder: (_,__,___) => EstateOfficeScreen(
-                              results.elementAt(index),
-                            ),
-                            transitionDuration: const Duration(seconds: 1)
-                          ),
+                              pageBuilder: (_, __, ___) => EstateOfficeScreen(
+                                    results.elementAt(index),
+                                  ),
+                              transitionDuration: const Duration(seconds: 1)),
                         );
                       },
                     );

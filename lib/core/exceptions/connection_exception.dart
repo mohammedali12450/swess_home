@@ -1,5 +1,5 @@
 class ConnectionException implements Exception {
-  final String message;
+  final String errorMessage;
 
-  ConnectionException({required this.message});
+  ConnectionException({required this.errorMessage});
 }

@@ -26,8 +26,7 @@ class CreatePropertyScreen2 extends StatefulWidget {
   static const String id = "CreatePropertyScreen2";
   final Estate currentOffer;
 
-  const CreatePropertyScreen2({Key? key, required this.currentOffer})
-      : super(key: key);
+  const CreatePropertyScreen2({Key? key, required this.currentOffer}) : super(key: key);
 
   @override
   _CreatePropertyScreen2State createState() => _CreatePropertyScreen2State();
@@ -63,24 +62,24 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
     super.initState();
 
     // initializing :
-    isSell = widget.currentOffer.estateOfferType!.id == sellOfferTypeNumber;
-    isHouse = widget.currentOffer.estateType!.id == housePropertyTypeNumber;
+    isSell = widget.currentOffer.estateOfferType.id == sellOfferTypeNumber;
+    isHouse = widget.currentOffer.estateType.id == housePropertyTypeNumber;
     areaTypes = BlocProvider.of<AreaUnitsBloc>(context).areaUnits!;
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
-    ownershipTypes =
-        BlocProvider.of<OwnershipTypeBloc>(context).ownershipTypes!;
+    ownershipTypes = BlocProvider.of<OwnershipTypeBloc>(context).ownershipTypes!;
     widget.currentOffer.areaUnit = areaTypes.first;
     if (!isHouse && isSell) {
       widget.currentOffer.ownershipType = ownershipTypes.first;
     }
     if (!isSell) {
       widget.currentOffer.periodType = periodTypes.first;
-      selectedPeriodCubit = ChannelCubit(periodTypes.first.name);
+      selectedPeriodCubit = ChannelCubit(periodTypes.first.name.split("|").elementAt(1));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isKeyboardOpened = MediaQuery.of(context).viewInsets.bottom != 0;
     return CreatePropertyTemplate(
       headerIconPath: areaOutlineIconPath,
       headerText: "الخطوة الثانية",
@@ -101,12 +100,17 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
               children: [
                 Expanded(
                   flex: 1,
-                  child: MyDropdownList(
-                    elementsList: areaTypes.map((e) => e.name).toList(),
-                    onSelect: (index) {
-                      widget.currentOffer.areaUnit =
-                          areaTypes.elementAt(index);
+                  child: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
                     },
+                    child: MyDropdownList(
+                      elementsList: areaTypes.map((e) => e.name).toList(),
+                      onSelect: (index) {
+                        widget.currentOffer.areaUnit = areaTypes.elementAt(index);
+                      },
+                      isOnChangeNull: isKeyboardOpened,
+                    ),
                   ),
                 ),
                 kWi12,
@@ -116,8 +120,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                       bloc: areaErrorCubit,
                       builder: (_, errorMessage) {
                         return TextField(
-                          style: textStyling(S.s17, W.w4, C.bl,
-                                  fontFamily: F.roboto)
+                          style: textStyling(S.s17, W.w4, C.bl, fontFamily: F.roboto)
                               .copyWith(letterSpacing: 0.3),
                           controller: areaController,
                           keyboardType: TextInputType.number,
@@ -152,14 +155,19 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                     ? Container()
                     : Expanded(
                         flex: 1,
-                        child: MyDropdownList(
-                          elementsList: periodTypes.map((e) => e.name).toList(),
-                          onSelect: (index) {
-                            widget.currentOffer.periodType =
-                                periodTypes.elementAt(index);
-                            selectedPeriodCubit!
-                                .setState(periodTypes.elementAt(index).name);
+                        child: GestureDetector(
+                          onTap: () {
+                            FocusScope.of(context).unfocus();
                           },
+                          child: MyDropdownList(
+                            isOnChangeNull: isKeyboardOpened,
+                            elementsList: periodTypes.map((e) => e.name.split('|').first).toList(),
+                            onSelect: (index) {
+                              widget.currentOffer.periodType = periodTypes.elementAt(index);
+                              selectedPeriodCubit!.setState(
+                                  periodTypes.elementAt(index).name.split('|').elementAt(1));
+                            },
+                          ),
                         ),
                       ),
                 kWi12,
@@ -168,9 +176,8 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                   child: BlocBuilder<ChannelCubit, dynamic>(
                     bloc: priceErrorCubit,
                     builder: (_, errorMessage) => TextField(
-                      style:
-                          textStyling(S.s17, W.w4, C.bl, fontFamily: F.roboto)
-                              .copyWith(letterSpacing: 0.3),
+                      style: textStyling(S.s17, W.w4, C.bl, fontFamily: F.roboto)
+                          .copyWith(letterSpacing: 0.3),
                       controller: priceController,
                       cursorColor: black,
                       keyboardType: TextInputType.number,
@@ -185,8 +192,8 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                         isDense: true,
                       ),
                       onChanged: (value) {
-                        priceController.text = NumbersHelper.getMoneyFormat(
-                            int.parse(value.replaceAll(',', '')));
+                        priceController.text =
+                            NumbersHelper.getMoneyFormat(int.parse(value.replaceAll(',', '')));
                         priceController.selection = TextSelection.fromPosition(
                           TextPosition(offset: priceController.text.length),
                         );
@@ -237,7 +244,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
               SizedBox(
                 width: inf,
                 child: ResText(
-                  ":عدد الغرف (اختياري)",
+                  ":عدد الغرف ( اختياري )",
                   textStyle: textStyling(S.s18, W.w6, C.bl),
                   textAlign: TextAlign.right,
                 ),
@@ -257,7 +264,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
               SizedBox(
                 width: inf,
                 child: ResText(
-                  ":رقم الطابق (اختياري)",
+                  ":رقم الطابق ( اختياري )",
                   textStyle: textStyling(S.s18, W.w6, C.bl),
                   textAlign: TextAlign.right,
                 ),
@@ -266,7 +273,6 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
               TextField(
                 controller: floorController,
                 cursorColor: black,
-                keyboardType: TextInputType.number,
                 textDirection: TextDirection.rtl,
                 decoration: const InputDecoration(
                   border: kUnderlinedBorderBlack,
@@ -280,7 +286,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
               SizedBox(
                 width: inf,
                 child: ResText(
-                  ":نوع العرض",
+                  ":نوع الملكية",
                   textStyle: textStyling(S.s18, W.w6, C.bl),
                   textAlign: TextAlign.right,
                 ),
@@ -289,8 +295,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
               MyDropdownList(
                 elementsList: ownershipTypes.map((e) => e.name).toList(),
                 onSelect: (index) {
-                  widget.currentOffer.ownershipType =
-                      ownershipTypes.elementAt(index);
+                  widget.currentOffer.ownershipType = ownershipTypes.elementAt(index);
                 },
               ),
             ],
@@ -306,20 +311,19 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
               onPressed: () {
                 if (!validateData()) return;
                 widget.currentOffer.area = areaController.text;
-                widget.currentOffer.price =
-                    priceController.text.replaceAll(",", "");
+                widget.currentOffer.price = priceController.text.replaceAll(",", "");
                 if (!isSell) {
                   widget.currentOffer.period = periodController.text;
                 }
                 if (isHouse) {
                   widget.currentOffer.roomsCount = roomsCountController.text;
+                  widget.currentOffer.floor = floorController.text;
                 }
 
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => CreatePropertyScreen3(
-                        currentOffer: widget.currentOffer),
+                    builder: (_) => CreatePropertyScreen3(currentOffer: widget.currentOffer),
                   ),
                 );
               },

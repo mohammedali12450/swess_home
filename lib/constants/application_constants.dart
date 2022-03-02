@@ -17,4 +17,5 @@ const int vacationsPropertyTypeNumber = 5 ;
 
 const double kInitLatitude = 33.512512;
 const double kInitLongitude = 36.274231;
+String? firebaseToken ;
 

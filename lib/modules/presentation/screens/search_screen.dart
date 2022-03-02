@@ -15,6 +15,8 @@ import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/l
 import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/ownership_type_bloc/ownership_type_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate_type.dart';
 import 'package:swesshome/modules/data/models/interior_status.dart';
@@ -22,6 +24,7 @@ import 'package:swesshome/modules/data/models/location.dart';
 import 'package:swesshome/modules/data/models/ownership_type.dart';
 import 'package:swesshome/modules/data/models/price_domain.dart';
 import 'package:swesshome/modules/data/models/search_data.dart';
+import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/presentation/screens/estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
@@ -66,9 +69,8 @@ class _SearchScreenState extends State<SearchScreen> {
     isHouse = (widget.searchData.estateTypeId == housePropertyTypeNumber);
     isLands = (widget.searchData.estateTypeId == landsPropertyTypeNumber);
     isShops = (widget.searchData.estateTypeId == shopsPropertyTypeNumber);
-    isFarmsAndVacations =
-        ((widget.searchData.estateTypeId == farmsPropertyTypeNumber) ||
-            (widget.searchData.estateTypeId == vacationsPropertyTypeNumber));
+    isFarmsAndVacations = ((widget.searchData.estateTypeId == farmsPropertyTypeNumber) ||
+        (widget.searchData.estateTypeId == vacationsPropertyTypeNumber));
   }
 
   initializeOfferData({bool justInitAdvanced = false}) {
@@ -85,6 +87,8 @@ class _SearchScreenState extends State<SearchScreen> {
     initializeEstateBooleanVariables();
   }
 
+  String? userToken;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -92,12 +96,16 @@ class _SearchScreenState extends State<SearchScreen> {
     // Fetch lists :
     estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
     priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
-    ownershipsTypes =
-        BlocProvider.of<OwnershipTypeBloc>(context).ownershipTypes!;
-    interiorStatuses =
-        BlocProvider.of<InteriorStatusesBloc>(context).interiorStatuses!;
+    ownershipsTypes = BlocProvider.of<OwnershipTypeBloc>(context).ownershipTypes!;
+    interiorStatuses = BlocProvider.of<InteriorStatusesBloc>(context).interiorStatuses!;
+
     // Initialize search data :
     initializeOfferData();
+
+    User? user = BlocProvider.of<UserLoginBloc>(context).user;
+    if (user != null && user.token != null) {
+      userToken = user.token;
+    }
   }
 
   @override
@@ -180,9 +188,7 @@ class _SearchScreenState extends State<SearchScreen> {
               child: BlocBuilder<ChannelCubit, dynamic>(
                 bloc: locationDetectedCubit,
                 builder: (_, isLocationDetected) {
-                  return (isLocationDetected)
-                      ? buildSearchWidgets()
-                      : buildLocationDetector();
+                  return (isLocationDetected) ? buildSearchWidgets() : buildLocationDetector();
                 },
               ),
             ),
@@ -194,8 +200,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       width: screenWidth,
                       alignment: Alignment.bottomCenter,
                       height: Res.height(72),
-                      decoration: BoxDecoration(
-                          color: Colors.white, boxShadow: [lowElevation]),
+                      decoration: BoxDecoration(color: Colors.white, boxShadow: [lowElevation]),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -228,8 +233,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   kWi8,
                                   ResText(
                                     "ابحث",
-                                    textStyle: textStyling(S.s18, W.w6, C.wh)
-                                        .copyWith(height: 1.8),
+                                    textStyle: textStyling(S.s18, W.w6, C.wh).copyWith(height: 1.8),
                                   ),
                                 ],
                               ),
@@ -237,17 +241,17 @@ class _SearchScreenState extends State<SearchScreen> {
                               color: secondaryColor,
                               onPressed: () {
                                 if (locationDetectedCubit.state == false) {
-                                  Fluttertoast.showToast(
-                                      msg: "قم بتحديد مكان العقار أولا!");
+                                  Fluttertoast.showToast(msg: "قم بتحديد مكان العقار أولا!");
                                 }
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => EstatesScreen(
                                       searchData: EstateFetchStarted(
-                                          searchData: widget.searchData,
-                                          isAdvanced:
-                                              advancedSearchOpenedCubit.state),
+                                        searchData: widget.searchData,
+                                        isAdvanced: advancedSearchOpenedCubit.state,
+                                        token: userToken,
+                                      ),
                                     ),
                                   ),
                                 );
@@ -273,8 +277,7 @@ class _SearchScreenState extends State<SearchScreen> {
             bloc: patternCubit,
             builder: (_, pattern) {
               List<LocationViewer> locations =
-                  BlocProvider.of<LocationsBloc>(context)
-                      .getLocationsViewers(pattern);
+                  BlocProvider.of<LocationsBloc>(context).getLocationsViewers(pattern);
               return SingleChildScrollView(
                 child: Column(
                   children: [
@@ -292,15 +295,13 @@ class _SearchScreenState extends State<SearchScreen> {
                               // initialize search data again :
                               initializeOfferData();
                               // set search data location id:
-                              widget.searchData.locationId =
-                                  locations.elementAt(index).id;
+                              widget.searchData.locationId = locations.elementAt(index).id;
                               // set location detected state :
                               locationDetectedCubit.setState(true);
                               // unfocused text field :
                               FocusScope.of(context).unfocus();
                               // save location as recent search:
-                              await saveAsRecentSearch(
-                                  locations.elementAt(index).id);
+                              await saveAsRecentSearch(locations.elementAt(index).id);
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(
@@ -334,19 +335,16 @@ class _SearchScreenState extends State<SearchScreen> {
 
   List<LocationViewer>? getStoredRecentSearches() {
     // TODO: get data from shared preferences :
-    List<String>? storedRecentSearches =
-        RecentSearchesSharedPreferences.getRecentSearches();
+    List<String>? storedRecentSearches = RecentSearchesSharedPreferences.getRecentSearches();
     storedRecentSearches ??= [];
     List<LocationViewer> locationsViewers = [];
-    List<Location>? locations =
-        BlocProvider.of<LocationsBloc>(context).locations;
+    List<Location>? locations = BlocProvider.of<LocationsBloc>(context).locations;
     for (var locationId in storedRecentSearches) {
       for (Location parentLocation in locations!) {
         for (Location childLocation in parentLocation.locations!) {
           if (childLocation.id == int.parse(locationId)) {
             locationsViewers.add(
-              LocationViewer(
-                  childLocation.name, parentLocation.name, childLocation.id),
+              LocationViewer(childLocation.name, parentLocation.name, childLocation.id),
             );
           }
         }
@@ -387,13 +385,11 @@ class _SearchScreenState extends State<SearchScreen> {
                           },
                         ),
                         MyButton(
-                          child: ResText("تأكيد",
-                              textStyle: textStyling(S.s16, W.w5, C.wh)),
+                          child: ResText("تأكيد", textStyle: textStyling(S.s16, W.w5, C.wh)),
                           color: secondaryColor,
                           borderRadius: 8,
                           onPressed: () async {
-                            await RecentSearchesSharedPreferences
-                                .removeRecentSearches();
+                            await RecentSearchesSharedPreferences.removeRecentSearches();
                             patternCubit.setState(null);
                             Navigator.pop(context);
                           },
@@ -423,18 +419,15 @@ class _SearchScreenState extends State<SearchScreen> {
                   return InkWell(
                     onTap: () async {
                       // set location name in location text field :
-                      locationController.text =
-                          recentPlaces.elementAt(index).getLocationName();
+                      locationController.text = recentPlaces.elementAt(index).getLocationName();
                       // set search data location id :
-                      widget.searchData.locationId =
-                          recentPlaces.elementAt(index).id;
+                      widget.searchData.locationId = recentPlaces.elementAt(index).id;
                       // change location detect state to detected :
                       locationDetectedCubit.setState(true);
                       // unfocused location textField :
                       FocusScope.of(context).unfocus();
                       // store search :
-                      await saveAsRecentSearch(
-                          recentPlaces.elementAt(index).id);
+                      await saveAsRecentSearch(recentPlaces.elementAt(index).id);
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(
@@ -483,8 +476,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Container buildSearchWidgets() {
-    List<String> priceDomainsNames =
-        priceDomains.map((e) => e.getTextPriceDomain()).toList();
+    List<String> priceDomainsNames = priceDomains.map((e) => e.getTextPriceDomain()).toList();
     priceDomainsNames.insert(0, "غير محدد");
 
     return Container(
@@ -502,12 +494,10 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             kHe12,
             MyDropdownList(
-              elementsList:
-                  estatesTypes.map((e) => e.name.split('|').first).toList(),
+              elementsList: estatesTypes.map((e) => e.name.split('|').first).toList(),
               onSelect: (index) {
                 // set search data estate type :
-                widget.searchData.estateTypeId =
-                    estatesTypes.elementAt(index).id;
+                widget.searchData.estateTypeId = estatesTypes.elementAt(index).id;
                 // close advanced search section:
                 advancedSearchOpenedCubit.setState(false);
               },
@@ -527,9 +517,8 @@ class _SearchScreenState extends State<SearchScreen> {
               onSelect: (index) {
                 // set search data price domain:
                 bool isNoneSelected = (index == 0);
-                widget.searchData.priceDomainId = (isNoneSelected)
-                    ? null
-                    : priceDomains.elementAt(index - 1).id;
+                widget.searchData.priceDomainId =
+                    (isNoneSelected) ? null : priceDomains.elementAt(index - 1).id;
               },
             ),
             kHe24,
@@ -545,8 +534,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     InkWell(
                       onTap: () {
                         // change advanced search section open state :
-                        advancedSearchOpenedCubit
-                            .setState(!isAdvancedSearchOpened);
+                        advancedSearchOpenedCubit.setState(!isAdvancedSearchOpened);
                       },
                       child: Container(
                         height: Res.height(56),
@@ -563,9 +551,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                             kWi8,
                             Icon(
-                              (isAdvancedSearchOpened)
-                                  ? Icons.arrow_drop_down
-                                  : Icons.arrow_left,
+                              (isAdvancedSearchOpened) ? Icons.arrow_drop_down : Icons.arrow_left,
                               color: white,
                             ),
                           ],
@@ -585,11 +571,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Column buildAdvancedSearchWidgets() {
     List<String> choices = ["غير محدد", "نعم", "لا"];
-    List<String> ownerShipTypesNames =
-        ownershipsTypes.map((e) => e.name).toList();
+    List<String> ownerShipTypesNames = ownershipsTypes.map((e) => e.name).toList();
     ownerShipTypesNames.insert(0, "غير محدد");
-    List<String> interiorStatusesNames =
-        interiorStatuses.map((e) => e.name).toList();
+    List<String> interiorStatusesNames = interiorStatuses.map((e) => e.name).toList();
     interiorStatusesNames.insert(0, "غير محدد");
 
     return Column(
@@ -610,9 +594,8 @@ class _SearchScreenState extends State<SearchScreen> {
             onSelect: (index) {
               // set search data ownership type :
               bool isNoneSelected = index == 0;
-              widget.searchData.ownershipId = (isNoneSelected)
-                  ? null
-                  : ownershipsTypes.elementAt(index - 1).id;
+              widget.searchData.ownershipId =
+                  (isNoneSelected) ? null : ownershipsTypes.elementAt(index - 1).id;
             },
           ),
         ],
@@ -632,9 +615,8 @@ class _SearchScreenState extends State<SearchScreen> {
             onSelect: (index) {
               // set search data interior status :
               bool isNoneSelected = index == 0;
-              widget.searchData.interiorStatusId = (isNoneSelected)
-                  ? null
-                  : interiorStatuses.elementAt(index - 1).id;
+              widget.searchData.interiorStatusId =
+                  (isNoneSelected) ? null : interiorStatuses.elementAt(index - 1).id;
             },
           ),
         ],
@@ -645,9 +627,8 @@ class _SearchScreenState extends State<SearchScreen> {
             choices: choices,
             onSelect: (currentIndex) {
               // set search data furnished status :
-              widget.searchData.isFurnished = (currentIndex == 0)
-                  ? null
-                  : ((currentIndex == 1) ? true : false);
+              widget.searchData.isFurnished =
+                  (currentIndex == 0) ? null : ((currentIndex == 1) ? true : false);
             },
           ),
         ],
@@ -658,9 +639,8 @@ class _SearchScreenState extends State<SearchScreen> {
             choices: choices,
             onSelect: (currentIndex) {
               // set search data Pool status :
-              widget.searchData.hasSwimmingPool = (currentIndex == 0)
-                  ? null
-                  : ((currentIndex == 1) ? true : false);
+              widget.searchData.hasSwimmingPool =
+                  (currentIndex == 0) ? null : ((currentIndex == 1) ? true : false);
             },
           ),
           kHe24,
@@ -669,9 +649,8 @@ class _SearchScreenState extends State<SearchScreen> {
             choices: choices,
             onSelect: (currentIndex) {
               // set search data Beach status :
-              widget.searchData.isOnBeach = (currentIndex == 0)
-                  ? null
-                  : ((currentIndex == 1) ? true : false);
+              widget.searchData.isOnBeach =
+                  (currentIndex == 0) ? null : ((currentIndex == 1) ? true : false);
             },
           ),
         ],
@@ -680,8 +659,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<void> saveAsRecentSearch(int locationId) async {
-    List<String>? recentSearches =
-        RecentSearchesSharedPreferences.getRecentSearches();
+    List<String>? recentSearches = RecentSearchesSharedPreferences.getRecentSearches();
     recentSearches ??= [];
     if (recentSearches.contains(locationId.toString())) {
       recentSearches.remove(locationId.toString());
@@ -689,4 +667,6 @@ class _SearchScreenState extends State<SearchScreen> {
     recentSearches.insert(0, locationId.toString());
     await RecentSearchesSharedPreferences.setRecentSearches(recentSearches);
   }
+
+
 }

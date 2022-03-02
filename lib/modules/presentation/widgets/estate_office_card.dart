@@ -20,18 +20,9 @@ class EstateOfficeCard extends StatelessWidget {
     return InkWell(
       onTap: onTap ,
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(8),),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(8),),
           color: white,
-          boxShadow: [
-            BoxShadow(
-              color: black.withOpacity(0.24) ,
-              offset: const Offset(0, 2) ,
-              spreadRadius: 1 ,
-              blurRadius: 4
-
-            )
-          ]
         ),
         height: Res.height(120),
         margin: EdgeInsets.symmetric( horizontal: Res.width(8)),
@@ -54,12 +45,12 @@ class EstateOfficeCard extends StatelessWidget {
                 children: [
                   ResText(
                     office.name! ,
-                    textStyle: textStyling(S.s24, W.w5, C.bl),
+                    textStyle: textStyling(S.s20, W.w5, C.bl),
                   ) ,
                   kHe12 ,
                   ResText(
                     office.location!.getLocationName() ,
-                    textStyle: textStyling(S.s18, W.w5, C.bl),
+                    textStyle: textStyling(S.s16, W.w5, C.bl),
                   ) ,
                 ],
 

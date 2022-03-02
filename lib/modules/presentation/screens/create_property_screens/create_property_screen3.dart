@@ -249,10 +249,10 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
                 if (!validateData()) return;
 
                 String nearbyPlacesText = "";
-                for (var element in nearbyPlaces) {
+                nearbyPlaces.asMap().forEach((index, element) {
                   nearbyPlacesText += element;
-                  nearbyPlacesText += '|';
-                }
+                  if (index != nearbyPlaces.length - 1) nearbyPlacesText += "|";
+                });
                 widget.currentOffer.locationId = selectedLocation!.id;
                 widget.currentOffer.nearbyPlaces = nearbyPlacesText;
                 widget.currentOffer.latitude = (_selectedPlace != null)

@@ -26,7 +26,10 @@ enum TutorialStep {
 class MapSample extends StatefulWidget {
   static const String id = "MapSample";
 
-  const MapSample({Key? key}) : super(key: key);
+  final List<Marker>? initialMarkers;
+  final bool isView;
+
+  const MapSample({Key? key, this.initialMarkers, this.isView = false}) : super(key: key);
 
   @override
   State<MapSample> createState() => MapSampleState();
@@ -41,23 +44,26 @@ class MapSampleState extends State<MapSample> {
   // Map Variables:
   final Completer<GoogleMapController> _controller = Completer();
   GoogleMapController? googleMapController;
-  static  CameraPosition damascusPosition = const CameraPosition(
+  static const CameraPosition damascusPosition = CameraPosition(
     target: LatLng(kInitLatitude, kInitLongitude),
     zoom: 10,
   );
   Marker? selectedMarker;
+  Set<Marker> markers = {};
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    showTutorial();
+    if (!widget.isView) {
+      showTutorial();
+    }
+    if (widget.initialMarkers != null) markers.addAll(widget.initialMarkers!);
   }
 
   void showTutorial() async {
     // check if map tutorial passed!!
-    bool? isTutorialPassed =
-        ApplicationSharedPreferences.getMapTutorialPassState();
+    bool? isTutorialPassed = ApplicationSharedPreferences.getMapTutorialPassState();
     if (isTutorialPassed) return;
     await Future.delayed(
       const Duration(seconds: 3),
@@ -69,26 +75,28 @@ class MapSampleState extends State<MapSample> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        await showMyAlertDialog(
-          "تأكيد",
-          "هل تريد إلغاء تحديد الموقع",
-          context,
-          actions: [
-            DialogAction(
-              content: "تأكيد",
-              onPressed: (context) {
-                int count = 0;
-                Navigator.of(context).popUntil((_) => count++ >= 2);
-              },
-            ),
-            DialogAction(
-              content: "إلغاء",
-              onPressed: (dialogContext) {
-                Navigator.of(dialogContext).pop(); // Dismiss alert dialog
-              },
-            ),
-          ],
-        );
+        if (!widget.isView) {
+          await showMyAlertDialog(
+            "تأكيد",
+            "هل تريد إلغاء تحديد الموقع",
+            context,
+            actions: [
+              DialogAction(
+                content: "تأكيد",
+                onPressed: (context) {
+                  int count = 0;
+                  Navigator.of(context).popUntil((_) => count++ >= 2);
+                },
+              ),
+              DialogAction(
+                content: "إلغاء",
+                onPressed: (dialogContext) {
+                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                },
+              ),
+            ],
+          );
+        }
         return true;
       },
       child: Scaffold(
@@ -98,7 +106,6 @@ class MapSampleState extends State<MapSample> {
             BlocBuilder<ChannelCubit, dynamic>(
               bloc: mapMarkersCubit,
               builder: (_, newMarker) {
-                Set<Marker> markers = {};
                 // initState
                 if (newMarker != null) {
                   markers.add(newMarker);
@@ -110,7 +117,7 @@ class MapSampleState extends State<MapSample> {
                     mapMarkersCubit.setState(
                       Marker(
                         position: position,
-                        markerId: const MarkerId("id"),
+                        markerId: MarkerId((markers.length + 1).toString()),
                       ),
                     );
                   },
@@ -125,176 +132,173 @@ class MapSampleState extends State<MapSample> {
                 );
               },
             ),
-            BlocBuilder(
-              bloc: tutorialStepCubit,
-              builder: (_, tutorialStep) {
-                return Stack(
-                  children: [
-                    // weak black background :
-                    if (tutorialStep != TutorialStep.none)
-                      Container(
-                        width: screenWidth,
-                        height: fullScreenHeight,
-                        color: black.withOpacity(0.72),
-                      ),
-                    // Floating buttons:
-                    Positioned.fill(
-                      bottom: Res.height(16),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: kSmallAllPadding,
-                              decoration: BoxDecoration(
-                                border: (tutorialStep == TutorialStep.zooming)
-                                    ? Border.all(color: white, width: 2)
-                                    : Border.all(
-                                        color: Colors.transparent, width: 2),
-                              ),
-                              child: FloatingActionButton(
-                                heroTag: "btn2",
-                                backgroundColor: secondaryColor,
-                                child: Icon(
-                                  Icons.remove,
-                                  color: white,
-                                  size: Res.width(32),
+            if (!widget.isView)
+              BlocBuilder(
+                bloc: tutorialStepCubit,
+                builder: (_, tutorialStep) {
+                  return Stack(
+                    children: [
+                      // weak black background :
+                      if (tutorialStep != TutorialStep.none)
+                        Container(
+                          width: screenWidth,
+                          height: fullScreenHeight,
+                          color: black.withOpacity(0.72),
+                        ),
+                      // Floating buttons:
+                      Positioned.fill(
+                        bottom: Res.height(16),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: kSmallAllPadding,
+                                decoration: BoxDecoration(
+                                  border: (tutorialStep == TutorialStep.zooming)
+                                      ? Border.all(color: white, width: 2)
+                                      : Border.all(color: Colors.transparent, width: 2),
                                 ),
-                                onPressed: () {
-                                  // zoom in:
-                                  if (googleMapController == null) return;
-                                  googleMapController!.animateCamera(
-                                    CameraUpdate.zoomOut(),
-                                  );
-                                },
-                              ),
-                            ),
-                            kWi8,
-                            Container(
-                              padding: kSmallAllPadding,
-                              width: Res.width(108),
-                              height: Res.width(108),
-                              decoration: BoxDecoration(
-                                border: (tutorialStep == TutorialStep.finish)
-                                    ? Border.all(color: white, width: 2)
-                                    : Border.all(
-                                        color: Colors.transparent, width: 2),
-                              ),
-                              child: FloatingActionButton(
-                                heroTag: "btn3",
-                                backgroundColor: thirdColor,
-                                child: Icon(
-                                  Icons.check,
-                                  color: secondaryColor,
-                                  size: Res.width(36),
+                                child: FloatingActionButton(
+                                  heroTag: "btn2",
+                                  backgroundColor: secondaryColor,
+                                  child: Icon(
+                                    Icons.remove,
+                                    color: white,
+                                    size: Res.width(32),
+                                  ),
+                                  onPressed: () {
+                                    // zoom in:
+                                    if (googleMapController == null) return;
+                                    googleMapController!.animateCamera(
+                                      CameraUpdate.zoomOut(),
+                                    );
+                                  },
                                 ),
-                                onPressed: () {
-                                  if (selectedMarker == null) {
-                                    Fluttertoast.showToast(
-                                        msg:
-                                            "قم بتحديد مكان العقار عن طريق النقر على الخريطة!",
-                                        toastLength: Toast.LENGTH_LONG);
-                                    return;
-                                  }
-                                  Navigator.pop(context, selectedMarker);
-                                },
                               ),
-                            ),
-                            kWi8,
-                            Container(
-                              padding: kSmallAllPadding,
-                              decoration: BoxDecoration(
-                                border: (tutorialStep == TutorialStep.zooming)
-                                    ? Border.all(color: white, width: 2)
-                                    : Border.all(
-                                        color: Colors.transparent, width: 2),
-                              ),
-                              child: FloatingActionButton(
-                                heroTag: "btn1",
-                                backgroundColor: secondaryColor,
-                                child: Icon(
-                                  Icons.add,
-                                  color: white,
-                                  size: Res.width(32),
+                              kWi8,
+                              Container(
+                                padding: kSmallAllPadding,
+                                width: Res.width(108),
+                                height: Res.width(108),
+                                decoration: BoxDecoration(
+                                  border: (tutorialStep == TutorialStep.finish)
+                                      ? Border.all(color: white, width: 2)
+                                      : Border.all(color: Colors.transparent, width: 2),
                                 ),
-                                onPressed: () {
-                                  // zoom in:
-                                  if (googleMapController == null) return;
-                                  googleMapController!.animateCamera(
-                                    CameraUpdate.zoomIn(),
-                                  );
-                                },
+                                child: FloatingActionButton(
+                                  heroTag: "btn3",
+                                  backgroundColor: thirdColor,
+                                  child: Icon(
+                                    Icons.check,
+                                    color: secondaryColor,
+                                    size: Res.width(36),
+                                  ),
+                                  onPressed: () {
+                                    if (selectedMarker == null) {
+                                      Fluttertoast.showToast(
+                                          msg: "قم بتحديد مكان العقار عن طريق النقر على الخريطة!",
+                                          toastLength: Toast.LENGTH_LONG);
+                                      return;
+                                    }
+                                    Navigator.pop(context, selectedMarker);
+                                  },
+                                ),
                               ),
+                              kWi8,
+                              Container(
+                                padding: kSmallAllPadding,
+                                decoration: BoxDecoration(
+                                  border: (tutorialStep == TutorialStep.zooming)
+                                      ? Border.all(color: white, width: 2)
+                                      : Border.all(color: Colors.transparent, width: 2),
+                                ),
+                                child: FloatingActionButton(
+                                  heroTag: "btn1",
+                                  backgroundColor: secondaryColor,
+                                  child: Icon(
+                                    Icons.add,
+                                    color: white,
+                                    size: Res.width(32),
+                                  ),
+                                  onPressed: () {
+                                    // zoom in:
+                                    if (googleMapController == null) return;
+                                    googleMapController!.animateCamera(
+                                      CameraUpdate.zoomIn(),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Zoom message :
+                      if (tutorialStep == TutorialStep.zooming)
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: MapPopupMessageTutorial(
+                              onPressed: () {
+                                tutorialStepCubit.setState(TutorialStep.moving);
+                              },
+                              title: "تكبير / تصغير",
+                              bottomRightRadius: 0,
+                              content: zoomingTutorialContent,
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Zoom message :
-                    if (tutorialStep == TutorialStep.zooming)
-                      Positioned.fill(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: MapPopupMessageTutorial(
-                            onPressed: () {
-                              tutorialStepCubit.setState(TutorialStep.moving);
-                            },
-                            title: "تكبير / تصغير",
-                            bottomRightRadius: 0,
-                            content: zoomingTutorialContent,
                           ),
                         ),
-                      ),
-                    // Move message :
-                    if (tutorialStep == TutorialStep.moving)
-                      Positioned.fill(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: MapPopupMessageTutorial(
-                            onPressed: () {
-                              tutorialStepCubit.setState(TutorialStep.select);
-                            },
-                            title: "تحريك",
-                            content: movingTutorialContent,
+                      // Move message :
+                      if (tutorialStep == TutorialStep.moving)
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: MapPopupMessageTutorial(
+                              onPressed: () {
+                                tutorialStepCubit.setState(TutorialStep.select);
+                              },
+                              title: "تحريك",
+                              content: movingTutorialContent,
+                            ),
                           ),
                         ),
-                      ),
-                    // Select message :
-                    if (tutorialStep == TutorialStep.select)
-                      Positioned.fill(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: MapPopupMessageTutorial(
-                            onPressed: () {
-                              tutorialStepCubit.setState(TutorialStep.finish);
-                            },
-                            title: "تحديد مكان العقار",
-                            content: selectTutorialContent,
+                      // Select message :
+                      if (tutorialStep == TutorialStep.select)
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: MapPopupMessageTutorial(
+                              onPressed: () {
+                                tutorialStepCubit.setState(TutorialStep.finish);
+                              },
+                              title: "تحديد مكان العقار",
+                              content: selectTutorialContent,
+                            ),
                           ),
                         ),
-                      ),
-                    // Finish message :
-                    if (tutorialStep == TutorialStep.finish)
-                      Positioned.fill(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: MapPopupMessageTutorial(
-                            onPressed: () {
-                              tutorialStepCubit.setState(TutorialStep.none);
-                              // Change shared preferences map tutorial
-                              ApplicationSharedPreferences.setMapTutorialPassState(true);
-                            },
-                            title: "تثبيت المكان",
-                            content: finishTutorialContent,
-                            bottomRightRadius: 0,
+                      // Finish message :
+                      if (tutorialStep == TutorialStep.finish)
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: MapPopupMessageTutorial(
+                              onPressed: () {
+                                tutorialStepCubit.setState(TutorialStep.none);
+                                // Change shared preferences map tutorial
+                                ApplicationSharedPreferences.setMapTutorialPassState(true);
+                              },
+                              title: "تثبيت المكان",
+                              content: finishTutorialContent,
+                              bottomRightRadius: 0,
+                            ),
                           ),
                         ),
-                      ),
-                  ],
-                );
-              },
-            ),
+                    ],
+                  );
+                },
+              ),
           ],
         ),
       ),

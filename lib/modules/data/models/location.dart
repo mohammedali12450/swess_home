@@ -5,6 +5,16 @@ class Location {
   String latitude;
   List<Location>? locations;
 
+
+  factory Location.init() {
+    return Location(
+      id: -1,
+      name: "default",
+      latitude: "default",
+      longitude: "default",
+    );
+  }
+
   String getLocationName() {
     return name + ', ' + ((locations != null) ? locations!.first.name : "");
   }

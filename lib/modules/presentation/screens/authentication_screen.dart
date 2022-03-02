@@ -6,6 +6,8 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_state.dart';
@@ -17,6 +19,7 @@ import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_dialog.dart';
 import 'package:swesshome/utils/helpers/responsive.dart';
 import 'home_screen.dart';
@@ -24,7 +27,7 @@ import 'home_screen.dart';
 class AuthenticationScreen extends StatefulWidget {
   static const String id = "AuthenticationScreen";
 
-  final bool? popAfterFinish ;
+  final bool? popAfterFinish;
 
   const AuthenticationScreen({Key? key, this.popAfterFinish = true}) : super(key: key);
 
@@ -79,8 +82,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
   void loginErrorHandling(errorResponseMap) {
     if (errorResponseMap.containsKey("authentication")) {
-      authenticationErrorLogin
-          .setState(errorResponseMap["authentication"].first);
+      authenticationErrorLogin.setState(errorResponseMap["authentication"].first);
     }
     if (errorResponseMap.containsKey("password")) {
       passwordErrorLogin.setState(errorResponseMap["password"].first);
@@ -103,36 +105,25 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 if (registerState.errorResponse != null) {
                   signUpErrorHandling(registerState.errorResponse);
                 } else if (registerState.errorMessage != null) {
-                  showMyAlertDialog(
-                    "خطأ",
-                    registerState.errorMessage!,
-                    context,
-                    actions: [
-                      DialogAction(
-                        content: "تم",
-                        onPressed: (context) {
-                          Navigator.pop(context);
-                        },
-                      )
-                    ],
-                  );
+                  showWonderfulAlertDialog(context, "خطأ", registerState.errorMessage!);
                 }
               }
               if (registerState is UserRegisterComplete) {
-                BlocProvider.of<UserLoginBloc>(context).user =
-                    registerState.user;
-                // save user token in shared preferences ;
+                BlocProvider.of<UserLoginBloc>(context).user = registerState.user;
+
                 if (registerState.user.token != null) {
-                  UserSharedPreferences.setAccessToken(
-                      registerState.user.token!);
+                  // save user token in shared preferences ;
+                  UserSharedPreferences.setAccessToken(registerState.user.token!);
+                  // Send user fcm token to server :
+                  BlocProvider.of<FcmBloc>(context).add(
+                    SendFcmTokenProcessStarted(userToken: registerState.user.token!),
+                  );
                 }
-                if(widget.popAfterFinish!){
-                  Navigator.pop(context) ;
-                }else{
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()),
-                          (route) => false);
+                if (widget.popAfterFinish!) {
+                  Navigator.pop(context);
+                } else {
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
                 }
               }
             },
@@ -143,29 +134,24 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 if (loginState.errorResponse != null) {
                   loginErrorHandling(loginState.errorResponse);
                 } else if (loginState.errorMessage != null) {
-                  showMyAlertDialog(
-                    "خطأ",
-                    loginState.errorMessage!,
-                    context,
-                    actions: [
-                      DialogAction(
-                        content: "تم",
-                        onPressed: (context) {
-                          Navigator.pop(context);
-                        },
-                      )
-                    ],
-                  );
+                  showWonderfulAlertDialog(context, "خطأ", loginState.errorMessage!);
                 }
               }
               if (loginState is UserLoginComplete) {
-                if(widget.popAfterFinish!){
-                  Navigator.pop(context) ;
-                }else{
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()),
-                          (route) => false);
+                if (userLoginBloc.user!.token != null) {
+                  // save user token in shared preferences ;
+                  UserSharedPreferences.setAccessToken(userLoginBloc.user!.token!);
+                  // Send user fcm token to server :
+                  BlocProvider.of<FcmBloc>(context).add(
+                    SendFcmTokenProcessStarted(userToken: userLoginBloc.user!.token!),
+                  );
+                }
+
+                if (widget.popAfterFinish!) {
+                  Navigator.pop(context);
+                } else {
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
                 }
               }
             },
@@ -209,11 +195,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       color: white,
                     ),
                     onPressed: () {
-                      if(widget.popAfterFinish!){
+                      if (widget.popAfterFinish!) {
                         Navigator.pop(context);
-                      }
-                      else{
-                        Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false) ;
+                      } else {
+                        Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
                       }
                     },
                   ),
@@ -323,9 +308,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         ),
                         prefixIcon: IconButton(
                           icon: Icon(
-                            (isVisible)
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                            (isVisible) ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                             color: black,
                           ),
                           onPressed: () {
@@ -406,7 +389,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           kHe16,
           MyButton(
             child: ResText(
-              "إنشاء حساب",
+              "إنشاء حساب جديد",
               textStyle: textStyling(S.s20, W.w5, C.wh),
             ),
             width: Res.width(250),
@@ -496,7 +479,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ResText(
-            "إنشاء حساب",
+            "إنشاء حساب جديد",
             textStyle: textStyling(S.s36, W.w6, C.wh),
           ),
           kHe40,
@@ -572,9 +555,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         ),
                         prefixIcon: IconButton(
                           icon: Icon(
-                            (isVisible)
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                            (isVisible) ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                             color: black,
                           ),
                           onPressed: () {

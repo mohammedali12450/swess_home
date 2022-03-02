@@ -12,7 +12,10 @@ Future<void> showWonderfulAlertDialog(
   String body, {
   String? defaultButtonContent,
   TextStyle? titleTextStyle,
+  double? defaultButtonWidth,
+  double? defaultButtonHeight,
   TextStyle? bodyTextStyle,
+  Function()? onDefaultButtonPressed,
   TextStyle? defaultButtonContentStyle,
   bool removeDefaultButton = false,
   List<Widget>? dialogButtons,
@@ -49,7 +52,8 @@ Future<void> showWonderfulAlertDialog(
             ResText(
               body,
               textStyle: bodyTextStyle ?? textStyling(S.s16, W.w5, C.bl),
-            ),            kHe32,
+            ),
+            kHe32,
             Wrap(
               alignment: WrapAlignment.center,
               direction: Axis.horizontal,
@@ -61,15 +65,19 @@ Future<void> showWonderfulAlertDialog(
                         : MyButton(
                             color: secondaryColor,
                             borderRadius: 4,
-                            width: Res.width(120),
-                            height: Res.height(56),
+                            width: defaultButtonWidth ?? Res.width(120),
+                            height: defaultButtonHeight ?? Res.height(56),
                             onPressed: () {
+                              if (onDefaultButtonPressed != null) {
+                                onDefaultButtonPressed();
+                                return;
+                              }
                               Navigator.pop(context);
                             },
                             child: ResText(
-                              defaultButtonContent ?? "Ok",
-                              textStyle: defaultButtonContentStyle ??
-                                  textStyling(S.s14, W.w5, C.c1),
+                              defaultButtonContent ?? "تم",
+                              textStyle:
+                                  defaultButtonContentStyle ?? textStyling(S.s14, W.w5, C.c1),
                             ),
                           ),
                   ] +

@@ -7,11 +7,16 @@ import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/user_authentication_provider.dart';
 
 class UserAuthenticationRepository {
-  UserAuthenticationProvider userAuthenticationProvider =
-      UserAuthenticationProvider();
+  UserAuthenticationProvider userAuthenticationProvider = UserAuthenticationProvider();
 
   Future register(Register register) async {
-    Response response = await userAuthenticationProvider.register(register);
+    Response response;
+
+    try {
+      response = await userAuthenticationProvider.register(register);
+    } catch (_) {
+      rethrow;
+    }
 
     if (response.statusCode == 422) {
       throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
@@ -26,19 +31,24 @@ class UserAuthenticationRepository {
 
   Future<User> loginByToken(String token) async {
     Response response = await userAuthenticationProvider.loginByToken(token);
-    if(response.statusCode == 422){
+    if (response.statusCode == 422) {
       throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
-    if(response.statusCode != 200){
+    if (response.statusCode != 200) {
       throw UnknownException();
     }
     User user = User.fromJson(jsonDecode(response.toString())["data"]);
-    return user ;
+    return user;
   }
 
-  Future login(String authentication , String password) async {
+  Future login(String authentication, String password) async {
+    Response response;
 
-    Response response = await userAuthenticationProvider.login(authentication , password);
+    try {
+      response = await userAuthenticationProvider.login(authentication, password);
+    } catch (_) {
+      rethrow;
+    }
 
     if (response.statusCode == 422) {
       throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
@@ -51,12 +61,16 @@ class UserAuthenticationRepository {
     return user;
   }
 
-  Future logout(String token)async{
-    Response response = await userAuthenticationProvider.logout(token);
-    if(response.statusCode != 200){
+  Future logout(String token) async {
+    Response response;
+
+    try {
+      response = await userAuthenticationProvider.logout(token);
+    } catch (e) {
+      rethrow;
+    }
+    if (response.statusCode != 200) {
       throw UnknownException();
     }
   }
-
-
 }

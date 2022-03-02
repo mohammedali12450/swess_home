@@ -1,24 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:swesshome/constants/api_paths.dart';
+import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/constants/enums.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_state.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_state.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_event.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
+import 'package:swesshome/modules/data/models/user.dart';
+import 'package:swesshome/modules/data/repositories/estate_repository.dart';
+import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/estate_details_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import 'package:swesshome/utils/helpers/responsive.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'my_button.dart';
 
 class EstateCard extends StatefulWidget {
   final Estate estate;
+  final bool removeBottomBar;
+  final Widget? bottomWidget;
+  final Function? onClosePressed;
+  final bool removeCloseButton;
 
-  const EstateCard({Key? key, required this.estate}) : super(key: key);
+  const EstateCard({
+    Key? key,
+    required this.estate,
+    this.removeBottomBar = false,
+    this.bottomWidget,
+    this.onClosePressed,
+    this.removeCloseButton = false,
+  }) : super(key: key);
 
   @override
   _EstateCardState createState() => _EstateCardState();
@@ -26,26 +54,56 @@ class EstateCard extends StatefulWidget {
 
 class _EstateCardState extends State<EstateCard> {
   ChannelCubit currentImageCubit = ChannelCubit(0);
-  ChannelCubit likeCubit = ChannelCubit(false);
-  ChannelCubit saveCubit = ChannelCubit(false);
+
+  late LikeAndUnlikeBloc _likeAndUnlikeBloc;
+
+  late SaveAndUnSaveEstateBloc _saveAndUnSaveEstateBloc;
+
+  VisitBloc visitBloc = VisitBloc(EstateRepository());
+
+  String? userToken;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _likeAndUnlikeBloc = LikeAndUnlikeBloc(
+      (widget.estate.isLiked!) ? Liked() : Unliked(),
+      EstateRepository(),
+    );
+
+    _saveAndUnSaveEstateBloc = SaveAndUnSaveEstateBloc(
+      (widget.estate.isSaved!) ? EstateSaved() : EstateUnSaved(),
+      EstateRepository(),
+    );
+
+    User? user = BlocProvider.of<UserLoginBloc>(context).user;
+    if (user != null && user.token != null) {
+      userToken = user.token;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    int intPrice = int.parse(widget.estate.price!);
+    int intPrice = int.parse(widget.estate.price);
     String estatePrice = NumbersHelper.getMoneyFormat(intPrice);
-    String specialWord = (widget.estate.estateType!.id == 1 ||
-            widget.estate.estateType!.id == 2 ||
-            widget.estate.estateType!.id == 5)
+    String specialWord = (widget.estate.estateType.id == 1 ||
+            widget.estate.estateType.id == 2 ||
+            widget.estate.estateType.id == 5)
         ? " مميز"
         : " مميزة";
-    String estateType = widget.estate.estateType!.name.split('|').elementAt(1) +
+    String estateType = widget.estate.estateType.name.split('|').elementAt(1) +
         ((widget.estate.contractId! == 4) ? specialWord : "");
-    String addingDate = DateHelper.getDateByFormat(
-        DateTime.parse(widget.estate.publishedAt!), "yyyy/mm/dd");
+    String addingDate =
+        DateHelper.getDateByFormat(DateTime.parse(widget.estate.publishedAt!), "yyyy/MM/dd");
     Color estateTypeBackgroundColor = Colors.white;
     Color estatePriceBackgroundColor = Colors.white;
     Color estateTypeColor = Colors.white;
     Color estatePriceColor = Colors.white;
+    List<String> estateImages =
+        widget.estate.images.where((e) => e.type == "estate_image").map((e) => e.url).toList();
+
     switch (widget.estate.contractId!) {
       case 1:
         {
@@ -126,8 +184,7 @@ class _EstateCardState extends State<EstateCard> {
                         builder: (BuildContext context, int index) {
                           return PhotoViewGalleryPageOptions.customChild(
                             child: CachedNetworkImage(
-                              imageUrl: baseUrl +
-                                  widget.estate.images!.elementAt(index).url,
+                              imageUrl: baseUrl + estateImages.elementAt(index),
                               fit: BoxFit.cover,
                               progressIndicatorBuilder: (_, __, ___) {
                                 return Container(
@@ -139,22 +196,21 @@ class _EstateCardState extends State<EstateCard> {
                                   ),
                                 );
                               },
-                              imageBuilder: (context, imageProvider) =>
-                                  Container(
+                              imageBuilder: (context, imageProvider) => Container(
                                 decoration: BoxDecoration(
+                                  color: white,
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(12),
                                     topRight: Radius.circular(12),
                                   ),
-                                  image: DecorationImage(
-                                      image: imageProvider, fit: BoxFit.cover),
+                                  image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                                 ),
                               ),
                             ),
                             disableGestures: true,
                           );
                         },
-                        itemCount: widget.estate.images!.length,
+                        itemCount: estateImages.length,
                         loadingBuilder: (context, event) => const Center(
                           child: Icon(
                             Icons.camera_alt_outlined,
@@ -193,13 +249,11 @@ class _EstateCardState extends State<EstateCard> {
                                   kWi4,
                                   ResText(
                                     (currentImageIndex + 1).toString() + '/',
-                                    textStyle: textStyling(S.s12, W.w4, C.wh,
-                                        fontFamily: F.roboto),
+                                    textStyle: textStyling(S.s12, W.w4, C.wh, fontFamily: F.roboto),
                                   ),
                                   ResText(
-                                    widget.estate.images!.length.toString(),
-                                    textStyle: textStyling(S.s12, W.w4, C.wh,
-                                        fontFamily: F.roboto),
+                                    estateImages.length.toString(),
+                                    textStyle: textStyling(S.s12, W.w4, C.wh, fontFamily: F.roboto),
                                   ),
                                 ],
                               ),
@@ -207,30 +261,33 @@ class _EstateCardState extends State<EstateCard> {
                           );
                         },
                       ),
-                      Positioned(
-                        top: Res.height(4),
-                        right: Res.width(8),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: black.withOpacity(0.64),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(2),
+                      if (!widget.removeCloseButton)
+                        Positioned(
+                          top: Res.height(4),
+                          right: Res.width(8),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: black.withOpacity(0.64),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(2),
+                              ),
+                            ),
+                            child: IconButton(
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(
+                                Icons.close,
+                                size: 16,
+                                color: white,
+                              ),
+                              onPressed: () {
+                                if (widget.onClosePressed != null) {
+                                  widget.onClosePressed!();
+                                }
+                              },
                             ),
                           ),
-                          child: IconButton(
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.zero,
-                            icon: const Icon(
-                              Icons.close,
-                              size: 16,
-                              color: white,
-                            ),
-                            onPressed: () {
-                              // TODO : Process this state
-                            },
-                          ),
-                        ),
-                      )
+                        )
                     ],
                   ),
                 ),
@@ -249,8 +306,7 @@ class _EstateCardState extends State<EstateCard> {
                             child: ResText(
                               estateType,
                               textStyle: textStyling(S.s18, W.w5, C.bl)
-                                  .copyWith(
-                                      color: estateTypeColor, height: 1.8),
+                                  .copyWith(color: estateTypeColor, height: 1.8),
                               textAlign: TextAlign.center,
                               maxLines: 3,
                             ),
@@ -267,6 +323,16 @@ class _EstateCardState extends State<EstateCard> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
+                              if (widget.estate.estateType.id == rentOfferTypeNumber)
+                                ResText(
+                                  widget.estate.periodType!.name.split("|").first + " /",
+                                  textStyle: textStyling(
+                                    S.s20,
+                                    W.w5,
+                                    C.bl,
+                                  ).copyWith(height: 1.8, color: estatePriceColor),
+                                  textAlign: TextAlign.right,
+                                ),
                               Container(
                                 padding: EdgeInsets.only(
                                   right: Res.width(12),
@@ -277,8 +343,7 @@ class _EstateCardState extends State<EstateCard> {
                                     S.s20,
                                     W.w5,
                                     C.bl,
-                                  ).copyWith(
-                                      height: 1.8, color: estatePriceColor),
+                                  ).copyWith(height: 1.8, color: estatePriceColor),
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -288,9 +353,9 @@ class _EstateCardState extends State<EstateCard> {
                                 ),
                                 child: ResText(
                                   estatePrice,
-                                  textStyle: textStyling(S.s22, W.w4, C.bl,
-                                          fontFamily: F.libreFranklin)
-                                      .copyWith(color: estatePriceColor),
+                                  textStyle:
+                                      textStyling(S.s22, W.w4, C.bl, fontFamily: F.libreFranklin)
+                                          .copyWith(color: estatePriceColor),
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -331,7 +396,7 @@ class _EstateCardState extends State<EstateCard> {
                             Container(
                               color: Colors.transparent,
                               child: ResText(
-                                widget.estate.location!.getLocationName(),
+                                widget.estate.location.getLocationName(),
                                 textStyle: textStyling(S.s20, W.w6, C.c2),
                                 textAlign: TextAlign.right,
                               ),
@@ -349,55 +414,193 @@ class _EstateCardState extends State<EstateCard> {
                     ],
                   ),
                 ),
+                kHe8,
               ],
             ),
           ),
-          const Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              BlocBuilder<ChannelCubit, dynamic>(
-                bloc: saveCubit,
-                builder: (_, isSaved) {
-                  return IconButton(
-                    onPressed: () {
-                      saveCubit.setState(!isSaved);
-                    },
-                    icon: (isSaved)
-                        ? const Icon(
-                            Icons.bookmark,
-                            color: secondaryColor,
-                          )
-                        : const Icon(Icons.bookmark_border_outlined),
-                  );
-                },
-              ),
-              IconButton(
-                onPressed: () {
-                  launch(
-                    "tel://" + widget.estate.estateOffice!.mobile.toString(),
-                  );
-                },
-                icon: const Icon(Icons.call),
-              ),
-              BlocBuilder<ChannelCubit, dynamic>(
-                bloc: likeCubit,
-                builder: (_, isLiked) {
-                  return IconButton(
-                    onPressed: () {
-                      likeCubit.setState(!isLiked);
-                    },
-                    icon: (isLiked)
-                        ? const Icon(
-                            Icons.favorite,
-                            color: secondaryColor,
-                          )
-                        : const Icon(Icons.favorite_border),
-                  );
-                },
-              ),
-            ],
-          ),
+          // bottom bar :
+          if (!widget.removeBottomBar) ...[
+            const Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                BlocConsumer<SaveAndUnSaveEstateBloc, SaveAndUnSaveEstateState>(
+                  bloc: _saveAndUnSaveEstateBloc,
+                  listener: (_, saveAndUnSaveState) {
+                    if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
+                      showWonderfulAlertDialog(context, "خطأ", saveAndUnSaveState.error);
+                      _saveAndUnSaveEstateBloc.add(ReInitializeSaveState(isSaved: widget.estate.isSaved!));
+                    }
+                    if (saveAndUnSaveState is EstateSaved) {
+                      widget.estate.isSaved = true;
+                    }
+                    if (saveAndUnSaveState is EstateUnSaved) {
+                      widget.estate.isSaved = false;
+                    }
+                  },
+                  builder: (_, saveAndUnSaveState) {
+                    return IconButton(
+                      onPressed: () {
+                        if (userToken == null) {
+                          showWonderfulAlertDialog(
+                            context,
+                            "خطأ",
+                            "هذه الميزة تتطلب تسجيل الدخول",
+                            removeDefaultButton: true,
+                            width: Res.width(400),
+                            dialogButtons: [
+                              MyButton(
+                                width: Res.width(150),
+                                color: secondaryColor,
+                                child: ResText(
+                                  "إلغاء",
+                                  textStyle: textStyling(S.s16, W.w5, C.wh),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              MyButton(
+                                width: Res.width(150),
+                                color: secondaryColor,
+                                child: ResText(
+                                  "تسجيل الدخول",
+                                  textStyle: textStyling(S.s16, W.w5, C.wh),
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, AuthenticationScreen.id);
+                                },
+                              ),
+                            ],
+                          );
+                          return;
+                        }
+
+                        if (saveAndUnSaveState is EstateSaved) {
+                          _saveAndUnSaveEstateBloc.add(
+                              UnSaveEventStarted(token: userToken, estateId: widget.estate.id));
+                        }
+                        if (saveAndUnSaveState is EstateUnSaved) {
+                          _saveAndUnSaveEstateBloc
+                              .add(EstateSaveStarted(token: userToken, estateId: widget.estate.id));
+                        }
+                      },
+                      icon: (saveAndUnSaveState is EstateSaveAndUnSaveProgress)
+                          ? const SpinKitWave(
+                              color: secondaryColor,
+                              size: 16,
+                            )
+                          : Icon((saveAndUnSaveState is EstateSaved)
+                              ? Icons.bookmark
+                              : Icons.bookmark_border_outlined),
+                      color: secondaryColor,
+                    );
+                  },
+                ),
+                IconButton(
+                  onPressed: () {
+                    visitBloc.add(
+                      VisitStarted(
+                          visitId: widget.estate.id,
+                          token: userToken,
+                          visitType: VisitType.estateCall),
+                    );
+                    launch(
+                      "tel://" + widget.estate.estateOffice!.mobile.toString(),
+                    );
+                  },
+                  icon: const Icon(Icons.call),
+                ),
+                BlocConsumer<LikeAndUnlikeBloc, LikeAndUnlikeState>(
+                  bloc: _likeAndUnlikeBloc,
+                  listener: (_, likeAndUnlikeState) {
+                    if (likeAndUnlikeState is LikeAndUnlikeError) {
+                      showWonderfulAlertDialog(context, "خطأ", likeAndUnlikeState.error);
+                      _likeAndUnlikeBloc.add(
+                        ReInitializeLikeState(isLike: widget.estate.isLiked!),
+                      );
+                    }
+                    if (likeAndUnlikeState is Liked) {
+                      widget.estate.isLiked = true;
+                    }
+                    if (likeAndUnlikeState is Unliked) {
+                      widget.estate.isLiked = false;
+                    }
+                  },
+                  builder: (_, likeAndUnlikeState) {
+                    return IconButton(
+                      onPressed: () async {
+                        if (userToken == null) {
+                          showWonderfulAlertDialog(
+                            context,
+                            "خطأ",
+                            "هذه الميزة تتطلب تسجيل الدخول",
+                            removeDefaultButton: true,
+                            width: Res.width(400),
+                            dialogButtons: [
+                              MyButton(
+                                width: Res.width(150),
+                                color: secondaryColor,
+                                child: ResText(
+                                  "إلغاء",
+                                  textStyle: textStyling(S.s16, W.w5, C.wh),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              MyButton(
+                                width: Res.width(150),
+                                color: secondaryColor,
+                                child: ResText(
+                                  "تسجيل الدخول",
+                                  textStyle: textStyling(S.s16, W.w5, C.wh),
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, AuthenticationScreen.id);
+                                },
+                              ),
+                            ],
+                          );
+                          return;
+                        }
+                        if (likeAndUnlikeState is Liked) {
+                          _likeAndUnlikeBloc.add(
+                            UnlikeStarted(
+                              token: userToken,
+                              unlikedObjectId: widget.estate.id,
+                              likeType: LikeType.estate,
+                            ),
+                          );
+                        }
+                        if (likeAndUnlikeState is Unliked) {
+                          _likeAndUnlikeBloc.add(
+                            LikeStarted(
+                                token: userToken,
+                                likedObjectId: widget.estate.id,
+                                likeType: LikeType.estate),
+                          );
+                        }
+                      },
+                      icon: (likeAndUnlikeState is LikeAndUnlikeProgress)
+                          ? const SpinKitWave(
+                              color: secondaryColor,
+                              size: 16,
+                            )
+                          : Icon(
+                              (likeAndUnlikeState is Liked)
+                                  ? Icons.favorite
+                                  : Icons.favorite_outline,
+                              color: secondaryColor,
+                            ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+          // bottom widget :
+          if (widget.bottomWidget != null) widget.bottomWidget!,
         ],
       ),
     );

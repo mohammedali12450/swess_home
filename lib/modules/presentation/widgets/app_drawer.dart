@@ -4,17 +4,25 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/created_estates_screen.dart';
+import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
+import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
+import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
+import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'my_button.dart';
 import 'res_text.dart';
@@ -59,8 +67,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          decoration: const BoxDecoration(
-                              shape: BoxShape.circle, color: white),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: white),
                           child: Image.asset(
                             swessHomeIconPath,
                             width: 100,
@@ -74,9 +81,8 @@ class _MyDrawerState extends State<MyDrawer> {
                         ),
                         kHe8,
                         ResText(
-                          "قم بتسجيل الدخول للاستفادة من ميزات التطبيق, وعرض عقارات مناسبة لطلبك!",
-                          textStyle: textStyling(S.s14, W.w5, C.wh)
-                              .copyWith(height: 1.8),
+                          "قم بتسجيل الدخول للاستفادة من ميزات التطبيق, وعرض عقارات مناسبة لطلبك",
+                          textStyle: textStyling(S.s14, W.w5, C.wh).copyWith(height: 1.8),
                           maxLines: 5,
                         ),
                         kHe12,
@@ -105,8 +111,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       children: [
                         kHe24,
                         Container(
-                          decoration: const BoxDecoration(
-                              shape: BoxShape.circle, color: white),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: white),
                           child: Image.asset(
                             swessHomeIconPath,
                             width: 100,
@@ -129,29 +134,44 @@ class _MyDrawerState extends State<MyDrawer> {
           },
         ),
         RowInformation(
-          content: "الطلبات العقارية المسبقة",
-          iconData: Icons.history,
-          onTap: () {},
+          content: "العقارات المحفوظة",
+          iconData: Icons.bookmark_border_outlined,
+          onTap: () {
+            Navigator.pushNamed(context, SavedEstatesScreen.id);
+          },
         ),
         RowInformation(
           content: "العروض العقارية المنشأة",
           iconData: Icons.article_outlined,
-          onTap: () {},
+          onTap: () {
+            Navigator.pushNamed(context, CreatedEstatesScreen.id);
+          },
         ),
         RowInformation(
           content: "اتصل بنا",
           iconData: Icons.call_outlined,
-          onTap: () {},
+          onTap: () {
+            launch(
+              "tel://" +
+                  BlocProvider.of<SystemVariablesBloc>(context)
+                      .systemVariables!
+                      .normalCompanyPhoneNumber,
+            );
+          },
         ),
         RowInformation(
           content: "تقييم التطبيق",
           iconData: Icons.star_rate_outlined,
-          onTap: () {},
+          onTap: () {
+            Navigator.pushNamed(context, RatingScreen.id);
+          },
         ),
         RowInformation(
           content: "مساعدة",
           iconData: Icons.error_outline,
-          onTap: () {},
+          onTap: () {
+            Navigator.pushNamed(context, FAQScreen.id);
+          },
         ),
         BlocBuilder<UserLoginBloc, UserLoginState>(
           builder: (context, userLoginState) {
@@ -171,8 +191,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       MyButton(
                         child: ResText(
                           "إلغاء",
-                          textStyle: textStyling(S.s16, W.w5, C.wh)
-                              .copyWith(height: 1.8),
+                          textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
                         ),
                         width: Res.width(140),
                         color: secondaryColor,
@@ -186,14 +205,14 @@ class _MyDrawerState extends State<MyDrawer> {
                             builder: (_, isLogoutLoading) {
                               return (isLogoutLoading)
                                   ? const SpinKitWave(
-                                color: white,
-                                size: 16,
-                              )
+                                      color: white,
+                                      size: 16,
+                                    )
                                   : ResText(
-                                "تسجيل الخروج",
-                                textStyle: textStyling(S.s16, W.w5, C.wh)
-                                    .copyWith(height: 1.8),
-                              );
+                                      "تسجيل الخروج",
+                                      textStyle:
+                                          textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
+                                    );
                             }),
                         width: Res.width(140),
                         color: secondaryColor,
@@ -218,7 +237,13 @@ class _MyDrawerState extends State<MyDrawer> {
   Future _logout() async {
     UserAuthenticationRepository userRep = UserAuthenticationRepository();
     if (_userLoginBloc.user != null && _userLoginBloc.user!.token != null) {
-      await userRep.logout(_userLoginBloc.user!.token!);
+      try {
+        await userRep.logout(_userLoginBloc.user!.token!);
+      } on ConnectionException catch (e) {
+        Navigator.pop(context) ;
+        showWonderfulAlertDialog(context, "خطأ", e.errorMessage);
+        return ;
+      }
     }
     UserSharedPreferences.removeAccessToken();
     _userLoginBloc.user = null;
@@ -235,10 +260,7 @@ class RowInformation extends StatelessWidget {
   final Function() onTap;
 
   const RowInformation(
-      {Key? key,
-      required this.iconData,
-      required this.content,
-      required this.onTap})
+      {Key? key, required this.iconData, required this.content, required this.onTap})
       : super(key: key);
 
   @override
@@ -248,8 +270,7 @@ class RowInformation extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: Res.width(16), vertical: Res.height(8)),
+            padding: EdgeInsets.symmetric(horizontal: Res.width(16), vertical: Res.height(8)),
             margin: EdgeInsets.only(top: Res.height(8)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -257,8 +278,7 @@ class RowInformation extends StatelessWidget {
                 ResText(
                   content,
                   textAlign: TextAlign.right,
-                  textStyle:
-                      textStyling(S.s16, W.w6, C.bl).copyWith(height: 1.8),
+                  textStyle: textStyling(S.s16, W.w6, C.bl).copyWith(height: 1.8),
                 ),
                 kWi8,
                 Icon(

@@ -5,6 +5,10 @@ class EstateOfferType {
 
   EstateOfferType({required this.id, required this.name});
 
+  factory EstateOfferType.init(){
+    return EstateOfferType(id: -1, name: "default") ;
+  }
+
   factory EstateOfferType.fromJson(json) {
     return EstateOfferType(
       id: json['id'],

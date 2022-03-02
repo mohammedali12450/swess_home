@@ -38,7 +38,10 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _currentOffer = Estate(officeId: widget.officeId);
+    // initializing estate :
+    _currentOffer = Estate.init();
+    _currentOffer.officeId = widget.officeId ;
+
     estateTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
     offerTypes =
         BlocProvider.of<EstateOfferTypesBloc>(context).estateOfferTypes!;
@@ -73,7 +76,7 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
           SizedBox(
             width: inf,
             child: ResText(
-              ":نوع العرض",
+              ":نوع الملكية",
               textStyle: textStyling(S.s18, W.w6, C.bl),
               textAlign: TextAlign.right,
             ),

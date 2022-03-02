@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:icon_badge/icon_badge.dart';
 import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
@@ -7,10 +9,15 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/texts.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/search_data.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
+import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/my_button.dart';
@@ -30,11 +37,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late UserLoginBloc _userAuthenticationBloc;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     ApplicationSharedPreferences.setWalkThroughPassState(true);
+    _userAuthenticationBloc = BlocProvider.of<UserLoginBloc>(context);
+    if (_userAuthenticationBloc.user != null) {
+      sendFcmToken(0);
+    }
+  }
+
+  Future sendFcmToken(int attempt) async {
+    if (attempt == 5) return;
+    if (firebaseToken == null) {
+      await Future.delayed(const Duration(seconds: 3));
+      sendFcmToken(attempt + 1);
+    }
+    BlocProvider.of<FcmBloc>(context).add(
+      SendFcmTokenProcessStarted(userToken: _userAuthenticationBloc.user!.token!),
+    );
   }
 
   @override
@@ -49,17 +73,21 @@ class _HomeScreenState extends State<HomeScreen> {
             "SwessHome",
             textStyle: textStyling(S.s24, W.w6, C.c1, fontFamily: F.roboto),
           ),
-          leading: Container(
-            margin: EdgeInsets.only(
-              left: Res.width(8),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.notifications_outlined),
-              onPressed: () {
-                // TODO : process this state.
+          leading: BlocBuilder<NotificationsCubit, int>(builder: (_, notificationsCount) {
+            return IconBadge(
+              icon: const Icon(
+                Icons.notifications_outlined,
+                color: white,
+              ),
+              itemCount: notificationsCount,
+              right: 0,
+              top: Res.height(5),
+              onTap: () {
+                Navigator.pushNamed(context, NotificationScreen.id);
               },
-            ),
-          ),
+              hideZero: true,
+            );
+          }),
           actions: [
             Builder(
               builder: (context) {
@@ -89,11 +117,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 buildHomeScreenHeader(),
                 kHe24,
                 buildSearchCard(),
-                kHe12,
-                buildVacationCard(),
-                kHe20,
+                kHe16,
+                if (BlocProvider.of<SystemVariablesBloc>(context)
+                    .systemVariables!
+                    .isVacationsAvailable) ...[
+                  buildVacationCard(),
+                  kHe20,
+                ],
                 buildEstatePostingCard(),
-                kHe20,
+                kHe12,
                 buildEstateOrderCard(),
                 kHe20,
               ],
@@ -112,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: const BorderRadius.all(
           Radius.circular(4),
         ),
-        border: Border.all(color: black),
+        border: Border.all(color: black , width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -120,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             width: inf,
             child: ResText(
-              "انشر عرضك العقاري",
+              "ابحث عن وكيل عقاري",
               textStyle: textStyling(S.s18, W.w6, C.bl),
               textAlign: TextAlign.right,
             ),
@@ -155,8 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   ResText(
                     "ابحث عن مكتب عقاري",
-                    textStyle:
-                        textStyling(S.s15, W.w5, C.hint).copyWith(height: 1.8),
+                    textStyle: textStyling(S.s15, W.w5, C.hint).copyWith(height: 1.8),
                     textAlign: TextAlign.right,
                   ),
                   kWi12,
@@ -181,47 +212,49 @@ class _HomeScreenState extends State<HomeScreen> {
   Stack buildVacationCard() {
     return Stack(
       children: [
-        Container(
-          width: screenWidth,
-          padding: EdgeInsets.symmetric(
-              horizontal: Res.width(16), vertical: Res.height(24)),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerRight,
-              end: Alignment.centerLeft,
-              colors: [lastColor, lastColor.withOpacity(0.75)],
+        InkWell(
+          onTap: () {
+            Fluttertoast.showToast(msg: "سيتم تفعيل هذه الميزة قريبا!");
+          },
+          child: Container(
+            width: screenWidth,
+            padding: EdgeInsets.symmetric(horizontal: Res.width(16), vertical: Res.height(24)),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: [lastColor, lastColor.withOpacity(0.75)],
+              ),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(15),
+              ),
+              image: const DecorationImage(
+                  image: AssetImage(beachImagePath), fit: BoxFit.cover, opacity: 0.1),
             ),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(15),
-            ),
-            image: const DecorationImage(
-                image: AssetImage(beachImagePath),
-                fit: BoxFit.cover,
-                opacity: 0.1),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Transform.rotate(
-                angle: 1.5,
-                child: const Icon(
-                  Icons.search,
-                  size: 28,
-                  color: white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Transform.rotate(
+                  angle: 1.5,
+                  child: const Icon(
+                    Icons.search,
+                    size: 28,
+                    color: white,
+                  ),
                 ),
-              ),
-              kHe12,
-              ResText(
-                "المزارع والاصطياف",
-                textStyle: textStyling(S.s20, W.w5, C.wh),
-              ),
-              kHe12,
-              ResText(
-                "! قم بتصفح عقارات الاصطياف محجزها من داخل بيتك",
-                textStyle: textStyling(S.s14, W.w5, C.wh),
-              ),
-            ],
+                kHe12,
+                ResText(
+                  "المزارع والاصطياف",
+                  textStyle: textStyling(S.s20, W.w5, C.wh),
+                ),
+                kHe12,
+                ResText(
+                  "! قم بتصفح عقارات الاصطياف و احجزها من داخل بيتك",
+                  textStyle: textStyling(S.s14, W.w5, C.wh),
+                ),
+              ],
+            ),
           ),
         ),
         Positioned.fill(
@@ -245,14 +278,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Column buildHomeScreenHeader() {
     return Column(
       children: [
-        SizedBox(
-          width: inf,
-          child: ResText(
-            '!مساء الخير',
-            textAlign: TextAlign.right,
-            textStyle: textStyling(S.s14, W.w5, C.hint),
-          ),
-        ),
         kHe8,
         SizedBox(
           width: inf,
@@ -335,8 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => SearchScreen(
-                        searchData:
-                            SearchData(estateOfferTypeId: rentOfferTypeNumber),
+                        searchData: SearchData(estateOfferTypeId: rentOfferTypeNumber),
                       ),
                     ),
                   );
@@ -356,8 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => SearchScreen(
-                        searchData:
-                            SearchData(estateOfferTypeId: sellOfferTypeNumber),
+                        searchData: SearchData(estateOfferTypeId: sellOfferTypeNumber),
                       ),
                     ),
                   );
@@ -378,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: const BorderRadius.all(
           Radius.circular(4),
         ),
-        border: Border.all(color: black),
+        border: Border.all(color: black , width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -434,8 +457,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         MyButton(
                           child: ResText(
                             "إلغاء",
-                            textStyle: textStyling(S.s16, W.w5, C.wh)
-                                .copyWith(height: 1.8),
+                            textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
                           ),
                           width: Res.width(140),
                           color: secondaryColor,
@@ -446,14 +468,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         MyButton(
                           child: ResText(
                             "تسجيل الدخول",
-                            textStyle: textStyling(S.s16, W.w5, C.wh)
-                                .copyWith(height: 1.8),
+                            textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
                           ),
                           width: Res.width(140),
                           color: secondaryColor,
                           onPressed: () async {
-                            await Navigator.pushNamed(
-                                context, AuthenticationScreen.id);
+                            await Navigator.pushNamed(context, AuthenticationScreen.id);
                             Navigator.pop(context);
                           },
                         ),

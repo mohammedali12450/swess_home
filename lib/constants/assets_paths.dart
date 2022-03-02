@@ -19,6 +19,9 @@ const String documentOutlineIconPath = 'assets/icons/document_logo.svg' ;
 const String checkOutlineIconPath = 'assets/icons/check_icon.svg' ;
 const String sendIconPath = 'assets/icons/send_icon.svg' ;
 const String streetIconPath = 'assets/icons/street_icon.svg' ;
+const String sadFacePath = 'assets/icons/sad_face.svg' ;
+const String happyFacePath = 'assets/icons/happy_face.svg' ;
+const String normalFacePath = 'assets/icons/normal_face.svg' ;
 
 
 

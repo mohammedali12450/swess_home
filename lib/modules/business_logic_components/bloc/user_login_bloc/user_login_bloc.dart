@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/unknown_exception.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
@@ -8,20 +9,22 @@ import 'package:swesshome/modules/data/repositories/user_authentication_reposito
 import 'user_login_state.dart';
 
 class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
-  UserAuthenticationRepository userAuthenticationRepository =
-      UserAuthenticationRepository();
+  UserAuthenticationRepository userAuthenticationRepository = UserAuthenticationRepository();
   User? user;
 
   UserLoginBloc(this.userAuthenticationRepository) : super(UserLoginNone()) {
     on<UserLoginStarted>((event, emit) async {
       emit(UserLoginProgress());
       try {
-        user = await userAuthenticationRepository.login(
-            event.authentication, event.password);
-        if(user!.token!= null){
+        user = await userAuthenticationRepository.login(event.authentication, event.password);
+        if (user!.token != null) {
           UserSharedPreferences.setAccessToken(user!.token!);
         }
         emit(UserLoginComplete());
+      } on ConnectionException catch (e) {
+        emit(
+          UserLoginError(errorMessage: e.errorMessage),
+        );
       } catch (e, stack) {
         if (e is FieldsException) {
           emit(
