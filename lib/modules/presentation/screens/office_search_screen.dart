@@ -66,7 +66,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           title: Row(
             children: [
               BlocBuilder<ChannelCubit, dynamic>(
@@ -75,6 +75,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                   return InkWell(
                     onTap: () {
                       textFieldController.clear();
+                      searchOfficesBloc.add(SearchOfficesCleared());
                       searchTypeCubit.setState((searchType == OfficeSearchType.name)
                           ? OfficeSearchType.area
                           : OfficeSearchType.name);
@@ -88,10 +89,10 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         borderRadius: const BorderRadius.all(
                           Radius.circular(4),
                         ),
-                        border: Border.all(color: white),
+                        border: Border.all(color: AppColors.white),
                       ),
                       child: ResText(
-                        (searchType == OfficeSearchType.name) ? "بحث بالاسم" : "بحث بالمنطقة",
+                        (searchType == OfficeSearchType.name) ? "ابحث بالمنطقة" : "ابحث بالاسم",
                         textStyle: textStyling(S.s14, W.w4, C.wh),
                       ),
                     ),
@@ -101,14 +102,16 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
               const Spacer(),
               ResText(
                 "البحث عن مكاتب عقارية",
-                textStyle: textStyling(S.s18, W.w6, C.wh),
+                textStyle: textStyling(S.s18, W.w6, C.wh).copyWith(height: 1.8),
               ),
             ],
           ),
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context);
+              },
               icon: const Icon(Icons.arrow_forward),
             )
           ],
@@ -145,13 +148,12 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         }
                         return;
                       }
-                      if (textFieldController.text.isEmpty && searchType == OfficeSearchType.name) {
-                        searchOfficesBloc.add(
-                          SearchOfficesByNameStarted(name: "", token: token),
-                        );
-                      }
                     },
                     onChanged: (newValue) {
+                      if (newValue.isEmpty) {
+                        searchOfficesBloc.add(SearchOfficesCleared());
+                        return;
+                      }
                       if (searchType == OfficeSearchType.name) {
                         searchOfficesBloc.add(
                           SearchOfficesByNameStarted(name: newValue, token: token),
@@ -160,12 +162,13 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                     },
                     style: textStyling(S.s14, W.w5, C.wh),
                     textDirection: TextDirection.rtl,
-                    cursorColor: white,
+                    cursorColor: AppColors.white,
                     decoration: InputDecoration(
                       hintText: (searchType == OfficeSearchType.name)
                           ? "أدخل اسم المكتب العقاري"
                           : "أدخل اسم المنطقة",
-                      hintStyle: textStyling(S.s14, W.w4, C.whHint).copyWith(),
+                      hintStyle: textStyling(S.s14, W.w4, C.whHint)
+                          .copyWith(color: AppColors.white.withOpacity(0.64)),
                       hintTextDirection: TextDirection.rtl,
                       border: kUnderlinedBorderGrey,
                       focusedBorder: kUnderlinedBorderGrey,
@@ -218,9 +221,6 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
           return const OfficesListShimmer();
         }
         if (searchResultsState is SearchOfficesFetchNone) {
-          searchOfficesBloc.add(
-            SearchOfficesByNameStarted(name: "", token: token),
-          );
           return Container();
         }
         if (searchResultsState is! SearchOfficesFetchComplete) {
@@ -239,14 +239,14 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
               children: [
                 SvgPicture.asset(
                   documentOutlineIconPath,
-                  color: black.withOpacity(0.32),
+                  color: AppColors.black.withOpacity(0.32),
                   width: screenWidth / 2,
                 ),
                 kHe32,
                 ResText(
                   "! لا يوجد نتائج مطابقة لبحثك",
                   textStyle: textStyling(S.s24, W.w5, C.hint).copyWith(
-                    color: black.withOpacity(0.32),
+                    color: AppColors.black.withOpacity(0.32),
                   ),
                 )
               ],

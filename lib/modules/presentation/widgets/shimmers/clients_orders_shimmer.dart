@@ -28,7 +28,7 @@ class ClientsOrdersShimmer extends StatelessWidget {
       padding: kMediumSymHeight,
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: black.withOpacity(0.24)),
+        border: Border.all(color: AppColors.black.withOpacity(0.24)),
         borderRadius: medBorderRadius,
       ),
       child: Column(

@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/utils/helpers/responsive.dart';
 import 'my_button.dart';
+import 'res_text.dart';
 
 Future<void> showWonderfulAlertDialog(
   BuildContext context,
   String title,
   String body, {
   String? defaultButtonContent,
-  TextStyle? titleTextStyle,
   double? defaultButtonWidth,
   double? defaultButtonHeight,
-  TextStyle? bodyTextStyle,
   Function()? onDefaultButtonPressed,
+  TextStyle? titleTextStyle,
+  TextStyle? bodyTextStyle,
   TextStyle? defaultButtonContentStyle,
   bool removeDefaultButton = false,
   List<Widget>? dialogButtons,
@@ -51,7 +51,9 @@ Future<void> showWonderfulAlertDialog(
             kHe24,
             ResText(
               body,
-              textStyle: bodyTextStyle ?? textStyling(S.s16, W.w5, C.bl),
+              textStyle: bodyTextStyle ?? textStyling(S.s16, W.w5, C.bl).copyWith(height: 2),
+              maxLines: 50,
+              textAlign: TextAlign.center,
             ),
             kHe32,
             Wrap(
@@ -63,7 +65,7 @@ Future<void> showWonderfulAlertDialog(
                     (removeDefaultButton)
                         ? Container()
                         : MyButton(
-                            color: secondaryColor,
+                            color: AppColors.secondaryColor,
                             borderRadius: 4,
                             width: defaultButtonWidth ?? Res.width(120),
                             height: defaultButtonHeight ?? Res.height(56),

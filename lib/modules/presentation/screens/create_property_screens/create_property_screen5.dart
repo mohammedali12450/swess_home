@@ -9,9 +9,11 @@ import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
+import 'package:swesshome/modules/data/models/system_variables.dart';
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
 import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/responsive.dart';
 import 'build_images_selectors.dart';
 import 'create_property_screen6.dart';
@@ -39,12 +41,20 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with Rest
   bool isLands = false;
   bool isShops = false;
 
+  bool isCompressing = false;
+
+  late SystemVariables _systemVariables;
+
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     isLands = widget.currentOffer.estateType.id == landsPropertyTypeNumber;
     isShops = widget.currentOffer.estateType.id == shopsPropertyTypeNumber;
+    _systemVariables = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!;
+
   }
 
   @override
@@ -73,7 +83,7 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with Rest
                   controller: descriptionController,
                   style: textStyling(S.s15, W.w5, C.bl),
                   maxLines: 8,
-                  maxLength: 250,
+                  maxLength: 600,
                   textDirection: TextDirection.rtl,
                   decoration: InputDecoration(
                     hintText: "أدخل وصف إضافي لعقارك !",
@@ -100,6 +110,17 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with Rest
                 onFloorPlanImagesSelected: (images) {
                   floorPlanPropertyImage = (images == null || images.isEmpty) ? null : images.first;
                 },
+                compressStateListener: (compressState) {
+                  isCompressing = compressState;
+                },
+
+                maximumCountOfEstateImages: int.parse(_systemVariables.maximumCountOfEstateImages),
+                maximumCountOfStreetImages: int.parse(_systemVariables.maximumCountOfStreetImages),
+                maximumCountOfFloorPlanImages:
+                int.parse(_systemVariables.maximumCountOfFloorPlanImages),
+                minimumCountOfEstateImages: _systemVariables.minimumCountOfEstateImages,
+
+
               ),
             kHe36,
             MyButton(
@@ -109,9 +130,13 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with Rest
               ),
               width: Res.width(240),
               height: Res.height(56),
-              color: secondaryColor,
+              color: AppColors.secondaryColor,
               onPressed: () {
                 if (!isLands && !isShops) {
+                  if (isCompressing) {
+                    Fluttertoast.showToast(msg: "الرجاء الانتظار حتى تنتهي عملية الضغط!");
+                    return;
+                  }
                   if (!validateData()) return;
                   widget.currentOffer.estateImages = propertyImages!;
                   widget.currentOffer.streetImages = streetPropertyImages;
@@ -158,6 +183,34 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with Rest
         return false;
       }
     }
+
+
+
+
+    if (propertyImages!.length > int.parse(_systemVariables.maximumCountOfEstateImages)) {
+      showWonderfulAlertDialog(
+          context,
+          "خطأ",
+          "لا يمكنك اختيار أكثر من " +
+              _systemVariables.maximumCountOfEstateImages +
+              " صورة من صور العقار");
+      return false;
+    }
+
+    if (streetPropertyImages != null &&
+        streetPropertyImages!.length > int.parse(_systemVariables.maximumCountOfStreetImages)) {
+      showWonderfulAlertDialog(
+          context,
+          "خطأ",
+          "لا يمكنك اختيار أكثر من " +
+              _systemVariables.maximumCountOfStreetImages +
+              " صورة من صور شارع العقار");
+      return false;
+    }
+
+
+
+
     return true;
   }
 

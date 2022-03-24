@@ -1,0 +1,279 @@
+{
+  "language": "English",
+  "@language": {
+    "description": "The current language"
+  },
+  "welcome": "welcome",
+  "post_estate": "post estate",
+  "application_name": "swess office",
+  "personal_account": "my account",
+  "rate": "rating",
+  "candidates_count": "candidates count",
+  "estate_offers_count": "estate offers count",
+  "buy_more": "buy more",
+  "subscription_contract": "subscription contract",
+  "my_estates": "my estates",
+  "statistics": "statistics",
+  "log_out": "log out",
+  "gold": "gold",
+  "silver": "silver",
+  "bronze": "bronze",
+  "free": "free",
+  "settings": "settings",
+  "share": "share",
+  "language_word": "Languages",
+  "changing_language": "changing language",
+  "dark_mode": "Dark mode",
+  "light_mode": "Light mode",
+  "automatic": "automatic",
+  "create_account": "sign up",
+  "creating_account": "signing up",
+  "sign_in": "sign in",
+  "signing_in": "signing in",
+  "mobile_number": "Mobile Number",
+  "enter_mobile_number": "Enter your mobile number",
+  "password": "Password",
+  "enter_password": "enter password",
+  "company_password": "company password",
+  "enter_company_password": "enter company password",
+  "estate_office_name": "estate office name",
+  "enter_estate_office_name": "enter estate office name",
+  "office_location": "office location",
+  "enter_office_location": "enter office location",
+  "estate_office_phone": "estate office phone",
+  "enter_estate_office_phone": "enter estate office phone",
+  "estate_office_logo": "estate office logo",
+  "optional": "optional",
+  "tap_to_choice_an_image": "tap to choice an image",
+  "detect_location": "detect location",
+  "change_image": "change image",
+  "invalid_mobile_number": "invalid mobile number",
+  "clients_orders": "Clients orders",
+  "estate_offer_creating": "Create real estate offers",
+  "start_now": "start now",
+  "create_estate_introduction": "you can create your own real estate offer to publish it in the application",
+  "estate_type": "Estate type",
+  "offer_type": "Offer type",
+  "next": "Next",
+  "estate_area": "Estate area",
+  "estate_price": "Estate price",
+  "estate_rent_price": "Estate rental price",
+  "estate_rent_period": "Estate rental period",
+  "rooms_count": "Rooms count",
+  "floor_number": "Floor number",
+  "estate_location": "Estate location",
+  "estate_location_hint": "Press to select estate location",
+  "nearby_places": "Nearby places",
+  "add": "Add",
+  "estate_position": "Estate position",
+  "estate_position_declaring": "You can provide the property position for more accurate information",
+  "press_to_detect_position": "Press to detect position",
+  "ownership_type": "Ownership type",
+  "interior_status": "Estate interior status",
+  "is_the_estate_furnished": "Is the property furnished?",
+  "is_the_estate_on_beach": "Is the property overlooking the beach?",
+  "is_the_estate_has_pool": "Does the property have a swimming pool?",
+  "yes": "yes",
+  "no": "no",
+  "property_images": "Property images",
+  "property_street_images": "Property street images",
+  "floor_plan_property_images": "floor plan images",
+  "max_count_of_images": "{count} Photos at most",
+  "@max_count_of_images": {
+    "description": "",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "min_count_of_images": "At least {count} photos",
+  "@min_count_of_images": {
+    "description": "",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "range_count_of_images": "from {min} to {max} images",
+  "@range_count_of_images": {
+    "description": "",
+    "placeholders": {
+      "min": {
+        "type": "String",
+        "example": "example"
+      },
+      "max": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "estate_description": "estate description",
+  "estate_description_hint": "Enter additional description for you estate",
+  "create_estate": "create offer estate",
+  "step_1": "Step 1",
+  "step_2": "Step 2",
+  "step_3": "Step 3",
+  "step_4": "Step 4",
+  "step_5": "Step 5",
+  "step_6": "Step 6",
+  "syrian_currency": "SP",
+  "lebanon_currency": "LBP",
+  "this_field_is_required": "This field is required",
+  "enter_location_name": "Enter location name",
+  "compressing_images": "Compressing images",
+  "send_estate": "Submit your real estate offer",
+  "congratulations": "Congratulations",
+  "sending_estate": "Sending your estate",
+  "finish_send_estate": "The real estate offer has been created and sent to the system, your offer will be reviewed in a short time.",
+  "ok": "Ok",
+  "accepted_estates": "Accepted estates",
+  "pending_estates": "Pending estates",
+  "rejected_estates": "Rejected estates",
+  "users_estates": "Users estates",
+  "deleted_estates": "Deleted estates",
+  "refresh": "Refresh",
+  "error_happened_when_executing_operation": "An error occurred while executing the operation",
+  "error_happened_when_connecting_with_server": "An error occurred while connecting to the server",
+  "have_not_accepted": "You have not accepted estates",
+  "have_not_rejected": "You have not rejected estates",
+  "have_not_deleted": "You have not deleted estates",
+  "have_not_pending": "You have not pending estates",
+  "have_not_users_estates": "You have not estates from users yet",
+  "delete": "Delete",
+  "restore": "Restore",
+  "edit": "Edit",
+  "accept": "Accept",
+  "reject": "Reject",
+  "adding_date": "Added date",
+  "estate_is_being_processed": "The real estate offer is being processed, a notification will be sent when it is activated",
+  "reject_reason": "Reject reason",
+  "repost": "Repost",
+  "estate_details": "Estate details",
+  "estate_offer_place_sentence": "{estate_type} for {estate_offer} in {place}",
+  "@estate_offer_place_sentence": {
+    "description": "",
+    "placeholders": {
+      "estate_type": {
+        "type": "String",
+        "example": "example"
+      },
+      "estate_offer": {
+        "type": "String",
+        "example": "example"
+      },
+      "place": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "estate_offer_sentence": "{estate_type} for {estate_offer}",
+  "@estate_offer_sentence": {
+    "description": "",
+    "placeholders": {
+      "estate_type": {
+        "type": "String",
+        "example": "example"
+      },
+      "estate_offer": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "furnished": "Furnished",
+  "on_beach": "On beach",
+  "has_swimming_pool": "Has swimming pool",
+  "image_counting": "Image {current} Of {total}",
+  "@image_counting": {
+    "description": "",
+    "placeholders": {
+      "current": {
+        "type": "String",
+        "example": "example"
+      },
+      "total": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "new_notification": "New notification",
+  "you_have_not_notifications": "You have not notifications",
+  "confirmation": "Confirmation",
+  "delete_confirmation": "Do you want to delete this property?",
+  "error": "Error",
+  "select_language": "Select language",
+  "check_your_internet_connection": "Check your internet connection",
+  "restart_application": "Restart application",
+  "no_clients_orders": "No orders from users yet",
+  "this_feature_will_be_activated_soon": "This feature will be activated soon",
+  "buy_candidates": "Buy candidates",
+  "buy_offers": "Buy offers",
+  "select_package_to_buy": "Select the package you want to buy",
+  "packets_offer": "Buy {count} {product} for {price} {currency}",
+  "@packets_offer": {
+    "description": "",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "example"
+      },
+      "product": {
+        "type": "String",
+        "example": "example"
+      },
+      "price": {
+        "type": "String",
+        "example": "example"
+      },
+      "currency": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "buy": "Buy",
+  "offers": "offers",
+  "candidates": "candidates",
+  "buy_successfully": "The purchase has been completed successfully, you will receive a notification when the package is activated",
+  "select_packet_size_first": "The size of the packet must be selected first",
+  "buy_packet_confirmation": "Do you want to buy this packet?",
+  "currency_over_period": "{currency} / {period}",
+  "@currency_over_period": {
+    "description": " ",
+    "placeholders": {
+      "currency": {
+        "type": "String",
+        "example": "example"
+      },
+      "period": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "repost_message": "Property has been republished",
+  "edit_message": "Edit request has been sent",
+  "property_has_been_located": "The property has been located",
+  "edit_estate": "Edit estate",
+  "unable_to_modify": "Non-Adjustable",
+  "cant_modify_this_feature": "This feature cannot be modified",
+  "send_request": "Send request" ,
+  "wait_compress_message" : "Please wait for the Compressing process to finish" ,
+  "loading_map" : "Loading the map" ,
+  "position_detected" : "Position detected" ,
+  "nearby_place_hint" : "Enter place name" ,
+  "repeated_place" : "This place is exits" ,
+  "notes" : "Notes" ,
+  "candidate_estate" : "Candidate estate" ,
+  "price_domain" : "Price domain" ,
+  "candidate" : "Candidate"
+
+
+}

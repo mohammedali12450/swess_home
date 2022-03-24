@@ -42,7 +42,7 @@ class _CreatePropertyTemplateState extends State<CreatePropertyTemplate> {
                 width: screenWidth,
                 height: Res.height(400),
                 decoration:  const BoxDecoration(
-                  color: black,
+                  color: AppColors.black,
                   image: DecorationImage(
                     image: AssetImage(flatImagePath),
                     fit: BoxFit.cover,
@@ -77,7 +77,7 @@ class _CreatePropertyTemplateState extends State<CreatePropertyTemplate> {
                    top: (isKeyboardOpened)?Res.height(kHugePadding):Res.height(kTinyPadding),
                     ),
                 decoration: const BoxDecoration(
-                  color: white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(32),
                     topRight: Radius.circular(32),

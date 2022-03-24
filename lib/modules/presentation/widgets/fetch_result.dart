@@ -26,13 +26,13 @@ class FetchResult extends StatelessWidget {
         Icon(
           iconData ?? Icons.error_outline,
           size: iconSize ?? screenWidth / 2,
-          color: hintColor,
+          color: AppColors.hintColor,
         ),
         kHe24,
         ResText(
           content,
           textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-            color: black.withOpacity(0.48),
+            color: AppColors.black.withOpacity(0.48),
           ),
         ),
       ],

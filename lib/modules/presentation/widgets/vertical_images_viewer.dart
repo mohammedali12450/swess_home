@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reorderables/reorderables.dart';
 import 'package:swesshome/constants/colors.dart';
@@ -20,12 +21,14 @@ class VerticalImagesViewer extends StatefulWidget {
   List? images; // url or file .
   final bool isSingleImage;
   final Function(List? images) onSelect;
+  final bool Function()? onStartPicking;
 
   VerticalImagesViewer({
     Key? key,
     required this.onSelect,
     this.isSingleImage = false,
     this.images,
+    this.onStartPicking,
   }) : super(key: key);
 
   @override
@@ -50,7 +53,7 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
       padding: kMediumSymHeight,
       decoration: BoxDecoration(
         border: Border.all(
-          color: black.withOpacity(0.32),
+          color: AppColors.black.withOpacity(0.32),
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(16),
@@ -65,7 +68,9 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
             children: [
               (images != null && images.isNotEmpty)
                   ? Padding(
-                      padding: EdgeInsets.only(bottom: Res.height(12)),
+                      padding: EdgeInsets.only(
+                        bottom: Res.height(12),
+                      ),
                       child: ReorderableWrap(
                         runSpacing: Res.height(8),
                         runAlignment: WrapAlignment.start,
@@ -82,7 +87,7 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
           );
         },
       ),
-    );
+    );  
   }
 
   Widget _buildImageCard(dynamic image, int index) {
@@ -112,7 +117,7 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                 child: Text(
                   index.toString(),
                   style: textStyling(S.s50, W.w6, C.wh, fontFamily: F.roboto)
-                      .copyWith(color: white.withOpacity(0.56), fontSize: 75),
+                      .copyWith(color: AppColors.white.withOpacity(0.56), fontSize: 75),
                 ),
               ),
             ),
@@ -121,13 +126,13 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                 top: 4,
                 child: Container(
                   decoration: const BoxDecoration(
-                      color: white, borderRadius: BorderRadius.all(Radius.circular(4))),
+                      color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: IconButton(
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     icon: const Icon(
                       Icons.close,
-                      color: secondaryColor,
+                      color: AppColors.secondaryColor,
                       size: 16,
                     ),
                     onPressed: () async {
@@ -135,7 +140,7 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                           removeDefaultButton: true,
                           dialogButtons: [
                             MyButton(
-                              color: secondaryColor,
+                              color: AppColors.secondaryColor,
                               width: Res.width(120),
                               child: ResText(
                                 "لا",
@@ -147,7 +152,7 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                               },
                             ),
                             MyButton(
-                              color: secondaryColor,
+                              color: AppColors.secondaryColor,
                               width: Res.width(120),
                               child: ResText(
                                 "نعم",
@@ -187,15 +192,21 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
           width: bosConstrains.maxWidth / 3.5,
           margin: EdgeInsets.symmetric(horizontal: Res.width(4)),
           decoration: BoxDecoration(
-              color: white,
+              color: AppColors.white,
               borderRadius: const BorderRadius.all(Radius.circular(12)),
               boxShadow: [
                 BoxShadow(
-                    color: black.withOpacity(0.32), offset: const Offset(-1, 2), blurRadius: 4)
+                    color: AppColors.black.withOpacity(0.32), offset: const Offset(-1, 2), blurRadius: 4)
               ]),
           child: InkWell(
             onTap: () {
-              if(isImagesLoadingCubit.state == true)return ;
+              if (isImagesLoadingCubit.state == true) return;
+
+              if (widget.onStartPicking != null && !widget.onStartPicking!()) {
+                Fluttertoast.showToast(msg: "الرجاء الانتظار حتى تتم عملية الضغط");
+                return;
+              }
+
               selectImages(context, isSingleImage: widget.isSingleImage);
             },
             child: BlocBuilder<ChannelCubit, dynamic>(
@@ -204,21 +215,24 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                 return Center(
                   child: (isLoading)
                       ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SpinKitWave(color: secondaryColor , size: 24,),
-                          kHe8 ,
-                           ResText(
-                            "جاري ضغط الصور",
-                            textStyle: textStyling(S.s12, W.w4, C.bl),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      )
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SpinKitWave(
+                              color: AppColors.secondaryColor,
+                              size: 24,
+                            ),
+                            kHe8,
+                            ResText(
+                              "جاري ضغط الصور",
+                              textStyle: textStyling(S.s12, W.w4, C.bl),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        )
                       : Icon(
                           Icons.add,
                           size: 48,
-                          color: black.withOpacity(0.48),
+                          color: AppColors.black.withOpacity(0.48),
                         ),
                 );
               },
@@ -254,11 +268,11 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
         widget.images!.add(await compressFile(File(file.path)));
         // selectedImages.add(File(file.path));
       }
-      isImagesLoadingCubit.setState(false);
       imagesCardsCubit.setState(
         List.from(widget.images!),
       );
-      widget.onSelect(widget.images);
     }
+    isImagesLoadingCubit.setState(false);
+    widget.onSelect(widget.images);
   }
 }

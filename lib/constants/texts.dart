@@ -14,7 +14,7 @@ const String introductionBody5 =
 const String homeScreenHeader =
     "هل تريد الاطلاع على العروض العقارية المتنوعة والبحث عن عقارات تناسبك؟ انضم إلى مئات الأشخاص الذين وجدوا ما يبحثو عنه";
 
-const String afterEstateOrderBody = "لقد تم إرسال طلبك بنجاح, سيتم عرض الطلب على المكاتب العقارية ومن ثم إرسال ترشيحات المكاتب لكم عن طريق الإشعارات. ";
+const String afterEstateOrderBody = "لقد تم إرسال طلبك بنجاح, سيتم عرض الطلب على المكاتب العقارية ومن ثم إرسال ترشيحات المكاتب لكم عن طريق الإشعارات";
 
 
 const String offerCreateIntroduction =

@@ -1,18 +1,31 @@
 class EstateOfferType {
-  int id;
+  final int id;
 
-  String name;
+  final String nameArabic;
+  final String nameEnglish;
 
-  EstateOfferType({required this.id, required this.name});
 
-  factory EstateOfferType.init(){
-    return EstateOfferType(id: -1, name: "default") ;
+  getName(bool isArabic){
+    return isArabic ? nameArabic : nameEnglish ;
+  }
+  EstateOfferType({required this.id, required this.nameArabic, required this.nameEnglish});
+
+  factory EstateOfferType.copy(EstateOfferType estateOfferType) {
+    return EstateOfferType(
+        id: estateOfferType.id,
+        nameArabic: estateOfferType.nameArabic,
+        nameEnglish: estateOfferType.nameEnglish);
+  }
+
+  factory EstateOfferType.init() {
+    return EstateOfferType(id: -1, nameArabic: "default" , nameEnglish: "default");
   }
 
   factory EstateOfferType.fromJson(json) {
     return EstateOfferType(
       id: json['id'],
-      name: json['name'],
+      nameArabic: json['name_ar'],
+      nameEnglish: json["name_en"] ,
     );
   }
 }

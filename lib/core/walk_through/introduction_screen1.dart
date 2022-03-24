@@ -25,7 +25,7 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: black,
+      backgroundColor: AppColors.black,
       body: Container(
         width: screenWidth,
         height: fullScreenHeight,
@@ -60,7 +60,7 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                         route) => false);
                   },
                   color: Colors.transparent,
-                  border: Border.all(color: white),
+                  border: Border.all(color: AppColors.white),
                   borderRadius: 5,
                 ),
               ),
@@ -74,7 +74,7 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                 width: Res.width(150),
                 height: Res.width(150),
                 child: CircleAvatar(
-                  backgroundColor: white,
+                  backgroundColor: AppColors.white,
                   backgroundImage: AssetImage(swessHomeIconPath),
                 ),
               ),
@@ -107,7 +107,7 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                 ),
                 width: Res.width(160),
                 height: Res.height(64),
-                color: white,
+                color: AppColors.white,
                 onPressed: () {
                   Navigator.pushNamed(context, IntroductionScreen2.id);
                   // TODO : Process this state.
@@ -115,7 +115,7 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                 borderRadius: 8,
                 shadow: [
                   BoxShadow(
-                      color: white.withOpacity(0.15),
+                      color: AppColors.white.withOpacity(0.15),
                       offset: Offset(0, 0),
                       blurRadius: 4,
                       spreadRadius: 3),

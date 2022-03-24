@@ -49,7 +49,7 @@ class _CreatePropertyScreen6State extends State<CreatePropertyScreen6> {
             child: TextField(
               style: textStyling(S.s15, W.w5, C.bl),
               maxLines: 8,
-              maxLength: 250,
+              maxLength: 600,
               textDirection: TextDirection.rtl,
               controller: descriptionController,
               decoration: InputDecoration(
@@ -69,7 +69,7 @@ class _CreatePropertyScreen6State extends State<CreatePropertyScreen6> {
             ),
             width: Res.width(240),
             height: Res.height(56),
-            color: secondaryColor,
+            color: AppColors.secondaryColor,
             onPressed: () {
               widget.currentOffer.description = descriptionController.text;
               Navigator.push(

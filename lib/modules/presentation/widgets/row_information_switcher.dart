@@ -40,10 +40,10 @@ class RowInformationSwitcher extends StatelessWidget {
                 padding: kSmallSymWidth,
                 width: Res.width(88),
                 decoration: BoxDecoration(
-                  color: (isPressed) ? secondaryColor : Colors.transparent,
+                  color: (isPressed) ? AppColors.secondaryColor : Colors.transparent,
                   borderRadius: const BorderRadius.all(Radius.circular(12)),
                   border: Border.all(
-                      color: (isPressed) ? Colors.transparent : black),
+                      color: (isPressed) ? Colors.transparent : AppColors.black),
                 ),
                 child: ResText(
                   switcherContent,

@@ -40,7 +40,7 @@ class _FAQScreenState extends State<FAQScreen> {
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           toolbarHeight: Res.height(75),
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           automaticallyImplyLeading: false,
           actions: [
             Container(
@@ -85,10 +85,10 @@ class _FAQScreenState extends State<FAQScreen> {
     return Container(
       margin: EdgeInsets.only(bottom: Res.height(12)),
       child: ExpansionTile(
-        backgroundColor: thirdColor,
+        backgroundColor: AppColors.thirdColor,
         childrenPadding: kLargeSymWidth,
-        iconColor: secondaryColor,
-        collapsedIconColor: secondaryColor,
+        iconColor: AppColors.secondaryColor,
+        collapsedIconColor: AppColors.secondaryColor,
         title: FAQTextWidgets(
           isTitle: true,
           content: header,

@@ -23,8 +23,8 @@ class EstateOrderCard extends StatefulWidget {
 class _EstateOrderCardState extends State<EstateOrderCard> {
   @override
   Widget build(BuildContext context) {
-    String estateType = widget.estateOrder.estateType!.name.split("|").elementAt(1);
-    String estateOfferType = widget.estateOrder.estateOfferType!.name;
+    String estateType = widget.estateOrder.estateType!.getName(true).split("|").elementAt(1);
+    String estateOfferType = widget.estateOrder.estateOfferType!.getName(true);
     String estateHeader = " مطلوب $estateType لل$estateOfferType";
 
     return Container(
@@ -38,12 +38,12 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
         horizontal: Res.width(8),
       ),
       decoration: BoxDecoration(
-        color: white,
+        color: AppColors.white,
         borderRadius: const BorderRadius.all(
           Radius.circular(8),
         ),
         boxShadow: [
-          BoxShadow(color: black.withOpacity(0.32), offset: const Offset(2, 2), blurRadius: 4),
+          BoxShadow(color: AppColors.black.withOpacity(0.32), offset: const Offset(2, 2), blurRadius: 4),
         ],
       ),
       child: Column(
@@ -79,7 +79,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
             SizedBox(
               width: screenWidth,
               child: ResText(
-                "السعر المطلوب: " + widget.estateOrder.priceDomain!.getTextPriceDomain(),
+                "السعر المطلوب: " + widget.estateOrder.priceDomain!.getTextPriceDomain(true),
                 textStyle: textStyling(S.s16, W.w4, C.bl).copyWith(height: 1.8),
                 textAlign: TextAlign.right,
               ),
@@ -106,9 +106,9 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
               ),
               shadow: [
                 BoxShadow(
-                    color: black.withOpacity(0.32), offset: const Offset(-1, 1), blurRadius: 2)
+                    color: AppColors.black.withOpacity(0.32), offset: const Offset(-1, 1), blurRadius: 2)
               ],
-              color: baseColor,
+              color: AppColors.baseColor,
               width: Res.width(180),
               height: Res.height(54),
               onPressed: () {

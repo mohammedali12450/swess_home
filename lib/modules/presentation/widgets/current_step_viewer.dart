@@ -36,8 +36,8 @@ class CurrentStepViewer extends StatelessWidget {
             height: Res.height(12),
             decoration: BoxDecoration(
                 color: (index+1 == currentStepIndex)
-                    ? (activeCircleColor??lastColor)
-                    : (unActiveCircleColor??white),
+                    ? (activeCircleColor??AppColors.lastColor)
+                    : (unActiveCircleColor??AppColors.white),
                 shape: BoxShape.circle),
           );
         },

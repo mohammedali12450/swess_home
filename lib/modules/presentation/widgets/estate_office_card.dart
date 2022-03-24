@@ -22,7 +22,7 @@ class EstateOfficeCard extends StatelessWidget {
       child: Container(
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8),),
-          color: white,
+          color: AppColors.white,
         ),
         height: Res.height(120),
         margin: EdgeInsets.symmetric( horizontal: Res.width(8)),

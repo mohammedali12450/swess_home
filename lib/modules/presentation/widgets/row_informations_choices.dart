@@ -39,7 +39,7 @@ class RowInformationChoices extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   borderRadius: const BorderRadius.all(Radius.circular(12)),
-                  border: Border.all(color: black),
+                  border: Border.all(color: AppColors.black),
                 ),
                 child: ResText(
                   choices.elementAt(currentChoiceIndex),

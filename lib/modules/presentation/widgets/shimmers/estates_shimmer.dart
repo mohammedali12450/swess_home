@@ -27,7 +27,7 @@ class EstatesShimmer extends StatelessWidget {
           vertical: Res.height(8), horizontal: Res.width(16)),
       decoration: BoxDecoration(
         borderRadius: medBorderRadius,
-        border: Border.all(color: black.withOpacity(0.25)),
+        border: Border.all(color: AppColors.black.withOpacity(0.25)),
       ),
       child: Column(
         children: [
@@ -35,7 +35,7 @@ class EstatesShimmer extends StatelessWidget {
             height: Res.height(200),
             width: inf,
             decoration: BoxDecoration(
-              color: black.withOpacity(0.12),
+              color: AppColors.black.withOpacity(0.12),
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16), topRight: Radius.circular(16)),
             ),

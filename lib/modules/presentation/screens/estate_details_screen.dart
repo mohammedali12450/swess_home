@@ -97,14 +97,14 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           toolbarHeight: Res.height(75),
           title: Row(
             children: [
               IconButton(
                 icon: const Icon(
                   Icons.share,
-                  color: white,
+                  color: AppColors.white,
                 ),
                 onPressed: () {
                   Share.share('check out my website https://example.com');
@@ -130,7 +130,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
               child: IconButton(
                 icon: const Icon(
                   Icons.arrow_forward,
-                  color: white,
+                  color: AppColors.white,
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -167,10 +167,10 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                 fit: BoxFit.cover,
                                 progressIndicatorBuilder: (_, __, ___) {
                                   return Container(
-                                    color: white,
+                                    color: AppColors.white,
                                     child: Icon(
                                       Icons.camera_alt_outlined,
-                                      color: secondaryColor.withOpacity(0.6),
+                                      color: AppColors.secondaryColor.withOpacity(0.6),
                                       size: 120,
                                     ),
                                   );
@@ -203,7 +203,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 2),
                                 decoration: BoxDecoration(
-                                  color: black.withOpacity(0.64),
+                                  color: AppColors.black.withOpacity(0.64),
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(2),
                                   ),
@@ -213,7 +213,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                     const Icon(
                                       Icons.camera_alt_outlined,
                                       size: 20,
-                                      color: white,
+                                      color: AppColors.white,
                                     ),
                                     kWi4,
                                     ResText(
@@ -250,9 +250,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         textStyle: textStyling(S.s16, W.w5, C.hint).copyWith(height: 1.8),
                       ),
                       const Spacer(),
-                      if (widget.estate.estateType.id == rentOfferTypeNumber)
+                      if (widget.estate.estateOfferType.id == rentOfferTypeNumber)
                         ResText(
-                          widget.estate.periodType!.name.split("|").first + " /",
+                          widget.estate.periodType!.getName(true).split("|").first + " /",
                           textStyle: textStyling(
                             S.s20,
                             W.w5,
@@ -305,9 +305,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         child: Container(
                           color: Colors.transparent,
                           child: ResText(
-                            widget.estate.estateType.name.split('|').last +
+                            widget.estate.estateType.getName(true).split('|').last +
                                 ' لل' +
-                                widget.estate.estateOfferType.name +
+                                widget.estate.estateOfferType.getName(true) +
                                 ' في ' +
                                 widget.estate.location.getLocationName(),
                             textStyle: textStyling(S.s17, W.w6, C.c2),
@@ -323,7 +323,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 Container(
                   height: Res.height(32),
                   width: screenWidth,
-                  color: secondaryColor,
+                  color: AppColors.secondaryColor,
                   alignment: Alignment.centerRight,
                   padding: EdgeInsets.only(right: Res.width(8)),
                   child: ResText(
@@ -374,13 +374,13 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   const Divider(),
                 ],
                 // Rent period :
-                if (widget.estate.estateType.id == rentOfferTypeNumber)
+                if (widget.estate.estateOfferType.id == rentOfferTypeNumber)
                   RowInformation(
                     title: ': مدة الإيجار',
                     widgetContent: Row(
                       children: [
                         ResText(
-                          widget.estate.periodType!.name.split("|").elementAt(1),
+                          widget.estate.periodType!.getName(true).split("|").elementAt(1),
                           textStyle: textStyling(S.s18, W.w5, C.bl),
                         ),
                         kWi8,
@@ -402,7 +402,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   widgetContent: Row(
                     children: [
                       ResText(
-                        widget.estate.areaUnit.name,
+                        widget.estate.areaUnit.getName(true),
                         textStyle: textStyling(S.s18, W.w5, C.bl),
                       ),
                       kWi8,
@@ -414,7 +414,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   ),
                   icon: SvgPicture.asset(
                     areaOutlineIconPath,
-                    color: black,
+                    color: AppColors.black,
                     width: Res.width(32),
                     height: Res.width(32),
                   ),
@@ -479,10 +479,10 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 // Estate ownership type :
                 if (isSell)
                   RowInformation(
-                    title: 'نوع  العقد : ' + widget.estate.ownershipType!.name,
+                    title: 'نوع  العقد : ' + widget.estate.ownershipType!.getName(true),
                     icon: SvgPicture.asset(
                       documentOutlineIconPath,
-                      color: black,
+                      color: AppColors.black,
                       width: Res.width(32),
                       height: Res.width(32),
                     ),
@@ -491,7 +491,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 // Estate interior status :
                 if (!isLands)
                   RowInformation(
-                    title: 'حالة العقار : ' + widget.estate.interiorStatus!.name,
+                    title: 'حالة العقار : ' + widget.estate.interiorStatus!.getName(true),
                     icon: Icon(
                       Icons.foundation,
                       size: Res.width(32),
@@ -504,7 +504,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                     title: 'شارع العقار',
                     icon: SvgPicture.asset(
                       streetIconPath,
-                      color: black,
+                      color: AppColors.black,
                       width: Res.width(28),
                       height: Res.width(28),
                     ),
@@ -607,7 +607,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           children: [
                             const Icon(
                               Icons.call,
-                              color: white,
+                              color: AppColors.white,
                             ),
                             kWi12,
                             ResText(
@@ -616,7 +616,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             ),
                           ],
                         ),
-                        color: secondaryColor,
+                        color: AppColors.secondaryColor,
                         borderRadius: 12,
                         width: Res.width(250),
                         onPressed: () {

@@ -62,7 +62,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           toolbarHeight: Res.height(75),
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           title: SizedBox(
             width: screenWidth,
             child: ResText(
@@ -75,7 +75,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             IconButton(
               icon: const Icon(
                 Icons.arrow_forward_outlined,
-                color: baseColor,
+                color: AppColors.baseColor,
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -85,7 +85,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ),
         body: (BlocProvider.of<UserLoginBloc>(context).user != null)
             ? RefreshIndicator(
-                color: secondaryColor,
+                color: AppColors.secondaryColor,
                 onRefresh: () async {
                   _onRefresh();
                 },
@@ -118,14 +118,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             children: [
                               Icon(
                                 Icons.notifications_outlined,
-                                color: secondaryColor.withOpacity(0.12),
+                                color: AppColors.secondaryColor.withOpacity(0.12),
                                 size: screenWidth / 2,
                               ),
                               kHe24,
                               ResText(
                                 "ليس لديك إشعارات",
                                 textStyle: textStyling(S.s24, W.w5, C.c2).copyWith(
-                                  color: secondaryColor.withOpacity(0.32),
+                                  color: AppColors.secondaryColor.withOpacity(0.32),
                                 ),
                               ),
                             ],
@@ -143,6 +143,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               date: DateHelper.getDateByFormat(
                                   DateTime.parse(notification.date), "yyyy/MM/dd"),
                               isNew: index < newNotificationsCount,
+                              onTap: (){
+
+                              },
                             );
                           },
                         );
@@ -161,14 +164,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   children: [
                     Icon(
                       Icons.notifications_outlined,
-                      color: secondaryColor.withOpacity(0.12),
+                      color: AppColors.secondaryColor.withOpacity(0.12),
                       size: screenWidth / 2,
                     ),
                     kHe24,
                     ResText(
                       "قم بتسجيل الدخول لتصلك الإشعارات",
                       textStyle: textStyling(S.s24, W.w5, C.c2).copyWith(
-                        color: secondaryColor.withOpacity(0.32),
+                        color: AppColors.secondaryColor.withOpacity(0.32),
                       ),
                       maxLines: 3,
                     ),
@@ -179,7 +182,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         "تسجيل الدخول",
                         textStyle: textStyling(S.s16, W.w5, C.wh),
                       ),
-                      color: secondaryColor,
+                      color: AppColors.secondaryColor,
                       onPressed: () {
                         Navigator.push(
                           context,

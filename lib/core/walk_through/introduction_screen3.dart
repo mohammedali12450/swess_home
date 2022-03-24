@@ -24,7 +24,7 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: black,
+      backgroundColor: AppColors.black,
       body: Container(
         width: screenWidth,
         height: fullScreenHeight,
@@ -55,7 +55,7 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
                     textStyle: textStyling(S.s14, W.w4, C.wh),
                   ),
                   color: Colors.transparent,
-                  border: Border.all(color: white),
+                  border: Border.all(color: AppColors.white),
                   borderRadius: 5,
                   onPressed: (){
                     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
@@ -69,10 +69,10 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
                 width: Res.width(150),
                 height: Res.width(150),
                 child: CircleAvatar(
-                  backgroundColor: white,
+                  backgroundColor: AppColors.white,
                   child: Icon(
                     Icons.add_to_queue,
-                    color: secondaryColor,
+                    color: AppColors.secondaryColor,
                     size: Res.width(100),
                   ),
                 ),
@@ -96,7 +96,7 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
                 ),
                 width: Res.width(160),
                 height: Res.height(64),
-                color: white,
+                color: AppColors.white,
                 onPressed: () {
                   // TODO : Process this state.
                   Navigator.pushNamed(context, IntroductionScreen4.id);
@@ -104,7 +104,7 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
                 borderRadius: 8,
                 shadow: [
                   BoxShadow(
-                      color: white.withOpacity(0.15),
+                      color: AppColors.white.withOpacity(0.15),
                       offset: Offset(0, 0),
                       blurRadius: 4,
                       spreadRadius: 3),

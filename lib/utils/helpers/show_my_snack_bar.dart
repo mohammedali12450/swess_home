@@ -6,7 +6,7 @@ import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 showMySnackBar(BuildContext context , String content){
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      backgroundColor: baseColor,
+      backgroundColor: AppColors.baseColor,
       content: ResText(content , textStyle: textStyling(S.s16, W.w6, C.bl),),
     ),
   );

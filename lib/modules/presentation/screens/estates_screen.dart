@@ -56,14 +56,14 @@ class _EstatesScreenState extends State<EstatesScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           toolbarHeight: Res.height(75),
           title: Row(
             children: [
               IconButton(
                 icon: const Icon(
                   Icons.search,
-                  color: white,
+                  color: AppColors.white,
                 ),
                 onPressed: () {
                   // TODO : Process this state
@@ -73,7 +73,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
               IconButton(
                 icon: const Icon(
                   Icons.public,
-                  color: white,
+                  color: AppColors.white,
                 ),
                 onPressed: () {
                   // TODO : Process this state
@@ -99,7 +99,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
               child: IconButton(
                 icon: const Icon(
                   Icons.arrow_forward,
-                  color: white,
+                  color: AppColors.white,
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -139,7 +139,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                 } else if (estatesFetchState is EstateFetchError && estates.isEmpty) {
                   BlocProvider.of<EstateBloc>(context).isFetching = false;
                   return RefreshIndicator(
-                    color: secondaryColor,
+                    color: AppColors.secondaryColor,
                     onRefresh: () async {
                       BlocProvider.of<EstateBloc>(context).add(widget.searchData);
                     },
@@ -160,7 +160,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       children: [
                         Icon(
                           Icons.search,
-                          color: secondaryColor.withOpacity(0.24),
+                          color: AppColors.secondaryColor.withOpacity(0.24),
                           size: 120,
                         ),
                         kHe24,
@@ -175,7 +175,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                         ),
                         kHe40,
                         MyButton(
-                          color: secondaryColor,
+                          color: AppColors.secondaryColor,
                           width: Res.width(200),
                           child: ResText(
                             "ابحث مجدداً",
@@ -224,7 +224,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                             top: Res.height(12),
                           ),
                           child: const SpinKitWave(
-                            color: secondaryColor,
+                            color: AppColors.secondaryColor,
                             size: 50,
                           ),
                         ),
@@ -242,7 +242,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                               const Expanded(
                                 flex: 2,
                                 child: Divider(
-                                  color: secondaryColor,
+                                  color: AppColors.secondaryColor,
                                   thickness: 1,
                                 ),
                               ),
@@ -257,7 +257,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                               const Expanded(
                                 flex: 2,
                                 child: Divider(
-                                  color: secondaryColor,
+                                  color: AppColors.secondaryColor,
                                   thickness: 1,
                                 ),
                               ),
@@ -323,7 +323,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       width: screenWidth,
                       height: Res.height(52),
                       child: ResText(
-                        reports.elementAt(index).name,
+                        reports.elementAt(index).getName(true),
                         textAlign: TextAlign.right,
                         textStyle: textStyling(S.s15, W.w5, C.bl),
                       ),

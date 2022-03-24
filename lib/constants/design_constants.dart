@@ -123,7 +123,7 @@ List<Positioned> kBackgroundDrawings = [
       child: Icon(
         Icons.home_outlined,
         size: 70,
-        color: secondaryColor.withOpacity(0.04),
+        color: AppColors.secondaryColor.withOpacity(0.04),
       ),
     ),
   ),
@@ -135,7 +135,7 @@ List<Positioned> kBackgroundDrawings = [
       child: Icon(
         Icons.maps_home_work,
         size: 70,
-        color: secondaryColor.withOpacity(0.04),
+        color: AppColors.secondaryColor.withOpacity(0.04),
       ),
     ),
   ),
@@ -147,7 +147,7 @@ List<Positioned> kBackgroundDrawings = [
       child: Icon(
         Icons.library_add_check_outlined,
         size: 50,
-        color: secondaryColor.withOpacity(0.04),
+        color: AppColors.secondaryColor.withOpacity(0.04),
       ),
     ),
   ),
@@ -159,7 +159,7 @@ List<Positioned> kBackgroundDrawings = [
       child: Icon(
         Icons.apartment,
         size: 60,
-        color: secondaryColor.withOpacity(0.04),
+        color: AppColors.secondaryColor.withOpacity(0.04),
       ),
     ),
   ),
@@ -171,7 +171,7 @@ List<Positioned> kBackgroundDrawings = [
       child: Icon(
         Icons.map_outlined,
         size: 70,
-        color: secondaryColor.withOpacity(0.04),
+        color: AppColors.secondaryColor.withOpacity(0.04),
       ),
     ),
   ),
@@ -183,7 +183,7 @@ List<Positioned> kBackgroundDrawings = [
       child: Icon(
         Icons.payments_outlined,
         size: 70,
-        color: secondaryColor.withOpacity(0.04),
+        color: AppColors.secondaryColor.withOpacity(0.04),
       ),
     ),
   ),
@@ -199,24 +199,24 @@ const kOutlinedBorderBlack = OutlineInputBorder(
 );
 OutlineInputBorder kOutlinedBorderGrey = OutlineInputBorder(
   borderRadius: const BorderRadius.all(Radius.circular(10)),
-  borderSide: BorderSide(color: black.withOpacity(0.4)),
+  borderSide: BorderSide(color: AppColors.black.withOpacity(0.4)),
 );
 const kUnderlinedBorderRed = UnderlineInputBorder(
   borderSide: BorderSide(color: Colors.red),
 );
 const kUnderlinedBorderWhite = UnderlineInputBorder(
-  borderSide: BorderSide(color: white),
+  borderSide: BorderSide(color: AppColors.white),
 );
 const kUnderlinedBorderBlack = UnderlineInputBorder(
   borderSide: BorderSide(color: Colors.black),
 );
 UnderlineInputBorder kUnderlinedBorderGrey = UnderlineInputBorder(
-  borderSide: BorderSide(color: black.withOpacity(0.4)),
+  borderSide: BorderSide(color: AppColors.black.withOpacity(0.4)),
 );
 
-BoxShadow veryLowElevation = BoxShadow(color: black.withOpacity(0.08),offset: const Offset(0, 0) , blurRadius: 6 , spreadRadius: 1);
-BoxShadow lowElevation = BoxShadow(color: black.withOpacity(0.16),offset: const Offset(0, 0) , blurRadius: 6 , spreadRadius: 2);
-BoxShadow lowWhiteElevation = BoxShadow(color: black.withOpacity(0.16),offset: const Offset(0, 0) , blurRadius: 6 , spreadRadius: 2);
+BoxShadow veryLowElevation = BoxShadow(color: AppColors.black.withOpacity(0.08),offset: const Offset(0, 0) , blurRadius: 6 , spreadRadius: 1);
+BoxShadow lowElevation = BoxShadow(color: AppColors.black.withOpacity(0.16),offset: const Offset(0, 0) , blurRadius: 6 , spreadRadius: 2);
+BoxShadow lowWhiteElevation = BoxShadow(color: AppColors.black.withOpacity(0.16),offset: const Offset(0, 0) , blurRadius: 6 , spreadRadius: 2);
 
 const BorderRadius lowBorderRadius = BorderRadius.all(Radius.circular(8));
 const BorderRadius medBorderRadius = BorderRadius.all(Radius.circular(16));

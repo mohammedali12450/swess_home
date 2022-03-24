@@ -67,7 +67,7 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
           ),
           kHe16,
           MyDropdownList(
-            elementsList: estateTypes.map((e) => e.name.split('|').first).toList(),
+            elementsList: estateTypes.map((e) => e.getName(true).split('|').first).toList(),
             onSelect: (index) {
               _currentOffer.estateType = estateTypes.elementAt(index);
             },
@@ -83,7 +83,7 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
           ),
           kHe16,
           MyDropdownList(
-            elementsList: offerTypes.map((e) => e.name).toList(),
+            elementsList: offerTypes.map((e) => e.getName(true)).toList(),
             onSelect: (index) {
               _currentOffer.estateOfferType = offerTypes.elementAt(index);
             },
@@ -96,7 +96,7 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
             ),
             width: Res.width(240),
             height: Res.height(56),
-            color: secondaryColor,
+            color: AppColors.secondaryColor,
             onPressed: () {
               Navigator.push(
                 context,

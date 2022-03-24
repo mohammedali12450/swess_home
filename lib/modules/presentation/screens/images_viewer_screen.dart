@@ -27,9 +27,9 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: black,
+        backgroundColor: AppColors.black,
         appBar: AppBar(
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -72,10 +72,10 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
                       fit: BoxFit.cover,
                       progressIndicatorBuilder: (_, __, ___) {
                         return Container(
-                          color: white,
+                          color: AppColors.white,
                           child: Icon(
                             Icons.camera_alt_outlined,
-                            color: secondaryColor.withOpacity(0.6),
+                            color: AppColors.secondaryColor.withOpacity(0.6),
                             size: 120,
                           ),
                         );

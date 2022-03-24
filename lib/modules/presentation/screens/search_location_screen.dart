@@ -27,7 +27,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           automaticallyImplyLeading: false,
           title: TextField(
             textDirection: TextDirection.rtl,
@@ -42,7 +42,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                 suffixIcon: IconButton(
                   icon: const Icon(
                     Icons.arrow_forward,
-                    color: baseColor,
+                    color: AppColors.baseColor,
                   ),
                   onPressed: () {
                     Navigator.pop(context, null);

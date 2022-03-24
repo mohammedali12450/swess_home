@@ -97,14 +97,14 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
                           center: (estateSendState is SendEstateComplete)
                               ? const Icon(
                                   Icons.check,
-                                  color: secondaryColor,
+                                  color: AppColors.secondaryColor,
                                   size: 80,
                                 )
                               : ResText(
                                   percent.toInt().toString() + "%",
                                   textStyle: textStyling(S.s24, W.w6, C.c2, fontFamily: F.roboto),
                                 ),
-                          progressColor: secondaryColor,
+                          progressColor: AppColors.secondaryColor,
                         );
                       },
                     ),
@@ -132,7 +132,7 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
                       ),
                       width: Res.width(240),
                       height: Res.height(56),
-                      color: secondaryColor,
+                      color: AppColors.secondaryColor,
                       onPressed: () async {
                         if (estateSendState is! SendEstateComplete) return;
                         Navigator.of(context).popUntil((route) => route.isFirst);
@@ -153,7 +153,7 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
           const Icon(
             Icons.refresh_outlined,
             size: 18,
-            color: white,
+            color: AppColors.white,
           ),
           kWi12,
           ResText(
@@ -166,7 +166,7 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
         sendEstate();
       },
       width: Res.width(250),
-      color: secondaryColor,
+      color: AppColors.secondaryColor,
     );
   }
 }

@@ -26,10 +26,10 @@ class SmallElevatedCard extends StatelessWidget {
         vertical: Res.height(6),
       ),
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: AppColors.secondaryColor,
         boxShadow: [
           BoxShadow(
-              color: black.withOpacity(0.24),
+              color: AppColors.black.withOpacity(0.24),
               offset: const Offset(0, 2),
               blurRadius: 4,
               spreadRadius: 0)
@@ -58,7 +58,7 @@ class SmallElevatedCard extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.close,
-                color: white,
+                color: AppColors.white,
               ),
             ),
           ],

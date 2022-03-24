@@ -78,7 +78,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: Res.height(75),
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           automaticallyImplyLeading: false,
           actions: [
             Container(
@@ -108,14 +108,14 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
             child: IconButton(
               icon: const Icon(
                 Icons.public,
-                color: white,
+                color: AppColors.white,
               ),
               onPressed: () {},
             ),
           ),
         ),
         body: RefreshIndicator(
-          color: secondaryColor,
+          color: AppColors.secondaryColor,
           onRefresh: () async {
             _estateBloc.add(
               OfficeEstatesFetchStarted(officeId: widget.office.id),
@@ -195,7 +195,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                   textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
                                 ),
                                 width: Res.width(140),
-                                color: secondaryColor,
+                                color: AppColors.secondaryColor,
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
@@ -206,7 +206,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                   textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
                                 ),
                                 width: Res.width(140),
-                                color: secondaryColor,
+                                color: AppColors.secondaryColor,
                                 onPressed: () async {
                                   await Navigator.pushNamed(context, AuthenticationScreen.id);
                                   Navigator.pop(context);
@@ -226,9 +226,9 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           ),
                         );
                       },
-                      color: white,
+                      color: AppColors.white,
                       shadow: [lowElevation],
-                      border: Border.all(color: secondaryColor),
+                      border: Border.all(color: AppColors.secondaryColor),
                       borderRadius: 4,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -275,13 +275,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                               );
                             }
                           },
-                          color: white,
+                          color: AppColors.white,
                           shadow: [lowElevation],
-                          border: Border.all(color: secondaryColor),
+                          border: Border.all(color: AppColors.secondaryColor),
                           borderRadius: 4,
                           child: (likeAndUnlikeState is LikeAndUnlikeProgress)
                               ? const SpinKitWave(
-                                  color: secondaryColor,
+                                  color: AppColors.secondaryColor,
                                   size: 16,
                                 )
                               : Row(
@@ -307,7 +307,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                 Container(
                   height: Res.height(32),
                   width: screenWidth,
-                  color: secondaryColor,
+                  color: AppColors.secondaryColor,
                   alignment: Alignment.centerRight,
                   padding: EdgeInsets.only(
                     right: Res.width(8),
@@ -348,7 +348,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         child: ResText(
                           "! لم يقم هذا المكتب بنشر عروض عقارية",
                           textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-                            color: black.withOpacity(0.48),
+                            color: AppColors.black.withOpacity(0.48),
                           ),
                         ),
                       );

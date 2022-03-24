@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "356592627729-4n35d89t7tppf94rp4ltb0abf55re09d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.odayhmourad.swesshome",
+            "certificate_hash": "34ee59f1c96999a052237c8ca79f1db297b818eb"
+          }
+        },
+        {
           "client_id": "356592627729-hah8ciusjfi7qb2ffdictiejnl8diqo8.apps.googleusercontent.com",
           "client_type": 3
         }

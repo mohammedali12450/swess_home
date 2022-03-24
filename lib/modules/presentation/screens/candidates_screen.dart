@@ -24,7 +24,7 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: Res.height(75),
-        backgroundColor: secondaryColor,
+        backgroundColor: AppColors.secondaryColor,
         automaticallyImplyLeading: false,
         actions: [
           Container(
@@ -56,13 +56,13 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
                     Icon(
                       Icons.error_outline,
                       size: screenWidth / 2,
-                      color: secondaryColor.withOpacity(0.64),
+                      color: AppColors.secondaryColor.withOpacity(0.64),
                     ),
                     kHe24,
                     ResText (
                       "! لا يوجد ترشيحات لهذا الطلب",
                       textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-                        color: black.withOpacity(0.48),
+                        color: AppColors.black.withOpacity(0.48),
                       ),
                     ),
                   ],

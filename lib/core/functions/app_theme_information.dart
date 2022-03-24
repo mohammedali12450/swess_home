@@ -64,23 +64,23 @@ TextStyle textStyling(S fontSize, W fontWeight, C fontColor,
 Color _getColor(C fontColor) {
   switch (fontColor) {
     case C.c1:
-      return baseColor;
+      return AppColors.baseColor;
     case C.c2:
-      return secondaryColor;
+      return AppColors.secondaryColor;
     case C.c3:
-      return thirdColor;
+      return AppColors.thirdColor;
     case C.c4:
-      return lastColor;
+      return AppColors.lastColor;
     case C.bl:
-      return black;
+      return AppColors.black;
     case C.wh:
-      return white;
+      return AppColors.white;
     case C.hint:
-      return hintColor;
+      return AppColors.hintColor;
     case C.whHint:
-      return whiteHintColor;
+      return AppColors.whiteHintColor;
     default:
-      return black;
+      return AppColors.black;
   }
 }
 

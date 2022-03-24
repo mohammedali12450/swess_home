@@ -93,7 +93,7 @@ class _EstateCardState extends State<EstateCard> {
             widget.estate.estateType.id == 5)
         ? " مميز"
         : " مميزة";
-    String estateType = widget.estate.estateType.name.split('|').elementAt(1) +
+    String estateType = widget.estate.estateType.getName(true).split('|').elementAt(1) +
         ((widget.estate.contractId! == 4) ? specialWord : "");
     String addingDate =
         DateHelper.getDateByFormat(DateTime.parse(widget.estate.publishedAt!), "yyyy/MM/dd");
@@ -107,34 +107,34 @@ class _EstateCardState extends State<EstateCard> {
     switch (widget.estate.contractId!) {
       case 1:
         {
-          estateTypeBackgroundColor = baseColor;
-          estatePriceBackgroundColor = baseColor.withAlpha(120);
-          estateTypeColor = black;
-          estatePriceColor = black;
+          estateTypeBackgroundColor = AppColors.baseColor;
+          estatePriceBackgroundColor = AppColors.baseColor.withAlpha(120);
+          estateTypeColor = AppColors.black;
+          estatePriceColor = AppColors.black;
           break;
         }
       case 2:
         {
-          estateTypeBackgroundColor = baseColor;
-          estatePriceBackgroundColor = baseColor.withAlpha(80);
-          estateTypeColor = black;
-          estatePriceColor = black;
+          estateTypeBackgroundColor = AppColors.baseColor;
+          estatePriceBackgroundColor = AppColors.baseColor.withAlpha(80);
+          estateTypeColor = AppColors.black;
+          estatePriceColor = AppColors.black;
           break;
         }
       case 3:
         {
-          estateTypeBackgroundColor = lastColor;
-          estatePriceBackgroundColor = lastColor.withAlpha(220);
-          estateTypeColor = white;
-          estatePriceColor = white;
+          estateTypeBackgroundColor = AppColors.lastColor;
+          estatePriceBackgroundColor = AppColors.lastColor.withAlpha(220);
+          estateTypeColor = AppColors.white;
+          estatePriceColor = AppColors.white;
           break;
         }
       case 4:
         {
-          estateTypeBackgroundColor = secondaryColor;
-          estatePriceBackgroundColor = secondaryColor.withAlpha(220);
-          estateTypeColor = white;
-          estatePriceColor = white;
+          estateTypeBackgroundColor = AppColors.secondaryColor;
+          estatePriceBackgroundColor = AppColors.secondaryColor.withAlpha(220);
+          estateTypeColor = AppColors.white;
+          estatePriceColor = AppColors.white;
           break;
         }
     }
@@ -145,20 +145,20 @@ class _EstateCardState extends State<EstateCard> {
       ),
       width: screenWidth,
       decoration: BoxDecoration(
-        color: white,
+        color: AppColors.white,
         borderRadius: const BorderRadius.all(
           Radius.circular(12),
         ),
         boxShadow: [
           BoxShadow(
-              color: black.withOpacity(0.32),
+              color: AppColors.black.withOpacity(0.32),
               offset: const Offset(0, 0),
               blurRadius: 4,
               spreadRadius: 2)
         ],
         gradient: LinearGradient(colors: [
           (widget.estate.contractId == 4) ? Colors.yellow[200]! : Colors.white,
-          white,
+          AppColors.white,
         ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
       ),
       child: Column(
@@ -188,17 +188,17 @@ class _EstateCardState extends State<EstateCard> {
                               fit: BoxFit.cover,
                               progressIndicatorBuilder: (_, __, ___) {
                                 return Container(
-                                  color: white,
+                                  color: AppColors.white,
                                   child: Icon(
                                     Icons.camera_alt_outlined,
-                                    color: secondaryColor.withOpacity(0.6),
+                                    color: AppColors.secondaryColor.withOpacity(0.6),
                                     size: 120,
                                   ),
                                 );
                               },
                               imageBuilder: (context, imageProvider) => Container(
                                 decoration: BoxDecoration(
-                                  color: white,
+                                  color: AppColors.white,
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(12),
                                     topRight: Radius.circular(12),
@@ -234,7 +234,7 @@ class _EstateCardState extends State<EstateCard> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 2),
                               decoration: BoxDecoration(
-                                color: black.withOpacity(0.64),
+                                color: AppColors.black.withOpacity(0.64),
                                 borderRadius: const BorderRadius.all(
                                   Radius.circular(2),
                                 ),
@@ -244,7 +244,7 @@ class _EstateCardState extends State<EstateCard> {
                                   const Icon(
                                     Icons.camera_alt_outlined,
                                     size: 20,
-                                    color: white,
+                                    color: AppColors.white,
                                   ),
                                   kWi4,
                                   ResText(
@@ -267,7 +267,7 @@ class _EstateCardState extends State<EstateCard> {
                           right: Res.width(8),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: black.withOpacity(0.64),
+                              color: AppColors.black.withOpacity(0.64),
                               borderRadius: const BorderRadius.all(
                                 Radius.circular(2),
                               ),
@@ -278,7 +278,7 @@ class _EstateCardState extends State<EstateCard> {
                               icon: const Icon(
                                 Icons.close,
                                 size: 16,
-                                color: white,
+                                color: AppColors.white,
                               ),
                               onPressed: () {
                                 if (widget.onClosePressed != null) {
@@ -323,9 +323,9 @@ class _EstateCardState extends State<EstateCard> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              if (widget.estate.estateType.id == rentOfferTypeNumber)
+                              if (widget.estate.estateOfferType.id == rentOfferTypeNumber)
                                 ResText(
-                                  widget.estate.periodType!.name.split("|").first + " /",
+                                  widget.estate.periodType!.getName(true).split("|").first + " /",
                                   textStyle: textStyling(
                                     S.s20,
                                     W.w5,
@@ -429,7 +429,8 @@ class _EstateCardState extends State<EstateCard> {
                   listener: (_, saveAndUnSaveState) {
                     if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
                       showWonderfulAlertDialog(context, "خطأ", saveAndUnSaveState.error);
-                      _saveAndUnSaveEstateBloc.add(ReInitializeSaveState(isSaved: widget.estate.isSaved!));
+                      _saveAndUnSaveEstateBloc
+                          .add(ReInitializeSaveState(isSaved: widget.estate.isSaved!));
                     }
                     if (saveAndUnSaveState is EstateSaved) {
                       widget.estate.isSaved = true;
@@ -451,7 +452,7 @@ class _EstateCardState extends State<EstateCard> {
                             dialogButtons: [
                               MyButton(
                                 width: Res.width(150),
-                                color: secondaryColor,
+                                color: AppColors.secondaryColor,
                                 child: ResText(
                                   "إلغاء",
                                   textStyle: textStyling(S.s16, W.w5, C.wh),
@@ -462,13 +463,26 @@ class _EstateCardState extends State<EstateCard> {
                               ),
                               MyButton(
                                 width: Res.width(150),
-                                color: secondaryColor,
+                                color: AppColors.secondaryColor,
                                 child: ResText(
                                   "تسجيل الدخول",
                                   textStyle: textStyling(S.s16, W.w5, C.wh),
                                 ),
-                                onPressed: () {
-                                  Navigator.pushNamed(context, AuthenticationScreen.id);
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const AuthenticationScreen(
+                                        popAfterFinish: true,
+                                      ),
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                  User? user = BlocProvider.of<UserLoginBloc>(context).user;
+                                  if (user != null && user.token != null) {
+                                    userToken = user.token;
+                                  }
+                                  return;
                                 },
                               ),
                             ],
@@ -487,13 +501,13 @@ class _EstateCardState extends State<EstateCard> {
                       },
                       icon: (saveAndUnSaveState is EstateSaveAndUnSaveProgress)
                           ? const SpinKitWave(
-                              color: secondaryColor,
+                              color: AppColors.secondaryColor,
                               size: 16,
                             )
                           : Icon((saveAndUnSaveState is EstateSaved)
                               ? Icons.bookmark
                               : Icons.bookmark_border_outlined),
-                      color: secondaryColor,
+                      color: AppColors.secondaryColor,
                     );
                   },
                 ),
@@ -533,14 +547,14 @@ class _EstateCardState extends State<EstateCard> {
                         if (userToken == null) {
                           showWonderfulAlertDialog(
                             context,
-                            "خطأ",
+                            "تأكيد",
                             "هذه الميزة تتطلب تسجيل الدخول",
                             removeDefaultButton: true,
                             width: Res.width(400),
                             dialogButtons: [
                               MyButton(
                                 width: Res.width(150),
-                                color: secondaryColor,
+                                color: AppColors.secondaryColor,
                                 child: ResText(
                                   "إلغاء",
                                   textStyle: textStyling(S.s16, W.w5, C.wh),
@@ -551,13 +565,26 @@ class _EstateCardState extends State<EstateCard> {
                               ),
                               MyButton(
                                 width: Res.width(150),
-                                color: secondaryColor,
+                                color: AppColors.secondaryColor,
                                 child: ResText(
                                   "تسجيل الدخول",
                                   textStyle: textStyling(S.s16, W.w5, C.wh),
                                 ),
-                                onPressed: () {
-                                  Navigator.pushNamed(context, AuthenticationScreen.id);
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const AuthenticationScreen(
+                                        popAfterFinish: true,
+                                      ),
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                  User? user = BlocProvider.of<UserLoginBloc>(context).user;
+                                  if (user != null && user.token != null) {
+                                    userToken = user.token;
+                                  }
+                                  return;
                                 },
                               ),
                             ],
@@ -584,14 +611,14 @@ class _EstateCardState extends State<EstateCard> {
                       },
                       icon: (likeAndUnlikeState is LikeAndUnlikeProgress)
                           ? const SpinKitWave(
-                              color: secondaryColor,
+                              color: AppColors.secondaryColor,
                               size: 16,
                             )
                           : Icon(
                               (likeAndUnlikeState is Liked)
                                   ? Icons.favorite
                                   : Icons.favorite_outline,
-                              color: secondaryColor,
+                              color: AppColors.secondaryColor,
                             ),
                     );
                   },

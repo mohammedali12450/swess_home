@@ -66,18 +66,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           toolbarHeight: Res.height(75),
           centerTitle: true,
           title: ResText(
-            "SwessHome",
+            "Swess Home",
             textStyle: textStyling(S.s24, W.w6, C.c1, fontFamily: F.roboto),
           ),
           leading: BlocBuilder<NotificationsCubit, int>(builder: (_, notificationsCount) {
             return IconBadge(
               icon: const Icon(
                 Icons.notifications_outlined,
-                color: white,
+                color: AppColors.white,
               ),
               itemCount: notificationsCount,
               right: 0,
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: const BorderRadius.all(
           Radius.circular(4),
         ),
-        border: Border.all(color: black , width: 0.5),
+        border: Border.all(color: AppColors.black , width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -179,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Radius.circular(8),
                 ),
                 border: Border.all(
-                  color: black.withOpacity(0.56),
+                  color: AppColors.black.withOpacity(0.56),
                 ),
               ),
               child: Row(
@@ -196,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: const Icon(
                       Icons.search,
                       size: 24,
-                      color: black,
+                      color: AppColors.black,
                     ),
                   ),
                   kWi12,
@@ -223,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
               gradient: LinearGradient(
                 begin: Alignment.centerRight,
                 end: Alignment.centerLeft,
-                colors: [lastColor, lastColor.withOpacity(0.75)],
+                colors: [AppColors.lastColor, AppColors.lastColor.withOpacity(0.75)],
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(15),
@@ -240,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const Icon(
                     Icons.search,
                     size: 28,
-                    color: white,
+                    color: AppColors.white,
                   ),
                 ),
                 kHe12,
@@ -266,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: const Icon(
                 Icons.arrow_back_ios,
-                color: white,
+                color: AppColors.white,
               ),
             ),
           ),
@@ -309,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
         gradient: LinearGradient(
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
-          colors: [secondaryColor, secondaryColor.withOpacity(0.75)],
+          colors: [AppColors.secondaryColor, AppColors.secondaryColor.withOpacity(0.75)],
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(15),
@@ -333,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: const Icon(
                   Icons.search,
                   size: 28,
-                  color: white,
+                  color: AppColors.white,
                 ),
               ),
             ],
@@ -353,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   "إيجار",
                   textStyle: textStyling(S.s16, W.w5, C.c2),
                 ),
-                color: white,
+                color: AppColors.white,
                 height: Res.height(56),
                 onPressed: () {
                   Navigator.push(
@@ -373,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   "بيع",
                   textStyle: textStyling(S.s16, W.w5, C.c2),
                 ),
-                color: white,
+                color: AppColors.white,
                 height: Res.height(56),
                 onPressed: () {
                   Navigator.push(
@@ -401,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: const BorderRadius.all(
           Radius.circular(4),
         ),
-        border: Border.all(color: black , width: 0.5),
+        border: Border.all(color: AppColors.black , width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -430,7 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
             width: inf,
             alignment: Alignment.centerRight,
             child: MyButton(
-              color: secondaryColor,
+              color: AppColors.secondaryColor,
               height: Res.height(56),
               width: Res.width(180),
               child: Row(
@@ -444,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   kWi12,
                   const Icon(
                     Icons.add,
-                    color: white,
+                    color: AppColors.white,
                   ),
                 ],
               ),
@@ -460,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
                           ),
                           width: Res.width(140),
-                          color: secondaryColor,
+                          color: AppColors.secondaryColor,
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -471,7 +471,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
                           ),
                           width: Res.width(140),
-                          color: secondaryColor,
+                          color: AppColors.secondaryColor,
                           onPressed: () async {
                             await Navigator.pushNamed(context, AuthenticationScreen.id);
                             Navigator.pop(context);

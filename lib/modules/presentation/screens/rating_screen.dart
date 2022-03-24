@@ -41,7 +41,7 @@ class _RatingScreenState extends State<RatingScreen> {
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           toolbarHeight: Res.height(75),
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           automaticallyImplyLeading: false,
           actions: [
             Container(
@@ -168,19 +168,19 @@ class _RatingScreenState extends State<RatingScreen> {
                       if (ratingState is RatingProgress) {
                         return const SpinKitWave(
                           size: 16,
-                          color: white,
+                          color: AppColors.white,
                         );
                       }
                       return ResText(
                         "إرسال التقييم",
                         textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(
-                            color: (ratingState is RatingComplete) ? white.withOpacity(0.48) : white),
+                            color: (ratingState is RatingComplete) ? AppColors.white.withOpacity(0.48) : AppColors.white),
                       );
                     },
                   ),
                   width: Res.width(240),
                   height: Res.height(56),
-                  color: secondaryColor,
+                  color: AppColors.secondaryColor,
                   onPressed: () {
                     if (_ratingBloc.state is RatingProgress || _ratingBloc.state is RatingComplete) {
                       return;
@@ -233,15 +233,15 @@ class RatingChoiceWidget extends StatelessWidget {
       child: Container(
         padding: kSmallAllPadding,
         decoration: BoxDecoration(
-            color: (isPressed) ? secondaryColor : Colors.transparent,
-            border: Border.all(color: black),
+            color: (isPressed) ? AppColors.secondaryColor : Colors.transparent,
+            border: Border.all(color: AppColors.black),
             borderRadius: const BorderRadius.all(Radius.circular(8))),
         child: Column(
           children: [
             SvgPicture.asset(
               assetPath,
               width: Res.width(80),
-              color: (isPressed) ? white : black,
+              color: (isPressed) ? AppColors.white : AppColors.black,
             ),
             kHe12,
             ResText(

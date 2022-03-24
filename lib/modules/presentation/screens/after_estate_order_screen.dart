@@ -32,7 +32,7 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: Res.height(75),
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           automaticallyImplyLeading: false,
           actions: [
             Container(
@@ -60,7 +60,7 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
             child: IconButton(
               icon: const Icon(
                 Icons.history,
-                color: white,
+                color: AppColors.white,
               ),
               onPressed: () {},
             ),
@@ -75,7 +75,7 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
                 width: 150,
                 height: 150,
                 child: SvgPicture.asset(checkOutlineIconPath,
-                    color: secondaryColor),
+                    color: AppColors.secondaryColor),
               ),
               kHe32,
               ResText(
@@ -98,7 +98,7 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
                   textStyle: textStyling(S.s20, W.w6, C.wh),
                 ),
                 width: Res.width(200),
-                color: secondaryColor,
+                color: AppColors.secondaryColor,
                 onPressed: () {
                   Navigator.pushNamedAndRemoveUntil(
                     context,

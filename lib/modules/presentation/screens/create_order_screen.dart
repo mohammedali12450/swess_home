@@ -76,7 +76,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   @override
   Widget build(BuildContext context) {
     List<String> priceDomainsNames =
-        priceDomains.map((e) => e.getTextPriceDomain()).toList();
+        priceDomains.map((e) => e.getTextPriceDomain(true)).toList();
     priceDomainsNames.insert(0, "غير محدد");
 
     return BlocListener<EstateOrderBloc, EstateOrderState>(
@@ -95,7 +95,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               dialogButtons: [
                 MyButton(
                   width: Res.width(150),
-                  color: secondaryColor,
+                  color: AppColors.secondaryColor,
                   child: ResText(
                     "إلغاء",
                     textStyle: textStyling(S.s16, W.w5, C.wh),
@@ -106,7 +106,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 ),
                 MyButton(
                   width: Res.width(150),
-                  color: secondaryColor,
+                  color: AppColors.secondaryColor,
                   child: ResText(
                     "تسجيل الدخول",
                     textStyle: textStyling(S.s16, W.w5, C.wh),
@@ -126,7 +126,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: Res.height(75),
-            backgroundColor: secondaryColor,
+            backgroundColor: AppColors.secondaryColor,
             automaticallyImplyLeading: false,
             actions: [
               Container(
@@ -154,7 +154,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               child: IconButton(
                 icon: const Icon(
                   Icons.history,
-                  color: white,
+                  color: AppColors.white,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, RecentEstateOrdersScreen.id) ;
@@ -223,7 +223,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   kHe12,
                   MyDropdownList(
                     elementsList: estatesTypes
-                        .map((e) => e.name.split('|').first)
+                        .map((e) => e.getName(true).split('|').first)
                         .toList(),
                     onSelect: (index) {
                       selectedEstateTypeId = estatesTypes.elementAt(index).id;
@@ -240,7 +240,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   ),
                   kHe12,
                   MyDropdownList(
-                    elementsList: offerTypes.map((e) => e.name).toList(),
+                    elementsList: offerTypes.map((e) => e.getName(true)).toList(),
                     onSelect: (index) {
                       selectedEstateOfferTypeId =
                           offerTypes.elementAt(index).id;
@@ -304,7 +304,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       builder: (_, estateOrderState) {
                         if (estateOrderState is SendEstateOrderProgress) {
                           return const SpinKitWave(
-                            color: white,
+                            color: AppColors.white,
                             size: 24,
                           );
                         }
@@ -314,7 +314,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                         );
                       },
                     ),
-                    color: secondaryColor,
+                    color: AppColors.secondaryColor,
                     width: Res.width(200),
                     onPressed: () {
                       if (selectedLocation == null) {

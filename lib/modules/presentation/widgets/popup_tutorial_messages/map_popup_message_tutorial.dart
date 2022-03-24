@@ -28,7 +28,7 @@ class MapPopupMessageTutorial extends StatelessWidget {
       width: Res.width(320),
       padding: kMediumSymHeight,
       decoration: BoxDecoration(
-        color: white,
+        color: AppColors.white,
         borderRadius: BorderRadius.only(
           bottomLeft: const Radius.circular(20),
           topLeft: const Radius.circular(20),
@@ -60,7 +60,7 @@ class MapPopupMessageTutorial extends StatelessWidget {
             ),
             height: Res.height(56),
             width: Res.width(100),
-            color: lastColor,
+            color: AppColors.lastColor,
             shadow: [BoxShadow(
                 color: Colors.black.withOpacity(0.24),
                 offset: const Offset(0, 2),

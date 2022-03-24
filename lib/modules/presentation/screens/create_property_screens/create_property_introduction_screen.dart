@@ -31,7 +31,7 @@ class _CreatePropertyIntroductionScreenState
       body: Container(
         width: screenWidth,
         decoration: const BoxDecoration(
-          color: black,
+          color: AppColors.black,
           image: DecorationImage(
               image: AssetImage(flatImagePath),
               fit: BoxFit.cover,
@@ -75,7 +75,7 @@ class _CreatePropertyIntroductionScreenState
             kHe40,
             MyButton(
               width: Res.width(280),
-              color: white,
+              color: AppColors.white,
               child: ResText(
                 "إنشاء عرض عقاري",
                 textStyle: textStyling(S.s22, W.w6, C.c2),

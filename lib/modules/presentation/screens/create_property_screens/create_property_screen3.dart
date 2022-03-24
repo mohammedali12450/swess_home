@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
@@ -22,8 +24,7 @@ class CreatePropertyScreen3 extends StatefulWidget {
   static const String id = "CreatePropertyScreen3";
   final Estate currentOffer;
 
-  const CreatePropertyScreen3({Key? key, required this.currentOffer})
-      : super(key: key);
+  const CreatePropertyScreen3({Key? key, required this.currentOffer}) : super(key: key);
 
   @override
   _CreatePropertyScreen3State createState() => _CreatePropertyScreen3State();
@@ -34,6 +35,8 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
   ChannelCubit nearbyPlacesCubit = ChannelCubit([]);
   ChannelCubit mapButtonStateCubit = ChannelCubit("انقر لتحديد الموقع");
   ChannelCubit propertyLocationErrorCubit = ChannelCubit(null);
+  final ChannelCubit _isNearbyPlacesTextFieldEnableCubit = ChannelCubit(true);
+  late String maximumCountOfNearbyPlaces;
 
   // Controllers :
   TextEditingController propertyPlaceController = TextEditingController();
@@ -50,6 +53,9 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
     super.initState();
 
     // initializing :
+
+    maximumCountOfNearbyPlaces =
+        BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.maximumCountOfNearbyPlaces;
   }
 
   @override
@@ -74,11 +80,10 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
               bloc: propertyLocationErrorCubit,
               builder: (_, errorMessage) => TextField(
                 onTap: () async {
-                  selectedLocation = await Navigator.of(context)
-                      .pushNamed(SearchLocationScreen.id) as LocationViewer?;
+                  selectedLocation = await Navigator.of(context).pushNamed(SearchLocationScreen.id)
+                      as LocationViewer?;
                   if (selectedLocation != null) {
-                    propertyPlaceController.text =
-                        selectedLocation!.getLocationName();
+                    propertyPlaceController.text = selectedLocation!.getLocationName();
                     propertyLocationErrorCubit.setState(null);
                   }
                 },
@@ -88,7 +93,7 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
                     .copyWith(letterSpacing: 0.3),
                 controller: propertyPlaceController,
                 keyboardType: TextInputType.text,
-                cursorColor: black,
+                cursorColor: AppColors.black,
                 decoration: InputDecoration(
                   errorText: errorMessage,
                   hintText: "انقر لتحديد مكان العقار",
@@ -124,6 +129,9 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
                           onDelete: (content) {
                             nearbyPlaces.remove(content);
                             nearbyPlacesCubit.setState(List.from(nearbyPlaces));
+                            if (!_isNearbyPlacesTextFieldEnableCubit.state) {
+                              _isNearbyPlacesTextFieldEnableCubit.setState(true);
+                            }
                           },
                         ),
                       )
@@ -138,6 +146,11 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
                   flex: 1,
                   child: MyButton(
                     onPressed: () {
+                      if (nearbyPlaces.length >= int.parse(maximumCountOfNearbyPlaces)) {
+                        showNearbyPlacesFlutterToast();
+                        return;
+                      }
+
                       String newPlace = nearbyPlacesController.text;
                       // check if there are similar place :
                       if (nearbyPlaces.contains(newPlace)) {
@@ -154,14 +167,16 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
                       nearbyPlaces.add(newPlace);
                       nearbyPlacesController.clear();
                       nearbyPlacesCubit.setState(List.from(nearbyPlaces));
+                      if (nearbyPlaces.length >= int.parse(maximumCountOfNearbyPlaces)) {
+                        _isNearbyPlacesTextFieldEnableCubit.setState(false);
+                      }
                     },
                     color: Colors.transparent,
-                    border: Border.all(color: black, width: 0.5),
+                    border: Border.all(color: AppColors.black, width: 0.5),
                     borderRadius: 8,
                     child: ResText(
                       'إضافة',
-                      textStyle:
-                          textStyling(S.s16, W.w5, C.bl).copyWith(height: 1.8),
+                      textStyle: textStyling(S.s16, W.w5, C.bl).copyWith(height: 1.8),
                     ),
                     height: Res.height(56),
                   ),
@@ -169,18 +184,29 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
                 kWi12,
                 Expanded(
                   flex: 3,
-                  child: TextField(
-                    textDirection: TextDirection.rtl,
-                    style: textStyling(S.s17, W.w4, C.bl, fontFamily: F.roboto)
-                        .copyWith(letterSpacing: 0.3),
-                    controller: nearbyPlacesController,
-                    cursorColor: black,
-                    keyboardType: TextInputType.text,
-                    decoration: const InputDecoration(
-                      border: kUnderlinedBorderBlack,
-                      focusedBorder: kUnderlinedBorderBlack,
-                      isDense: true,
-                    ),
+                  child: BlocBuilder<ChannelCubit, dynamic>(
+                    bloc: _isNearbyPlacesTextFieldEnableCubit,
+                    builder: (_, isEnabled) {
+                      return TextField(
+                        readOnly: !isEnabled,
+                        onTap: (!isEnabled)
+                            ? () {
+                          showNearbyPlacesFlutterToast();
+                        }
+                            : null,
+                        textDirection: TextDirection.rtl,
+                        style: textStyling(S.s17, W.w4, C.bl, fontFamily: F.roboto)
+                            .copyWith(letterSpacing: 0.3),
+                        controller: nearbyPlacesController,
+                        cursorColor: AppColors.black,
+                        keyboardType: TextInputType.text,
+                        decoration: const InputDecoration(
+                          border: kUnderlinedBorderBlack,
+                          focusedBorder: kUnderlinedBorderBlack,
+                          isDense: true,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -210,8 +236,8 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
                 return MyButton(
                   onPressed: () async {
                     mapButtonStateCubit.setState("...جاري تحميل الخريطة");
-                    _selectedPlace = await Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const MapSample()));
+                    _selectedPlace = await Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => const MapSample()));
                     if (_selectedPlace != null) {
                       mapButtonStateCubit.setState("تم تحديد الموقع");
                     } else {
@@ -222,13 +248,13 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
                     mapButtonContent,
                     textStyle: textStyling(S.s16, W.w5, C.c2),
                   ),
-                  color: white,
-                  border: Border.all(color: black),
+                  color: AppColors.white,
+                  border: Border.all(color: AppColors.black),
                   borderRadius: 8,
                   width: Res.width(300),
                   shadow: [
                     BoxShadow(
-                        color: black.withOpacity(0.20),
+                        color: AppColors.black.withOpacity(0.20),
                         offset: const Offset(0, 0),
                         blurRadius: 4,
                         spreadRadius: 1),
@@ -244,7 +270,7 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
               ),
               width: Res.width(240),
               height: Res.height(56),
-              color: secondaryColor,
+              color: AppColors.secondaryColor,
               onPressed: () {
                 if (!validateData()) return;
 
@@ -255,17 +281,14 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
                 });
                 widget.currentOffer.locationId = selectedLocation!.id;
                 widget.currentOffer.nearbyPlaces = nearbyPlacesText;
-                widget.currentOffer.latitude = (_selectedPlace != null)
-                    ? _selectedPlace!.position.latitude.toString()
-                    : null;
-                widget.currentOffer.longitude = (_selectedPlace != null)
-                    ? _selectedPlace!.position.longitude.toString()
-                    : null;
+                widget.currentOffer.latitude =
+                    (_selectedPlace != null) ? _selectedPlace!.position.latitude.toString() : null;
+                widget.currentOffer.longitude =
+                    (_selectedPlace != null) ? _selectedPlace!.position.longitude.toString() : null;
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => CreatePropertyScreen4(
-                        currentOffer: widget.currentOffer),
+                    builder: (_) => CreatePropertyScreen4(currentOffer: widget.currentOffer),
                   ),
                 );
               },
@@ -275,6 +298,11 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> {
         ),
       ),
     );
+  }
+
+  showNearbyPlacesFlutterToast() {
+    Fluttertoast.showToast(
+        msg: " لا يمكنك تحديد أكثر من " + maximumCountOfNearbyPlaces + " أماكن قريبة ");
   }
 
   bool validateData() {

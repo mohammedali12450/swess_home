@@ -1,6 +1,8 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:phone_number/phone_number.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
@@ -20,9 +22,9 @@ import 'package:swesshome/modules/data/repositories/user_authentication_reposito
 import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/my_dialog.dart';
 import 'package:swesshome/utils/helpers/responsive.dart';
 import 'home_screen.dart';
+import 'verification_screen.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   static const String id = "AuthenticationScreen";
@@ -48,6 +50,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   ChannelCubit lastNameError = ChannelCubit(null);
   late UserRegisterBloc userRegisterBloc;
   late UserLoginBloc userLoginBloc;
+  late String phoneDialCode;
 
   // controllers:
   TextEditingController authenticationController = TextEditingController();
@@ -63,6 +66,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     super.initState();
     userRegisterBloc = UserRegisterBloc(UserAuthenticationRepository());
     userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
+    phoneDialCode = "+963" ;
   }
 
   void signUpErrorHandling(errorResponseMap) {
@@ -109,6 +113,17 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 }
               }
               if (registerState is UserRegisterComplete) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>  VerificationCodeScreen(
+                        phoneNumber: phoneDialCode + authenticationController.text),
+                  ),
+                );
+
+                return ;
+
+
                 BlocProvider.of<UserLoginBloc>(context).user = registerState.user;
 
                 if (registerState.user.token != null) {
@@ -146,7 +161,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     SendFcmTokenProcessStarted(userToken: userLoginBloc.user!.token!),
                   );
                 }
-
                 if (widget.popAfterFinish!) {
                   Navigator.pop(context);
                 } else {
@@ -160,7 +174,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         child: SafeArea(
           child: Scaffold(
             resizeToAvoidBottomInset: true,
-            backgroundColor: black,
+            backgroundColor: AppColors.black,
             body: Stack(
               children: [
                 Builder(
@@ -192,7 +206,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   child: IconButton(
                     icon: const Icon(
                       Icons.close,
-                      color: white,
+                      color: AppColors.white,
                     ),
                     onPressed: () {
                       if (widget.popAfterFinish!) {
@@ -262,10 +276,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     enabledBorder: kOutlinedBorderGrey,
                     suffixIcon: const Icon(
                       Icons.person_outline,
-                      color: secondaryColor,
+                      color: AppColors.secondaryColor,
                     ),
                     filled: true,
-                    fillColor: white),
+                    fillColor: AppColors.white),
               );
             },
           ),
@@ -304,19 +318,19 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         enabledBorder: kOutlinedBorderGrey,
                         suffixIcon: const Icon(
                           Icons.lock_outline,
-                          color: secondaryColor,
+                          color: AppColors.secondaryColor,
                         ),
                         prefixIcon: IconButton(
                           icon: Icon(
                             (isVisible) ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                            color: black,
+                            color: AppColors.black,
                           ),
                           onPressed: () {
                             _passwordVisibilityCubit.setState(!isVisible);
                           },
                         ),
                         filled: true,
-                        fillColor: white),
+                        fillColor: AppColors.white),
                   );
                 },
               );
@@ -335,7 +349,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   return Checkbox(
                       value: isChecked,
                       fillColor: MaterialStateProperty.all<Color>(Colors.white),
-                      checkColor: secondaryColor,
+                      checkColor: AppColors.secondaryColor,
                       onChanged: (_) {
                         _checkBoxStateCubit.setState(!isChecked);
                       });
@@ -352,7 +366,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SpinKitWave(
-                        color: secondaryColor,
+                        color: AppColors.secondaryColor,
                         size: 20,
                       ),
                       kWi16,
@@ -371,7 +385,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             ),
             width: Res.width(250),
             height: Res.height(64),
-            color: white,
+            color: AppColors.white,
             onPressed: () {
               userLoginBloc.add(UserLoginStarted(
                   authentication: authenticationControllerLogin.text,
@@ -380,7 +394,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             borderRadius: 8,
             shadow: [
               BoxShadow(
-                  color: white.withOpacity(0.15),
+                  color: AppColors.white.withOpacity(0.15),
                   offset: const Offset(0, 0),
                   blurRadius: 4,
                   spreadRadius: 3),
@@ -395,7 +409,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             width: Res.width(250),
             height: Res.height(64),
             color: Colors.transparent,
-            border: Border.all(color: white),
+            border: Border.all(color: AppColors.white),
             onPressed: () {
               _isLoginSelected.setState(false);
             },
@@ -486,7 +500,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           SizedBox(
             width: inf,
             child: ResText(
-              ":الإيميل أو رقم الموبايل",
+              ":رقم الموبايل",
               textStyle: textStyling(S.s16, W.w5, C.wh),
               textAlign: TextAlign.right,
             ),
@@ -495,30 +509,79 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           BlocBuilder<ChannelCubit, dynamic>(
             bloc: authenticationError,
             builder: (_, errorMessage) {
-              return TextField(
-                onChanged: (_) {
-                  authenticationError.setState(null);
-                },
-                controller: authenticationController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                    errorText: errorMessage,
-                    hintText: 'أدخل الإيميل أو رقم الموبايل',
-                    hintStyle: textStyling(S.s14, W.w5, C.hint),
-                    hintTextDirection: TextDirection.rtl,
-                    contentPadding: kSmallSymWidth,
-                    errorBorder: kOutlinedBorderRed,
-                    focusedBorder: kOutlinedBorderBlack,
-                    enabledBorder: kOutlinedBorderGrey,
-                    suffixIcon: const Icon(
-                      Icons.person_outline,
-                      color: secondaryColor,
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2 ,
+                    child: CountryCodePicker(
+                      onChanged: (countryCode) {
+                        if (countryCode.dialCode != null) {
+                          phoneDialCode = countryCode.dialCode!;
+                        }
+                      },
+                      // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                      initialSelection: 'Sy',
+                      favorite: [],
+                      // optional. Shows only country name and flag
+                      showCountryOnly: false,
+                      // optional. Shows only country name and flag when popup is closed.
+                      showOnlyCountryWhenClosed: false,
+                      // optional. aligns the flag and the Text left
+                      alignLeft: false,
+                      builder: (countryCode) {
+                        return Container(
+                          height: Res.height(54),
+                          margin: EdgeInsets.symmetric(horizontal: Res.width(4)),
+                          decoration: BoxDecoration(
+                            color: AppColors.white ,
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.arrow_drop_down),
+                              Image.asset(
+                                countryCode!.flagUri!,
+                                package: "country_code_picker",
+                                width: Res.width(36),
+                              ),
+                              kWi4,
+                              ResText(countryCode.dialCode! , textStyle: textStyling(S.s14, W.w5, C.bl , fontFamily: F.roboto ),),
+                            ],
+                          ),
+                        );
+                      },
+                      showDropDownButton: true,
                     ),
-                    filled: true,
-                    fillColor: white),
+                  ),
+                  kWi8 ,
+                  Expanded(
+                    flex: 5,
+                    child: TextField(
+                      onChanged: (_) {
+                        authenticationError.setState(null);
+                      },
+                      controller: authenticationController,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: AppColors.white ,
+                        errorText: errorMessage,
+                        hintText: 'أدخل رقم الموبايل',
+                        hintStyle: textStyling(S.s14, W.w5, C.hint).copyWith(height: 1.8),
+                        hintTextDirection: TextDirection.rtl,
+                        contentPadding: kSmallSymWidth,
+                        enabledBorder: kUnderlinedBorderWhite ,
+                        focusedBorder: kUnderlinedBorderWhite ,
+                      ),
+                    ),
+                  ),
+                ],
               );
             },
           ),
+
           kHe24,
           SizedBox(
             width: inf,
@@ -551,19 +614,19 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         enabledBorder: kOutlinedBorderGrey,
                         suffixIcon: const Icon(
                           Icons.lock_outline,
-                          color: secondaryColor,
+                          color: AppColors.secondaryColor,
                         ),
                         prefixIcon: IconButton(
                           icon: Icon(
                             (isVisible) ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                            color: black,
+                            color: AppColors.black,
                           ),
                           onPressed: () {
                             _passwordVisibilityCubit.setState(!isVisible);
                           },
                         ),
                         filled: true,
-                        fillColor: white),
+                        fillColor: AppColors.white),
                   );
                 },
               );
@@ -600,10 +663,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     enabledBorder: kOutlinedBorderGrey,
                     suffixIcon: const Icon(
                       Icons.person_outline,
-                      color: secondaryColor,
+                      color: AppColors.secondaryColor,
                     ),
                     filled: true,
-                    fillColor: white),
+                    fillColor: AppColors.white),
               );
             },
           ),
@@ -638,10 +701,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     enabledBorder: kOutlinedBorderGrey,
                     suffixIcon: const Icon(
                       Icons.person_outline,
-                      color: secondaryColor,
+                      color: AppColors.secondaryColor,
                     ),
                     filled: true,
-                    fillColor: white),
+                    fillColor: AppColors.white),
               );
             },
           ),
@@ -657,7 +720,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SpinKitWave(
-                        color: secondaryColor,
+                        color: AppColors.secondaryColor,
                         size: 20,
                       ),
                       kWi16,
@@ -676,8 +739,16 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             ),
             width: Res.width(260),
             height: Res.height(64),
-            color: white,
-            onPressed: () {
+            color: AppColors.white,
+            onPressed: ()async {
+
+
+              // validators :
+              if (!await getFieldsValidation()) {
+              return;
+              }
+
+
               userRegisterBloc.add(
                 UserRegisterStarted(
                   register: Register(
@@ -691,7 +762,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             borderRadius: 8,
             shadow: [
               BoxShadow(
-                  color: white.withOpacity(0.15),
+                  color: AppColors.white.withOpacity(0.15),
                   offset: const Offset(0, 0),
                   blurRadius: 4,
                   spreadRadius: 3),
@@ -706,7 +777,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             width: Res.width(250),
             height: Res.height(64),
             color: Colors.transparent,
-            border: Border.all(color: white),
+            border: Border.all(color: AppColors.white),
             onPressed: () {
               _isLoginSelected.setState(true);
             },
@@ -715,5 +786,22 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         ],
       ),
     );
+  }
+
+  Future<bool> getFieldsValidation() async {
+    bool isValidationSuccess = true;
+
+    // phone number validate :
+
+    PhoneNumber phoneNumber;
+    try {
+      phoneNumber = await PhoneNumberUtil().parse(phoneDialCode + authenticationController.text);
+    } catch (e) {
+      print(e);
+      authenticationError.setState("هذا الرقم غير صالح");
+      return false;
+    }
+
+    return isValidationSuccess;
   }
 }

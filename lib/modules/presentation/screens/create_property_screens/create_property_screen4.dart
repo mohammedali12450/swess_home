@@ -13,11 +13,13 @@ import 'package:swesshome/modules/business_logic_components/bloc/system_variable
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/interior_status.dart';
 import 'package:swesshome/modules/data/models/ownership_type.dart';
+import 'package:swesshome/modules/data/models/system_variables.dart';
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
 import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/row_information_switcher.dart';
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/responsive.dart';
 import 'build_images_selectors.dart';
 import 'create_property_screen5.dart';
@@ -51,6 +53,11 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
 
   File? floorPlanPropertyImage;
 
+  bool isCompressing = false;
+
+  late SystemVariables _systemVariables;
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -80,6 +87,8 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
     if (!isLands && !isShops) {
       widget.currentOffer.isFurnished = false;
     }
+    _systemVariables = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!;
+
   }
 
   @override
@@ -102,6 +111,14 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                     onFloorPlanImagesSelected: (images) {
                       floorPlanPropertyImage = (images == null) ? null : images.first;
                     },
+                    compressStateListener: (compressState) {
+                      isCompressing = compressState;
+                    },
+                    maximumCountOfEstateImages: int.parse(_systemVariables.maximumCountOfEstateImages),
+                    maximumCountOfStreetImages: int.parse(_systemVariables.maximumCountOfStreetImages),
+                    maximumCountOfFloorPlanImages:
+                    int.parse(_systemVariables.maximumCountOfFloorPlanImages),
+                    minimumCountOfEstateImages: _systemVariables.minimumCountOfEstateImages,
                   ),
                   kHe36,
                   MyButton(
@@ -111,8 +128,13 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                     ),
                     width: Res.width(240),
                     height: Res.height(56),
-                    color: secondaryColor,
+                    color: AppColors.secondaryColor,
                     onPressed: () {
+                      if (isCompressing) {
+                        Fluttertoast.showToast(msg: "الرجاء الانتظار حتى تنتهي عملية الضغط!");
+                        return;
+                      }
+                      if (!landsAndShopsValidateDate()) return;
                       widget.currentOffer.estateImages = propertyImages!;
                       widget.currentOffer.streetImages = streetPropertyImages;
                       widget.currentOffer.floorPlanImage = floorPlanPropertyImage;
@@ -146,7 +168,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                   ),
                   kHe16,
                   MyDropdownList(
-                    elementsList: ownershipTypes.map((e) => e.name).toList(),
+                    elementsList: ownershipTypes.map((e) => e.getName(true)).toList(),
                     onSelect: (index) {
                       widget.currentOffer.ownershipType =
                           ownershipTypes.elementAt(index);
@@ -165,7 +187,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                   ),
                   kHe16,
                   MyDropdownList(
-                    elementsList: interiorStatuses.map((e) => e.name).toList(),
+                    elementsList: interiorStatuses.map((e) => e.getName(true)).toList(),
                     onSelect: (index) {
                       widget.currentOffer.interiorStatus =
                           interiorStatuses.elementAt(index);
@@ -207,7 +229,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                   ),
                   width: Res.width(240),
                   height: Res.height(56),
-                  color: secondaryColor,
+                  color: AppColors.secondaryColor,
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -244,6 +266,29 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
         return false;
       }
     }
+
+    if (propertyImages!.length > int.parse(_systemVariables.maximumCountOfEstateImages)) {
+      showWonderfulAlertDialog(
+          context,
+          "خطأ",
+          "لا يمكنك اختيار أكثر من " +
+              _systemVariables.maximumCountOfEstateImages +
+              " صورة من صور العقار");
+      return false;
+    }
+
+    if (streetPropertyImages != null &&
+        streetPropertyImages!.length > int.parse(_systemVariables.maximumCountOfStreetImages)) {
+      showWonderfulAlertDialog(
+          context,
+          "خطأ",
+          "لا يمكنك اختيار أكثر من " +
+              _systemVariables.maximumCountOfStreetImages +
+              " صورة من صور شارع العقار");
+      return false;
+    }
+
+
 
     return true;
   }

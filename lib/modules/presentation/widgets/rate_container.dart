@@ -19,7 +19,7 @@ class RateContainer extends StatelessWidget {
     return Container(
       height: Res.height(40),
       decoration: BoxDecoration(
-        border: Border.all(color: borderColors ?? black),
+        border: Border.all(color: borderColors ?? AppColors.black),
         borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? 8)),
       ),
       child: Row(

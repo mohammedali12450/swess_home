@@ -46,7 +46,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: Res.height(75),
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           automaticallyImplyLeading: false,
           actions: [
             Container(
@@ -71,7 +71,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
           ),
         ),
         body: RefreshIndicator(
-          color: secondaryColor,
+          color: AppColors.secondaryColor,
           onRefresh: () async {
             if (BlocProvider.of<UserLoginBloc>(context).user!.token != null) {
               _savedEstatesBloc.add(
@@ -111,13 +111,13 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                           Icon(
                             Icons.error_outline,
                             size: screenWidth / 2,
-                            color: secondaryColor.withOpacity(0.64),
+                            color: AppColors.secondaryColor.withOpacity(0.64),
                           ),
                           kHe24,
                           ResText(
                             "! لا يوجد عروض عقارية محفوظة",
                             textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-                              color: black.withOpacity(0.48),
+                              color: AppColors.black.withOpacity(0.48),
                             ),
                           ),
                         ],

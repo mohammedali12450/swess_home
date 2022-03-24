@@ -114,7 +114,7 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           automaticallyImplyLeading: false,
           toolbarHeight: Res.height(75),
           title: SizedBox(
@@ -212,7 +212,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 textStyle: textStyling(S.s16, W.w6, C.bl),
                               ),
                               borderRadius: 4,
-                              color: baseColor,
+                              color: AppColors.baseColor,
                               onPressed: () {
                                 locationController.clear();
                                 locationDetectedCubit.setState(false);
@@ -228,7 +228,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 children: [
                                   const Icon(
                                     Icons.search,
-                                    color: white,
+                                    color: AppColors.white,
                                   ),
                                   kWi8,
                                   ResText(
@@ -238,7 +238,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ],
                               ),
                               borderRadius: 4,
-                              color: secondaryColor,
+                              color: AppColors.secondaryColor,
                               onPressed: () {
                                 if (locationDetectedCubit.state == false) {
                                   Fluttertoast.showToast(msg: "قم بتحديد مكان العقار أولا!");
@@ -378,7 +378,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             "إلغاء",
                             textStyle: textStyling(S.s16, W.w5, C.wh),
                           ),
-                          color: secondaryColor,
+                          color: AppColors.secondaryColor,
                           borderRadius: 8,
                           onPressed: () {
                             Navigator.pop(context);
@@ -386,7 +386,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                         MyButton(
                           child: ResText("تأكيد", textStyle: textStyling(S.s16, W.w5, C.wh)),
-                          color: secondaryColor,
+                          color: AppColors.secondaryColor,
                           borderRadius: 8,
                           onPressed: () async {
                             await RecentSearchesSharedPreferences.removeRecentSearches();
@@ -458,7 +458,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     documentOutlineIconPath,
                     width: Res.width(250),
                     height: Res.width(250),
-                    color: secondaryColor.withOpacity(0.24),
+                    color: AppColors.secondaryColor.withOpacity(0.24),
                   ),
                 ),
                 kHe24,
@@ -476,7 +476,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Container buildSearchWidgets() {
-    List<String> priceDomainsNames = priceDomains.map((e) => e.getTextPriceDomain()).toList();
+    List<String> priceDomainsNames = priceDomains.map((e) => e.getTextPriceDomain(true)).toList();
     priceDomainsNames.insert(0, "غير محدد");
 
     return Container(
@@ -494,7 +494,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             kHe12,
             MyDropdownList(
-              elementsList: estatesTypes.map((e) => e.name.split('|').first).toList(),
+              elementsList: estatesTypes.map((e) => e.getName(true).split('|').first).toList(),
               onSelect: (index) {
                 // set search data estate type :
                 widget.searchData.estateTypeId = estatesTypes.elementAt(index).id;
@@ -538,7 +538,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       },
                       child: Container(
                         height: Res.height(56),
-                        color: secondaryColor,
+                        color: AppColors.secondaryColor,
                         padding: EdgeInsets.symmetric(
                           horizontal: Res.width(8),
                         ),
@@ -552,7 +552,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             kWi8,
                             Icon(
                               (isAdvancedSearchOpened) ? Icons.arrow_drop_down : Icons.arrow_left,
-                              color: white,
+                              color: AppColors.white,
                             ),
                           ],
                         ),
@@ -571,9 +571,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Column buildAdvancedSearchWidgets() {
     List<String> choices = ["غير محدد", "نعم", "لا"];
-    List<String> ownerShipTypesNames = ownershipsTypes.map((e) => e.name).toList();
+    List<String> ownerShipTypesNames = ownershipsTypes.map((e) => e.getName(true)).toList();
     ownerShipTypesNames.insert(0, "غير محدد");
-    List<String> interiorStatusesNames = interiorStatuses.map((e) => e.name).toList();
+    List<String> interiorStatusesNames = interiorStatuses.map((e) => e.getName(true)).toList();
     interiorStatusesNames.insert(0, "غير محدد");
 
     return Column(

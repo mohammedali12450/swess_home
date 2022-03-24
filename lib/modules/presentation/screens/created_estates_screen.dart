@@ -52,7 +52,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: Res.height(75),
-        backgroundColor: secondaryColor,
+        backgroundColor: AppColors.secondaryColor,
         automaticallyImplyLeading: false,
         actions: [
           Container(
@@ -61,7 +61,9 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
             ),
             child: IconButton(
               icon: const Icon(Icons.arrow_forward),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context) ;
+              },
             ),
           ),
         ],
@@ -75,7 +77,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
         ),
       ),
       body: RefreshIndicator(
-        color: secondaryColor,
+        color: AppColors.secondaryColor,
         onRefresh: () async {
           _onRefresh();
         },
@@ -109,13 +111,13 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
                         Icon(
                           Icons.error_outline,
                           size: screenWidth / 2,
-                          color: secondaryColor.withOpacity(0.64),
+                          color: AppColors.secondaryColor.withOpacity(0.64),
                         ),
                         kHe24,
                         ResText(
                           "! لا يوجد لديك عروض عقارية",
                           textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-                            color: black.withOpacity(0.48),
+                            color: AppColors.black.withOpacity(0.48),
                           ),
                         ),
                       ],

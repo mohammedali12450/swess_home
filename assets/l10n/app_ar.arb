@@ -1,0 +1,274 @@
+{
+  "language": "العربية",
+  "welcome": "أهلا بكم",
+  "post_estate": "نشر عقار",
+  "application_name": "سويس أوفيس",
+  "personal_account": "حسابي",
+  "rate": "التقييم",
+  "candidates_count": "عدد الترشيحات",
+  "estate_offers_count": "عدد العروض العقارية",
+  "buy_more": "شراء عدد إضافي",
+  "subscription_contract": "عقد الاشتراك",
+  "my_estates": "عقاراتي",
+  "statistics": "الإحصائيات",
+  "log_out": "تسجيل الخروج",
+  "gold": "الذهبي",
+  "silver": "الفضي",
+  "bronze": "البرونزي",
+  "free": "المجاني",
+  "settings": "الإعدادات",
+  "share": "مشاركة",
+  "language_word": "اللغات",
+  "changing_language": "تغيير اللغة",
+  "dark_mode": "الوضع الليلي",
+  "light_mode": "الوضع النهاري",
+  "automatic": "تلقائي",
+  "create_account": "إنشاء حساب",
+  "creating_account": "جاري إنشاء حساب",
+  "sign_in": "تسجيل الدخول",
+  "signing_in": "جاري تسجيل الدخول",
+  "mobile_number": "رقم الموبايل",
+  "enter_mobile_number": "أدخل رقم موبايل مالك المكتب",
+  "password": "كلمة المرور",
+  "enter_password": "أدخل كلمة المرور",
+  "company_password": "كلمة مرور الشركة",
+  "enter_company_password": "أدخل كلمة مرور الشركة",
+  "estate_office_name": "اسم المكتب العقاري",
+  "enter_estate_office_name": "أدخل اسم المكتب العقاري",
+  "office_location": "مكان المكتب",
+  "enter_office_location": "أدخل مكان المكتب",
+  "estate_office_phone": "رقم هاتف المكتب",
+  "enter_estate_office_phone": "أدخل رقم هاتف المكتب",
+  "estate_office_logo": "شعار المكتب العقاري",
+  "optional": "اختياري",
+  "tap_to_choice_an_image": "انقر لإختيار صورة",
+  "detect_location": "تحديد الموقع",
+  "change_image": "تغيير الصورة",
+  "invalid_mobile_number": "هذا الرقم غير صالح",
+  "clients_orders": "طلبات المستخدمين",
+  "estate_offer_creating": "إنشاء العروض العقارية",
+  "start_now": "إبدأ الآن",
+  "create_estate_introduction": "يمكنك إنشاء عرض مميز للعقار الذي ترغب بنشره في التطبيق بخطوات سهلة وبسيطة",
+  "estate_type": "نوع العقار",
+  "offer_type": "نوع العرض",
+  "next": "التالي",
+  "estate_area": "مساحة العقار",
+  "estate_price": "سعر العقار",
+  "estate_rent_price": "سعر إيجار العقار",
+  "estate_rent_period": "مدة إيجار العقار",
+  "rooms_count": "عدد الغرف",
+  "floor_number": "رقم الطابق",
+  "estate_location": "مكان العقار",
+  "estate_location_hint": "انقر لتحديد مكان العقار",
+  "nearby_places": "الأماكن القريبة من العقار",
+  "add": "إضافة",
+  "estate_position": "موقع العقار",
+  "estate_position_declaring": "يمكنك تزويد موقع العقار لمعلومات أكثر دقة.",
+  "press_to_detect_position": "انقر لتحديد الموقع",
+  "ownership_type": "نوع الملكية",
+  "interior_status": "حالة العقار",
+  "is_the_estate_furnished": "هل العقار مفروش؟",
+  "is_the_estate_on_beach": "هل العقار مطل على الشاطئ؟",
+  "is_the_estate_has_pool": "هل العقار يحوي مسبح؟",
+  "yes": "نعم",
+  "no": "لا",
+  "property_images": "صور العقار",
+  "property_street_images": "صور شارع العقار",
+  "floor_plan_property_images": "صور مخطط العقار",
+  "max_count_of_images": "الحد الأعلى {count} صور",
+  "@max_count_of_images": {
+    "description": "",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "min_count_of_images": "الحد الأدنى {count} صور",
+  "@min_count_of_images": {
+    "description": "",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "range_count_of_images": "من {min} إلى {max} صور",
+  "@range_count_of_images": {
+    "description": "",
+    "placeholders": {
+      "min": {
+        "type": "String",
+        "example": "example"
+      },
+      "max": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "estate_description": "وصف العقار",
+  "estate_description_hint": "أدخل وصف إضافي لعقارك",
+  "create_estate": "إنشاء العرض العقاري",
+  "step_1": "الخطوة الأولى",
+  "step_2": "الخطوة الثانية",
+  "step_3": "الخطوة الثالثة",
+  "step_4": "الخطوة الرابعة",
+  "step_5": "الخطوة الخامسة",
+  "step_6": "الخطوة السادسة",
+  "syrian_currency": "ل.س",
+  "lebanon_currency": "ل.ل",
+  "this_field_is_required": "هذا الحقل مطلوب",
+  "enter_location_name": "أدخل اسم المنطقة",
+  "compressing_images": "جاري ضغط الصور",
+  "send_estate": "إرسال العرض العقاري",
+  "congratulations": "مبروك",
+  "sending_estate": "جاري إرسال العرض العقاري",
+  "finish_send_estate": "تم إنشاء العرض العقاري وإرساله إلى النظام, ستتم مراجعة عرضك العقاري خلال مدة قصيرة.",
+  "ok": "تم",
+  "accepted_estates": "العقارات المقبولة",
+  "pending_estates": "العقارات قيد الانتظار",
+  "rejected_estates": "العقارات المرفوضة",
+  "users_estates": "عقارات المستخدمين",
+  "deleted_estates": "العقارات المحذوفة",
+  "refresh": "تحديث",
+  "error_happened_when_executing_operation": "حدث خطأ أثناء تنفيذ العملية",
+  "error_happened_when_connecting_with_server": "حدث خطأ أثناء الاتصال بالخادم",
+  "have_not_accepted": "ليس لديك عقارات مقبولة",
+  "have_not_rejected": "ليس لديك عقارات مرفوضة",
+  "have_not_deleted": "ليس لديك عقارات محذوفة",
+  "have_not_pending": "ليس لديك عقارات قيد الانتظار",
+  "have_not_users_estates": "ليس لديك عقارات من المستخدمين بعد",
+  "delete": "حذف",
+  "restore": "استعادة",
+  "edit": "تعديل",
+  "accept": "قبول",
+  "reject": "رفض",
+  "adding_date": "تاريخ الإضافة",
+  "estate_is_being_processed": "جاري معالجة العرض العقاري، سيتم إرسال إشعار عند تفعيله",
+  "reject_reason": "سبب الرفض",
+  "repost": "إعادة النشر",
+  "estate_details": "تفاصيل العقار",
+  "estate_offer_place_sentence": " {estate_type} لل{estate_offer} في {place}",
+  "@estate_offer_place_sentence": {
+    "description": "",
+    "placeholders": {
+      "estate_type": {
+        "type": "String",
+        "example": "example"
+      },
+      "estate_offer": {
+        "type": "String",
+        "example": "example"
+      },
+      "place": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "estate_offer_sentence": "{estate_type} لل{estate_offer}",
+  "@estate_offer_sentence": {
+    "description": "",
+    "placeholders": {
+      "estate_type": {
+        "type": "String",
+        "example": "example"
+      },
+      "estate_offer": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "furnished": "مفروش",
+  "on_beach": "يطل على الشاطئ",
+  "has_swimming_pool": "يحوي مسبح",
+  "image_counting": "الصورة {current} من {total}",
+  "@image_counting": {
+    "description": "",
+    "placeholders": {
+      "current": {
+        "type": "String",
+        "example": "example"
+      },
+      "total": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "new_notification": "إشعار جديد",
+  "you_have_not_notifications": "ليس لديك إشعارات",
+  "confirmation": "تأكيد",
+  "delete_confirmation": "هل تريد حذف هذا العقار؟",
+  "error": "خطأ",
+  "select_language": "قم بتحديد اللغة",
+  "check_your_internet_connection": "تحقق من اتصالك بشبكة الإنترنت",
+  "restart_application": "إعادة تشغيل التطبيق",
+  "no_clients_orders": "لا يوجد طلبات من المستخدمين",
+  "this_feature_will_be_activated_soon": "سيتم تفعيل هذه الميزة قريبا",
+  "buy_candidates": "شراء ترشيحات",
+  "buy_offers": "شراء عروض",
+  "select_package_to_buy": "قم بتحديد الباقة التي تريد شراؤها",
+  "packets_offer": "شراء {count} {product} بسعر  {price} {currency}",
+  "@packets_offer": {
+    "description": "",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "example"
+      },
+      "product": {
+        "type": "String",
+        "example": "example"
+      },
+      "price": {
+        "type": "String",
+        "example": "example"
+      },
+      "currency": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "buy": "شراء",
+  "offers": "عروض",
+  "candidates": "ترشيحات",
+  "buy_successfully": "تمت عملية الشراء بنجاح, سيصلك إشعار عند تفعيل الباقة",
+  "select_packet_size_first": "يجب تحديد حجم الباقة أولا",
+  "buy_packet_confirmation": "هل تريد شراء هذه الباقة؟",
+  "currency_over_period": "{currency} / {period}",
+  "@currency_over_period": {
+    "description": "des",
+    "placeholders": {
+      "currency": {
+        "type": "String",
+        "example": "example"
+      },
+      "period": {
+        "type": "String",
+        "example": "example"
+      }
+    }
+  },
+  "repost_message": "تم إعادة نشر العقار",
+  "edit_message": "تم إرسال طلب التعديل",
+  "property_has_been_located": "تم تحديد موقع العقار",
+  "edit_estate": "تعديل العقار",
+  "unable_to_modify": "غير قابل للتعديل",
+  "cant_modify_this_feature": "لا يمكن تعديل هذه الخاصية",
+  "send_request": "إرسال الطلب",
+  "wait_compress_message": "الرجاء انتظار عملية الضغط",
+  "loading_map": "جاري تحميل الخريطة",
+  "position_detected": "تم تحديد الموقع",
+  "nearby_place_hint": "أدخل اسم المكان",
+  "repeated_place": "هذا المكان موجود مسبقا",
+  "notes": "ملاحظات",
+  "candidate_estate": "ترشيح عقار",
+  "price_domain": "مجال السعر",
+  "candidate": "ترشيح"
+}

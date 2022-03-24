@@ -58,7 +58,7 @@ class _MyDrawerState extends State<MyDrawer> {
               height: Res.height(340),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [secondaryColor, lastColor],
+                    colors: [AppColors.secondaryColor, AppColors.lastColor],
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter),
               ),
@@ -67,7 +67,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: white),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.white),
                           child: Image.asset(
                             swessHomeIconPath,
                             width: 100,
@@ -92,7 +92,7 @@ class _MyDrawerState extends State<MyDrawer> {
                             textStyle: textStyling(S.s16, W.w5, C.c2),
                           ),
                           width: Res.width(180),
-                          color: white,
+                          color: AppColors.white,
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -111,7 +111,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       children: [
                         kHe24,
                         Container(
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: white),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.white),
                           child: Image.asset(
                             swessHomeIconPath,
                             width: 100,
@@ -194,7 +194,7 @@ class _MyDrawerState extends State<MyDrawer> {
                           textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
                         ),
                         width: Res.width(140),
-                        color: secondaryColor,
+                        color: AppColors.secondaryColor,
                         onPressed: () {
                           Navigator.pop(context);
                         },
@@ -205,7 +205,7 @@ class _MyDrawerState extends State<MyDrawer> {
                             builder: (_, isLogoutLoading) {
                               return (isLogoutLoading)
                                   ? const SpinKitWave(
-                                      color: white,
+                                      color: AppColors.white,
                                       size: 16,
                                     )
                                   : ResText(
@@ -215,7 +215,7 @@ class _MyDrawerState extends State<MyDrawer> {
                                     );
                             }),
                         width: Res.width(140),
-                        color: secondaryColor,
+                        color: AppColors.secondaryColor,
                         onPressed: () async {
                           isLogoutLoadingCubit.setState(true);
                           await _logout();
@@ -286,14 +286,14 @@ class RowInformation extends StatelessWidget {
                   size: Res.width(32),
                 ),
                 const Divider(
-                  color: black,
+                  color: AppColors.black,
                 ),
               ],
             ),
           ),
           kHe12,
           const Divider(
-            color: black,
+            color: AppColors.black,
             height: 1,
           ),
         ],

@@ -1,23 +1,26 @@
 class PriceDomain {
   int id;
+
   String min;
   String max;
 
-  String getTextPriceDomain() {
+  PriceDomain({required this.id, required this.min, required this.max});
+
+  String getTextPriceDomain(bool isArabic) {
     if (min == "0" && max == "999999999999999999") {
-      return "غير محدد";
+      return isArabic? "غير محدد" : "undefined";
     }
     if (min == "0") {
-      return "أقل من " + max;
+      return isArabic ? ("أقل من " + max) : ("less than $max");
     }
     if (max == "999999999999999999") {
-      return "أكثر من " + min;
+      return isArabic ? ("أكثر من " + min) : ("more than $min") ;
     }
 
-    return "بين " + min + " و " + max;
+    return isArabic ? ("بين " + min + " و " + max) : ("between $min and $max");
   }
 
-  PriceDomain({required this.id, required this.min, required this.max});
+
 
   factory PriceDomain.fromJson(json) {
     return PriceDomain(

@@ -143,7 +143,7 @@ class MapSampleState extends State<MapSample> {
                         Container(
                           width: screenWidth,
                           height: fullScreenHeight,
-                          color: black.withOpacity(0.72),
+                          color: AppColors.black.withOpacity(0.72),
                         ),
                       // Floating buttons:
                       Positioned.fill(
@@ -157,15 +157,15 @@ class MapSampleState extends State<MapSample> {
                                 padding: kSmallAllPadding,
                                 decoration: BoxDecoration(
                                   border: (tutorialStep == TutorialStep.zooming)
-                                      ? Border.all(color: white, width: 2)
+                                      ? Border.all(color: AppColors.white, width: 2)
                                       : Border.all(color: Colors.transparent, width: 2),
                                 ),
                                 child: FloatingActionButton(
                                   heroTag: "btn2",
-                                  backgroundColor: secondaryColor,
+                                  backgroundColor: AppColors.secondaryColor,
                                   child: Icon(
                                     Icons.remove,
-                                    color: white,
+                                    color: AppColors.white,
                                     size: Res.width(32),
                                   ),
                                   onPressed: () {
@@ -184,15 +184,15 @@ class MapSampleState extends State<MapSample> {
                                 height: Res.width(108),
                                 decoration: BoxDecoration(
                                   border: (tutorialStep == TutorialStep.finish)
-                                      ? Border.all(color: white, width: 2)
+                                      ? Border.all(color: AppColors.white, width: 2)
                                       : Border.all(color: Colors.transparent, width: 2),
                                 ),
                                 child: FloatingActionButton(
                                   heroTag: "btn3",
-                                  backgroundColor: thirdColor,
+                                  backgroundColor: AppColors.thirdColor,
                                   child: Icon(
                                     Icons.check,
-                                    color: secondaryColor,
+                                    color: AppColors.secondaryColor,
                                     size: Res.width(36),
                                   ),
                                   onPressed: () {
@@ -211,15 +211,15 @@ class MapSampleState extends State<MapSample> {
                                 padding: kSmallAllPadding,
                                 decoration: BoxDecoration(
                                   border: (tutorialStep == TutorialStep.zooming)
-                                      ? Border.all(color: white, width: 2)
+                                      ? Border.all(color: AppColors.white, width: 2)
                                       : Border.all(color: Colors.transparent, width: 2),
                                 ),
                                 child: FloatingActionButton(
                                   heroTag: "btn1",
-                                  backgroundColor: secondaryColor,
+                                  backgroundColor: AppColors.secondaryColor,
                                   child: Icon(
                                     Icons.add,
-                                    color: white,
+                                    color: AppColors.white,
                                     size: Res.width(32),
                                   ),
                                   onPressed: () {

@@ -45,7 +45,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: Res.height(75),
-          backgroundColor: secondaryColor,
+          backgroundColor: AppColors.secondaryColor,
           automaticallyImplyLeading: false,
           actions: [
             Container(

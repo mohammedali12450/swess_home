@@ -102,9 +102,9 @@ class AppRouter {
             builder: (context) {
               initializeApplicationConstants(context);
               return AnimatedSplashScreen.withScreenFunction(
-                backgroundColor: baseColor,
+                backgroundColor: AppColors.baseColor,
                 splash: SpinKitFoldingCube(
-                  color: secondaryColor,
+                  color: AppColors.secondaryColor,
                   size: Res.width(screenWidth / 4),
                 ),
                 splashIconSize: Res.width(screenWidth / 1.5),
@@ -296,7 +296,7 @@ class AppRouter {
             onPressed: () {
               Navigator.pop(context);
             },
-            color: secondaryColor,
+            color: AppColors.secondaryColor,
           )
         ],
       ),

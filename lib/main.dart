@@ -61,7 +61,11 @@ void main() async {
 
   // Run application:
   if (!_clearSharedPreferences) {
-    runApp(Phoenix(child: const MyApp()));
+    runApp(
+      Phoenix(
+        child: const MyApp(),
+      ),
+    );
   }
 }
 
@@ -89,7 +93,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     notificationsCubit = NotificationsCubit(NotificationsSharedPreferences.getNotificationsCount());
 
     // Firebase messages initializing :
-    initializeFirebaseMessaging() ;
+    initializeFirebaseMessaging();
   }
 
   @override
@@ -181,8 +185,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 
-  Future initializeFirebaseMessaging()async{
-
+  Future initializeFirebaseMessaging() async {
     // initialize firebase messaging :
     messaging = FirebaseMessaging.instance;
     messaging.getToken().then((value) {
@@ -191,7 +194,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     // on foreground message :
     FirebaseMessaging.onMessage.listen(
-          (RemoteMessage message) async {
+      (RemoteMessage message) async {
         RemoteNotification? notification = message.notification;
         AndroidNotification? android = message.notification?.android;
         if (notification != null && android != null) {
@@ -218,7 +221,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     // on message opened App :
     FirebaseMessaging.onMessageOpenedApp.listen(
-          (message) async {
+      (message) async {
         RemoteNotification? notification = message.notification;
         AndroidNotification? android = message.notification?.android;
         if (notification != null && android != null) {}
@@ -248,5 +251,4 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     await NotificationsSharedPreferences.reload();
     notificationsCubit.checkNewNotifications();
   }
-
 }

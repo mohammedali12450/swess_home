@@ -1,8 +1,3 @@
-
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
@@ -19,14 +14,21 @@ class NotificationCard extends StatelessWidget {
 
   final bool isNew;
 
+  final Function() onTap;
+
   const NotificationCard(
-      {Key? key, required this.title, required this.body, required this.date, required this.isNew})
+      {Key? key,
+      required this.title,
+      required this.body,
+      required this.date,
+      required this.isNew,
+      required this.onTap})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       child: Stack(
         children: [
           Container(
@@ -34,7 +36,7 @@ class NotificationCard extends StatelessWidget {
             padding: kMediumSymHeight,
             margin: const EdgeInsets.symmetric(vertical: 3),
             decoration: BoxDecoration(
-              color: thirdColor.withOpacity(0.18),
+              color: AppColors.thirdColor.withOpacity(0.18),
               borderRadius: const BorderRadius.all(
                 Radius.circular(12),
               ),
@@ -49,7 +51,7 @@ class NotificationCard extends StatelessWidget {
                   title,
                   textAlign: TextAlign.right,
                   textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-                      shadows: [BoxShadow(color: black.withOpacity(0.24), blurRadius: 4)]),
+                      shadows: [BoxShadow(color: AppColors.black.withOpacity(0.24), blurRadius: 4)]),
                 ),
                 kHe16,
                 Padding(
@@ -67,7 +69,7 @@ class NotificationCard extends StatelessWidget {
                 ResText(
                   date,
                   textStyle: textStyling(S.s14, W.w4, C.bl, fontFamily: F.roboto).copyWith(
-                    color: black.withOpacity(0.48),
+                    color: AppColors.black.withOpacity(0.48),
                   ),
                   textAlign: TextAlign.left,
                 ),
@@ -85,13 +87,13 @@ class NotificationCard extends StatelessWidget {
                   horizontal: Res.width(8),
                 ),
                 decoration: BoxDecoration(
-                    color: secondaryColor,
+                    color: AppColors.secondaryColor,
                     borderRadius: const BorderRadius.all(
                       Radius.circular(4),
                     ),
                     boxShadow: [
                       BoxShadow(
-                          color: black.withOpacity(0.24), offset: const Offset(0, 2), blurRadius: 4)
+                          color: AppColors.black.withOpacity(0.24), offset: const Offset(0, 2), blurRadius: 4)
                     ]),
                 child: Center(
                   child: ResText(
