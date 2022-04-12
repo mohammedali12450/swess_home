@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_state.dart';
@@ -10,10 +11,12 @@ class RecentEstatesOrdersBloc extends Bloc<RecentEstatesOrdersEvent, RecentEstat
 
   RecentEstatesOrdersBloc(this.estateOrderRepository) : super(RecentEstatesOrdersFetchNone()) {
     on<RecentEstatesOrdersFetchStarted>((event, emit) async {
-      emit(RecentEstatesOrdersFetchProgress()) ;
+      emit(RecentEstatesOrdersFetchProgress());
       try {
         List<EstateOrder> orders = await estateOrderRepository.getRecentEstateOrders(event.token);
         emit(RecentEstatesOrdersFetchComplete(estateOrders: orders));
+      } on ConnectionException catch (e, stack) {
+        emit(RecentEstatesOrdersFetchError(error: e.errorMessage, isConnectionError: true));
       } catch (e, stack) {
         if (e is GeneralException) {
           emit(RecentEstatesOrdersFetchError(error: e.errorMessage));

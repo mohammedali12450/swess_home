@@ -17,7 +17,7 @@ class EstateOrderBloc extends Bloc<EstateOrderEvent, EstateOrderState> {
         await estateOrderRepository.sendEstateOrder(event.order, event.token);
         emit(SendEstateOrderComplete());
       } on ConnectionException catch (e) {
-        emit(SendEstateOrderError(error: e.errorMessage));
+        emit(SendEstateOrderError(error: e.errorMessage, isConnectionError: true));
       } catch (e, stack) {
         if (e is GeneralException) {
           emit(SendEstateOrderError(error: e.errorMessage));

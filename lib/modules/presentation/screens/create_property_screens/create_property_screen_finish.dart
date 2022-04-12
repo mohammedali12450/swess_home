@@ -59,9 +59,12 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
   Widget build(BuildContext context) {
     return BlocConsumer<SendEstateBloc, SendEstateState>(
       bloc: _sendEstateBloc,
-      listener: (_, estateSendState) {
+      listener: (_, estateSendState)async {
         if (estateSendState is SendEstateError) {
-          showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, estateSendState.errorMessage);
+          var error = estateSendState.isConnectionError
+              ? AppLocalizations.of(context)!.no_internet_connection
+              : estateSendState.errorMessage;
+          await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
         }
       },
       builder: (_, estateSendState) {

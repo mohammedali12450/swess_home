@@ -215,10 +215,13 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
       bloc: searchOfficesBloc,
       listener: (_, searchResultsState) {
         if (searchResultsState is SearchOfficesFetchError) {
+          var error = searchResultsState.isConnectionError
+              ? AppLocalizations.of(context)!.no_internet_connection
+              : searchResultsState.errorMessage;
           showWonderfulAlertDialog(
             context,
             AppLocalizations.of(context)!.error,
-            searchResultsState.errorMessage,
+            error,
             onDefaultButtonPressed: () {
               int count = 0;
               Navigator.popUntil(context, (route) => count++ == 2);

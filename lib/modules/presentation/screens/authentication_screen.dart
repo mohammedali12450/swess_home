@@ -115,6 +115,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           BlocListener<UserRegisterBloc, UserRegisterState>(
             listener: (_, registerState) {
               if (registerState is UserRegisterError) {
+                if (registerState.isConnectionError) {
+                  showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.error,
+                    AppLocalizations.of(context)!.no_internet_connection,
+                  );
+                  return;
+                }
+
                 if (registerState.errorResponse != null) {
                   signUpErrorHandling(registerState.errorResponse);
                 } else if (registerState.errorMessage != null) {
@@ -145,6 +154,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           BlocListener<UserLoginBloc, UserLoginState>(
             listener: (_, loginState) {
               if (loginState is UserLoginError) {
+                if (loginState.isConnectionError) {
+                  showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.error,
+                    AppLocalizations.of(context)!.no_internet_connection,
+                  );
+                  return;
+                }
+
                 if (loginState.errorResponse != null) {
                   loginErrorHandling(loginState.errorResponse);
                 } else if (loginState.errorMessage != null) {
@@ -340,6 +358,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 },
               ),
               onPressed: () async {
+                if (BlocProvider.of<UserLoginBloc>(context).state is UserLoginProgress) {
+                  return;
+                }
+
                 // validators :
                 if (!await getFieldsValidationSignIn()) {
                   return;
@@ -347,8 +369,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 print(phoneNumber);
                 print(passwordControllerLogin.text);
                 userLoginBloc.add(UserLoginStarted(
-                    authentication: phoneNumber,
-                    password: passwordControllerLogin.text));
+                    authentication: phoneNumber, password: passwordControllerLogin.text));
               },
             ),
           ),

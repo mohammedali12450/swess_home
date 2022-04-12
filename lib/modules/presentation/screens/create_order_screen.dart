@@ -79,7 +79,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
 
     return BlocListener<EstateOrderBloc, EstateOrderState>(
-      listener: (_, estateOrderState) {
+      listener: (_, estateOrderState)async {
         if (estateOrderState is SendEstateOrderComplete) {
           Navigator.pushNamed(context, AfterEstateOrderScreen.id);
         } else if (estateOrderState is SendEstateOrderError) {
@@ -110,8 +110,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               ],
             );
           } else {
-            showWonderfulAlertDialog(
-                context, AppLocalizations.of(context)!.error, estateOrderState.error);
+            var error = estateOrderState.isConnectionError
+                ? AppLocalizations.of(context)!.no_internet_connection
+                : estateOrderState.error;
+            await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
           }
         }
       },

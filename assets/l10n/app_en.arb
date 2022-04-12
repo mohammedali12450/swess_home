@@ -431,5 +431,6 @@
   "faq_4_title" : "What is the 'Real Estate Demand' feature and when should I use it?",
   "faq_4_content": "If you are looking for a property with certain specifications, but you did not find it through the search, you can click on the 'Real Estate Requests' feature and type in it the specifications of the property you are looking for so that your request will reach all the subscribed real estate offices.",
   "faq_5_title" : "How can I contact the real estate office?",
-  "faq_5_content": "You can search for a specific real estate office by clicking on the Publish your real estate offer feature and typing the name of the office you want to look up. You can also search for real estate offices located in a specific area by typing the name of the area. Moreover, the phone number of the real estate will appear with each offer of its own."
+  "faq_5_content": "You can search for a specific real estate office by clicking on the Publish your real estate offer feature and typing the name of the office you want to look up. You can also search for real estate offices located in a specific area by typing the name of the area. Moreover, the phone number of the real estate will appear with each offer of its own.",
+  "no_internet_connection" : "Check your internet connection !"
 }

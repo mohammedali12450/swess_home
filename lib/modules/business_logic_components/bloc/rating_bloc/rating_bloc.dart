@@ -16,7 +16,7 @@ class RatingBloc extends Bloc<RatingEvent, RatingState> {
           await ratingRepository.sendRate(event.token, event.notes, event.rate);
           emit(RatingComplete());
         } on ConnectionException catch (e) {
-          emit(RatingError(error: e.errorMessage));
+          emit(RatingError(error: e.errorMessage , isConnectionError: true));
         } catch (e) {
           if (e is GeneralException) {
             emit(RatingError(error: e.errorMessage));

@@ -16,7 +16,7 @@ class SavedEstatesBloc extends Bloc<SavedEstatesEvent, SavedEstatesState> {
         List<Estate> savedEstates = await estateRepository.getSavedEstates(event.token);
         emit(SavedEstatesFetchComplete(savedEstates: savedEstates));
       } on ConnectionException catch (e) {
-        emit(SavedEstatesFetchError(error: e.errorMessage));
+        emit(SavedEstatesFetchError(error: e.errorMessage , isConnectionError: true));
       } catch (e) {
         if (e is GeneralException) {
           emit(SavedEstatesFetchError(error: e.errorMessage));

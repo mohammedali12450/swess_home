@@ -17,7 +17,7 @@ class SaveAndUnSaveEstateBloc extends Bloc<SaveAndUnSaveEstateEvent, SaveAndUnSa
         await estateRepository.saveEstate(event.token, event.estateId);
         emit(EstateSaved());
       } on ConnectionException catch (e) {
-        emit(EstateSaveAndUnSaveError(error: e.errorMessage));
+        emit(EstateSaveAndUnSaveError(error: e.errorMessage , isConnectionError: true));
       } catch (e, stack) {
         if (e is GeneralException) {
           emit(EstateSaveAndUnSaveError(error: e.errorMessage));

@@ -14,6 +14,7 @@ import 'package:swesshome/modules/data/repositories/estate_order_repository.dart
 import 'package:swesshome/modules/presentation/widgets/estate_order_card.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/clients_orders_shimmer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
 class RecentEstateOrdersScreen extends StatefulWidget {
   static const String id = "RecentEstateOrdersScreen";
@@ -49,8 +50,16 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen> {
             AppLocalizations.of(context)!.recent_created_orders,
           ),
         ),
-        body: BlocBuilder<RecentEstatesOrdersBloc, RecentEstatesOrdersState>(
+        body: BlocConsumer<RecentEstatesOrdersBloc, RecentEstatesOrdersState>(
           bloc: _recentEstatesOrdersBloc,
+          listener: (context, recentOrdersState) async {
+            if (recentOrdersState is RecentEstatesOrdersFetchError) {
+              var error = recentOrdersState.isConnectionError
+                  ? AppLocalizations.of(context)!.no_internet_connection
+                  : recentOrdersState.error;
+              await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
+            }
+          },
           builder: (BuildContext context, recentOrdersState) {
             if (recentOrdersState is RecentEstatesOrdersFetchProgress) {
               return const ClientsOrdersShimmer();
@@ -79,15 +88,13 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen> {
                   ],
                 ),
               );
-
             }
 
             return ListView.builder(
-                itemCount: orders.length ,
+                itemCount: orders.length,
                 itemBuilder: (_, index) {
-
-              return EstateOrderCard(estateOrder: orders.elementAt(index));
-            });
+                  return EstateOrderCard(estateOrder: orders.elementAt(index));
+                });
           },
         ),
       ),

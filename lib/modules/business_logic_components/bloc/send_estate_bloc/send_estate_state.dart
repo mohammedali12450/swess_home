@@ -2,8 +2,10 @@ abstract class SendEstateState {}
 
 class SendEstateError extends SendEstateState {
   final String errorMessage;
+  final bool isConnectionError ;
 
-  SendEstateError({required this.errorMessage});
+
+  SendEstateError({required this.errorMessage , this.isConnectionError =false});
 }
 
 class SendEstateComplete extends SendEstateState {}

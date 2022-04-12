@@ -23,7 +23,7 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
         emit(UserLoginComplete());
       } on ConnectionException catch (e) {
         emit(
-          UserLoginError(errorMessage: e.errorMessage),
+          UserLoginError(errorMessage: e.errorMessage , isConnectionError: true),
         );
       } catch (e, stack) {
         if (e is FieldsException) {

@@ -19,7 +19,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
             await notificationRepository.getNotifications(event.token);
         emit(NotificationsFetchComplete(notifications: notifications.reversed.toList()));
       } on ConnectionException catch (e) {
-        emit(NotificationsFetchError(error: e.errorMessage));
+        emit(NotificationsFetchError(error: e.errorMessage , isConnectionError: true));
       } catch (e) {
         if (e is GeneralException) {
           emit(NotificationsFetchError(error: e.errorMessage));

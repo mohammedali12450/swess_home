@@ -6,8 +6,8 @@ class CreatedEstatesFetchProgress extends CreatedEstatesState {}
 
 class CreatedEstatesFetchError extends CreatedEstatesState {
   String error;
-
-  CreatedEstatesFetchError({required this.error});
+  final bool isConnectionError ;
+  CreatedEstatesFetchError({required this.error , this.isConnectionError = false });
 }
 
 class CreatedEstatesFetchComplete extends CreatedEstatesState {

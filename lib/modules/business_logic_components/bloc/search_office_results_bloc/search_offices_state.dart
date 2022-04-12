@@ -7,8 +7,9 @@ class SearchOfficesFetchNone extends SearchOfficesStates {}
 
 class SearchOfficesFetchError extends SearchOfficesStates {
   String errorMessage ;
+  final bool isConnectionError ;
 
-  SearchOfficesFetchError({required this.errorMessage});
+  SearchOfficesFetchError({required this.errorMessage , this.isConnectionError = false});
 }
 
 class SearchOfficesFetchProgress extends SearchOfficesStates {}

@@ -19,7 +19,7 @@ class UserRegisterBloc extends Bloc<UserRegisterEvent, UserRegisterState> {
         emit(UserRegisterComplete(user: registeredUser));
       } on ConnectionException catch (e) {
         emit(
-          UserRegisterError(errorMessage: e.errorMessage),
+          UserRegisterError(errorMessage: e.errorMessage , isConnectionError: true),
         );
       } catch (e) {
         if (e is FieldsException) {

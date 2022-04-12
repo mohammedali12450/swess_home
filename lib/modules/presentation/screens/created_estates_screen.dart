@@ -67,11 +67,15 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
             height: 1.sh - 75.h,
             child: BlocConsumer<CreatedEstatesBloc, CreatedEstatesState>(
               bloc: _createdEstatesBloc,
-              listener: (_, createdEstatesFetchState) {
+              listener: (_, createdEstatesFetchState)async {
                 if (createdEstatesFetchState is CreatedEstatesFetchError) {
-                  showWonderfulAlertDialog(
-                      context, AppLocalizations.of(context)!.error, createdEstatesFetchState.error);
-                }
+                  var error = createdEstatesFetchState.isConnectionError
+                      ? AppLocalizations.of(context)!.no_internet_connection
+                      : createdEstatesFetchState.error;
+                  await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
+
+
+              }
               },
               builder: (_, createdEstatesFetchState) {
                 if (createdEstatesFetchState is CreatedEstatesFetchProgress) {

@@ -15,7 +15,7 @@ class SendEstateBloc extends Bloc<SendEstateEvent, SendEstateState> {
             onSendProgress: event.onSendProgress);
         emit(SendEstateComplete());
       } on ConnectionException catch (e) {
-        emit(SendEstateError(errorMessage: e.errorMessage));
+        emit(SendEstateError(errorMessage: e.errorMessage , isConnectionError: true));
       } catch (e, stack) {
         print(e);
         print(stack);

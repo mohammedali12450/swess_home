@@ -7,8 +7,8 @@ class NotificationsFetchProgress extends NotificationsState {}
 
 class NotificationsFetchError extends NotificationsState {
   String error;
-
-  NotificationsFetchError({required this.error});
+  final bool isConnectionError ;
+  NotificationsFetchError({required this.error , this.isConnectionError = false});
 }
 
 class NotificationsFetchComplete extends NotificationsState {

@@ -14,6 +14,7 @@ class RecentEstatesOrdersFetchComplete extends RecentEstatesOrdersState {
 
 class RecentEstatesOrdersFetchError extends RecentEstatesOrdersState {
   final String error;
+  final bool isConnectionError ;
 
-  RecentEstatesOrdersFetchError({required this.error});
+  RecentEstatesOrdersFetchError({required this.error , this.isConnectionError = false});
 }

@@ -176,10 +176,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                     kWi16,
                     BlocConsumer<LikeAndUnlikeBloc, LikeAndUnlikeState>(
                       bloc: _likeAndUnlikeBloc,
-                      listener: (_, likeAndUnlikeState) {
+                      listener: (_, likeAndUnlikeState) async{
                         if (likeAndUnlikeState is LikeAndUnlikeError) {
-                          showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error,
-                              likeAndUnlikeState.error);
+
+                          var error = likeAndUnlikeState.isConnectionError
+                              ? AppLocalizations.of(context)!.no_internet_connection
+                              : likeAndUnlikeState.error;
+                          await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
                           _likeAndUnlikeBloc
                               .add(ReInitializeLikeState(isLike: widget.office.isLiked));
                         } else if (likeAndUnlikeState is Liked) {
@@ -261,10 +264,14 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                 kHe24,
                 BlocConsumer<EstateBloc, EstateState>(
                   bloc: _estateBloc,
-                  listener: (_, estateState) {
+                  listener: (_, estateState)async {
                     if (estateState is EstateFetchError) {
-                      showWonderfulAlertDialog(
-                          context, AppLocalizations.of(context)!.error, estateState.errorMessage);
+
+                      var error = estateState.isConnectionError
+                          ? AppLocalizations.of(context)!.no_internet_connection
+                          : estateState.errorMessage;
+                      await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
+
                     }
                   },
                   builder: (_, estateState) {

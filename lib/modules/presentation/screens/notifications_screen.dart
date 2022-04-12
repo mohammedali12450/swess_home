@@ -78,11 +78,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       vertical: 8.h,
                     ),
                     child: BlocConsumer<NotificationsBloc, NotificationsState>(
-                        listener: (_, notificationsState) {
+                        listener: (_, notificationsState)async {
                       if (notificationsState is NotificationsFetchError) {
-                        showWonderfulAlertDialog(
-                            context, AppLocalizations.of(context)!.error, notificationsState.error);
-                      }
+                        var error = notificationsState.isConnectionError
+                            ? AppLocalizations.of(context)!.no_internet_connection
+                            : notificationsState.error;
+                        await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error); }
                     }, builder: (context, notificationsState) {
                       if (notificationsState is NotificationsFetchProgress) {
                         return const NotificationsShimmer();

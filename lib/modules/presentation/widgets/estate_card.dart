@@ -458,11 +458,13 @@ class _EstateCardState extends State<EstateCard> {
               children: [
                 BlocConsumer<SaveAndUnSaveEstateBloc, SaveAndUnSaveEstateState>(
                   bloc: _saveAndUnSaveEstateBloc,
-                  listener: (_, saveAndUnSaveState) {
+                  listener: (_, saveAndUnSaveState) async{
                     if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
-                      showWonderfulAlertDialog(
-                          context, AppLocalizations.of(context)!.error, saveAndUnSaveState.error);
-                      _saveAndUnSaveEstateBloc.add(
+                      var error = saveAndUnSaveState.isConnectionError
+                          ? AppLocalizations.of(context)!.no_internet_connection
+                          : saveAndUnSaveState.error;
+                      await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
+                    _saveAndUnSaveEstateBloc.add(
                         ReInitializeSaveState(isSaved: widget.estate.isSaved!),
                       );
                     }
@@ -479,7 +481,7 @@ class _EstateCardState extends State<EstateCard> {
                         if (userToken == null) {
                           showWonderfulAlertDialog(
                             context,
-                            AppLocalizations.of(context)!.error,
+                            AppLocalizations.of(context)!.confirmation  ,
                             AppLocalizations.of(context)!.this_features_require_login,
                             removeDefaultButton: true,
                             width: 400.w,
@@ -555,11 +557,13 @@ class _EstateCardState extends State<EstateCard> {
                 ),
                 BlocConsumer<LikeAndUnlikeBloc, LikeAndUnlikeState>(
                   bloc: _likeAndUnlikeBloc,
-                  listener: (_, likeAndUnlikeState) {
+                  listener: (_, likeAndUnlikeState)async {
                     if (likeAndUnlikeState is LikeAndUnlikeError) {
-                      showWonderfulAlertDialog(
-                          context, AppLocalizations.of(context)!.error, likeAndUnlikeState.error);
-                      _likeAndUnlikeBloc.add(
+                      var error = likeAndUnlikeState.isConnectionError
+                          ? AppLocalizations.of(context)!.no_internet_connection
+                          : likeAndUnlikeState.error;
+                      await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
+                    _likeAndUnlikeBloc.add(
                         ReInitializeLikeState(isLike: widget.estate.isLiked!),
                       );
                     }

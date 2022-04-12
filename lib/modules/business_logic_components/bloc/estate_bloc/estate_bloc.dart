@@ -23,7 +23,7 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
           page++;
         } on ConnectionException catch (e) {
           emit(
-            EstateFetchError(errorMessage: e.errorMessage),
+            EstateFetchError(errorMessage: e.errorMessage , isConnectionError: true),
           );
         } on GeneralException catch (e) {
           emit(

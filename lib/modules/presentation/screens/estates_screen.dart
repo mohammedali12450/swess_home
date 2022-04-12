@@ -98,16 +98,17 @@ class _EstatesScreenState extends State<EstatesScreen> {
               EstateRepository(),
             )..add(widget.searchData),
             child: BlocConsumer<EstateBloc, EstateState>(
-              listener: (_, estateFetchState) {
+              listener: (_, estateFetchState) async{
                 if (estateFetchState is EstateFetchComplete) {
                   if (estateFetchState.estates.isEmpty && estates.isNotEmpty) {
                     isEstatesFinished = true;
                   }
                 }
                 if (estateFetchState is EstateFetchError) {
-                  showWonderfulAlertDialog(
-                      context, AppLocalizations.of(context)!.error, estateFetchState.errorMessage);
-                }
+                  var error = estateFetchState.isConnectionError
+                      ? AppLocalizations.of(context)!.no_internet_connection
+                      : estateFetchState.errorMessage;
+                  await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);  }
               },
               builder: (context, estatesFetchState) {
                 if (estatesFetchState is EstateFetchNone ||

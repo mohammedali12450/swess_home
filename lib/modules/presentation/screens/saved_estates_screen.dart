@@ -44,7 +44,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            AppLocalizations.of(context)!.saved_estates ,
+            AppLocalizations.of(context)!.saved_estates,
           ),
         ),
         body: RefreshIndicator(
@@ -65,9 +65,13 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
               padding: kMediumSymHeight,
               child: BlocConsumer<SavedEstatesBloc, SavedEstatesState>(
                 bloc: _savedEstatesBloc,
-                listener: (_, savedEstatesState) {
+                listener: (_, savedEstatesState) async {
                   if (savedEstatesState is SavedEstatesFetchError) {
-                    showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, savedEstatesState.error);
+                    var error = savedEstatesState.isConnectionError
+                        ? AppLocalizations.of(context)!.no_internet_connection
+                        : savedEstatesState.error;
+                    await showWonderfulAlertDialog(
+                        context, AppLocalizations.of(context)!.error, error);
                   }
                 },
                 builder: (BuildContext context, savedEstatesState) {
@@ -75,7 +79,9 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                     return const PropertyShimmer();
                   }
                   if (savedEstatesState is! SavedEstatesFetchComplete) {
-                    return  FetchResult(content: AppLocalizations.of(context)!.error_happened_when_executing_operation);
+                    return FetchResult(
+                        content:
+                            AppLocalizations.of(context)!.error_happened_when_executing_operation);
                   }
 
                   List<Estate> estates = savedEstatesState.savedEstates;

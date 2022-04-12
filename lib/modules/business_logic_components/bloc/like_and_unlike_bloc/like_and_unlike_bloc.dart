@@ -15,7 +15,7 @@ class LikeAndUnlikeBloc extends Bloc<LikeAndUnlikeEvent, LikeAndUnlikeState> {
         await estateRepository.like(event.token, event.likedObjectId, event.likeType);
         emit(Liked());
       } on ConnectionException catch (e) {
-        emit(LikeAndUnlikeError(error: e.errorMessage));
+        emit(LikeAndUnlikeError(error: e.errorMessage , isConnectionError: true));
       } catch (e, stack) {
         if (e is GeneralException) {
           emit(LikeAndUnlikeError(error: e.errorMessage));

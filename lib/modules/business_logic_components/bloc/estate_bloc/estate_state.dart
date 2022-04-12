@@ -4,8 +4,8 @@ abstract class EstateState {}
 
 class EstateFetchError extends EstateState {
   String errorMessage;
-
-  EstateFetchError({required this.errorMessage});
+  final bool isConnectionError ;
+  EstateFetchError({required this.errorMessage , this.isConnectionError = false});
 }
 
 class EstateFetchComplete extends EstateState {

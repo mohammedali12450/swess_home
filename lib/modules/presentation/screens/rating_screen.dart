@@ -147,8 +147,10 @@ class _RatingScreenState extends State<RatingScreen> {
                       }
 
                       if (ratingState is RatingError) {
-                        await showWonderfulAlertDialog(
-                            context, AppLocalizations.of(context)!.error, ratingState.error);
+                        var error = ratingState.isConnectionError
+                            ? AppLocalizations.of(context)!.no_internet_connection
+                            : ratingState.error;
+                        await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
                       }
                       if (ratingState is RatingComplete) {
                         Fluttertoast.showToast(

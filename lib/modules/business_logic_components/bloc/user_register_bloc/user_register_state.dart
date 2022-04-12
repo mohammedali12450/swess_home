@@ -17,6 +17,8 @@ class UserRegisterComplete extends UserRegisterState{
 class UserRegisterError extends UserRegisterState{
   final String? errorMessage ;
   Map<String , dynamic>? errorResponse;
-  UserRegisterError({this.errorMessage, this.errorResponse});
+  final bool isConnectionError;
+
+  UserRegisterError({this.errorMessage, this.errorResponse , this.isConnectionError = false});
 }
 

@@ -17,7 +17,7 @@ class CreatedEstatesBloc extends Bloc<CreatedEstatesEvent, CreatedEstatesState> 
           List<Estate> estates = await estateRepository.getCreatedEstates(event.token);
           emit(CreatedEstatesFetchComplete(createdEstates: estates));
         } on ConnectionException catch (e) {
-          emit(CreatedEstatesFetchError(error: e.errorMessage));
+          emit(CreatedEstatesFetchError(error: e.errorMessage , isConnectionError: true));
         } catch (e) {
           if (e is GeneralException) {
             emit(CreatedEstatesFetchError(error: e.errorMessage));

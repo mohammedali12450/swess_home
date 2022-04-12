@@ -47,222 +47,217 @@ class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        BlocBuilder<UserLoginBloc, UserLoginState>(
-          builder: (context, userLoginState) {
-            User? user = BlocProvider.of<UserLoginBloc>(context).user;
-            return Container(
-              padding: kMediumSymWidth,
-              alignment: Alignment.topCenter,
-              height: 340.h,
-              decoration: BoxDecoration(
-                color: !isDark
-                    ? Theme.of(context).colorScheme.secondary
-                    : Theme.of(context).colorScheme.secondary,
-                // gradient: LinearGradient(colors: [
-                //   Theme.of(context).colorScheme.primary,
-                //   Theme.of(context).colorScheme.secondary
-                // ], begin: Alignment.bottomCenter, end: Alignment.topCenter),
-              ),
-              child: (user == null)
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isDark
-                                ? Theme.of(context).colorScheme.onBackground
-                                : Colors.black26,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BlocBuilder<UserLoginBloc, UserLoginState>(
+            builder: (context, userLoginState) {
+              User? user = BlocProvider.of<UserLoginBloc>(context).user;
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 36.h, horizontal: 12.w),
+                alignment: Alignment.topCenter,
+                decoration: BoxDecoration(
+                  color: !isDark
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.secondary,
+                ),
+                child: (user == null)
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.white,
+                            ),
+                            child: Image.asset(
+                              swessHomeIconPath,
+                              width: 100.w,
+                              height: 100.w,
+                            ),
                           ),
-                          child: Image.asset(
-                            swessHomeIconPath,
-                            width: 100.w,
-                            height: 100.w,
+                          kHe12,
+                          Text(
+                            AppLocalizations.of(context)!.sign_in,
+                            style: Theme.of(context).textTheme.headline4!.copyWith(
+                                  color: AppColors.white,
+                                ),
                           ),
-                        ),
-                        kHe12,
-                        Text(
-                          AppLocalizations.of(context)!.sign_in,
-                          style: Theme.of(context).textTheme.headline4!.copyWith(
-                                color: Theme.of(context).colorScheme.onBackground,
-                              ),
-                        ),
-                        kHe8,
-                        Text(
-                          AppLocalizations.of(context)!.login_drawer_body,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                                color: Theme.of(context).colorScheme.onBackground,
-                              ),
-                          maxLines: 5,
-                        ),
-                        kHe12,
+                          kHe8,
+                          Text(
+                            AppLocalizations.of(context)!.login_drawer_body,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                              color: AppColors.white,
+                                ),
+                            maxLines: 5,
+                          ),
+                          kHe16,
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: Size(200.w, 56.h),
+                              primary: AppColors.primaryDark
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.sign_in,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1!
+                                  .copyWith(color: AppColors.black),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const AuthenticationScreen(
+                                    popAfterFinish: true,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          kHe24,
+                          Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            child: Image.asset(
+                              swessHomeIconPath,
+                              width: 100.w,
+                              height: 100.w,
+                            ),
+                          ),
+                          kHe24,
+                          Text(
+                            user.userName,
+                            style: Theme.of(context).textTheme.headline4!.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          kHe4,
+                          Text(
+                            user.authentication,
+                            textDirection: TextDirection.ltr,
+                            style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500),
+                          )
+                        ],
+                      ),
+              );
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.saved_estates,
+            iconData: Icons.bookmark_border_outlined,
+            onTap: () {
+              Navigator.pushNamed(context, SavedEstatesScreen.id);
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.recent_created_estates,
+            iconData: Icons.article_outlined,
+            onTap: () {
+              Navigator.pushNamed(context, CreatedEstatesScreen.id);
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.call_us,
+            iconData: Icons.call_outlined,
+            onTap: () {
+              launch(
+                "tel://" +
+                    BlocProvider.of<SystemVariablesBloc>(context)
+                        .systemVariables!
+                        .normalCompanyPhoneNumber,
+              );
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.rate_us,
+            iconData: Icons.star_rate_outlined,
+            onTap: () {
+              Navigator.pushNamed(context, RatingScreen.id);
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.settings,
+            iconData: Icons.settings_outlined,
+            onTap: () {
+              Navigator.pushNamed(context, SettingsScreen.id);
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.help,
+            iconData: Icons.error_outline,
+            onTap: () {
+              Navigator.pushNamed(context, FAQScreen.id);
+            },
+          ),
+          BlocBuilder<UserLoginBloc, UserLoginState>(
+            builder: (context, userLoginState) {
+              User? user = BlocProvider.of<UserLoginBloc>(context).user;
+              if (user != null) {
+                return RowInformation(
+                  content: AppLocalizations.of(context)!.log_out,
+                  iconData: Icons.logout,
+                  onTap: () async {
+                    await showWonderfulAlertDialog(
+                      context,
+                      AppLocalizations.of(context)!.confirmation,
+                      AppLocalizations.of(context)!.logout_confirmation,
+                      removeDefaultButton: true,
+                      width: 400.w,
+                      dialogButtons: [
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            fixedSize: Size(200.w, 56.h),
-                          ),
+                              fixedSize: Size(120.w, 56.h), padding: EdgeInsets.zero),
                           child: Text(
-                            AppLocalizations.of(context)!.sign_in,
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle1!
-                                .copyWith(color: AppColors.white),
+                            AppLocalizations.of(context)!.cancel,
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const AuthenticationScreen(
-                                  popAfterFinish: true,
-                                ),
-                              ),
-                            );
+                            Navigator.pop(context);
+                          },
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              fixedSize: Size(120.w, 56.h), padding: EdgeInsets.zero),
+                          child: BlocBuilder<ChannelCubit, dynamic>(
+                              bloc: isLogoutLoadingCubit,
+                              builder: (_, isLogoutLoading) {
+                                return (isLogoutLoading)
+                                    ? SpinKitWave(
+                                        color: Theme.of(context).colorScheme.background,
+                                        size: 16.w,
+                                      )
+                                    : Text(
+                                        AppLocalizations.of(context)!.log_out,
+                                      );
+                              }),
+                          onPressed: () async {
+                            isLogoutLoadingCubit.setState(true);
+                            await _logout();
+                            isLogoutLoadingCubit.setState(false);
                           },
                         ),
                       ],
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        kHe24,
-                        Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Theme.of(context).colorScheme.background),
-                          child: Image.asset(
-                            swessHomeIconPath,
-                            width: 100,
-                            height: 100,
-                          ),
-                        ),
-                        kHe24,
-                        Text(
-                          user.userName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline4!
-                              .copyWith(color: AppColors.white),
-                        ),
-                        kHe4,
-                        Text(
-                          user.authentication,
-                          textDirection: TextDirection.ltr,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1!
-                              .copyWith(color: AppColors.white),
-                        )
-                      ],
-                    ),
-            );
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.saved_estates,
-          iconData: Icons.bookmark_border_outlined,
-          onTap: () {
-            Navigator.pushNamed(context, SavedEstatesScreen.id);
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.recent_created_estates,
-          iconData: Icons.article_outlined,
-          onTap: () {
-            Navigator.pushNamed(context, CreatedEstatesScreen.id);
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.call_us,
-          iconData: Icons.call_outlined,
-          onTap: () {
-            launch(
-              "tel://" +
-                  BlocProvider.of<SystemVariablesBloc>(context)
-                      .systemVariables!
-                      .normalCompanyPhoneNumber,
-            );
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.rate_us,
-          iconData: Icons.star_rate_outlined,
-          onTap: () {
-            Navigator.pushNamed(context, RatingScreen.id);
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.settings,
-          iconData: Icons.settings_outlined,
-          onTap: () {
-            Navigator.pushNamed(context, SettingsScreen.id);
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.help,
-          iconData: Icons.error_outline,
-          onTap: () {
-            Navigator.pushNamed(context, FAQScreen.id);
-          },
-        ),
-        BlocBuilder<UserLoginBloc, UserLoginState>(
-          builder: (context, userLoginState) {
-            User? user = BlocProvider.of<UserLoginBloc>(context).user;
-            if (user != null) {
-              return RowInformation(
-                content: AppLocalizations.of(context)!.log_out,
-                iconData: Icons.logout,
-                onTap: () async {
-                  await showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.confirmation,
-                    AppLocalizations.of(context)!.logout_confirmation,
-                    removeDefaultButton: true,
-                    width: 400.w,
-                    dialogButtons: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(120.w, 56.h), padding: EdgeInsets.zero),
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(120.w, 56.h), padding: EdgeInsets.zero),
-                        child: BlocBuilder<ChannelCubit, dynamic>(
-                            bloc: isLogoutLoadingCubit,
-                            builder: (_, isLogoutLoading) {
-                              return (isLogoutLoading)
-                                  ? SpinKitWave(
-                                      color: Theme.of(context).colorScheme.background,
-                                      size: 16.w,
-                                    )
-                                  : Text(
-                                      AppLocalizations.of(context)!.log_out,
-                                    );
-                            }),
-                        onPressed: () async {
-                          isLogoutLoadingCubit.setState(true);
-                          await _logout();
-                          isLogoutLoadingCubit.setState(false);
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            }
-            return Container();
-          },
-        ),
-      ],
+                    );
+                  },
+                );
+              }
+              return Container();
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -273,7 +268,11 @@ class _MyDrawerState extends State<MyDrawer> {
         await userRep.logout(_userLoginBloc.user!.token!);
       } on ConnectionException catch (e) {
         Navigator.pop(context);
-        showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, e.errorMessage);
+        showWonderfulAlertDialog(
+          context,
+          AppLocalizations.of(context)!.error,
+          AppLocalizations.of(context)!.check_your_internet_connection,
+        );
         return;
       }
     }

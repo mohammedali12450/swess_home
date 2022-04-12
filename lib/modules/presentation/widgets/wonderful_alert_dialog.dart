@@ -64,7 +64,8 @@ Future<void> showWonderfulAlertDialog(
                     (removeDefaultButton)
                         ? Container()
                         : ElevatedButton(
-                            style: ElevatedButton.styleFrom(fixedSize: Size(180.w, 56.h)),
+                            style: ElevatedButton.styleFrom(
+                                fixedSize: Size(200.w, 56.h), padding: EdgeInsets.zero),
                             onPressed: () {
                               if (onDefaultButtonPressed != null) {
                                 onDefaultButtonPressed();
