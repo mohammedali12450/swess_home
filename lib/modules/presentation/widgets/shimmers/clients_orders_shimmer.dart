@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:swesshome/constants/colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmer_widget.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
 
 
 class ClientsOrdersShimmer extends StatelessWidget {
@@ -17,18 +16,18 @@ class ClientsOrdersShimmer extends StatelessWidget {
         shrinkWrap: true,
         itemCount: 3,
         itemBuilder: (_, index) {
-          return buildShimmerWidget();
+          return buildShimmerWidget(context);
         });
   }
 
-  Container buildShimmerWidget() {
+  Container buildShimmerWidget(BuildContext context) {
     return Container(
-      width: screenWidth,
-      margin: EdgeInsets.symmetric(vertical: Res.height(4)),
+      width: 1.sw,
+      margin: EdgeInsets.symmetric(vertical: 4.h),
       padding: kMediumSymHeight,
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: AppColors.black.withOpacity(0.24)),
+        border: Border.all(color: Theme.of(context).colorScheme.onBackground.withOpacity(0.24)),
         borderRadius: medBorderRadius,
       ),
       child: Column(
@@ -37,37 +36,37 @@ class ClientsOrdersShimmer extends StatelessWidget {
           Row(
             children: [
               ShimmerWidget.rectangular(
-                height: Res.height(24),
-                width: Res.width(110),
+                height: 24.h,
+                width: 110.w,
               ),
               const Spacer(),
               ShimmerWidget.rectangular(
-                height: Res.height(24),
-                width: Res.width(180),
+                height: 24.h,
+                width: 180.w,
               )
 
             ],
           ),
           kHe16 ,
           ShimmerWidget.rectangular(
-            height: Res.height(24),
-            width: Res.width(200),
+            height: 24.h,
+            width: 200.w,
           ),
           kHe16 ,
           ShimmerWidget.rectangular(
-            height: Res.height(24),
-            width: Res.width(220),
+            height: 24.h,
+            width: 220.w,
           ),
           kHe16 ,
           ShimmerWidget.rectangular(
-            height: Res.height(24),
-            width: Res.width(200),
+            height: 24.h,
+            width: 200.w,
           ),
           Container(
             alignment: Alignment.centerLeft,
             child: ShimmerWidget.circular(
-              height: Res.height(48),
-              width: Res.width(120),
+              height: 48.h,
+              width: 120.w,
               shapeBorder: const RoundedRectangleBorder(borderRadius: lowBorderRadius),
             ),
           ),

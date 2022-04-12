@@ -64,9 +64,9 @@ TextStyle textStyling(S fontSize, W fontWeight, C fontColor,
 Color _getColor(C fontColor) {
   switch (fontColor) {
     case C.c1:
-      return AppColors.baseColor;
-    case C.c2:
       return AppColors.secondaryColor;
+    case C.c2:
+      return AppColors.primaryColor;
     case C.c3:
       return AppColors.thirdColor;
     case C.c4:

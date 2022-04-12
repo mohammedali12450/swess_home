@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/core/storage/shared_preferences/recent_searches_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
@@ -15,7 +16,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/l
 import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/ownership_type_bloc/ownership_type_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate_type.dart';
@@ -25,13 +25,13 @@ import 'package:swesshome/modules/data/models/ownership_type.dart';
 import 'package:swesshome/modules/data/models/price_domain.dart';
 import 'package:swesshome/modules/data/models/search_data.dart';
 import 'package:swesshome/modules/data/models/user.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/estates_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/row_informations_choices.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../data/providers/locale_provider.dart';
 
 class SearchScreen extends StatefulWidget {
   static const String id = "SearchScreen1";
@@ -88,6 +88,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   String? userToken;
+  late bool isArabic;
 
   @override
   void initState() {
@@ -110,40 +111,26 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: AppColors.secondaryColor,
-          automaticallyImplyLeading: false,
-          toolbarHeight: Res.height(75),
-          title: SizedBox(
-            width: inf,
-            child: ResText(
-              isSell ? "عقارات للبيع" : "عقارات للإيجار",
-              textStyle: textStyling(S.s20, W.w4, C.wh).copyWith(height: 1.8),
-              textAlign: TextAlign.right,
-            ),
+          backgroundColor: isDarkMode ? const Color(0xff26282B) : null,
+          title: Text(
+            isSell
+                ? AppLocalizations.of(context)!.sell_estates
+                : AppLocalizations.of(context)!.rent_estates,
           ),
-          actions: [
-            IconButton(
-              padding: EdgeInsets.only(
-                right: Res.width(8),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_forward),
-            ),
-          ],
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(64),
+            preferredSize: Size.fromHeight(64.h),
             child: Container(
               margin: EdgeInsets.only(
-                bottom: Res.height(8),
+                bottom: 8.h,
               ),
               padding: EdgeInsets.symmetric(
-                horizontal: Res.width(12),
+                horizontal: 12.w,
               ),
               child: Center(
                 child: TextField(
@@ -160,17 +147,18 @@ class _SearchScreenState extends State<SearchScreen> {
                   },
                   controller: locationController,
                   textDirection: TextDirection.rtl,
-                  style: textStyling(S.s15, W.w4, C.wh),
+                  style: Theme.of(context).textTheme.subtitle1!.copyWith(color: AppColors.white),
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(
-                      horizontal: Res.width(8),
+                      horizontal: 8.w,
                     ),
                     border: kUnderlinedBorderWhite,
                     focusedBorder: kUnderlinedBorderWhite,
                     enabledBorder: kUnderlinedBorderWhite,
-                    hintText: "أدخل مكان العقار. مثل:المالكي, الميدان..",
-                    hintTextDirection: TextDirection.rtl,
-                    hintStyle: textStyling(S.s14, W.w4, C.whHint),
+                    hintText: AppLocalizations.of(context)!.search_place_hint,
+                    hintStyle: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          color: AppColors.white.withOpacity(0.48),
+                        ),
                   ),
                   onChanged: (value) {
                     patternCubit.setState(value);
@@ -181,7 +169,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
         body: SizedBox(
-          height: screenHeight,
+          height: 1.sh,
           child: Stack(children: [
             Container(
               padding: kMediumSymHeight,
@@ -197,51 +185,37 @@ class _SearchScreenState extends State<SearchScreen> {
                     bottom: 0,
                     child: Container(
                       padding: kSmallSymWidth,
-                      width: screenWidth,
+                      width: 1.sw,
                       alignment: Alignment.bottomCenter,
-                      height: Res.height(72),
-                      decoration: BoxDecoration(color: Colors.white, boxShadow: [lowElevation]),
+                      height: 72.h,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.background,
+                          boxShadow: [lowElevation]),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
-                            flex: 1,
-                            child: MyButton(
-                              child: ResText(
-                                "مسح",
-                                textStyle: textStyling(S.s16, W.w6, C.bl),
-                              ),
-                              borderRadius: 4,
-                              color: AppColors.baseColor,
-                              onPressed: () {
-                                locationController.clear();
-                                locationDetectedCubit.setState(false);
-                              },
-                            ),
-                          ),
-                          kWi4,
-                          Expanded(
                             flex: 3,
-                            child: MyButton(
+                            child: ElevatedButton(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(
-                                    Icons.search,
-                                    color: AppColors.white,
+                                  Text(
+                                    AppLocalizations.of(context)!.search,
+                                    style: Theme.of(context).textTheme.headline5!.copyWith(
+                                        color: Theme.of(context).colorScheme.background,
+                                        height: 1.4),
                                   ),
                                   kWi8,
-                                  ResText(
-                                    "ابحث",
-                                    textStyle: textStyling(S.s18, W.w6, C.wh).copyWith(height: 1.8),
+                                  Icon(
+                                    Icons.search,
+                                    color: Theme.of(context).colorScheme.background,
                                   ),
                                 ],
                               ),
-                              borderRadius: 4,
-                              color: AppColors.secondaryColor,
                               onPressed: () {
                                 if (locationDetectedCubit.state == false) {
-                                  Fluttertoast.showToast(msg: "قم بتحديد مكان العقار أولا!");
+                                  Fluttertoast.showToast(msg: AppLocalizations.of(context)!.search);
                                 }
                                 Navigator.push(
                                   context,
@@ -255,6 +229,21 @@ class _SearchScreenState extends State<SearchScreen> {
                                     ),
                                   ),
                                 );
+                              },
+                            ),
+                          ),
+                          kWi4,
+                          Expanded(
+                            flex: 1,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  primary: isDarkMode ? const Color(0xff90B8F8) : null),
+                              child: Text(
+                                AppLocalizations.of(context)!.clear,
+                              ),
+                              onPressed: () {
+                                locationController.clear();
+                                locationDetectedCubit.setState(false);
                               },
                             ),
                           ),
@@ -278,53 +267,49 @@ class _SearchScreenState extends State<SearchScreen> {
             builder: (_, pattern) {
               List<LocationViewer> locations =
                   BlocProvider.of<LocationsBloc>(context).getLocationsViewers(pattern);
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    if (pattern == null) buildRecentSearchedPlaces(),
-                    if (pattern != null)
-                      ListView.separated(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (_, index) {
-                          return InkWell(
-                            onTap: () async {
-                              // set location name in location text field:
-                              locationController.text =
-                                  locations.elementAt(index).getLocationName();
-                              // initialize search data again :
-                              initializeOfferData();
-                              // set search data location id:
-                              widget.searchData.locationId = locations.elementAt(index).id;
-                              // set location detected state :
-                              locationDetectedCubit.setState(true);
-                              // unfocused text field :
-                              FocusScope.of(context).unfocus();
-                              // save location as recent search:
-                              await saveAsRecentSearch(locations.elementAt(index).id);
-                            },
-                            child: Container(
-                              margin: EdgeInsets.symmetric(
-                                vertical: Res.height(8),
-                              ),
-                              padding: kMediumSymWidth,
-                              width: inf,
-                              child: ResText(
-                                locations.elementAt(index).getLocationName(),
-                                textAlign: TextAlign.right,
-                                textStyle: textStyling(S.s16, W.w5, C.bl),
-                              ),
+              return (pattern == null)
+                  ? buildRecentSearchedPlaces()
+                  : ListView.separated(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (_, index) {
+                        return InkWell(
+                          onTap: () async {
+                            // set location name in location text field:
+                            locationController.text = locations.elementAt(index).getLocationName();
+                            // initialize search data again :
+                            initializeOfferData();
+                            // set search data location id:
+                            widget.searchData.locationId = locations.elementAt(index).id;
+                            // set location detected state :
+                            locationDetectedCubit.setState(true);
+                            // unfocused text field :
+                            FocusScope.of(context).unfocus();
+                            // save location as recent search:
+                            await saveAsRecentSearch(locations.elementAt(index).id);
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical: 8.h,
                             ),
-                          );
-                        },
-                        separatorBuilder: (_, index) {
-                          return const Divider();
-                        },
-                        itemCount: locations.length,
-                      ),
-                  ],
-                ),
-              );
+                            padding: kMediumSymWidth,
+                            width: inf,
+                            child: Text(
+                              locations.elementAt(index).getLocationName(),
+                              textAlign: TextAlign.right,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1!
+                                  .copyWith(color: Theme.of(context).colorScheme.onBackground),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (_, index) {
+                        return const Divider();
+                      },
+                      itemCount: locations.length,
+                    );
             },
           );
         }
@@ -353,148 +338,147 @@ class _SearchScreenState extends State<SearchScreen> {
     return locationsViewers;
   }
 
-  SingleChildScrollView buildRecentSearchedPlaces() {
+  Column buildRecentSearchedPlaces() {
     List<LocationViewer> recentPlaces = getStoredRecentSearches() ?? [];
 
-    return SingleChildScrollView(
-      physics: const ClampingScrollPhysics(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (recentPlaces.isNotEmpty) ...[
-            Row(
-              children: [
-                kWi12,
-                InkWell(
-                  onTap: () async {
-                    await showWonderfulAlertDialog(
-                      context,
-                      "تنبيه",
-                      "هل تريد حذف عمليات البحث السابقة؟",
-                      removeDefaultButton: true,
-                      dialogButtons: [
-                        MyButton(
-                          child: ResText(
-                            "إلغاء",
-                            textStyle: textStyling(S.s16, W.w5, C.wh),
-                          ),
-                          color: AppColors.secondaryColor,
-                          borderRadius: 8,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        if (recentPlaces.isNotEmpty) ...[
+          Row(
+            children: [
+              kWi12,
+              Text(
+                AppLocalizations.of(context)!.recent_searches,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              const Spacer(),
+              InkWell(
+                onTap: () async {
+                  await showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.confirmation,
+                    AppLocalizations.of(context)!.clear_notifications_confirm,
+                    removeDefaultButton: true,
+                    dialogButtons: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(fixedSize: Size(110.w, 56.h)),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
                         ),
-                        MyButton(
-                          child: ResText("تأكيد", textStyle: textStyling(S.s16, W.w5, C.wh)),
-                          color: AppColors.secondaryColor,
-                          borderRadius: 8,
-                          onPressed: () async {
-                            await RecentSearchesSharedPreferences.removeRecentSearches();
-                            patternCubit.setState(null);
-                            Navigator.pop(context);
-                          },
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(fixedSize: Size(110.w, 56.h)),
+                        child: Text(
+                          AppLocalizations.of(context)!.yes,
                         ),
-                      ],
-                    );
-                  },
-                  child: ResText(
-                    "مسح الكل",
-                    textStyle: textStyling(S.s15, W.w5, C.bl),
-                  ),
-                ),
-                const Spacer(),
-                ResText(
-                  "عمليات البحث السابقة",
-                  textStyle: textStyling(S.s16, W.w7, C.bl),
-                  textAlign: TextAlign.right,
-                ),
-                kWi12,
-              ],
-            ),
-            kHe16,
-            ListView.separated(
-                physics: const ClampingScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (_, index) {
-                  return InkWell(
-                    onTap: () async {
-                      // set location name in location text field :
-                      locationController.text = recentPlaces.elementAt(index).getLocationName();
-                      // set search data location id :
-                      widget.searchData.locationId = recentPlaces.elementAt(index).id;
-                      // change location detect state to detected :
-                      locationDetectedCubit.setState(true);
-                      // unfocused location textField :
-                      FocusScope.of(context).unfocus();
-                      // store search :
-                      await saveAsRecentSearch(recentPlaces.elementAt(index).id);
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(
-                        vertical: Res.height(8),
+                        onPressed: () async {
+                          await RecentSearchesSharedPreferences.removeRecentSearches();
+                          patternCubit.setState(null);
+                          Navigator.pop(context);
+                        },
                       ),
-                      padding: kMediumSymWidth,
-                      width: inf,
-                      child: ResText(
-                        recentPlaces.elementAt(index).getLocationName(),
-                        textAlign: TextAlign.right,
-                        textStyle: textStyling(S.s16, W.w5, C.bl),
-                      ),
-                    ),
+                    ],
                   );
                 },
-                separatorBuilder: (_, index) {
-                  return const Divider();
-                },
-                itemCount: recentPlaces.length)
-          ],
-          if (recentPlaces.isEmpty) ...[
-            Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: Res.height(150)),
-                  width: inf,
-                  child: SvgPicture.asset(
-                    documentOutlineIconPath,
-                    width: Res.width(250),
-                    height: Res.width(250),
-                    color: AppColors.secondaryColor.withOpacity(0.24),
+                child: Text(
+                  AppLocalizations.of(context)!.clear_all,
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+              ),
+              kWi12,
+            ],
+          ),
+          kHe16,
+          ListView.separated(
+              physics: const ClampingScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (_, index) {
+                return InkWell(
+                  onTap: () async {
+                    // set location name in location text field :
+                    locationController.text = recentPlaces.elementAt(index).getLocationName();
+                    // set search data location id :
+                    widget.searchData.locationId = recentPlaces.elementAt(index).id;
+                    // change location detect state to detected :
+                    locationDetectedCubit.setState(true);
+                    // unfocused location textField :
+                    FocusScope.of(context).unfocus();
+                    // store search :
+                    await saveAsRecentSearch(recentPlaces.elementAt(index).id);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(
+                      vertical: 20.h,
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    width: inf,
+                    child: Text(
+                      recentPlaces.elementAt(index).getLocationName(),
+                      textAlign: TextAlign.right,
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
                   ),
-                ),
-                kHe24,
-                ResText(
-                  "لا يوجد عمليات بحث سابقة",
-                  textStyle: textStyling(S.s24, W.w7, C.hint),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            )
-          ]
+                );
+              },
+              separatorBuilder: (_, index) {
+                return const Divider();
+              },
+              itemCount: recentPlaces.length)
         ],
-      ),
+        if (recentPlaces.isEmpty) ...[
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    documentOutlineIconPath,
+                    width: 250.w,
+                    height: 250.w,
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.24),
+                  ),
+                  kHe24,
+                  Text(
+                    AppLocalizations.of(context)!.no_recent_searches,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline4!
+                        .copyWith(fontWeight: FontWeight.w500),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          )
+        ]
+      ],
     );
   }
 
   Container buildSearchWidgets() {
-    List<String> priceDomainsNames = priceDomains.map((e) => e.getTextPriceDomain(true)).toList();
-    priceDomainsNames.insert(0, "غير محدد");
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+
+    List<String> priceDomainsNames =
+        priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
+    priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: Res.width(16)),
       child: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: inf,
-              child: ResText(
-                ":نوع العقار",
-                textStyle: textStyling(S.s18, W.w5, C.bl),
-                textAlign: TextAlign.right,
-              ),
+            Text(
+              AppLocalizations.of(context)!.estate_type + " :",
+              style: Theme.of(context).textTheme.headline6,
             ),
             kHe12,
             MyDropdownList(
-              elementsList: estatesTypes.map((e) => e.getName(true).split('|').first).toList(),
+              elementsList: estatesTypes.map((e) => e.getName(isArabic).split('|').first).toList(),
               onSelect: (index) {
                 // set search data estate type :
                 widget.searchData.estateTypeId = estatesTypes.elementAt(index).id;
@@ -503,13 +487,9 @@ class _SearchScreenState extends State<SearchScreen> {
               },
             ),
             kHe24,
-            SizedBox(
-              width: inf,
-              child: ResText(
-                ":مجال سعر العقار",
-                textStyle: textStyling(S.s18, W.w5, C.bl),
-                textAlign: TextAlign.right,
-              ),
+            Text(
+              AppLocalizations.of(context)!.price_domain + " :",
+              style: Theme.of(context).textTheme.headline6,
             ),
             kHe12,
             MyDropdownList(
@@ -537,23 +517,29 @@ class _SearchScreenState extends State<SearchScreen> {
                         advancedSearchOpenedCubit.setState(!isAdvancedSearchOpened);
                       },
                       child: Container(
-                        height: Res.height(56),
-                        color: AppColors.secondaryColor,
+                        height: 40.h,
+                        color: isDark
+                            ? Theme.of(context).colorScheme.primary
+                            : AppColors.secondaryColor,
                         padding: EdgeInsets.symmetric(
-                          horizontal: Res.width(8),
+                          horizontal: 8.w,
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            ResText(
-                              "بحث متقدم",
-                              textStyle: textStyling(S.s16, W.w5, C.wh),
+                            Text(
+                              AppLocalizations.of(context)!.advanced_search,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1!
+                                  .copyWith(color: AppColors.black),
                             ),
                             kWi8,
                             Icon(
-                              (isAdvancedSearchOpened) ? Icons.arrow_drop_down : Icons.arrow_left,
-                              color: AppColors.white,
-                            ),
+                                (isAdvancedSearchOpened)
+                                    ? Icons.arrow_drop_down
+                                    : ((!isArabic) ? Icons.arrow_right : Icons.arrow_left),
+                                color: AppColors.black),
                           ],
                         ),
                       ),
@@ -570,11 +556,21 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Column buildAdvancedSearchWidgets() {
-    List<String> choices = ["غير محدد", "نعم", "لا"];
-    List<String> ownerShipTypesNames = ownershipsTypes.map((e) => e.getName(true)).toList();
-    ownerShipTypesNames.insert(0, "غير محدد");
-    List<String> interiorStatusesNames = interiorStatuses.map((e) => e.getName(true)).toList();
-    interiorStatusesNames.insert(0, "غير محدد");
+    List<String> choices = [
+      AppLocalizations.of(context)!.unselected,
+      AppLocalizations.of(context)!.yes,
+      AppLocalizations.of(context)!.no
+    ];
+    List<String> ownerShipTypesNames = ownershipsTypes.map((e) => e.getName(isArabic)).toList();
+    ownerShipTypesNames.insert(
+      0,
+      AppLocalizations.of(context)!.unselected,
+    );
+    List<String> interiorStatusesNames = interiorStatuses.map((e) => e.getName(isArabic)).toList();
+    interiorStatusesNames.insert(
+      0,
+      AppLocalizations.of(context)!.unselected,
+    );
 
     return Column(
       children: [
@@ -582,10 +578,9 @@ class _SearchScreenState extends State<SearchScreen> {
           kHe24,
           SizedBox(
             width: inf,
-            child: ResText(
-              ":نوع الملكية",
-              textStyle: textStyling(S.s18, W.w5, C.bl),
-              textAlign: TextAlign.right,
+            child: Text(
+              AppLocalizations.of(context)!.ownership_type + " :",
+              style: Theme.of(context).textTheme.headline6,
             ),
           ),
           kHe12,
@@ -603,10 +598,9 @@ class _SearchScreenState extends State<SearchScreen> {
           kHe24,
           SizedBox(
             width: inf,
-            child: ResText(
-              ":حالة العقار",
-              textStyle: textStyling(S.s18, W.w5, C.bl),
-              textAlign: TextAlign.right,
+            child: Text(
+              AppLocalizations.of(context)!.interior_status + " :",
+              style: Theme.of(context).textTheme.headline6,
             ),
           ),
           kHe12,
@@ -623,35 +617,38 @@ class _SearchScreenState extends State<SearchScreen> {
         if (isHouse) ...[
           kHe24,
           RowInformationChoices(
-            content: "هل البيت الذي تبحث عنه مفروش؟",
+            content: AppLocalizations.of(context)!.is_the_estate_furnished,
             choices: choices,
             onSelect: (currentIndex) {
               // set search data furnished status :
               widget.searchData.isFurnished =
                   (currentIndex == 0) ? null : ((currentIndex == 1) ? true : false);
             },
+            hasSpacerBetween: true,
           ),
         ],
         if (isFarmsAndVacations) ...[
           kHe24,
           RowInformationChoices(
-            content: "هل العقار يحوي مسبح؟",
+            content: AppLocalizations.of(context)!.has_swimming_pool,
             choices: choices,
             onSelect: (currentIndex) {
               // set search data Pool status :
               widget.searchData.hasSwimmingPool =
                   (currentIndex == 0) ? null : ((currentIndex == 1) ? true : false);
             },
+            hasSpacerBetween: true,
           ),
           kHe24,
           RowInformationChoices(
-            content: "هل العقار مطل على الشاطئ؟",
+            content: AppLocalizations.of(context)!.is_the_estate_on_beach,
             choices: choices,
             onSelect: (currentIndex) {
               // set search data Beach status :
               widget.searchData.isOnBeach =
                   (currentIndex == 0) ? null : ((currentIndex == 1) ? true : false);
             },
+            hasSpacerBetween: true,
           ),
         ],
       ],
@@ -667,6 +664,4 @@ class _SearchScreenState extends State<SearchScreen> {
     recentSearches.insert(0, locationId.toString());
     await RecentSearchesSharedPreferences.setRecentSearches(recentSearches);
   }
-
-
 }

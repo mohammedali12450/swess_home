@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:swesshome/constants/colors.dart';
@@ -16,12 +17,11 @@ import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/data/repositories/reports_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
 import 'package:swesshome/utils/helpers/show_my_snack_bar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EstatesScreen extends StatefulWidget {
   static const String id = "EstatesScreen";
@@ -35,6 +35,8 @@ class EstatesScreen extends StatefulWidget {
 }
 
 class _EstatesScreenState extends State<EstatesScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final List<Estate> estates = [];
   final ScrollController _scrollController = ScrollController();
   bool isEstatesFinished = false;
@@ -51,66 +53,46 @@ class _EstatesScreenState extends State<EstatesScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: AppColors.secondaryColor,
-          toolbarHeight: Res.height(75),
-          title: Row(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.search,
-                  color: AppColors.white,
-                ),
-                onPressed: () {
-                  // TODO : Process this state
-                },
-              ),
-              kWi4,
-              IconButton(
-                icon: const Icon(
-                  Icons.public,
-                  color: AppColors.white,
-                ),
-                onPressed: () {
-                  // TODO : Process this state
-                },
-              ),
-              const Spacer(),
-              ResText(
-                "نتائج البحث",
-                textStyle: textStyling(
-                  S.s20,
-                  W.w5,
-                  C.wh,
-                ),
-              ),
-            ],
+          title: Text(
+            AppLocalizations.of(context)!.search_results,
           ),
-          automaticallyImplyLeading: false,
           actions: [
-            Container(
-              margin: EdgeInsets.only(
-                right: Res.width(8),
+            IconButton(
+              icon: const Icon(
+                Icons.search,
+                color: AppColors.white,
               ),
-              child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_forward,
-                  color: AppColors.white,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+              onPressed: () {
+                // TODO : Process this state
+                Navigator.pop(context);
+              },
+            ),
+            kWi4,
+            IconButton(
+              icon: const Icon(
+                Icons.public,
+                color: AppColors.white,
               ),
-            )
+              onPressed: () {
+                // TODO : Process this state
+              },
+            ),
+            kWi8,
           ],
         ),
         body: Container(
-          color: Colors.white,
-          padding: EdgeInsets.symmetric(horizontal: Res.width(4)),
           child: BlocProvider<EstateBloc>(
             create: (_) => EstateBloc(
               EstateRepository(),
@@ -119,36 +101,36 @@ class _EstatesScreenState extends State<EstatesScreen> {
               listener: (_, estateFetchState) {
                 if (estateFetchState is EstateFetchComplete) {
                   if (estateFetchState.estates.isEmpty && estates.isNotEmpty) {
-                    if (!isEstatesFinished) {
-                      showMySnackBar(context, "! انتهت النتائج المطابقة لبحثك");
-                    }
                     isEstatesFinished = true;
                   }
                 }
                 if (estateFetchState is EstateFetchError) {
-                  showWonderfulAlertDialog(context, "خطأ", estateFetchState.errorMessage);
+                  showWonderfulAlertDialog(
+                      context, AppLocalizations.of(context)!.error, estateFetchState.errorMessage);
                 }
               },
               builder: (context, estatesFetchState) {
                 if (estatesFetchState is EstateFetchNone ||
                     (estatesFetchState is EstateFetchProgress && estates.isEmpty)) {
-                  return const EstatesShimmer();
+                  return const PropertyShimmer();
                 } else if (estatesFetchState is EstateFetchComplete) {
                   estates.addAll(estatesFetchState.estates);
                   BlocProvider.of<EstateBloc>(context).isFetching = false;
                 } else if (estatesFetchState is EstateFetchError && estates.isEmpty) {
                   BlocProvider.of<EstateBloc>(context).isFetching = false;
                   return RefreshIndicator(
-                    color: AppColors.secondaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                     onRefresh: () async {
                       BlocProvider.of<EstateBloc>(context).add(widget.searchData);
                     },
                     child: SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       child: SizedBox(
-                          width: screenWidth,
-                          height: screenHeight - Res.height(75),
-                          child: const FetchResult(content: "حدث خطأ أثناء تنفيذ العملية")),
+                          width: 1.sw,
+                          height: 1.sh - 75.h,
+                          child: FetchResult(
+                              content: AppLocalizations.of(context)!
+                                  .error_happened_when_executing_operation)),
                     ),
                   );
                 }
@@ -160,26 +142,29 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       children: [
                         Icon(
                           Icons.search,
-                          color: AppColors.secondaryColor.withOpacity(0.24),
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.24),
                           size: 120,
                         ),
                         kHe24,
-                        ResText(
-                          "! عذرا, لا يوجد عقارات مناسبة لبحثك",
-                          textStyle: textStyling(S.s18, W.w6, C.bl),
+                        Text(
+                          AppLocalizations.of(context)!.no_results_body,
+                          style: Theme.of(context).textTheme.headline5,
                         ),
                         kHe12,
-                        ResText(
-                          "قم بتغيير فلتر البحث ثم حاول مجدداً",
-                          textStyle: textStyling(S.s14, W.w5, C.bl),
+                        Text(
+                          AppLocalizations.of(context)!.no_results_hint,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(fontWeight: FontWeight.w400),
                         ),
                         kHe40,
-                        MyButton(
-                          color: AppColors.secondaryColor,
-                          width: Res.width(200),
-                          child: ResText(
-                            "ابحث مجدداً",
-                            textStyle: textStyling(S.s18, W.w6, C.wh),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(220.w, 64.h),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.search_again,
                           ),
                           onPressed: () {
                             Navigator.pop(context);
@@ -215,34 +200,35 @@ class _EstatesScreenState extends State<EstatesScreen> {
                             onClosePressed: () {
                               showReportModalBottomSheet(estates.elementAt(index).id);
                             },
+                            removeCloseButton: false,
                           );
                         },
                       ),
                       if (BlocProvider.of<EstateBloc>(context).isFetching)
                         Container(
                           margin: EdgeInsets.only(
-                            top: Res.height(12),
+                            top: 12.h,
                           ),
-                          child: const SpinKitWave(
-                            color: AppColors.secondaryColor,
+                          child: SpinKitWave(
+                            color: Theme.of(context).colorScheme.primary,
                             size: 50,
                           ),
                         ),
                       if (isEstatesFinished)
                         Container(
                           margin: EdgeInsets.symmetric(
-                            vertical: Res.height(50),
+                            vertical: 50.h,
                           ),
-                          width: screenWidth,
+                          width: 1.sw,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               kWi16,
-                              const Expanded(
+                              Expanded(
                                 flex: 2,
                                 child: Divider(
-                                  color: AppColors.secondaryColor,
+                                  color: Theme.of(context).colorScheme.primary,
                                   thickness: 1,
                                 ),
                               ),
@@ -254,10 +240,10 @@ class _EstatesScreenState extends State<EstatesScreen> {
                                   textStyle: textStyling(S.s18, W.w5, C.bl),
                                 ),
                               ),
-                              const Expanded(
+                              Expanded(
                                 flex: 2,
                                 child: Divider(
-                                  color: AppColors.secondaryColor,
+                                  color: Theme.of(context).colorScheme.primary,
                                   thickness: 1,
                                 ),
                               ),
@@ -294,7 +280,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
             child: Column(
               children: [
                 SizedBox(
-                  width: screenWidth,
+                  width: 1.sw,
                   child: ResText(
                     "ما الذي تراه غير مناسب في هذا العقار؟",
                     textAlign: TextAlign.right,
@@ -319,9 +305,9 @@ class _EstatesScreenState extends State<EstatesScreen> {
                     },
                     child: Container(
                       alignment: Alignment.centerRight,
-                      padding: EdgeInsets.only(right: Res.width(8)),
-                      width: screenWidth,
-                      height: Res.height(52),
+                      padding: EdgeInsets.only(right: 8.w),
+                      width: 1.sw,
+                      height: 52.h,
                       child: ResText(
                         reports.elementAt(index).getName(true),
                         textAlign: TextAlign.right,
@@ -339,5 +325,11 @@ class _EstatesScreenState extends State<EstatesScreen> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 }

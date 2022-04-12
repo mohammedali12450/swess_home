@@ -15,7 +15,9 @@ const int vacationsPropertyTypeNumber = 5 ;
 
 // Map constants:
 
-const double kInitLatitude = 33.512512;
-const double kInitLongitude = 36.274231;
+const double kInitLatitudeSyria = 33.512512;
+const double kInitLongitudeSyria = 36.274231;
+const double kInitLatitudeLebanon = 33.888630;
+const double kInitLongitudeLebanon = 35.495480;
 String? firebaseToken ;
 

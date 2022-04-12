@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icon_badge/icon_badge.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/application_constants.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
-import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/texts.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_event.dart';
@@ -15,16 +15,15 @@ import 'package:swesshome/modules/business_logic_components/bloc/system_variable
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/search_data.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'office_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -38,6 +37,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late UserLoginBloc _userAuthenticationBloc;
+  late bool isArabic;
 
   @override
   void initState() {
@@ -63,64 +63,65 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isArabic = Provider.of<LocaleProvider>(context).isArabic();
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: AppColors.secondaryColor,
-          toolbarHeight: Res.height(75),
           centerTitle: true,
-          title: ResText(
-            "Swess Home",
-            textStyle: textStyling(S.s24, W.w6, C.c1, fontFamily: F.roboto),
+          title: Text(
+            AppLocalizations.of(context)!.application_name,
           ),
-          leading: BlocBuilder<NotificationsCubit, int>(builder: (_, notificationsCount) {
-            return IconBadge(
-              icon: const Icon(
-                Icons.notifications_outlined,
-                color: AppColors.white,
-              ),
-              itemCount: notificationsCount,
-              right: 0,
-              top: Res.height(5),
-              onTap: () {
-                Navigator.pushNamed(context, NotificationScreen.id);
-              },
-              hideZero: true,
-            );
-          }),
+          leading: Builder(
+            builder: (context) {
+              return Container(
+                margin: EdgeInsets.only(
+                  right: isArabic ? 8.w : 0,
+                  left: !isArabic ? 8.w : 0,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                ),
+              );
+            },
+          ),
           actions: [
-            Builder(
-              builder: (context) {
-                return Container(
-                  margin: EdgeInsets.only(
-                    right: Res.width(8),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.menu),
-                    onPressed: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                  ),
-                );
-              },
-            )
+            BlocBuilder<NotificationsCubit, int>(builder: (_, notificationsCount) {
+              return IconBadge(
+                icon: const Icon(
+                  Icons.notifications_outlined,
+                ),
+                itemCount: notificationsCount,
+                right: 0,
+                top: 5.h,
+                onTap: () {
+                  Navigator.pushNamed(context, NotificationScreen.id);
+                },
+                hideZero: true,
+              );
+            })
           ],
         ),
-        endDrawer: const Drawer(
+        drawer: const Drawer(
           child: MyDrawer(),
         ),
         body: Container(
           padding: kSmallSymWidth,
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 buildHomeScreenHeader(),
                 kHe24,
                 buildSearchCard(),
                 kHe16,
                 if (BlocProvider.of<SystemVariablesBloc>(context)
-                    .systemVariables!
-                    .isVacationsAvailable) ...[
+                        .systemVariables!
+                        .isVacationsAvailable ||
+                    true) ...[
                   buildVacationCard(),
                   kHe20,
                 ],
@@ -144,27 +145,20 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: const BorderRadius.all(
           Radius.circular(4),
         ),
-        border: Border.all(color: AppColors.black , width: 0.5),
+        border: Border.all(color: Theme.of(context).colorScheme.onBackground, width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: inf,
-            child: ResText(
-              "ابحث عن وكيل عقاري",
-              textStyle: textStyling(S.s18, W.w6, C.bl),
-              textAlign: TextAlign.right,
-            ),
+          Text(
+            AppLocalizations.of(context)!.search_for_estate_agent,
+            style: Theme.of(context).textTheme.headline5,
           ),
           kHe12,
-          SizedBox(
-            width: inf,
-            child: ResText(
-              "!ابحث عن المكاتب العقارية المختلفة لنشر عروضك العقارية لديها",
-              textStyle: textStyling(S.s15, W.w4, C.bl),
-              textAlign: TextAlign.right,
-            ),
+          Text(
+            AppLocalizations.of(context)!.search_agent_card_body,
+            style: Theme.of(context).textTheme.subtitle2,
           ),
           kHe16,
           InkWell(
@@ -173,33 +167,32 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: Container(
               width: inf,
-              height: Res.height(64),
+              height: 64.h,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(
                   Radius.circular(8),
                 ),
                 border: Border.all(
-                  color: AppColors.black.withOpacity(0.56),
+                  color: Theme.of(context).colorScheme.onBackground.withOpacity(0.56),
                 ),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  ResText(
-                    "ابحث عن مكتب عقاري",
-                    textStyle: textStyling(S.s15, W.w5, C.hint).copyWith(height: 1.8),
-                    textAlign: TextAlign.right,
-                  ),
                   kWi12,
                   Transform.rotate(
-                    angle: 1.5,
-                    child: const Icon(
+                    angle: isArabic ? 1.5 : 0,
+                    child: Icon(
                       Icons.search,
-                      size: 24,
-                      color: AppColors.black,
+                      size: 24.w,
+                      color: Theme.of(context).colorScheme.onBackground,
                     ),
                   ),
                   kWi12,
+                  Text(AppLocalizations.of(context)!.search_for_estate_agent,
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle1!
+                          .copyWith(color: Theme.of(context).hintColor)),
                 ],
               ),
             ),
@@ -210,20 +203,26 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Stack buildVacationCard() {
+    bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode(context);
+
     return Stack(
       children: [
         InkWell(
           onTap: () {
-            Fluttertoast.showToast(msg: "سيتم تفعيل هذه الميزة قريبا!");
+            Fluttertoast.showToast(
+                msg: AppLocalizations.of(context)!.this_feature_will_be_activated_soon);
           },
           child: Container(
-            width: screenWidth,
-            padding: EdgeInsets.symmetric(horizontal: Res.width(16), vertical: Res.height(24)),
+            width: 1.sw,
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.centerRight,
                 end: Alignment.centerLeft,
-                colors: [AppColors.lastColor, AppColors.lastColor.withOpacity(0.75)],
+                colors: [
+                  (!isDarkMode) ? AppColors.lastColor : Colors.white,
+                  (!isDarkMode) ? AppColors.lastColor.withOpacity(0.75) : const Color(0xff90B8F8),
+                ],
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(15),
@@ -232,26 +231,38 @@ class _HomeScreenState extends State<HomeScreen> {
                   image: AssetImage(beachImagePath), fit: BoxFit.cover, opacity: 0.1),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Transform.rotate(
-                  angle: 1.5,
-                  child: const Icon(
+                  angle: isArabic ? 1.5 : 0,
+                  child: Icon(
                     Icons.search,
-                    size: 28,
-                    color: AppColors.white,
+                    size: 28.w,
+                    color: Theme.of(context).colorScheme.background,
                   ),
                 ),
                 kHe12,
-                ResText(
-                  "المزارع والاصطياف",
-                  textStyle: textStyling(S.s20, W.w5, C.wh),
+                Text(
+                  AppLocalizations.of(context)!.vacations_and_farms,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5!
+                      .copyWith(color: Theme.of(context).colorScheme.background),
                 ),
                 kHe12,
-                ResText(
-                  "! قم بتصفح عقارات الاصطياف و احجزها من داخل بيتك",
-                  textStyle: textStyling(S.s14, W.w5, C.wh),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: isArabic ? 24.w : 0,
+                    right: !isArabic ? 24.w : 0,
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.vacations_card_body,
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle2!
+                        .copyWith(color: Theme.of(context).colorScheme.background),
+                  ),
                 ),
               ],
             ),
@@ -259,14 +270,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Positioned.fill(
           child: Align(
-            alignment: Alignment.centerLeft,
+            alignment: isArabic ? Alignment.centerLeft : Alignment.centerRight,
             child: Container(
-              margin: EdgeInsets.only(
-                left: Res.width(16),
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios,
-                color: AppColors.white,
+              margin: EdgeInsets.only(left: isArabic ? 16.w : 0, right: !isArabic ? 16.w : 0),
+              child: Icon(
+                (isArabic) ? Icons.arrow_back_ios : Icons.arrow_forward_ios,
+                color: Theme.of(context).colorScheme.background,
               ),
             ),
           ),
@@ -277,39 +286,41 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Column buildHomeScreenHeader() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         kHe8,
-        SizedBox(
-          width: inf,
-          child: ResText(
-            '! swess home أهلا بكم في',
-            textAlign: TextAlign.right,
-            textStyle: textStyling(S.s16, W.w5, C.bl),
-          ),
+        Text(
+          AppLocalizations.of(context)!.welcome_in_swesshome,
+          style: Theme.of(context).textTheme.headline6,
         ),
         kHe16,
-        SizedBox(
-          width: inf,
-          child: ResText(
-            homeScreenHeader,
-            textAlign: TextAlign.right,
-            textStyle: textStyling(S.s15, W.w5, C.hint),
-            maxLines: 3,
-          ),
+        Text(
+          AppLocalizations.of(context)!.home_screen_header,
+          style: Theme.of(context)
+              .textTheme
+              .bodyText2!
+              .copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp),
         ),
       ],
     );
   }
 
   Container buildSearchCard() {
+    bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode(context);
+
     return Container(
-      width: screenWidth,
+      width: 1.sw,
       padding: kLargeSymHeight,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
-          colors: [AppColors.secondaryColor, AppColors.secondaryColor.withOpacity(0.75)],
+          colors: [
+            (isDarkMode) ? Color(0xff90B8F8) : Theme.of(context).colorScheme.primary,
+            (isDarkMode)
+                ? AppColors.white.withOpacity(0.75)
+                : Theme.of(context).colorScheme.primary.withOpacity(0.75)
+          ],
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(15),
@@ -321,66 +332,79 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              ResText(
-                "العروض العقارية",
-                textStyle: textStyling(S.s18, W.w6, C.wh),
+              Transform.rotate(
+                angle: isArabic ? 1.5 : 0,
+                child: Icon(
+                  Icons.search,
+                  size: 28.w,
+                  color: Theme.of(context).colorScheme.background,
+                ),
               ),
               kWi16,
-              Transform.rotate(
-                angle: 1.5,
-                child: const Icon(
-                  Icons.search,
-                  size: 28,
-                  color: AppColors.white,
-                ),
+              Text(
+                AppLocalizations.of(context)!.estate_offers,
+                style: Theme.of(context).textTheme.headline5!.copyWith(
+                      color: Theme.of(context).colorScheme.background,
+                    ),
               ),
             ],
           ),
-          kHe12,
-          ResText(
-            ".. ابحث في العروض العقارية المتنوعة بيوت, محلات, أراضي",
-            textStyle: textStyling(S.s14, W.w5, C.wh),
+          14.verticalSpace,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: Text(
+              AppLocalizations.of(context)!.search_card_body,
+              style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                  color: Theme.of(context).colorScheme.background,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w400),
+            ),
           ),
           kHe32,
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              MyButton(
-                borderRadius: 8,
-                child: ResText(
-                  "إيجار",
-                  textStyle: textStyling(S.s16, W.w5, C.c2),
-                ),
-                color: AppColors.white,
-                height: Res.height(56),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => SearchScreen(
-                        searchData: SearchData(estateOfferTypeId: rentOfferTypeNumber),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    maximumSize: Size(150.w, 56.h),
+                    minimumSize: Size(125.w, 56.h),
+                    primary: Theme.of(context).colorScheme.background),
+                child: Text(
+                  AppLocalizations.of(context)!.sell,
+                  style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground,
                       ),
-                    ),
-                  );
-                },
-              ),
-              kWi16,
-              MyButton(
-                borderRadius: 8,
-                child: ResText(
-                  "بيع",
-                  textStyle: textStyling(S.s16, W.w5, C.c2),
                 ),
-                color: AppColors.white,
-                height: Res.height(56),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => SearchScreen(
                         searchData: SearchData(estateOfferTypeId: sellOfferTypeNumber),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              kWi16,
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    maximumSize: Size(150.w, 56.h),
+                    minimumSize: Size(125.w, 56.h),
+                    primary: Theme.of(context).colorScheme.background),
+                child: Text(
+                  AppLocalizations.of(context)!.rent,
+                  style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SearchScreen(
+                        searchData: SearchData(estateOfferTypeId: rentOfferTypeNumber),
                       ),
                     ),
                   );
@@ -401,84 +425,71 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: const BorderRadius.all(
           Radius.circular(4),
         ),
-        border: Border.all(color: AppColors.black , width: 0.5),
+        border: Border.all(color: Theme.of(context).colorScheme.onBackground, width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           kHe12,
-          SizedBox(
-            width: inf,
-            child: ResText(
-              "الطلبات العقارية",
-              textStyle: textStyling(S.s18, W.w5, C.bl),
-              textAlign: TextAlign.right,
-            ),
+          Text(
+            AppLocalizations.of(context)!.estate_orders,
+            style: Theme.of(context).textTheme.headline5,
           ),
           kHe12,
-          SizedBox(
-            width: inf,
-            child: ResText(
-              "أرسل لنا معلومات عن العقار الذي تبحث عنه في حال لم تجد عقارات مناسبة",
-              textStyle: textStyling(S.s14, W.w4, C.bl),
-              textAlign: TextAlign.right,
-              maxLines: 2,
-            ),
+          Text(
+            AppLocalizations.of(context)!.estate_order_card_body,
+            style: Theme.of(context).textTheme.subtitle2,
+            maxLines: 2,
           ),
           kHe16,
           Container(
             width: inf,
-            alignment: Alignment.centerRight,
-            child: MyButton(
-              color: AppColors.secondaryColor,
-              height: Res.height(56),
-              width: Res.width(180),
+            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            child: ElevatedButton(
+              style:
+                  ElevatedButton.styleFrom(fixedSize: Size(220.w, 56.h), padding: EdgeInsets.zero),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  kWi12,
-                  ResText(
-                    "إنشاء طلب عقاري",
-                    textStyle: textStyling(S.s16, W.w5, C.wh),
-                  ),
-                  kWi12,
-                  const Icon(
+                  Icon(
                     Icons.add,
-                    color: AppColors.white,
+                    color: Theme.of(context).colorScheme.background,
                   ),
+                  kWi12,
+                  Text(
+                    AppLocalizations.of(context)!.create_estate_order,
+                  ),
+                  kWi12,
                 ],
               ),
               onPressed: () async {
                 if (BlocProvider.of<UserLoginBloc>(context).user == null) {
                   await showWonderfulAlertDialog(
-                      context, "تأكيد", "إن هذه الميزة تتطلب تسجيل الدخول",
+                      context,
+                      AppLocalizations.of(context)!.confirmation,
+                      AppLocalizations.of(context)!.this_features_require_login,
                       removeDefaultButton: true,
                       dialogButtons: [
-                        MyButton(
-                          child: ResText(
-                            "إلغاء",
-                            textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
+                        ElevatedButton(
+                          child: Text(
+                            AppLocalizations.of(context)!.sign_in,
                           ),
-                          width: Res.width(140),
-                          color: AppColors.secondaryColor,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        MyButton(
-                          child: ResText(
-                            "تسجيل الدخول",
-                            textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
-                          ),
-                          width: Res.width(140),
-                          color: AppColors.secondaryColor,
                           onPressed: () async {
                             await Navigator.pushNamed(context, AuthenticationScreen.id);
                             Navigator.pop(context);
                           },
                         ),
+                        ElevatedButton(
+                          child: Text(
+                            AppLocalizations.of(context)!.cancel,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
                       ],
-                      width: Res.width(400));
+                      width: 400.w);
                   return;
                 }
                 Navigator.pushNamed(context, CreateOrderScreen.id);

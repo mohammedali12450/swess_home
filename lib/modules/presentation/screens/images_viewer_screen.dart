@@ -1,14 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:swesshome/constants/api_paths.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+
+import '../../../constants/api_paths.dart';
 
 class ImagesViewerScreen extends StatefulWidget {
   final List<String> images;
@@ -29,38 +28,16 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
       child: Scaffold(
         backgroundColor: AppColors.black,
         appBar: AppBar(
-          backgroundColor: AppColors.secondaryColor,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ResText(
-                widget.screenTitle,
-                textStyle: textStyling(S.s16, W.w5, C.wh),
-                textAlign: TextAlign.right,
-              ),
-            ],
+          title: Text(
+            widget.screenTitle,
           ),
-          automaticallyImplyLeading: true,
-          leading: Container(),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(
-                right: Res.width(24),
-              ),
-              child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.arrow_forward)),
-            ),
-          ],
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: screenWidth,
-              height: Res.height(600),
+              width: 1.sw,
+              height: 1.sw,
               child: PhotoViewGallery.builder(
                 scrollPhysics: const BouncingScrollPhysics(),
                 builder: (BuildContext context, int index) {
@@ -71,13 +48,9 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
                       imageUrl: baseUrl + widget.images.elementAt(index),
                       fit: BoxFit.cover,
                       progressIndicatorBuilder: (_, __, ___) {
-                        return Container(
-                          color: AppColors.white,
-                          child: Icon(
-                            Icons.camera_alt_outlined,
-                            color: AppColors.secondaryColor.withOpacity(0.6),
-                            size: 120,
-                          ),
+                        return Icon(
+                          Icons.camera_alt_outlined,
+                          size: 120.w,
                         );
                       },
                       imageBuilder: (context, imageProvider) => Container(
@@ -93,31 +66,29 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
                   );
                 },
                 itemCount: widget.images.length,
-                loadingBuilder: (context, event) => const Center(
+                loadingBuilder: (context, event) => Center(
                   child: Icon(
                     Icons.camera_alt_outlined,
-                    size: 64,
+                    size: 64.w,
                   ),
                 ),
                 pageController: PageController(),
                 onPageChanged: (newIndex) {
                   currentImageCubit.setState(newIndex);
                 },
-                backgroundDecoration: const BoxDecoration(
-                  color: Colors.white,
+                backgroundDecoration:  BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
                 ),
               ),
             ),
-            kHe12,
+            12.verticalSpace,
             BlocBuilder<ChannelCubit, dynamic>(
               bloc: currentImageCubit,
               builder: (_, currentImage) {
-                return ResText(
-                  "الصورة " +
-                      (currentImageCubit.state + 1).toString() +
-                      " من " +
-                      widget.images.length.toString(),
-                  textStyle: textStyling(S.s12, W.w5, C.wh),
+                return Text(
+                  AppLocalizations.of(context)!.image_counting(
+                      (currentImageCubit.state + 1).toString(), widget.images.length.toString()),
+                  style: Theme.of(context).textTheme.subtitle2!.copyWith(color: AppColors.white),
                 );
               },
             ),

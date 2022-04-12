@@ -14,7 +14,7 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
       emit(LocationsFetchProgress());
       try {
         locations = await locationsRepository.getLocations();
-        emit(LocationsFetchComplete());
+        emit(LocationsFetchComplete(locations: locations!));
       } catch (e , stack) {
         debugPrint(e.toString());
         debugPrint(stack.toString());

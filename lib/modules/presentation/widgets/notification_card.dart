@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
+
 
 class NotificationCard extends StatelessWidget {
   final String title;
@@ -16,27 +16,32 @@ class NotificationCard extends StatelessWidget {
 
   final Function() onTap;
 
-  const NotificationCard(
-      {Key? key,
-      required this.title,
-      required this.body,
-      required this.date,
-      required this.isNew,
-      required this.onTap})
-      : super(key: key);
+  final double topPadding;
+
+  const NotificationCard({
+    Key? key,
+    required this.title,
+    required this.body,
+    required this.date,
+    required this.isNew,
+    required this.onTap,
+    this.topPadding = 3,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
+
     return InkWell(
       onTap: onTap,
       child: Stack(
         children: [
           Container(
-            width: inf,
-            padding: kMediumSymHeight,
-            margin: const EdgeInsets.symmetric(vertical: 3),
+            width: 1.sw,
+            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+            margin: EdgeInsets.only(bottom: 3, top: topPadding),
             decoration: BoxDecoration(
-              color: AppColors.thirdColor.withOpacity(0.18),
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.18),
               borderRadius: const BorderRadius.all(
                 Radius.circular(12),
               ),
@@ -45,60 +50,59 @@ class NotificationCard extends StatelessWidget {
               ),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ResText(
+                Text(
                   title,
-                  textAlign: TextAlign.right,
-                  textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-                      shadows: [BoxShadow(color: AppColors.black.withOpacity(0.24), blurRadius: 4)]),
+                  style: Theme.of(context).textTheme.headline5,
                 ),
-                kHe16,
+                16.verticalSpace,
                 Padding(
                   padding: EdgeInsets.only(
-                    left: Res.width(12),
+                    left: (isArabic) ? 12.w : 0,
+                    right: (!isArabic) ? 12.w : 0,
                   ),
-                  child: ResText(
+                  child: Text(
                     body,
-                    textAlign: TextAlign.right,
-                    textStyle: textStyling(S.s15, W.w5, C.bl).copyWith(height: 1.8),
+                    style: Theme.of(context).textTheme.subtitle2,
                     maxLines: 10,
                   ),
                 ),
-                kHe8,
-                ResText(
+                8.verticalSpace,
+                Text(
                   date,
-                  textStyle: textStyling(S.s14, W.w4, C.bl, fontFamily: F.roboto).copyWith(
-                    color: AppColors.black.withOpacity(0.48),
+                  style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground.withOpacity(0.64),
                   ),
-                  textAlign: TextAlign.left,
+                  textAlign: TextAlign.end,
                 ),
-                kHe12,
+                12.verticalSpace,
               ],
             ),
           ),
           if (isNew)
             Positioned(
-              left: Res.width(16),
-              top: Res.height(12),
+              left: (isArabic) ? 16.w : null,
+              right: (!isArabic) ? 16.w : null,
+              top: 12.h,
               child: Container(
-                height: Res.height(32),
+                height: 32.h,
                 padding: EdgeInsets.symmetric(
-                  horizontal: Res.width(8),
+                  horizontal: 12.w,
                 ),
                 decoration: BoxDecoration(
-                    color: AppColors.secondaryColor,
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(4),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: AppColors.black.withOpacity(0.24), offset: const Offset(0, 2), blurRadius: 4)
-                    ]),
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(4),
+                  ),
+                ),
                 child: Center(
-                  child: ResText(
-                    "إشعار جديد",
-                    textStyle: textStyling(S.s12, W.w4, C.wh).copyWith(height: 1.8),
+                  child: Text(
+                    AppLocalizations.of(context)!.new_notification,
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle2!
+                        .copyWith(color: Theme.of(context).colorScheme.background),
                     textAlign: TextAlign.center,
                   ),
                 ),

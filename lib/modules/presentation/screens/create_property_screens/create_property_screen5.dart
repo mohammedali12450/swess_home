@@ -1,23 +1,22 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
-import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/system_variables.dart';
+import 'package:swesshome/modules/presentation/screens/create_property_screens/build_images_selectors.dart';
+import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_screen_finish.dart';
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
-import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-import 'build_images_selectors.dart';
 import 'create_property_screen6.dart';
-import 'create_property_screen_finish.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'image_count_validate.dart';
 
 class CreatePropertyScreen5 extends StatefulWidget {
   static const String id = "CreatePropertyScreen5";
@@ -30,22 +29,21 @@ class CreatePropertyScreen5 extends StatefulWidget {
   _CreatePropertyScreen5State createState() => _CreatePropertyScreen5State();
 }
 
-class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with RestorationMixin {
+class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> {
   List<File>? propertyImages;
 
   List<File>? streetPropertyImages;
-  File? floorPlanPropertyImage;
+
+  List<File>? floorPlanPropertyImages;
 
   TextEditingController descriptionController = TextEditingController();
 
   bool isLands = false;
   bool isShops = false;
-
   bool isCompressing = false;
 
   late SystemVariables _systemVariables;
-
-
+  ChannelCubit textDirectionCubit = ChannelCubit(null);
 
   @override
   void initState() {
@@ -54,44 +52,55 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with Rest
     isLands = widget.currentOffer.estateType.id == landsPropertyTypeNumber;
     isShops = widget.currentOffer.estateType.id == shopsPropertyTypeNumber;
     _systemVariables = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!;
-
   }
 
   @override
   Widget build(BuildContext context) {
     return CreatePropertyTemplate(
       headerIconPath: (isLands || isShops) ? documentOutlineIconPath : imageOutlineIconPath,
-      headerText: "الخطوة الخامسة",
+      headerText: AppLocalizations.of(context)!.step_5,
       body: SingleChildScrollView(
         child: Column(
           children: [
             if (isLands || isShops) ...[
-              kHe24,
+              24.verticalSpace,
               SizedBox(
-                width: inf,
-                child: ResText(
-                  ":وصف العقار (اختياري)",
-                  textStyle: textStyling(S.s18, W.w6, C.bl),
-                  textAlign: TextAlign.right,
-                ),
+                width: 1.sw,
+                child: Text(AppLocalizations.of(context)!.estate_description +
+                    " ( ${AppLocalizations.of(context)!.optional} ) :"),
               ),
-              kHe16,
+              16.verticalSpace,
               SizedBox(
-                width: inf,
-                height: Res.height(200),
-                child: TextField(
-                  controller: descriptionController,
-                  style: textStyling(S.s15, W.w5, C.bl),
-                  maxLines: 8,
-                  maxLength: 600,
-                  textDirection: TextDirection.rtl,
-                  decoration: InputDecoration(
-                    hintText: "أدخل وصف إضافي لعقارك !",
-                    hintStyle: textStyling(S.s15, W.w5, C.hint),
-                    hintTextDirection: TextDirection.rtl,
-                    border: kOutlinedBorderBlack,
-                    focusedBorder: kOutlinedBorderBlack,
-                  ),
+                width: 1.sw,
+                height: 200.h,
+                child: BlocBuilder<ChannelCubit, dynamic>(
+                  bloc: textDirectionCubit,
+                  builder: (_, text) {
+                    return TextField(
+                      textDirection: (text == null)
+                          ? null
+                          : intl.Bidi.detectRtlDirectionality(text)
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
+                      controller: descriptionController,
+                      maxLines: 8,
+                      maxLength: 600,
+                      decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context)!.estate_description_hint,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.onBackground.withOpacity(0.48),
+                              width: 0.5),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(12),
+                          ),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        textDirectionCubit.setState(value);
+                      },
+                    );
+                  },
                 ),
               ),
             ],
@@ -108,29 +117,27 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with Rest
                       : images.map((e) => e as File).toList();
                 },
                 onFloorPlanImagesSelected: (images) {
-                  floorPlanPropertyImage = (images == null || images.isEmpty) ? null : images.first;
+                  floorPlanPropertyImages = (images == null || images.isEmpty)
+                      ? null
+                      : images.map((e) => e as File).toList();
                 },
                 compressStateListener: (compressState) {
                   isCompressing = compressState;
                 },
-
                 maximumCountOfEstateImages: int.parse(_systemVariables.maximumCountOfEstateImages),
                 maximumCountOfStreetImages: int.parse(_systemVariables.maximumCountOfStreetImages),
                 maximumCountOfFloorPlanImages:
                 int.parse(_systemVariables.maximumCountOfFloorPlanImages),
                 minimumCountOfEstateImages: _systemVariables.minimumCountOfEstateImages,
-
-
               ),
-            kHe36,
-            MyButton(
-              child: ResText(
-                (isLands || isShops) ? "إنشاء العرض العقاري" : "التالي",
-                textStyle: textStyling(S.s16, W.w5, C.wh),
+            32.verticalSpace,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
+              child: Text(
+                (isLands || isShops)
+                    ? AppLocalizations.of(context)!.create_estate
+                    : AppLocalizations.of(context)!.next,
               ),
-              width: Res.width(240),
-              height: Res.height(56),
-              color: AppColors.secondaryColor,
               onPressed: () {
                 if (!isLands && !isShops) {
                   if (isCompressing) {
@@ -140,7 +147,7 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with Rest
                   if (!validateData()) return;
                   widget.currentOffer.estateImages = propertyImages!;
                   widget.currentOffer.streetImages = streetPropertyImages;
-                  widget.currentOffer.floorPlanImage = floorPlanPropertyImage;
+                  widget.currentOffer.floorPlanImages = floorPlanPropertyImages;
                 } else {
                   widget.currentOffer.description = descriptionController.text;
                 }
@@ -155,7 +162,6 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with Rest
                 );
               },
             ),
-            kHe24,
           ],
         ),
       ),
@@ -163,63 +169,14 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> with Rest
   }
 
   bool validateData() {
-    int minimumEstateImagesCount =
-        BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.minimumCountOfEstateImages;
-    int? minimumStreetImagesCount =
-        BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.minimumCountOfStreetImages;
-
-    if (propertyImages == null || propertyImages!.length < minimumEstateImagesCount) {
-      Fluttertoast.showToast(
-          msg: "يجب تحديد " + minimumEstateImagesCount.toString() + " صور للعقار على الأقل!");
+    if (!isImagesCountValidate(
+      context,
+      propertyImages == null ? 0 : propertyImages!.length,
+      streetPropertyImages == null ? 0 : streetPropertyImages!.length,
+      floorPlanPropertyImages == null ? 0 : floorPlanPropertyImages!.length,
+    )) {
       return false;
     }
-
-    if (minimumStreetImagesCount != null) {
-      if (streetPropertyImages == null || streetPropertyImages!.length < minimumStreetImagesCount) {
-        Fluttertoast.showToast(
-            msg: "يجب تحديد " +
-                minimumStreetImagesCount.toString() +
-                " صور لشارع العقار على الأقل!");
-        return false;
-      }
-    }
-
-
-
-
-    if (propertyImages!.length > int.parse(_systemVariables.maximumCountOfEstateImages)) {
-      showWonderfulAlertDialog(
-          context,
-          "خطأ",
-          "لا يمكنك اختيار أكثر من " +
-              _systemVariables.maximumCountOfEstateImages +
-              " صورة من صور العقار");
-      return false;
-    }
-
-    if (streetPropertyImages != null &&
-        streetPropertyImages!.length > int.parse(_systemVariables.maximumCountOfStreetImages)) {
-      showWonderfulAlertDialog(
-          context,
-          "خطأ",
-          "لا يمكنك اختيار أكثر من " +
-              _systemVariables.maximumCountOfStreetImages +
-              " صورة من صور شارع العقار");
-      return false;
-    }
-
-
-
-
     return true;
-  }
-
-  @override
-  // TODO: implement restorationId
-  String? get restorationId => "CreatePropertyScreen5";
-
-  @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    // TODO: implement restoreState
   }
 }

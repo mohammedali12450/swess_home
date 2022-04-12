@@ -2,33 +2,28 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reorderables/reorderables.dart';
 import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/images_compressor.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-import 'my_button.dart';
-import 'wonderful_alert_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // ignore: must_be_immutable
 class VerticalImagesViewer extends StatefulWidget {
   List? images; // url or file .
-  final bool isSingleImage;
   final Function(List? images) onSelect;
   final bool Function()? onStartPicking;
 
   VerticalImagesViewer({
     Key? key,
     required this.onSelect,
-    this.isSingleImage = false,
-    this.images,
     this.onStartPicking,
+    this.images,
   }) : super(key: key);
 
   @override
@@ -49,12 +44,10 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: screenWidth,
-      padding: kMediumSymHeight,
+      width: 1.sw,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: AppColors.black.withOpacity(0.32),
-        ),
+        border: Border.all(color: Theme.of(context).colorScheme.onBackground),
         borderRadius: const BorderRadius.all(
           Radius.circular(16),
         ),
@@ -67,18 +60,20 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               (images != null && images.isNotEmpty)
-                  ? Padding(
-                      padding: EdgeInsets.only(
-                        bottom: Res.height(12),
-                      ),
-                      child: ReorderableWrap(
-                        runSpacing: Res.height(8),
-                        runAlignment: WrapAlignment.start,
-                        alignment: WrapAlignment.start,
-                        onReorder: _onReorder,
-                        children: images
-                            .map((image) => _buildImageCard(image, images.indexOf(image) + 1))
-                            .toList(),
+                  ? Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 12.h),
+                        child: ReorderableWrap(
+                          runSpacing: 8.h,
+                          runAlignment: WrapAlignment.start,
+                          alignment: WrapAlignment.start,
+                          onReorder: _onReorder,
+                          children: images
+                              .map(
+                                (image) => _buildImageCard(image, images.indexOf(image) + 1),
+                              )
+                              .toList(),
+                        ),
                       ),
                     )
                   : Container(),
@@ -87,7 +82,7 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
           );
         },
       ),
-    );  
+    );
   }
 
   Widget _buildImageCard(dynamic image, int index) {
@@ -99,13 +94,13 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
     }
     return LayoutBuilder(
       key: UniqueKey(),
-      builder: (_, bosConstrains) {
+      builder: (_, boxConstrains) {
         return Stack(
           children: [
             Container(
-              height: bosConstrains.maxWidth / 2.2,
-              width: bosConstrains.maxWidth / 2.2,
-              margin: EdgeInsets.symmetric(horizontal: Res.width(4)),
+              height: boxConstrains.maxWidth / 2.2,
+              width: boxConstrains.maxWidth / 2.2,
+              margin: EdgeInsets.symmetric(horizontal: 4.w),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
                 image: DecorationImage(
@@ -116,47 +111,51 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
               child: Center(
                 child: Text(
                   index.toString(),
-                  style: textStyling(S.s50, W.w6, C.wh, fontFamily: F.roboto)
-                      .copyWith(color: AppColors.white.withOpacity(0.56), fontSize: 75),
+                  style: Theme.of(context).textTheme.headline1!.copyWith(
+                      color: AppColors.white.withOpacity(0.64), fontWeight: FontWeight.w600),
                 ),
               ),
             ),
             Positioned(
-                right: 8,
-                top: 4,
+                right: 8.w,
+                top: 4.h,
                 child: Container(
-                  decoration: const BoxDecoration(
-                      color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(4))),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    boxShadow: [
+                      BoxShadow(
+                          color: Theme.of(context).colorScheme.shadow,
+                          offset: const Offset(1, 0),
+                          spreadRadius: 1,
+                          blurRadius: 4),
+                    ],
+                  ),
                   child: IconButton(
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     icon: const Icon(
                       Icons.close,
-                      color: AppColors.secondaryColor,
                       size: 16,
                     ),
                     onPressed: () async {
-                      await showWonderfulAlertDialog(context, "تأكيد", "هل تريد حذف هذه الصورة؟",
+                      await showWonderfulAlertDialog(
+                          context,
+                          AppLocalizations.of(context)!.confirmation,
+                          AppLocalizations.of(context)!.delete_image_confirmation,
                           removeDefaultButton: true,
                           dialogButtons: [
-                            MyButton(
-                              color: AppColors.secondaryColor,
-                              width: Res.width(120),
-                              child: ResText(
-                                "لا",
-                                textStyle: textStyling(S.s16, W.w5, C.wh),
+                            ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.no,
                                 textAlign: TextAlign.center,
                               ),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
                             ),
-                            MyButton(
-                              color: AppColors.secondaryColor,
-                              width: Res.width(120),
-                              child: ResText(
-                                "نعم",
-                                textStyle: textStyling(S.s16, W.w5, C.wh),
+                            ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.yes,
                                 textAlign: TextAlign.center,
                               ),
                               onPressed: () {
@@ -190,24 +189,26 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
         return Container(
           height: bosConstrains.maxWidth / 3.5,
           width: bosConstrains.maxWidth / 3.5,
-          margin: EdgeInsets.symmetric(horizontal: Res.width(4)),
+          margin: EdgeInsets.symmetric(horizontal: 4.w),
           decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
-              boxShadow: [
-                BoxShadow(
-                    color: AppColors.black.withOpacity(0.32), offset: const Offset(-1, 2), blurRadius: 4)
-              ]),
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            color: Theme.of(context).colorScheme.background,
+            boxShadow: [
+              BoxShadow(
+                  color: Theme.of(context).colorScheme.shadow,
+                  offset: const Offset(1, 1),
+                  spreadRadius: 2,
+                  blurRadius: 3),
+            ],
+          ),
           child: InkWell(
             onTap: () {
               if (isImagesLoadingCubit.state == true) return;
-
               if (widget.onStartPicking != null && !widget.onStartPicking!()) {
-                Fluttertoast.showToast(msg: "الرجاء الانتظار حتى تتم عملية الضغط");
+                Fluttertoast.showToast(msg: AppLocalizations.of(context)!.wait_compress_message);
                 return;
               }
-
-              selectImages(context, isSingleImage: widget.isSingleImage);
+              selectImages(context);
             },
             child: BlocBuilder<ChannelCubit, dynamic>(
               bloc: isImagesLoadingCubit,
@@ -217,22 +218,22 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const SpinKitWave(
-                              color: AppColors.secondaryColor,
-                              size: 24,
+                            SpinKitWave(
+                              color: Theme.of(context).colorScheme.onBackground,
+                              size: 24.w,
                             ),
-                            kHe8,
-                            ResText(
-                              "جاري ضغط الصور",
-                              textStyle: textStyling(S.s12, W.w4, C.bl),
+                            8.verticalSpace,
+                            Text(
+                              AppLocalizations.of(context)!.compressing_images,
                               textAlign: TextAlign.center,
+                              style:
+                                  Theme.of(context).textTheme.subtitle2!.copyWith(fontSize: 13.sp),
                             ),
                           ],
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.add,
                           size: 48,
-                          color: AppColors.black.withOpacity(0.48),
                         ),
                 );
               },
@@ -243,29 +244,16 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
     );
   }
 
-  Future<void> selectImages(BuildContext context, {bool isSingleImage = false}) async {
+  Future<void> selectImages(BuildContext context) async {
     ImagePicker picker = ImagePicker();
-    // Single image state:
-    if (isSingleImage) {
-      XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
-      if (pickedImage == null) return;
-      widget.images ??= [];
-      widget.images!.clear();
-      widget.images!.add(await compressFile(File(pickedImage.path)));
-      imagesCardsCubit.setState(
-        List.from(widget.images!),
-      );
-      widget.onSelect(widget.images);
-      return;
-    }
-
     // Multiple images state :
     List<XFile>? pickedImages = await picker.pickMultiImage();
     isImagesLoadingCubit.setState(true);
     if (pickedImages != null) {
       widget.images ??= [];
       for (XFile file in pickedImages) {
-        widget.images!.add(await compressFile(File(file.path)));
+        File temp = await compressFile(File(file.path));
+        widget.images!.add(temp);
         // selectedImages.add(File(file.path));
       }
       imagesCardsCubit.setState(

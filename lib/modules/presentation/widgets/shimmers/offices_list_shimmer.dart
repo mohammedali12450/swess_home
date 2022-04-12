@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmer_widget.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
 
 class OfficesListShimmer extends StatefulWidget {
   const OfficesListShimmer({Key? key}) : super(key: key);
@@ -25,7 +25,7 @@ class _OfficesListShimmerState extends State<OfficesListShimmer> {
   SizedBox buildShimmerWidget() {
     return SizedBox(
       width: inf,
-      height: Res.height(100),
+      height: 100.h,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -33,8 +33,8 @@ class _OfficesListShimmerState extends State<OfficesListShimmer> {
           Expanded(
             flex: 1,
             child: ShimmerWidget.rectangular(
-              height: Res.height(80),
-              width: Res.width(160),
+              height: 80.h,
+              width: 160.w,
             ),
           ),
           Expanded(
@@ -43,26 +43,26 @@ class _OfficesListShimmerState extends State<OfficesListShimmer> {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                kHe20 ,
+                kHe20,
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: Res.width(16),
+                    horizontal: 16.w,
                   ),
                   child: ShimmerWidget.rectangular(
-                    height: Res.height(30),
+                    height: 30.h,
                   ),
                 ),
                 const Spacer(),
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: Res.width(16),
+                    horizontal: 16.w,
                   ),
                   child: ShimmerWidget.rectangular(
-                    height: Res.height(20),
-                    width: Res.width(80),
+                    height: 20.h,
+                    width: 80.w,
                   ),
                 ),
-                kHe20 ,
+                kHe20,
               ],
             ),
           ),

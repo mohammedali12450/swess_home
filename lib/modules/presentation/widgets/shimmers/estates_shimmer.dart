@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
+import 'package:swesshome/modules/presentation/widgets/shimmer_widget.dart';
 
-import '../shimmer_widget.dart';
-
-class EstatesShimmer extends StatelessWidget {
-  const EstatesShimmer({Key? key}) : super(key: key);
+class PropertyShimmer extends StatelessWidget {
+  const PropertyShimmer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,117 +15,116 @@ class EstatesShimmer extends StatelessWidget {
       shrinkWrap: true,
       itemCount: 3,
       itemBuilder: (_, index) {
-        return buildPropertyShimmer();
+        return buildPropertyShimmer(context);
       },
     );
   }
 
-  Container buildPropertyShimmer() {
+  Container buildPropertyShimmer(BuildContext context) {
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
+
     return Container(
-      width: screenWidth,
-      margin: EdgeInsets.symmetric(
-          vertical: Res.height(8), horizontal: Res.width(16)),
+      width: 1.sw,
+      margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
       decoration: BoxDecoration(
-        borderRadius: medBorderRadius,
-        border: Border.all(color: AppColors.black.withOpacity(0.25)),
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        border: Border.all(color: Theme.of(context).colorScheme.onBackground.withOpacity(0.24)),
       ),
       child: Column(
         children: [
           Container(
-            height: Res.height(200),
-            width: inf,
+            height: 300.h,
+            width: 1.sw,
             decoration: BoxDecoration(
-              color: AppColors.black.withOpacity(0.12),
+              color: Theme.of(context).colorScheme.onBackground.withOpacity(0.12),
               borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+                  topLeft: Radius.circular(12), topRight: Radius.circular(12)),
             ),
           ),
           Row(
             children: [
-              Expanded(
-                flex: 2,
-                child: ShimmerWidget.rectangular(
-                  height: Res.height(80),
-                ),
-              ),
               Expanded(
                 flex: 6,
                 child: ShimmerWidget.rectangular(
-                  baseColor: Colors.grey[300],
-                  highlightColor: Colors.grey[200],
-                  height: Res.height(80),
+                  baseColor: isDark ? Colors.grey[400] : Colors.grey[300],
+                  highlightColor: isDark ? Colors.grey[300] : Colors.grey[200],
+                  height: 100.h,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: ShimmerWidget.rectangular(
+                  height: 100.h,
                 ),
               ),
             ],
           ),
-          kHe16,
-          SizedBox(
-            height: Res.height(80),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                kWi12,
-                Expanded(
-                  flex: 1,
-                  child: ShimmerWidget.rectangular(
-                    height: Res.height(75),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: inf,
-                        alignment: Alignment.centerRight,
-                        padding: EdgeInsets.only(right: Res.width(12)),
-                        child: ShimmerWidget.rectangular(
-                          height: Res.height(20),
-                          width: Res.width(220),
-                        ),
-                      ),
-                      kHe12,
-                      Container(
-                        width: inf,
-                        alignment: Alignment.centerRight,
-                        padding: EdgeInsets.only(right: Res.width(12)),
-                        child: ShimmerWidget.rectangular(
-                          height: Res.height(16),
-                          width: Res.width(180),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+          16.verticalSpace,
+          Container(
+            width: 1.sw,
+            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            padding: EdgeInsets.only(
+              right: isArabic ? 12.w : 0,
+              left: !isArabic ? 12.w : 0,
+            ),
+            child: ShimmerWidget.rectangular(
+              height: 20.h,
+              width: 220.w,
             ),
           ),
-          kHe24,
+          8.verticalSpace,
+          Container(
+            width: 1.sw,
+            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            padding: EdgeInsets.only(
+              right: isArabic ? 12.w : 0,
+              left: !isArabic ? 12.w : 0,
+            ),
+            child: ShimmerWidget.rectangular(
+              height: 16.h,
+              width: 180.w,
+            ),
+          ),
+          8.verticalSpace,
+          Container(
+            width: 1.sw,
+            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            padding: EdgeInsets.only(
+              right: isArabic ? 12.w : 0,
+              left: !isArabic ? 12.w : 0,
+            ),
+            child: ShimmerWidget.rectangular(
+              height: 16.h,
+              width: 140.w,
+            ),
+          ),
+          24.verticalSpace,
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ShimmerWidget.circular(
-                height: Res.height(48),
-                width: Res.width(60),
-                shapeBorder:
-                    const RoundedRectangleBorder(borderRadius: lowBorderRadius),
+                height: 48.h,
+                width: 120.w,
+                shapeBorder: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(4),
+                  ),
+                ),
               ),
+              16.horizontalSpace,
               ShimmerWidget.circular(
-                height: Res.height(48),
-                width: Res.width(60),
-                shapeBorder:
-                    const RoundedRectangleBorder(borderRadius: lowBorderRadius),
-              ),
-              ShimmerWidget.circular(
-                height: Res.height(48),
-                width: Res.width(60),
-                shapeBorder:
-                    const RoundedRectangleBorder(borderRadius: lowBorderRadius),
+                height: 48.h,
+                width: 120.w,
+                shapeBorder: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(4),
+                  ),
+                ),
               ),
             ],
-          ),
-          kHe8,
+          ) ,
+          12.verticalSpace
         ],
       ),
     );

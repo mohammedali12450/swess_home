@@ -1,36 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/constants/enums.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_state.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_event.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/user.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
-import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/estate_details_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'my_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../constants/enums.dart';
+import '../screens/authentication_screen.dart';
 
 class EstateCard extends StatefulWidget {
   final Estate estate;
@@ -39,14 +41,14 @@ class EstateCard extends StatefulWidget {
   final Function? onClosePressed;
   final bool removeCloseButton;
 
-  const EstateCard({
-    Key? key,
-    required this.estate,
-    this.removeBottomBar = false,
-    this.bottomWidget,
-    this.onClosePressed,
-    this.removeCloseButton = false,
-  }) : super(key: key);
+  const EstateCard(
+      {Key? key,
+      required this.estate,
+      this.removeBottomBar = false,
+      this.bottomWidget,
+      required this.removeCloseButton,
+      this.onClosePressed})
+      : super(key: key);
 
   @override
   _EstateCardState createState() => _EstateCardState();
@@ -58,9 +60,9 @@ class _EstateCardState extends State<EstateCard> {
   late LikeAndUnlikeBloc _likeAndUnlikeBloc;
 
   late SaveAndUnSaveEstateBloc _saveAndUnSaveEstateBloc;
-
   VisitBloc visitBloc = VisitBloc(EstateRepository());
 
+  late String currency;
   String? userToken;
 
   @override
@@ -86,80 +88,87 @@ class _EstateCardState extends State<EstateCard> {
 
   @override
   Widget build(BuildContext context) {
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode(context);
+
+    currency = AppLocalizations.of(context)!.syrian_currency;
+    if (BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore) {
+      currency = AppLocalizations.of(context)!.lebanon_currency;
+    }
+
     int intPrice = int.parse(widget.estate.price);
     String estatePrice = NumbersHelper.getMoneyFormat(intPrice);
-    String specialWord = (widget.estate.estateType.id == 1 ||
-            widget.estate.estateType.id == 2 ||
-            widget.estate.estateType.id == 5)
-        ? " مميز"
-        : " مميزة";
-    String estateType = widget.estate.estateType.getName(true).split('|').elementAt(1) +
-        ((widget.estate.contractId! == 4) ? specialWord : "");
+
+    String estateType = widget.estate.estateType.getName(isArabic).split('|').elementAt(1);
     String addingDate =
-        DateHelper.getDateByFormat(DateTime.parse(widget.estate.publishedAt!), "yyyy/MM/dd");
+        DateHelper.getDateByFormat(DateTime.parse(widget.estate.createdAt!), "yyyy/MM/dd");
+    List<String> estateImages =
+        widget.estate.images.where((e) => e.type == "estate_image").map((e) => e.url).toList();
+
     Color estateTypeBackgroundColor = Colors.white;
     Color estatePriceBackgroundColor = Colors.white;
     Color estateTypeColor = Colors.white;
     Color estatePriceColor = Colors.white;
-    List<String> estateImages =
-        widget.estate.images.where((e) => e.type == "estate_image").map((e) => e.url).toList();
 
-    switch (widget.estate.contractId!) {
-      case 1:
-        {
-          estateTypeBackgroundColor = AppColors.baseColor;
-          estatePriceBackgroundColor = AppColors.baseColor.withAlpha(120);
-          estateTypeColor = AppColors.black;
-          estatePriceColor = AppColors.black;
-          break;
-        }
-      case 2:
-        {
-          estateTypeBackgroundColor = AppColors.baseColor;
-          estatePriceBackgroundColor = AppColors.baseColor.withAlpha(80);
-          estateTypeColor = AppColors.black;
-          estatePriceColor = AppColors.black;
-          break;
-        }
-      case 3:
-        {
-          estateTypeBackgroundColor = AppColors.lastColor;
-          estatePriceBackgroundColor = AppColors.lastColor.withAlpha(220);
-          estateTypeColor = AppColors.white;
-          estatePriceColor = AppColors.white;
-          break;
-        }
-      case 4:
-        {
-          estateTypeBackgroundColor = AppColors.secondaryColor;
-          estatePriceBackgroundColor = AppColors.secondaryColor.withAlpha(220);
-          estateTypeColor = AppColors.white;
-          estatePriceColor = AppColors.white;
-          break;
-        }
+    if (isDarkMode) {
+      switch (widget.estate.contractId!) {
+        case 1:
+        case 2:
+          {
+            estateTypeBackgroundColor = Colors.white12;
+            estatePriceBackgroundColor = Colors.white54;
+            estateTypeColor = AppColors.white;
+            estatePriceColor = AppColors.black;
+            break;
+          }
+        case 3:
+        case 4:
+          {
+            estateTypeBackgroundColor = Colors.black38;
+            estatePriceBackgroundColor = Colors.white24;
+            estateTypeColor = AppColors.white;
+            estatePriceColor = AppColors.white;
+            break;
+          }
+      }
+    } else {
+      switch (widget.estate.contractId!) {
+        case 1:
+        case 2:
+          {
+            estateTypeBackgroundColor = Theme.of(context).colorScheme.primary.withAlpha(180);
+            estatePriceBackgroundColor = Theme.of(context).colorScheme.secondary;
+            estateTypeColor = AppColors.white;
+            estatePriceColor = AppColors.black;
+            break;
+          }
+        case 3:
+        case 4:
+          {
+            estateTypeBackgroundColor = Theme.of(context).colorScheme.primary;
+            estatePriceBackgroundColor = Theme.of(context).colorScheme.secondary;
+            estateTypeColor = AppColors.white;
+            estatePriceColor = AppColors.black;
+            break;
+          }
+      }
     }
 
     return Container(
-      margin: EdgeInsets.symmetric(
-        vertical: Res.height(8),
-      ),
-      width: screenWidth,
+      margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
+      width: 1.sw,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).colorScheme.background,
         borderRadius: const BorderRadius.all(
-          Radius.circular(12),
+          Radius.circular(8),
         ),
         boxShadow: [
           BoxShadow(
-              color: AppColors.black.withOpacity(0.32),
-              offset: const Offset(0, 0),
-              blurRadius: 4,
-              spreadRadius: 2)
+            color: Theme.of(context).colorScheme.shadow,
+            offset: const Offset(0, 2),
+            blurRadius: 4,
+          )
         ],
-        gradient: LinearGradient(colors: [
-          (widget.estate.contractId == 4) ? Colors.yellow[200]! : Colors.white,
-          AppColors.white,
-        ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
       ),
       child: Column(
         children: [
@@ -176,7 +185,7 @@ class _EstateCardState extends State<EstateCard> {
               children: [
                 // Estate images :
                 SizedBox(
-                  height: Res.height(300),
+                  height: 300.h,
                   child: Stack(
                     children: [
                       PhotoViewGallery.builder(
@@ -187,21 +196,17 @@ class _EstateCardState extends State<EstateCard> {
                               imageUrl: baseUrl + estateImages.elementAt(index),
                               fit: BoxFit.cover,
                               progressIndicatorBuilder: (_, __, ___) {
-                                return Container(
-                                  color: AppColors.white,
-                                  child: Icon(
-                                    Icons.camera_alt_outlined,
-                                    color: AppColors.secondaryColor.withOpacity(0.6),
-                                    size: 120,
-                                  ),
+                                return Icon(
+                                  Icons.camera_alt_outlined,
+                                  size: 120.w,
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.64),
                                 );
                               },
                               imageBuilder: (context, imageProvider) => Container(
                                 decoration: BoxDecoration(
-                                  color: AppColors.white,
                                   borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    topRight: Radius.circular(12),
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8),
                                   ),
                                   image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                                 ),
@@ -210,50 +215,62 @@ class _EstateCardState extends State<EstateCard> {
                             disableGestures: true,
                           );
                         },
-                        itemCount: estateImages.length,
-                        loadingBuilder: (context, event) => const Center(
+                        itemCount: widget.estate.images
+                            .where((element) => element.type == "estate_image")
+                            .length,
+                        loadingBuilder: (context, event) => Center(
                           child: Icon(
                             Icons.camera_alt_outlined,
-                            size: 64,
+                            size: 64.w,
                           ),
                         ),
                         pageController: PageController(),
                         onPageChanged: (newIndex) {
                           currentImageCubit.setState(newIndex);
                         },
-                        backgroundDecoration: const BoxDecoration(
-                          color: Colors.white24,
+                        backgroundDecoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.background,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
+                          ),
                         ),
                       ),
                       BlocBuilder<ChannelCubit, dynamic>(
                         bloc: currentImageCubit,
                         builder: (_, currentImageIndex) {
                           return Positioned(
-                            top: Res.height(4),
-                            left: Res.width(8),
+                            top: 4.h,
+                            left: 8.w,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 2),
+                              padding: EdgeInsets.symmetric(horizontal: 4.w),
                               decoration: BoxDecoration(
-                                color: AppColors.black.withOpacity(0.64),
                                 borderRadius: const BorderRadius.all(
                                   Radius.circular(2),
                                 ),
+                                color: AppColors.white.withOpacity(0.64),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(
-                                    Icons.camera_alt_outlined,
-                                    size: 20,
-                                    color: AppColors.white,
-                                  ),
-                                  kWi4,
-                                  ResText(
+                                  Text(
                                     (currentImageIndex + 1).toString() + '/',
-                                    textStyle: textStyling(S.s12, W.w4, C.wh, fontFamily: F.roboto),
+                                    style: Theme.of(context).textTheme.caption!.copyWith(
+                                          fontFamily: "Hind",
+                                          color: AppColors.black,
+                                        ),
                                   ),
-                                  ResText(
+                                  Text(
                                     estateImages.length.toString(),
-                                    textStyle: textStyling(S.s12, W.w4, C.wh, fontFamily: F.roboto),
+                                    style: Theme.of(context).textTheme.caption!.copyWith(
+                                          fontFamily: "Hind",
+                                          color: AppColors.black,
+                                        ),
+                                  ),
+                                  4.horizontalSpace,
+                                  Icon(
+                                    Icons.camera_alt_outlined,
+                                    size: 20.w,
+                                    color: AppColors.black,
                                   ),
                                 ],
                               ),
@@ -263,8 +280,8 @@ class _EstateCardState extends State<EstateCard> {
                       ),
                       if (!widget.removeCloseButton)
                         Positioned(
-                          top: Res.height(4),
-                          right: Res.width(8),
+                          top: 4.h,
+                          right: 8.w,
                           child: Container(
                             decoration: BoxDecoration(
                               color: AppColors.black.withOpacity(0.64),
@@ -293,90 +310,129 @@ class _EstateCardState extends State<EstateCard> {
                 ),
                 // Estate price and type :
                 SizedBox(
-                  height: Res.height(100),
+                  height: 100.h,
                   child: Row(
                     children: [
+                      // price
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          height: 1.sh,
+                          decoration: BoxDecoration(
+                            color: estatePriceBackgroundColor,
+                          ),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: (isArabic) ? 12.w : 0,
+                                  left: (!isArabic) ? 12.w : 0,
+                                ),
+                                child: Text(
+                                  estatePrice,
+                                  style: GoogleFonts.libreFranklin(
+                                      color: estatePriceColor,
+                                      fontSize: 24.sp,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.5),
+                                ),
+                              ),
+                              if (widget.estate.estateOfferType.id != rentOfferTypeNumber)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    right: (isArabic) ? 8.w : 0,
+                                    left: (!isArabic) ? 8.w : 0,
+                                  ),
+                                  child: Text(
+                                    currency,
+                                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                                        height: 1.8,
+                                        fontSize: 22.sp,
+                                        fontWeight: FontWeight.w400,
+                                        color: estatePriceColor),
+                                  ),
+                                ),
+                              if (widget.estate.estateOfferType.id == rentOfferTypeNumber)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    right: (isArabic) ? 8.w : 0,
+                                    left: (!isArabic) ? 8.w : 0,
+                                  ),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.currency_over_period(
+                                      currency,
+                                      widget.estate.periodType!.getName(isArabic)!.split("|").first,
+                                    ),
+                                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                                        height: 1.8,
+                                        fontSize: 22.sp,
+                                        fontWeight: FontWeight.w400,
+                                        color: estatePriceColor),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
                       // type :
                       Expanded(
                         flex: 1,
                         child: Container(
                           color: estateTypeBackgroundColor,
-                          padding: kSmallAllPadding,
                           child: Center(
-                            child: ResText(
+                            child: Text(
                               estateType,
-                              textStyle: textStyling(S.s18, W.w5, C.bl)
-                                  .copyWith(color: estateTypeColor, height: 1.8),
-                              textAlign: TextAlign.center,
                               maxLines: 3,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1!
+                                  .copyWith(color: estateTypeColor),
                             ),
                           ),
                         ),
                       ),
-                      // price
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                          height: inf,
-                          color: estatePriceBackgroundColor,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              if (widget.estate.estateOfferType.id == rentOfferTypeNumber)
-                                ResText(
-                                  widget.estate.periodType!.getName(true).split("|").first + " /",
-                                  textStyle: textStyling(
-                                    S.s20,
-                                    W.w5,
-                                    C.bl,
-                                  ).copyWith(height: 1.8, color: estatePriceColor),
-                                  textAlign: TextAlign.right,
-                                ),
-                              Container(
-                                padding: EdgeInsets.only(
-                                  right: Res.width(12),
-                                ),
-                                child: ResText(
-                                  'ل.س',
-                                  textStyle: textStyling(
-                                    S.s20,
-                                    W.w5,
-                                    C.bl,
-                                  ).copyWith(height: 1.8, color: estatePriceColor),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(
-                                  right: Res.width(12),
-                                ),
-                                child: ResText(
-                                  estatePrice,
-                                  textStyle:
-                                      textStyling(S.s22, W.w4, C.bl, fontFamily: F.libreFranklin)
-                                          .copyWith(color: estatePriceColor),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ),
                 // Estate address and office logo
                 Container(
-                  height: Res.height(100),
+                  height: 100.h,
                   color: Colors.transparent,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            right: (isArabic) ? 8.w : 0,
+                            left: (!isArabic) ? 8.w : 0,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                color: Colors.transparent,
+                                child: Text(
+                                  widget.estate.location.getLocationName(),
+                                ),
+                              ),
+                              12.verticalSpace,
+                              Text(
+                                AppLocalizations.of(context)!.adding_date + " : " + addingDate,
+                                style: Theme.of(context).textTheme.subtitle2,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      Expanded(
                         flex: 1,
                         child: Container(
-                          height: Res.height(75),
+                          height: 75.h,
                           decoration: BoxDecoration(
                             color: Colors.transparent,
                             image: DecorationImage(
@@ -387,34 +443,10 @@ class _EstateCardState extends State<EstateCard> {
                           ),
                         ),
                       ),
-                      Expanded(
-                        flex: 3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              color: Colors.transparent,
-                              child: ResText(
-                                widget.estate.location.getLocationName(),
-                                textStyle: textStyling(S.s20, W.w6, C.c2),
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                            kHe12,
-                            ResText(
-                              "تاريخ الإضافة: " + addingDate,
-                              textStyle: textStyling(S.s18, W.w6, C.bl),
-                              textAlign: TextAlign.right,
-                            ),
-                          ],
-                        ),
-                      ),
-                      kWi8
+                      8.horizontalSpace
                     ],
                   ),
                 ),
-                kHe8,
               ],
             ),
           ),
@@ -428,9 +460,11 @@ class _EstateCardState extends State<EstateCard> {
                   bloc: _saveAndUnSaveEstateBloc,
                   listener: (_, saveAndUnSaveState) {
                     if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
-                      showWonderfulAlertDialog(context, "خطأ", saveAndUnSaveState.error);
-                      _saveAndUnSaveEstateBloc
-                          .add(ReInitializeSaveState(isSaved: widget.estate.isSaved!));
+                      showWonderfulAlertDialog(
+                          context, AppLocalizations.of(context)!.error, saveAndUnSaveState.error);
+                      _saveAndUnSaveEstateBloc.add(
+                        ReInitializeSaveState(isSaved: widget.estate.isSaved!),
+                      );
                     }
                     if (saveAndUnSaveState is EstateSaved) {
                       widget.estate.isSaved = true;
@@ -445,28 +479,22 @@ class _EstateCardState extends State<EstateCard> {
                         if (userToken == null) {
                           showWonderfulAlertDialog(
                             context,
-                            "خطأ",
-                            "هذه الميزة تتطلب تسجيل الدخول",
+                            AppLocalizations.of(context)!.error,
+                            AppLocalizations.of(context)!.this_features_require_login,
                             removeDefaultButton: true,
-                            width: Res.width(400),
+                            width: 400.w,
                             dialogButtons: [
-                              MyButton(
-                                width: Res.width(150),
-                                color: AppColors.secondaryColor,
-                                child: ResText(
-                                  "إلغاء",
-                                  textStyle: textStyling(S.s16, W.w5, C.wh),
+                              ElevatedButton(
+                                child: Text(
+                                  AppLocalizations.of(context)!.cancel,
                                 ),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
                               ),
-                              MyButton(
-                                width: Res.width(150),
-                                color: AppColors.secondaryColor,
-                                child: ResText(
-                                  "تسجيل الدخول",
-                                  textStyle: textStyling(S.s16, W.w5, C.wh),
+                              ElevatedButton(
+                                child: Text(
+                                  AppLocalizations.of(context)!.sign_in,
                                 ),
                                 onPressed: () async {
                                   await Navigator.push(
@@ -500,14 +528,14 @@ class _EstateCardState extends State<EstateCard> {
                         }
                       },
                       icon: (saveAndUnSaveState is EstateSaveAndUnSaveProgress)
-                          ? const SpinKitWave(
-                              color: AppColors.secondaryColor,
-                              size: 16,
+                          ? SpinKitWave(
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 16.w,
                             )
                           : Icon((saveAndUnSaveState is EstateSaved)
                               ? Icons.bookmark
                               : Icons.bookmark_border_outlined),
-                      color: AppColors.secondaryColor,
+                      color: Theme.of(context).colorScheme.primary,
                     );
                   },
                 ),
@@ -529,7 +557,8 @@ class _EstateCardState extends State<EstateCard> {
                   bloc: _likeAndUnlikeBloc,
                   listener: (_, likeAndUnlikeState) {
                     if (likeAndUnlikeState is LikeAndUnlikeError) {
-                      showWonderfulAlertDialog(context, "خطأ", likeAndUnlikeState.error);
+                      showWonderfulAlertDialog(
+                          context, AppLocalizations.of(context)!.error, likeAndUnlikeState.error);
                       _likeAndUnlikeBloc.add(
                         ReInitializeLikeState(isLike: widget.estate.isLiked!),
                       );
@@ -547,28 +576,22 @@ class _EstateCardState extends State<EstateCard> {
                         if (userToken == null) {
                           showWonderfulAlertDialog(
                             context,
-                            "تأكيد",
-                            "هذه الميزة تتطلب تسجيل الدخول",
+                            AppLocalizations.of(context)!.confirmation,
+                            AppLocalizations.of(context)!.this_features_require_login,
                             removeDefaultButton: true,
-                            width: Res.width(400),
+                            width: 400.w,
                             dialogButtons: [
-                              MyButton(
-                                width: Res.width(150),
-                                color: AppColors.secondaryColor,
-                                child: ResText(
-                                  "إلغاء",
-                                  textStyle: textStyling(S.s16, W.w5, C.wh),
+                              ElevatedButton(
+                                child: Text(
+                                  AppLocalizations.of(context)!.cancel,
                                 ),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
                               ),
-                              MyButton(
-                                width: Res.width(150),
-                                color: AppColors.secondaryColor,
-                                child: ResText(
-                                  "تسجيل الدخول",
-                                  textStyle: textStyling(S.s16, W.w5, C.wh),
+                              ElevatedButton(
+                                child: Text(
+                                  AppLocalizations.of(context)!.sign_in,
                                 ),
                                 onPressed: () async {
                                   await Navigator.push(
@@ -610,15 +633,15 @@ class _EstateCardState extends State<EstateCard> {
                         }
                       },
                       icon: (likeAndUnlikeState is LikeAndUnlikeProgress)
-                          ? const SpinKitWave(
-                              color: AppColors.secondaryColor,
-                              size: 16,
+                          ? SpinKitWave(
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 16.w,
                             )
                           : Icon(
                               (likeAndUnlikeState is Liked)
                                   ? Icons.favorite
                                   : Icons.favorite_outline,
-                              color: AppColors.secondaryColor,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                     );
                   },

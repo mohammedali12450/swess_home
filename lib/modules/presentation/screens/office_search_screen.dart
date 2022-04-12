@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:swesshome/constants/assets_paths.dart';
-import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/colors.dart';
+import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/enums.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_state.dart';
@@ -19,10 +19,9 @@ import 'package:swesshome/modules/presentation/screens/estate_office_screen.dart
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_office_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/offices_list_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OfficeSearchScreen extends StatefulWidget {
   static const String id = 'OfficeSearchScreen';
@@ -53,10 +52,17 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    locations = BlocProvider.of<LocationsBloc>(context).locations ?? [];
+    locations = BlocProvider
+        .of<LocationsBloc>(context)
+        .locations ?? [];
 
-    if (BlocProvider.of<UserLoginBloc>(context).user != null) {
-      token = BlocProvider.of<UserLoginBloc>(context).user!.token;
+    if (BlocProvider
+        .of<UserLoginBloc>(context)
+        .user != null) {
+      token = BlocProvider
+          .of<UserLoginBloc>(context)
+          .user!
+          .token;
     }
   }
 
@@ -66,9 +72,12 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: AppColors.secondaryColor,
           title: Row(
             children: [
+              Text(
+                AppLocalizations.of(context)!.search_for_estate_agent,
+              ),
+              const Spacer(),
               BlocBuilder<ChannelCubit, dynamic>(
                 bloc: searchTypeCubit,
                 builder: (_, searchType) {
@@ -82,8 +91,8 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: Res.width(8),
-                        vertical: Res.height(8),
+                        horizontal: 8.w,
+                        vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(
@@ -91,37 +100,29 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         ),
                         border: Border.all(color: AppColors.white),
                       ),
-                      child: ResText(
-                        (searchType == OfficeSearchType.name) ? "ابحث بالمنطقة" : "ابحث بالاسم",
-                        textStyle: textStyling(S.s14, W.w4, C.wh),
+                      child: Text(
+                        (searchType == OfficeSearchType.name)
+                            ? AppLocalizations.of(context)!.search_by_area
+                            : AppLocalizations.of(context)!.search_by_name,
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .caption!
+                            .copyWith(color: AppColors.white, fontSize: 15.sp),
                       ),
                     ),
                   );
                 },
               ),
-              const Spacer(),
-              ResText(
-                "البحث عن مكاتب عقارية",
-                textStyle: textStyling(S.s18, W.w6, C.wh).copyWith(height: 1.8),
-              ),
             ],
           ),
-          automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_forward),
-            )
-          ],
           bottom: PreferredSize(
             child: Container(
               margin: EdgeInsets.only(
-                bottom: Res.height(16),
+                bottom: 16.h,
               ),
               padding: EdgeInsets.symmetric(
-                horizontal: Res.width(16),
+                horizontal: 16.w,
               ),
               child: BlocBuilder<ChannelCubit, dynamic>(
                 bloc: searchTypeCubit,
@@ -160,26 +161,35 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         );
                       }
                     },
-                    style: textStyling(S.s14, W.w5, C.wh),
-                    textDirection: TextDirection.rtl,
                     cursorColor: AppColors.white,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .subtitle1!
+                        .copyWith(
+                      color: AppColors.white,
+                    ),
                     decoration: InputDecoration(
                       hintText: (searchType == OfficeSearchType.name)
-                          ? "أدخل اسم المكتب العقاري"
-                          : "أدخل اسم المنطقة",
-                      hintStyle: textStyling(S.s14, W.w4, C.whHint)
-                          .copyWith(color: AppColors.white.withOpacity(0.64)),
-                      hintTextDirection: TextDirection.rtl,
-                      border: kUnderlinedBorderGrey,
-                      focusedBorder: kUnderlinedBorderGrey,
-                      enabledBorder: kUnderlinedBorderGrey,
+                          ? AppLocalizations.of(context)!.enter_office_name
+                          : AppLocalizations.of(context)!.enter_area_name,
+                      hintStyle: Theme
+                          .of(context)
+                          .textTheme
+                          .subtitle1!
+                          .copyWith(
+                        color: AppColors.white.withOpacity(0.64),
+                      ),
+                      border: kUnderlinedBorderWhite,
+                      focusedBorder: kUnderlinedBorderWhite,
+                      enabledBorder: kUnderlinedBorderWhite,
                     ),
                   );
                 },
               ),
             ),
             preferredSize: Size.fromHeight(
-              Res.height(80),
+              80.h,
             ),
           ),
         ),
@@ -207,7 +217,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
         if (searchResultsState is SearchOfficesFetchError) {
           showWonderfulAlertDialog(
             context,
-            "خطأ",
+            AppLocalizations.of(context)!.error,
             searchResultsState.errorMessage,
             onDefaultButtonPressed: () {
               int count = 0;
@@ -225,9 +235,11 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
         }
         if (searchResultsState is! SearchOfficesFetchComplete) {
           return SizedBox(
-            width: screenWidth,
-            height: screenHeight - Res.height(75),
-            child: const FetchResult(content: "حدث خطأ أثناء تنفيذ العملية"),
+            width: 1.sw,
+            height: 1.sh - 75.h,
+            child: FetchResult(
+              content: AppLocalizations.of(context)!.error_happened_when_executing_operation,
+            ),
           );
         }
         List<EstateOffice> results = searchResultsState.results;
@@ -239,15 +251,16 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
               children: [
                 SvgPicture.asset(
                   documentOutlineIconPath,
-                  color: AppColors.black.withOpacity(0.32),
-                  width: screenWidth / 2,
+                  color: Theme
+                      .of(context)
+                      .colorScheme
+                      .onBackground
+                      .withOpacity(0.32),
+                  width: 0.5.sw,
                 ),
                 kHe32,
-                ResText(
-                  "! لا يوجد نتائج مطابقة لبحثك",
-                  textStyle: textStyling(S.s24, W.w5, C.hint).copyWith(
-                    color: AppColors.black.withOpacity(0.32),
-                  ),
+                Text(
+                  AppLocalizations.of(context)!.no_results_body,
                 )
               ],
             ),
@@ -260,10 +273,8 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
               if (searchTypeCubit.state == OfficeSearchType.area) ...[
                 SizedBox(
                   width: inf,
-                  child: ResText(
-                    ": المكاتب الموجودة في هذه المنطقة",
-                    textStyle: textStyling(S.s16, W.w5, C.bl),
-                    textAlign: TextAlign.right,
+                  child: Text(
+                    AppLocalizations.of(context)!.offices_in_this_area + " :",
                   ),
                 ),
                 kHe24,
@@ -278,7 +289,8 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         Navigator.push(
                           context,
                           PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => EstateOfficeScreen(
+                              pageBuilder: (_, __, ___) =>
+                                  EstateOfficeScreen(
                                     results.elementAt(index),
                                   ),
                               transitionDuration: const Duration(seconds: 1)),

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/candidates_screen.dart';
-import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/utils/helpers/date_helper.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-
-import 'my_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../data/providers/locale_provider.dart';
 
 class EstateOrderCard extends StatefulWidget {
   final EstateOrder estateOrder;
@@ -23,94 +24,90 @@ class EstateOrderCard extends StatefulWidget {
 class _EstateOrderCardState extends State<EstateOrderCard> {
   @override
   Widget build(BuildContext context) {
-    String estateType = widget.estateOrder.estateType!.getName(true).split("|").elementAt(1);
-    String estateOfferType = widget.estateOrder.estateOfferType!.getName(true);
-    String estateHeader = " مطلوب $estateType لل$estateOfferType";
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    String estateType = widget.estateOrder.estateType!.getName(isArabic).split("|").elementAt(1);
+    String estateOfferType = widget.estateOrder.estateOfferType!.getName(isArabic);
+    String estateHeader =
+        AppLocalizations.of(context)!.estate_offer_sentence(estateType, estateOfferType);
 
     return Container(
-      width: screenWidth,
+      width: 1.sw,
       padding: const EdgeInsets.symmetric(
         vertical: kMediumPadding,
         horizontal: kSmallPadding,
       ),
       margin: EdgeInsets.symmetric(
-        vertical: Res.height(6),
-        horizontal: Res.width(8),
+        vertical: 6.h,
+        horizontal: 8.w,
       ),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).colorScheme.background,
         borderRadius: const BorderRadius.all(
           Radius.circular(8),
         ),
         boxShadow: [
-          BoxShadow(color: AppColors.black.withOpacity(0.32), offset: const Offset(2, 2), blurRadius: 4),
+          BoxShadow(
+              color: Theme.of(context).colorScheme.onBackground.withOpacity(0.32),
+              offset: const Offset(2, 2),
+              blurRadius: 4),
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             children: <Widget>[
-              ResText(
-                DateHelper.getDateByFormat(
-                  DateTime.parse(widget.estateOrder.createdAt!),
-                  "yyyy/MM/dd",
-                ),
-                textStyle: textStyling(S.s15, W.w4, C.hint, fontFamily: F.roboto),
-              ),
+              Text(estateHeader, style: Theme.of(context).textTheme.headline5),
               const Spacer(),
-              ResText(
-                estateHeader,
-                textStyle: textStyling(S.s17, W.w6, C.bl).copyWith(height: 1.8),
-                textAlign: TextAlign.right,
-              ),
+              Text(
+                  DateHelper.getDateByFormat(
+                    DateTime.parse(widget.estateOrder.createdAt!),
+                    "yyyy/MM/dd",
+                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .subtitle2!
+                      .copyWith(color: Theme.of(context).hintColor)),
             ],
           ),
-          kHe12,
-          SizedBox(
-            width: screenWidth,
-            child: ResText(
-              widget.estateOrder.location!.getLocationName(),
-              textStyle: textStyling(S.s18, W.w4, C.bl).copyWith(height: 1.8),
-              textAlign: TextAlign.right,
-            ),
-          ),
+          kHe16,
+          Text(widget.estateOrder.location!.getLocationName(),
+              style: Theme.of(context).textTheme.subtitle1),
           if (widget.estateOrder.priceDomain != null) ...[
-            kHe8,
-            SizedBox(
-              width: screenWidth,
-              child: ResText(
-                "السعر المطلوب: " + widget.estateOrder.priceDomain!.getTextPriceDomain(true),
-                textStyle: textStyling(S.s16, W.w4, C.bl).copyWith(height: 1.8),
-                textAlign: TextAlign.right,
-              ),
+            12.verticalSpace,
+            Text(
+                AppLocalizations.of(context)!.price_domain +
+                    " : " +
+                    widget.estateOrder.priceDomain!.getTextPriceDomain(isArabic),
+                style: Theme.of(context).textTheme.subtitle1),
+          ],
+          if (widget.estateOrder.description != null) ...[
+            8.verticalSpace,
+            Text(
+              AppLocalizations.of(context)!.notes + " : " + widget.estateOrder.description!,
+              maxLines: 50,
+              style: Theme.of(context).textTheme.subtitle2!.copyWith(height: 1.8),
             ),
           ],
-          if (widget.estateOrder.description != null)
-            SizedBox(
-              width: screenWidth,
-              child: ResText(
-                "ملاحظات: " + widget.estateOrder.description!,
-                maxLines: 50,
-                textStyle: textStyling(S.s14, W.w5, C.bl).copyWith(height: 1.8),
-                textAlign: TextAlign.right,
-              ),
-            ),
           kHe24,
           Container(
-            alignment: Alignment.centerLeft,
-            width: screenWidth,
-            child: MyButton(
-              child: ResText(
-                "عرض الترشيحات",
-                textStyle: textStyling(S.s15, W.w5, C.bl),
+            alignment: isArabic ? Alignment.centerLeft : Alignment.centerRight,
+            width: 1.sw,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 24.w , vertical: 12.h),
+                primary: (isDark)
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.secondary,
               ),
-              shadow: [
-                BoxShadow(
-                    color: AppColors.black.withOpacity(0.32), offset: const Offset(-1, 1), blurRadius: 2)
-              ],
-              color: AppColors.baseColor,
-              width: Res.width(180),
-              height: Res.height(54),
+              child: Text(
+                AppLocalizations.of(context)!.view_candidates,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText2!
+                    .copyWith(color: AppColors.black, height: 1.4),
+              ),
               onPressed: () {
                 Navigator.push(
                   context,

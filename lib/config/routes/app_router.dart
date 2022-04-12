@@ -3,12 +3,11 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/core/walk_through/introduction_screen1.dart';
@@ -56,16 +55,18 @@ import 'package:swesshome/modules/presentation/screens/create_order_screen.dart'
 import 'package:swesshome/modules/presentation/screens/created_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
+import 'package:swesshome/modules/presentation/screens/languages_screen.dart';
 import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
 import 'package:swesshome/modules/presentation/screens/office_search_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
+import 'package:swesshome/modules/presentation/screens/select_language_screen.dart';
+import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_internet_connection.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AppRouter {
   late LocationsBloc locationsBloc;
@@ -100,14 +101,13 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => Builder(
             builder: (context) {
-              initializeApplicationConstants(context);
               return AnimatedSplashScreen.withScreenFunction(
-                backgroundColor: AppColors.baseColor,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 splash: SpinKitFoldingCube(
-                  color: AppColors.secondaryColor,
-                  size: Res.width(screenWidth / 4),
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 0.25.sw,
                 ),
-                splashIconSize: Res.width(screenWidth / 1.5),
+                splashIconSize: 0.3.sw,
                 duration: 0,
                 screenFunction: () async {
                   // Check internet connection :
@@ -126,7 +126,16 @@ class AppRouter {
                     }
                     seconds++;
                   }
-                  return (isIntroductionScreenPassed) ? const HomeScreen() : const IntroductionScreen1();
+
+                  // Language has not selected yet:
+                  bool isLanguageSelected = ApplicationSharedPreferences.getIsLanguageSelected();
+                  if (!isLanguageSelected) {
+                    return const SelectLanguageScreen();
+                  }
+                  // Language has selected before:
+                  return (isIntroductionScreenPassed)
+                      ? const HomeScreen()
+                      : const IntroductionScreen1();
                 },
               );
             },
@@ -202,19 +211,21 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const RatingScreen(),
         );
-      case FAQScreen.id :
+      case FAQScreen.id:
         return MaterialPageRoute(
           builder: (_) => const FAQScreen(),
+        );
+      case SettingsScreen.id:
+        return MaterialPageRoute(
+          builder: (_) => const SettingsScreen(),
+        );
+      case LanguagesScreen.id:
+        return MaterialPageRoute(
+          builder: (_) => const LanguagesScreen(),
         );
       default:
         return null;
     }
-  }
-
-  void initializeApplicationConstants(BuildContext context) {
-    screenWidth = getScreenWidth(context);
-    screenHeight = getScreenHeight(context);
-    fullScreenHeight = getFullScreenHeight(context);
   }
 
   void fetchApplicationData(BuildContext context) {
@@ -275,31 +286,10 @@ class AppRouter {
   }
 
   Future showFailureDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: const Text(
-          "حدث خطأ أثناء الاتصال بالسيرفر",
-          textAlign: TextAlign.right,
-        ),
-        title: const Text(
-          "خطأ",
-          textAlign: TextAlign.right,
-        ),
-        actions: [
-          MyButton(
-            width: Res.width(200),
-            child: Text(
-              "تم",
-              style: textStyling(S.s14, W.w5, C.wh),
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            color: AppColors.secondaryColor,
-          )
-        ],
-      ),
+    await showWonderfulAlertDialog(
+      context,
+      AppLocalizations.of(context)!.error,
+      AppLocalizations.of(context)!.error_happened_when_connecting_with_server,
     );
   }
 
@@ -307,16 +297,14 @@ class AppRouter {
     if (!await MyInternetConnection.isConnected()) {
       await showWonderfulAlertDialog(
         context,
-        "خطأ",
-        "! تحقق من اتصالك بالإنترنت",
+        AppLocalizations.of(context)!.error,
+        AppLocalizations.of(context)!.check_your_internet_connection,
         onDefaultButtonPressed: () {
           Phoenix.rebirth(context);
         },
-        defaultButtonContent: "إعادة تشغيل التطبيق",
-        defaultButtonWidth: Res.width(200),
+        defaultButtonContent: AppLocalizations.of(context)!.restart_application,
+        defaultButtonWidth: 200.w,
       );
     }
   }
-
-
 }

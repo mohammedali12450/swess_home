@@ -1,53 +1,46 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/constants/texts.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-
-import 'create_property_screen1.dart';
+import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_screen1.dart';
 
 class CreatePropertyIntroductionScreen extends StatefulWidget {
   static const String id = "CreatePropertyIntroductionScreen";
   final int officeId;
 
-  const CreatePropertyIntroductionScreen({Key? key, required this.officeId})
-      : super(key: key);
+  const CreatePropertyIntroductionScreen({Key? key, required this.officeId}) : super(key: key);
 
   @override
-  _CreatePropertyIntroductionScreenState createState() =>
-      _CreatePropertyIntroductionScreenState();
+  _CreatePropertyIntroductionScreenState createState() => _CreatePropertyIntroductionScreenState();
 }
 
-class _CreatePropertyIntroductionScreenState
-    extends State<CreatePropertyIntroductionScreen> {
+class _CreatePropertyIntroductionScreenState extends State<CreatePropertyIntroductionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        width: screenWidth,
-        decoration: const BoxDecoration(
-          color: AppColors.black,
-          image: DecorationImage(
-              image: AssetImage(flatImagePath),
-              fit: BoxFit.cover,
-              opacity: 0.32),
+        width: 1.sw,
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.95),
+          image: const DecorationImage(
+              image: AssetImage(flatImagePath), fit: BoxFit.cover, opacity: 0.32),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: screenWidth / 2,
+              width: 0.5.sw,
               child: Stack(
                 children: [
                   Opacity(
-                      child:
-                          Image.asset(swessHomeIconPath, color: Colors.white),
-                      opacity: 0.3),
+                    child: Image.asset(
+                      swessHomeIconPath,
+                      color: Colors.white,
+                    ),
+                    opacity: 0.3,
+                  ),
                   ClipRect(
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
@@ -57,36 +50,40 @@ class _CreatePropertyIntroductionScreenState
                 ],
               ),
             ),
-            kHe40,
-            ResText(
-              "إنشاء العروض العقارية",
-              textStyle: textStyling(S.s28, W.w7, C.wh),
+            40.verticalSpace,
+            Text(
+              AppLocalizations.of(context)!.estate_offer_creating,
+              style: Theme.of(context).textTheme.headline4!.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+              textAlign: TextAlign.center,
             ),
-            kHe16,
-            SizedBox(
-              width: screenWidth / 1.2,
-              child: ResText(
-                offerCreateIntroduction,
+            16.verticalSpace,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Text(
+                AppLocalizations.of(context)!.create_estate_introduction,
                 maxLines: 10,
-                textStyle: textStyling(S.s20, W.w5, C.wh).copyWith(height: 1.5),
                 textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(color: Colors.white),
               ),
             ),
-            kHe40,
-            MyButton(
-              width: Res.width(280),
-              color: AppColors.white,
-              child: ResText(
-                "إنشاء عرض عقاري",
-                textStyle: textStyling(S.s22, W.w6, C.c2),
+            40.verticalSpace,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(220.w, 64.h),
+                primary: AppColors.secondaryColor,
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.start_now,
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black),
               ),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => CreatePropertyScreen1(
-                      officeId: widget.officeId,
-                    ),
+                    builder: (_) => CreatePropertyScreen1(officeId: widget.officeId),
                   ),
                 );
               },

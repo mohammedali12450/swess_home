@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
-import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/area_units_bloc/area_units_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/ownership_type_bloc/ownership_type_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/area_unit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/ownership_type.dart';
 import 'package:swesshome/modules/data/models/period_type.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-
 import 'create_property_screen3.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreatePropertyScreen2 extends StatefulWidget {
   static const String id = "CreatePropertyScreen2";
@@ -38,6 +37,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
   ChannelCubit? selectedPeriodCubit;
   ChannelCubit areaErrorCubit = ChannelCubit(null);
   ChannelCubit priceErrorCubit = ChannelCubit(null);
+  ChannelCubit periodErrorCubit = ChannelCubit(null);
 
   // other:
   late List<AreaUnit> areaTypes;
@@ -48,6 +48,8 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
 
   bool isSell = true;
   bool isHouse = true;
+
+  bool isForStore = false;
 
   // controllers:
   TextEditingController areaController = TextEditingController();
@@ -62,15 +64,16 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
     super.initState();
 
     // initializing :
-    isSell = widget.currentOffer.estateOfferType.id == sellOfferTypeNumber;
-    isHouse = widget.currentOffer.estateType.id == housePropertyTypeNumber;
     areaTypes = BlocProvider.of<AreaUnitsBloc>(context).areaUnits!;
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
     ownershipTypes = BlocProvider.of<OwnershipTypeBloc>(context).ownershipTypes!;
+    isSell = widget.currentOffer.estateOfferType.id == sellOfferTypeNumber;
+    isHouse = widget.currentOffer.estateType.id == housePropertyTypeNumber;
     widget.currentOffer.areaUnit = areaTypes.first;
     if (!isHouse && isSell) {
       widget.currentOffer.ownershipType = ownershipTypes.first;
     }
+
     if (!isSell) {
       widget.currentOffer.periodType = periodTypes.first;
       selectedPeriodCubit = ChannelCubit(periodTypes.first.getName(true).split("|").elementAt(1));
@@ -80,255 +83,274 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
   @override
   Widget build(BuildContext context) {
     bool isKeyboardOpened = MediaQuery.of(context).viewInsets.bottom != 0;
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
+
+    isForStore = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore;
+
+    List<Widget> priceWidget = [
+      Expanded(
+        flex: 2,
+        child: BlocBuilder<ChannelCubit, dynamic>(
+          bloc: areaErrorCubit,
+          builder: (_, errorMessage) {
+            return TextField(
+              textDirection: TextDirection.ltr,
+              controller: areaController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.area_hint,
+                errorText: errorMessage,
+                isDense: true,
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                ),
+              ),
+              cursorColor: Theme.of(context).colorScheme.onBackground,
+              onChanged: (value) {
+                areaErrorCubit.setState(null);
+                if (!NumbersHelper.isNumeric(value)) {
+                  areaErrorCubit.setState(AppLocalizations.of(context)!.invalid_value);
+                }
+              },
+            );
+          },
+        ),
+      ),
+      12.horizontalSpace,
+      Expanded(
+        flex: 1,
+        child: GestureDetector(
+          onTap: () {
+            SystemChannels.textInput.invokeMethod('TextInput.hide');
+            FocusScope.of(context).unfocus();
+          },
+          child: MyDropdownList(
+            isOnChangeNull: isKeyboardOpened,
+            elementsList: areaTypes.map((e) => e.getName(isArabic)).toList(),
+            onSelect: (index) {
+              widget.currentOffer.areaUnit = areaTypes.elementAt(index);
+            },
+          ),
+        ),
+      ),
+    ];
+
     return CreatePropertyTemplate(
       headerIconPath: areaOutlineIconPath,
-      headerText: "الخطوة الثانية",
+      headerText: AppLocalizations.of(context)!.step_2,
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            kHe24,
-            SizedBox(
-              width: inf,
-              child: ResText(
-                ":مساحة العقار",
-                textStyle: textStyling(S.s18, W.w6, C.bl),
-                textAlign: TextAlign.right,
-              ),
+            24.verticalSpace,
+            Text(
+              AppLocalizations.of(context)!.estate_area + " :",
             ),
-            kHe16,
+            16.verticalSpace,
+            Row(children: (isArabic) ? priceWidget.reversed.toList() : priceWidget),
+            24.verticalSpace,
+            Text(
+              (isSell)
+                  ? AppLocalizations.of(context)!.estate_price + " :"
+                  : AppLocalizations.of(context)!.estate_rent_price + " :",
+            ),
+            16.verticalSpace,
             Row(
               children: [
                 Expanded(
-                  flex: 1,
-                  child: GestureDetector(
-                    onTap: () {
-                      FocusScope.of(context).unfocus();
+                  flex: 5,
+                  child: BlocBuilder<ChannelCubit, dynamic>(
+                    bloc: priceErrorCubit,
+                    builder: (_, errorMessage) {
+                      late String hintText;
+
+                      if (isForStore) {
+                        hintText = (isSell)
+                            ? AppLocalizations.of(context)!.estate_price_hint_lebanon
+                            : AppLocalizations.of(context)!.estate_rent_price_hint_lebanon;
+                      } else {
+                        hintText = (isSell)
+                            ? AppLocalizations.of(context)!.estate_price_hint_syrian
+                            : AppLocalizations.of(context)!.estate_rent_price_hint_syrian;
+                      }
+
+                      return TextField(
+                        textDirection: TextDirection.ltr,
+                        controller: priceController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: hintText,
+                          errorText: errorMessage,
+                          isDense: true,
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                          ),
+                        ),
+                        cursorColor: Theme.of(context).colorScheme.onBackground,
+                        onChanged: (value) {
+                          if (!NumbersHelper.isNumeric(value.replaceAll(",", ""))) {
+                            priceErrorCubit.setState(AppLocalizations.of(context)!.invalid_value);
+                            return;
+                          }
+                          priceController.text =
+                              NumbersHelper.getMoneyFormat(int.parse(value.replaceAll(',', '')));
+                          priceController.selection = TextSelection.fromPosition(
+                            TextPosition(offset: priceController.text.length),
+                          );
+                          priceErrorCubit.setState(null);
+                        },
+                      );
                     },
-                    child: MyDropdownList(
-                      elementsList: areaTypes.map((e) => e.getName(true)).toList(),
-                      onSelect: (index) {
-                        widget.currentOffer.areaUnit = areaTypes.elementAt(index);
-                      },
-                      isOnChangeNull: isKeyboardOpened,
-                    ),
                   ),
                 ),
-                kWi12,
-                Expanded(
-                  flex: 2,
-                  child: BlocBuilder<ChannelCubit, dynamic>(
-                      bloc: areaErrorCubit,
-                      builder: (_, errorMessage) {
-                        return TextField(
-                          style: textStyling(S.s17, W.w4, C.bl, fontFamily: F.roboto)
-                              .copyWith(letterSpacing: 0.3),
-                          controller: areaController,
-                          keyboardType: TextInputType.number,
-                          cursorColor: AppColors.black,
-                          decoration: InputDecoration(
-                            errorText: errorMessage,
-                            isDense: true,
-                            border: kOutlinedBorderBlack,
-                            focusedBorder: kOutlinedBorderBlack,
-                          ),
-                          onChanged: (_) {
-                            areaErrorCubit.setState(null);
-                          },
-                        );
-                      }),
-                ),
-              ],
-            ),
-            kHe24,
-            SizedBox(
-              width: inf,
-              child: ResText(
-                (isSell) ? ":سعر العقار" : ":سعر إيجار العقار",
-                textStyle: textStyling(S.s18, W.w6, C.bl),
-                textAlign: TextAlign.right,
-              ),
-            ),
-            kHe16,
-            Row(
-              children: [
+                12.horizontalSpace,
                 (isSell)
                     ? Container()
                     : Expanded(
-                        flex: 1,
+                        flex: 2,
                         child: GestureDetector(
                           onTap: () {
+                            SystemChannels.textInput.invokeMethod('TextInput.hide');
                             FocusScope.of(context).unfocus();
                           },
                           child: MyDropdownList(
                             isOnChangeNull: isKeyboardOpened,
-                            elementsList: periodTypes.map((e) => e.getName(true).split('|').first).toList(),
+                            elementsList: periodTypes
+                                .map((e) => e.getName(isArabic).split("|").first)
+                                .toList(),
                             onSelect: (index) {
                               widget.currentOffer.periodType = periodTypes.elementAt(index);
                               selectedPeriodCubit!.setState(
-                                  periodTypes.elementAt(index).getName(true).split('|').elementAt(1));
+                                periodTypes
+                                    .elementAt(index)
+                                    .getName(isArabic)
+                                    .split("|")
+                                    .elementAt(1),
+                              );
                             },
                           ),
                         ),
                       ),
-                kWi12,
-                Expanded(
-                  flex: 2,
-                  child: BlocBuilder<ChannelCubit, dynamic>(
-                    bloc: priceErrorCubit,
-                    builder: (_, errorMessage) => TextField(
-                      style: textStyling(S.s17, W.w4, C.bl, fontFamily: F.roboto)
-                          .copyWith(letterSpacing: 0.3),
-                      controller: priceController,
-                      cursorColor: AppColors.black,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        errorText: errorMessage,
-                        suffix: ResText(
-                          "ل.س",
-                          textStyle: textStyling(S.s16, W.w5, C.bl),
-                        ),
-                        border: kOutlinedBorderBlack,
-                        focusedBorder: kOutlinedBorderBlack,
-                        isDense: true,
-                      ),
-                      onChanged: (value) {
-                        priceController.text =
-                            NumbersHelper.getMoneyFormat(int.parse(value.replaceAll(',', '')));
-                        priceController.selection = TextSelection.fromPosition(
-                          TextPosition(offset: priceController.text.length),
-                        );
-                        priceErrorCubit.setState(null);
-                      },
-                    ),
-                  ),
-                ),
               ],
             ),
             if (!isSell) ...[
-              kHe24,
-              SizedBox(
-                width: inf,
-                child: ResText(
-                  ":مدة إيجار العقار",
-                  textStyle: textStyling(S.s18, W.w6, C.bl),
-                  textAlign: TextAlign.right,
-                ),
+              24.verticalSpace,
+              Text(
+                AppLocalizations.of(context)!.estate_rent_period + " :",
+                textAlign: TextAlign.right,
               ),
-              kHe12,
-              TextField(
-                style: textStyling(S.s17, W.w4, C.bl, fontFamily: F.roboto)
-                    .copyWith(letterSpacing: 0.3),
-                controller: periodController,
-                cursorColor: AppColors.black,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  suffix: BlocBuilder<ChannelCubit, dynamic>(
-                    bloc: selectedPeriodCubit,
-                    builder: (_, periodName) {
-                      return ResText(
-                        periodName,
-                        textStyle: textStyling(S.s16, W.w5, C.bl),
-                      );
+              12.verticalSpace,
+              BlocBuilder<ChannelCubit, dynamic>(
+                bloc: periodErrorCubit,
+                builder: (_, errorMessage) {
+                  return TextField(
+                    textDirection: TextDirection.ltr,
+                    controller: periodController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      errorText: errorMessage,
+                      suffix: BlocBuilder<ChannelCubit, dynamic>(
+                        bloc: selectedPeriodCubit,
+                        builder: (_, periodName) {
+                          return Padding(
+                            padding: EdgeInsets.only(right: 12.w),
+                            child: Text(
+                              periodName,
+                            ),
+                          );
+                        },
+                      ),
+                      isDense: true,
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                      ),
+                    ),
+                    cursorColor: Theme.of(context).colorScheme.onBackground,
+                    onChanged: (_) {
+                      periodErrorCubit.setState(null);
                     },
-                  ),
-                  border: kOutlinedBorderBlack,
-                  focusedBorder: kOutlinedBorderBlack,
-                  isDense: true,
-                ),
+                  );
+                },
               ),
             ],
-
-            // If the selected property type is house :
             if (isHouse) ...[
-              kHe24,
-              SizedBox(
-                width: inf,
-                child: ResText(
-                  ":عدد الغرف ( اختياري )",
-                  textStyle: textStyling(S.s18, W.w6, C.bl),
-                  textAlign: TextAlign.right,
-                ),
+              24.verticalSpace,
+              Text(
+                AppLocalizations.of(context)!.rooms_count +
+                    " ( ${AppLocalizations.of(context)!.optional} ) :",
               ),
-              kHe16,
+              16.verticalSpace,
               TextField(
                 controller: roomsCountController,
-                cursorColor: AppColors.black,
-                keyboardType: TextInputType.number,
-                textDirection: TextDirection.rtl,
-                decoration: const InputDecoration(
-                  border: kUnderlinedBorderBlack,
-                  focusedBorder: kUnderlinedBorderBlack,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.rooms_count_hint,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                  ),
                 ),
+                cursorColor: Theme.of(context).colorScheme.onBackground,
               ),
-              kHe24,
-              SizedBox(
-                width: inf,
-                child: ResText(
-                  ":رقم الطابق ( اختياري )",
-                  textStyle: textStyling(S.s18, W.w6, C.bl),
-                  textAlign: TextAlign.right,
-                ),
+              24.verticalSpace,
+              Text(
+                AppLocalizations.of(context)!.floor_number +
+                    " ( ${AppLocalizations.of(context)!.optional} ) :",
               ),
-              kHe16,
+              16.verticalSpace,
               TextField(
                 controller: floorController,
-                cursorColor: AppColors.black,
-                textDirection: TextDirection.rtl,
-                decoration: const InputDecoration(
-                  border: kUnderlinedBorderBlack,
-                  focusedBorder: kUnderlinedBorderBlack,
+                textDirection: TextDirection.ltr,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.floor_hint,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                  ),
                 ),
+                cursorColor: Theme.of(context).colorScheme.onBackground,
               ),
             ],
-            // If the selected property type is shops and lands :
             if (isSell && !isHouse) ...[
-              kHe24,
-              SizedBox(
-                width: inf,
-                child: ResText(
-                  ":نوع الملكية",
-                  textStyle: textStyling(S.s18, W.w6, C.bl),
-                  textAlign: TextAlign.right,
-                ),
+              24.verticalSpace,
+              Text(
+                AppLocalizations.of(context)!.ownership_type + " :",
               ),
-              kHe16,
+              16.verticalSpace,
               MyDropdownList(
-                elementsList: ownershipTypes.map((e) => e.getName(true)).toList(),
+                elementsList: ownershipTypes.map((e) => e.getName(isArabic)).toList(),
                 onSelect: (index) {
                   widget.currentOffer.ownershipType = ownershipTypes.elementAt(index);
                 },
               ),
             ],
-            kHe40,
-            MyButton(
-              child: ResText(
-                "التالي",
-                textStyle: textStyling(S.s16, W.w5, C.wh),
-              ),
-              width: Res.width(240),
-              height: Res.height(56),
-              color: AppColors.secondaryColor,
-              onPressed: () {
-                if (!validateData()) return;
-                widget.currentOffer.area = areaController.text;
-                widget.currentOffer.price = priceController.text.replaceAll(",", "");
-                if (!isSell) {
-                  widget.currentOffer.period = periodController.text;
-                }
-                if (isHouse) {
-                  widget.currentOffer.roomsCount = roomsCountController.text;
-                  widget.currentOffer.floor = floorController.text;
-                }
+            40.verticalSpace,
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
+                child: Text(
+                  AppLocalizations.of(context)!.next,
+                ),
+                onPressed: () {
+                  if (!validateData()) return;
+                  widget.currentOffer.area = areaController.text;
+                  widget.currentOffer.price = priceController.text.replaceAll(",", "");
+                  if (!isSell) {
+                    widget.currentOffer.period = periodController.text;
+                  }
+                  if (isHouse) {
+                    widget.currentOffer.roomsCount = roomsCountController.text;
+                    widget.currentOffer.floor = floorController.text;
+                  }
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CreatePropertyScreen3(currentOffer: widget.currentOffer),
-                  ),
-                );
-              },
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CreatePropertyScreen3(currentOffer: widget.currentOffer),
+                    ),
+                  );
+                },
+              ),
             ),
-            kHe12,
+            12.verticalSpace,
           ],
         ),
       ),
@@ -339,11 +361,19 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
     bool validation = true;
 
     if (areaController.text.isEmpty) {
-      areaErrorCubit.setState("هذا الحقل مطلوب");
+      areaErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
       validation = false;
     }
+    if (!NumbersHelper.isNumeric(areaController.text)) {
+      areaErrorCubit.setState(AppLocalizations.of(context)!.invalid_value);
+    }
+
     if (priceController.text.isEmpty) {
-      priceErrorCubit.setState("هذا الحقل مطلوب");
+      priceErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
+      validation = false;
+    }
+    if (!isSell && periodController.text.isEmpty) {
+      periodErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
       validation = false;
     }
 

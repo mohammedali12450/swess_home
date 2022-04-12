@@ -25,7 +25,7 @@ class Estate {
 
   List<File>? streetImages;
   String? floor;
-  dynamic floorPlanImage; // url or file
+  List<File>? floorPlanImages;
 
   OwnershipType? ownershipType;
   InteriorStatus? interiorStatus;
@@ -63,7 +63,7 @@ class Estate {
     required this.officeId,
     this.id = -1,
     this.streetImages,
-    this.floorPlanImage,
+    this.floorPlanImages,
     this.ownershipType,
     this.period,
     this.longitude,
@@ -180,7 +180,7 @@ class Estate {
       nearbyPlaces: json["nearby_places"],
       description: json["description"],
       period: json["period_number"],
-      floorPlanImage: json["floor_plan"],
+      floorPlanImages: json["floor_plan"],
       isLiked: json["is_liked"],
       isSaved: json['is_saved'],
       likesCount: json["likes_count"],
@@ -210,9 +210,7 @@ class Estate {
     int? hasSwimmingPool =
         (this.hasSwimmingPool == null) ? null : ((this.hasSwimmingPool!) ? 1 : 0);
     // floor plan image :
-    MultipartFile? floorPlanImage = (this.floorPlanImage == null)
-        ? null
-        : await MultipartFile.fromFile(this.floorPlanImage!.path);
+    List<MultipartFile>? floorPlanImages = await createImagesList(this.floorPlanImages);
     // estate images:
     List<MultipartFile>? estateImages = await createImagesList(this.estateImages);
     // street images:
@@ -239,7 +237,7 @@ class Estate {
     map["on_beach"] = isOnBeach;
     map["latitude"] = latitude;
     map["swimming_pool"] = hasSwimmingPool;
-    map["floor_plan"] = floorPlanImage;
+    map["floor_plan"] = floorPlanImages;
     map["estate_images[]"] = estateImages;
     map["street_images[]"] = streetImages;
     return map;

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
-import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/texts.dart';
+import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'recent_estates_orders_screen.dart';
 
 class AfterEstateOrderScreen extends StatefulWidget {
   static const String id = "AfterEstateOrderScreen";
@@ -28,43 +31,29 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: Res.height(75),
-          backgroundColor: AppColors.secondaryColor,
-          automaticallyImplyLeading: false,
-          actions: [
-            Container(
-              margin: EdgeInsets.only(
-                right: Res.width(16),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_forward),
-                onPressed: () {},
-              ),
-            ),
-          ],
-          title: SizedBox(
-            width: inf,
-            child: ResText(
-              "إنشاء طلب عقاري",
-              textStyle: textStyling(S.s18, W.w5, C.wh),
-              textAlign: TextAlign.right,
-            ),
+          title: Text(
+            AppLocalizations.of(context)!.create_estate_order,
           ),
-          leading: Container(
+          actions: [ Container(
             margin: EdgeInsets.only(
-              left: Res.width(16),
+              left: (isArabic) ? 16.w : 0,
+              right: (!isArabic) ? 16.w : 0,
             ),
             child: IconButton(
               icon: const Icon(
                 Icons.history,
                 color: AppColors.white,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, RecentEstateOrdersScreen.id);
+              },
             ),
-          ),
+          )
+          ]
         ),
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -75,30 +64,30 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
                 width: 150,
                 height: 150,
                 child: SvgPicture.asset(checkOutlineIconPath,
-                    color: AppColors.secondaryColor),
+                    color: Theme.of(context).colorScheme.primary),
               ),
               kHe32,
-              ResText(
-                "تم إرسال الطلب",
-                textStyle: textStyling(S.s24, W.w7, C.c2),
+              Text(
+                AppLocalizations.of(context)!.estate_order_sent,
+                style: Theme.of(context).textTheme.headline4,
                 textAlign: TextAlign.center,
                 maxLines: 50,
               ),
               kHe24,
-              ResText(
-                afterEstateOrderBody,
-                textStyle: textStyling(S.s18, W.w6, C.bl).copyWith(height: 2.5),
+              Text(
+                AppLocalizations.of(context)!.after_order_body,
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(height: 1.8),
                 textAlign: TextAlign.center,
                 maxLines: 50,
               ),
               kHe40,
-              MyButton(
-                child: ResText(
-                  "تم",
-                  textStyle: textStyling(S.s20, W.w6, C.wh),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(200 , 64) ,
                 ),
-                width: Res.width(200),
-                color: AppColors.secondaryColor,
+                child: Text(
+                  AppLocalizations.of(context)!.ok,
+                ),
                 onPressed: () {
                   Navigator.pushNamedAndRemoveUntil(
                     context,

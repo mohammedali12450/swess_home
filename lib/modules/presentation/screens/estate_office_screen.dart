@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/enums.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_state.dart';
@@ -18,16 +20,16 @@ import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bl
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_event.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/estate_office.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_introduction_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/rate_container.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'authentication_screen.dart';
 
@@ -73,49 +75,19 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+
     return BlocProvider(
       create: (_) => _estateBloc,
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: Res.height(75),
-          backgroundColor: AppColors.secondaryColor,
-          automaticallyImplyLeading: false,
-          actions: [
-            Container(
-              margin: EdgeInsets.only(
-                right: Res.width(16),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_forward),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-          ],
-          title: SizedBox(
-            width: inf,
-            child: ResText(
-              "تفاصيل المكتب",
-              textStyle: textStyling(S.s18, W.w5, C.wh),
-              textAlign: TextAlign.right,
-            ),
-          ),
-          leading: Container(
-            margin: EdgeInsets.only(
-              left: Res.width(16),
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.public,
-                color: AppColors.white,
-              ),
-              onPressed: () {},
-            ),
+          title: Text(
+            AppLocalizations.of(context)!.office_details,
           ),
         ),
         body: RefreshIndicator(
-          color: AppColors.secondaryColor,
+          color: Theme.of(context).colorScheme.primary,
           onRefresh: () async {
             _estateBloc.add(
               OfficeEstatesFetchStarted(officeId: widget.office.id),
@@ -129,12 +101,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                 Hero(
                   tag: widget.office.id.toString(),
                   child: CircleAvatar(
-                    radius: Res.width(96),
+                    radius: 96.w,
                     backgroundColor: Colors.grey,
                     backgroundImage: CachedNetworkImageProvider(baseUrl + widget.office.logo!),
                   ),
                 ),
-                kHe24,
+                24.verticalSpace,
+                // Account name and rate :
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -144,80 +117,43 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                     Expanded(
                       flex: 2,
                       child: RateContainer(
-                        rate: double.parse(widget.office.rating!),
+                        rate: double.parse(
+                          widget.office.rating.toString(),
+                        ),
                       ),
                     ),
-                    kWi8,
-                    ResText(
+                    8.horizontalSpace,
+                    Text(
                       widget.office.name!,
-                      textStyle: textStyling(S.s24, W.w6, C.bl).copyWith(height: 1.8),
+                      style: Theme.of(context).textTheme.headline5,
                     ),
                     const Spacer(
                       flex: 3,
                     ),
                   ],
                 ),
-                kHe16,
-                SizedBox(
-                  width: screenWidth,
-                  child: ResText(
-                    widget.office.location!.getLocationName(),
-                    textStyle: textStyling(S.s18, W.w5, C.bl),
-                    textAlign: TextAlign.center,
-                  ),
+                12.verticalSpace,
+                Text(
+                  widget.office.location!.getLocationName(),
+                  style: Theme.of(context).textTheme.headline5,
                 ),
                 kHe12,
-                SizedBox(
-                  width: screenWidth,
-                  child: ResText(
-                    widget.office.mobile!,
-                    textStyle: textStyling(S.s18, W.w5, C.bl),
-                    textAlign: TextAlign.center,
-                  ),
+                Text(
+                  widget.office.mobile!,
+                  textDirection: TextDirection.ltr,
+                  style: Theme.of(context).textTheme.subtitle1,
                 ),
                 kHe32,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    MyButton(
-                      width: Res.width(150),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(fixedSize: Size(180.w, 64.h)),
                       onPressed: () async {
                         if (BlocProvider.of<UserLoginBloc>(context).user == null) {
-                          await showWonderfulAlertDialog(
-                            context,
-                            "تأكيد",
-                            "إن هذه الميزة تتطلب تسجيل الدخول",
-                            removeDefaultButton: true,
-                            dialogButtons: [
-                              MyButton(
-                                child: ResText(
-                                  "إلغاء",
-                                  textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
-                                ),
-                                width: Res.width(140),
-                                color: AppColors.secondaryColor,
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              MyButton(
-                                child: ResText(
-                                  "تسجيل الدخول",
-                                  textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
-                                ),
-                                width: Res.width(140),
-                                color: AppColors.secondaryColor,
-                                onPressed: () async {
-                                  await Navigator.pushNamed(context, AuthenticationScreen.id);
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                            width: Res.width(400),
-                          );
+                          await buildSignInRequiredDialog();
                           return;
                         }
-
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -226,17 +162,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           ),
                         );
                       },
-                      color: AppColors.white,
-                      shadow: [lowElevation],
-                      border: Border.all(color: AppColors.secondaryColor),
-                      borderRadius: 4,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(Icons.add),
-                          ResText(
-                            "نشر عقار",
-                            textStyle: textStyling(S.s14, W.w5, C.bl),
+                          Text(
+                            AppLocalizations.of(context)!.post_estate,
                           )
                         ],
                       ),
@@ -246,8 +178,10 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       bloc: _likeAndUnlikeBloc,
                       listener: (_, likeAndUnlikeState) {
                         if (likeAndUnlikeState is LikeAndUnlikeError) {
-                          showWonderfulAlertDialog(context, "خطأ", likeAndUnlikeState.error);
-                          _likeAndUnlikeBloc.add(ReInitializeLikeState(isLike: widget.office.isLiked));
+                          showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error,
+                              likeAndUnlikeState.error);
+                          _likeAndUnlikeBloc
+                              .add(ReInitializeLikeState(isLike: widget.office.isLiked));
                         } else if (likeAndUnlikeState is Liked) {
                           widget.office.isLiked = true;
                         } else if (likeAndUnlikeState is Unliked) {
@@ -255,9 +189,14 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         }
                       },
                       builder: (_, likeAndUnlikeState) {
-                        return MyButton(
-                          width: Res.width(150),
-                          onPressed: () {
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(fixedSize: Size(180.w, 64.h)),
+                          onPressed: () async {
+                            if (userToken == null) {
+                              await buildSignInRequiredDialog();
+                              return;
+                            }
+
                             if (likeAndUnlikeState is Liked) {
                               _likeAndUnlikeBloc.add(
                                 UnlikeStarted(
@@ -275,26 +214,23 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                               );
                             }
                           },
-                          color: AppColors.white,
-                          shadow: [lowElevation],
-                          border: Border.all(color: AppColors.secondaryColor),
-                          borderRadius: 4,
                           child: (likeAndUnlikeState is LikeAndUnlikeProgress)
-                              ? const SpinKitWave(
-                                  color: AppColors.secondaryColor,
-                                  size: 16,
+                              ? SpinKitWave(
+                                  color: AppColors.white,
+                                  size: 16.w,
                                 )
                               : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon((likeAndUnlikeState is Liked)
                                         ? Icons.thumb_up_alt
                                         : Icons.thumb_up_alt_outlined),
                                     kWi12,
-                                    ResText(
-                                      (likeAndUnlikeState is Liked) ? "تم الإعجاب" : "إعجاب",
-                                      textStyle: textStyling(S.s14, W.w5, C.bl),
-                                      textAlign: TextAlign.right,
+                                    Text(
+                                      (likeAndUnlikeState is Liked)
+                                          ? AppLocalizations.of(context)!.liked
+                                          : AppLocalizations.of(context)!.like,
                                     )
                                   ],
                                 ),
@@ -305,17 +241,21 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                 ),
                 kHe40,
                 Container(
-                  height: Res.height(32),
-                  width: screenWidth,
-                  color: AppColors.secondaryColor,
-                  alignment: Alignment.centerRight,
+                  height: 32.h,
+                  width: 1.sw,
+                  color: isDark
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.secondary,
+                  alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
                   padding: EdgeInsets.only(
-                    right: Res.width(8),
+                    right: isArabic ? 8.w : 0,
+                    left: !isArabic ? 8.w : 0,
                   ),
-                  child: ResText(
-                    ": العروض العقارية",
-                    textStyle: textStyling(S.s14, W.w4, C.wh),
-                    textAlign: TextAlign.right,
+                  child: Text(
+                    AppLocalizations.of(context)!.estate_offers + " :",
+                    style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                          color: AppColors.black,
+                        ),
                   ),
                 ),
                 kHe24,
@@ -323,17 +263,19 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                   bloc: _estateBloc,
                   listener: (_, estateState) {
                     if (estateState is EstateFetchError) {
-                      showWonderfulAlertDialog(context, "خطأ", estateState.errorMessage);
+                      showWonderfulAlertDialog(
+                          context, AppLocalizations.of(context)!.error, estateState.errorMessage);
                     }
                   },
                   builder: (_, estateState) {
                     if (estateState is EstateFetchProgress) {
-                      return const EstatesShimmer();
+                      return const PropertyShimmer();
                     }
                     if (estateState is! EstateFetchComplete) {
                       return FetchResult(
-                        content: "حدث خطأ أثناء تنفيذ العملية",
-                        iconSize: screenWidth / 4,
+                        content:
+                            AppLocalizations.of(context)!.error_happened_when_executing_operation,
+                        iconSize: 0.25.sw,
                       );
                     }
 
@@ -342,14 +284,12 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                     if (estates.isEmpty) {
                       return Container(
                         margin: EdgeInsets.only(
-                          top: Res.height(60),
+                          top: 60.h,
                         ),
-                        width: screenWidth,
-                        child: ResText(
-                          "! لم يقم هذا المكتب بنشر عروض عقارية",
-                          textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-                            color: AppColors.black.withOpacity(0.48),
-                          ),
+                        width: 1.sw,
+                        child: Text(
+                          AppLocalizations.of(context)!.office_have_not_estates,
+                          textAlign: TextAlign.center,
                         ),
                       );
                     }
@@ -361,6 +301,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       itemBuilder: (_, index) {
                         return EstateCard(
                           estate: estates.elementAt(index),
+                          removeCloseButton: true,
                         );
                       },
                     );
@@ -371,6 +312,35 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Future buildSignInRequiredDialog() async {
+    await showWonderfulAlertDialog(
+      context,
+      AppLocalizations.of(context)!.confirmation,
+      AppLocalizations.of(context)!.this_features_require_login,
+      removeDefaultButton: true,
+      dialogButtons: [
+        ElevatedButton(
+          child: Text(
+            AppLocalizations.of(context)!.sign_in,
+          ),
+          onPressed: () async {
+            await Navigator.pushNamed(context, AuthenticationScreen.id);
+            Navigator.pop(context);
+          },
+        ),
+        ElevatedButton(
+          child: Text(
+            AppLocalizations.of(context)!.cancel,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+      width: 400.w,
     );
   }
 }

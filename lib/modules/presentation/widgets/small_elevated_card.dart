@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:swesshome/constants/colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
 
 
 class SmallElevatedCard extends StatelessWidget {
@@ -18,18 +17,18 @@ class SmallElevatedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: Res.width(8),
-        vertical: Res.height(2),
+        horizontal: 8.w,
+        vertical: 2.h,
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: Res.width(12),
-        vertical: Res.height(6),
+        horizontal: 12.w,
+        vertical: 6.h,
       ),
       decoration: BoxDecoration(
-        color: AppColors.secondaryColor,
+        color: Theme.of(context).colorScheme.primary,
         boxShadow: [
           BoxShadow(
-              color: AppColors.black.withOpacity(0.24),
+              color: Theme.of(context).colorScheme.onBackground.withOpacity(0.24),
               offset: const Offset(0, 2),
               blurRadius: 4,
               spreadRadius: 0)
@@ -39,7 +38,7 @@ class SmallElevatedCard extends StatelessWidget {
         ),
       ),
       child: SizedBox(
-        height: Res.height(32),
+        height: 32.h,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -56,9 +55,9 @@ class SmallElevatedCard extends StatelessWidget {
                   onDelete!(content);
                 }
               },
-              icon: const Icon(
+              icon:  Icon(
                 Icons.close,
-                color: AppColors.white,
+                color: Theme.of(context).colorScheme.background,
               ),
             ),
           ],

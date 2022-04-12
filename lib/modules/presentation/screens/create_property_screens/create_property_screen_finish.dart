@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/assets_paths.dart';
-import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/constants/texts.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_estate_bloc/send_estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_estate_bloc/send_estate_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_estate_bloc/send_estate_state.dart';
@@ -15,10 +13,8 @@ import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
+import 'package:swesshome/modules/presentation/widgets/refresh_button.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
 
 class CreatePropertyScreenFinish extends StatefulWidget {
   static const String id = "CreatePropertyScreenFinish";
@@ -38,9 +34,7 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
   @override
   void initState() {
     super.initState();
-
     _sendEstateBloc = SendEstateBloc(estateRepository: EstateRepository());
-
     // Send Estate:
     sendEstate();
   }
@@ -67,106 +61,95 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
       bloc: _sendEstateBloc,
       listener: (_, estateSendState) {
         if (estateSendState is SendEstateError) {
-          showWonderfulAlertDialog(context, "خطأ", estateSendState.errorMessage);
+          showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, estateSendState.errorMessage);
         }
       },
       builder: (_, estateSendState) {
         return CreatePropertyTemplate(
           headerIconPath: sendIconPath,
-          headerText: "إرسال العرض العقاري",
+          headerText: AppLocalizations.of(context)!.send_estate,
           body: (estateSendState is SendEstateError)
               ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const FetchResult(content: "حدث خطأ أثناء إرسال العقار"),
-                    SizedBox(height: Res.height(72),),
-                    buildRefreshButton(),
-                  ],
-                )
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FetchResult(content: AppLocalizations.of(context)!.error_when_sending_estate),
+              40.verticalSpace,
+              RefreshButton(
+                onPressed: () => sendEstate(),
+              )
+            ],
+          )
               : Column(
-                  children: [
-                    kHe36,
-                    BlocBuilder<ChannelCubit, dynamic>(
-                      bloc: sendProgress,
-                      builder: (_, percent) {
-                        percent = percent.toDouble();
-                        return CircularPercentIndicator(
-                          radius: 100,
-                          lineWidth: 10,
-                          percent: (percent / 100).toDouble(),
-                          center: (estateSendState is SendEstateComplete)
-                              ? const Icon(
-                                  Icons.check,
-                                  color: AppColors.secondaryColor,
-                                  size: 80,
-                                )
-                              : ResText(
-                                  percent.toInt().toString() + "%",
-                                  textStyle: textStyling(S.s24, W.w6, C.c2, fontFamily: F.roboto),
-                                ),
-                          progressColor: AppColors.secondaryColor,
-                        );
-                      },
+            children: [
+              36.verticalSpace,
+              BlocBuilder<ChannelCubit, dynamic>(
+                bloc: sendProgress,
+                builder: (_, percent) {
+                  percent = percent.toDouble();
+                  return CircularPercentIndicator(
+                    backgroundColor: Theme.of(context).colorScheme.onBackground.withOpacity(0.24),
+                    progressColor: Theme.of(context).colorScheme.onBackground,
+                    radius: 100,
+                    lineWidth: 10,
+                    percent: (percent / 100).toDouble(),
+                    center: (estateSendState is SendEstateComplete)
+                        ? Icon(
+                      Icons.check,
+                      size: 80.w,
+                    )
+                        : Text(
+                      percent.toInt().toString() + "%",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline5!
+                          .copyWith(fontWeight: FontWeight.w500, fontFamily: "Hind"),
                     ),
-                    SizedBox(
-                      height: Res.height(56),
-                    ),
-                    if (estateSendState is SendEstateComplete) ...[
-                      ResText(
-                        "مبروك",
-                        textStyle: textStyling(S.s30, W.w6, C.bl),
-                      ),
-                      kHe24,
-                      ResText(
-                        finishCreatePropertyContent,
-                        textStyle: textStyling(S.s18, W.w6, C.bl).copyWith(height: 1.9),
-                        maxLines: 3,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                    const Spacer(),
-                    MyButton(
-                      child: ResText(
-                        (estateSendState is SendEstateComplete) ? "تم" : "جاري إرسال العقار",
-                        textStyle: textStyling(S.s16, W.w5, C.wh),
-                      ),
-                      width: Res.width(240),
-                      height: Res.height(56),
-                      color: AppColors.secondaryColor,
-                      onPressed: () async {
-                        if (estateSendState is! SendEstateComplete) return;
-                        Navigator.of(context).popUntil((route) => route.isFirst);
-                      },
-                    ),
-                  ],
+                  );
+                },
+              ),
+              if (estateSendState is SendEstateProgress)
+                Container(
+                  padding: EdgeInsets.only(top: 24.h),
+                  width: 1.sw,
+                  child: Text(
+                    AppLocalizations.of(context)!.sending_estate,
+                    textAlign: TextAlign.center,
+                    maxLines: 30,
+                  ),
                 ),
+              42.verticalSpace,
+              if (estateSendState is SendEstateComplete) ...[
+                Text(
+                  AppLocalizations.of(context)!.congratulations,
+                  style: Theme.of(context).textTheme.headline4,
+                ),
+                24.verticalSpace,
+                Text(
+                  AppLocalizations.of(context)!.finish_send_estate,
+                  maxLines: 3,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(height: 1.8),
+                ),
+              ],
+              const Spacer(),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(240.w, 64.h),
+                ),
+                child: Text(
+                  (estateSendState is SendEstateComplete)
+                      ? AppLocalizations.of(context)!.ok
+                      : AppLocalizations.of(context)!.sending_estate,
+                ),
+                onPressed: () async {
+                  if (estateSendState is! SendEstateComplete) return;
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
+            ],
+          ),
         );
       },
-    );
-  }
-
-  buildRefreshButton() {
-    return MyButton(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.refresh_outlined,
-            size: 18,
-            color: AppColors.white,
-          ),
-          kWi12,
-          ResText(
-            "إعادة المحاولة",
-            textStyle: textStyling(S.s18, W.w5, C.wh).copyWith(height: 1.8),
-          ),
-        ],
-      ),
-      onPressed: () {
-        sendEstate();
-      },
-      width: Res.width(250),
-      color: AppColors.secondaryColor,
     );
   }
 }

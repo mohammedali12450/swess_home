@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-
-import '../my_button.dart';
-import '../res_text.dart';
 
 class MapPopupMessageTutorial extends StatelessWidget {
   final void Function() onPressed;
@@ -13,62 +9,53 @@ class MapPopupMessageTutorial extends StatelessWidget {
 
   final String content;
 
-  final double bottomRightRadius;
-
-  const MapPopupMessageTutorial({Key? key,
+  const MapPopupMessageTutorial({
+    Key? key,
     required this.onPressed,
     required this.title,
     required this.content,
-    this.bottomRightRadius = 20})
-      : super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: Res.width(320),
-      padding: kMediumSymHeight,
-      decoration: BoxDecoration(
+      width: 320.w,
+      padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 12.w),
+      decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
-          bottomLeft: const Radius.circular(20),
-          topLeft: const Radius.circular(20),
-          topRight: const Radius.circular(20),
-          bottomRight: Radius.circular(bottomRightRadius),
+          bottomLeft: Radius.circular(20),
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+          bottomRight: Radius.circular(20),
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ResText(
+          Text(
             title,
-            textStyle: textStyling(S.s20, W.w6, C.bl),
             textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline4,
           ),
-          kHe16,
-          ResText(
+          24.verticalSpace,
+          Text(
             content,
             maxLines: 10,
             textAlign: TextAlign.center,
-            textStyle: textStyling(S.s16, W.w5, C.bl).copyWith(height: 1.6),
+            style: Theme.of(context).textTheme.subtitle1!.copyWith(height: 1.8),
           ),
-          kHe16,
-          MyButton(
-            child: ResText(
-              "التالي",
-              textStyle: textStyling(S.s14, W.w5, C.wh),
+          24.verticalSpace,
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(180.w, 56.h),
             ),
-            height: Res.height(56),
-            width: Res.width(100),
-            color: AppColors.lastColor,
-            shadow: [BoxShadow(
-                color: Colors.black.withOpacity(0.24),
-                offset: const Offset(0, 2),
-                blurRadius: 4,
-                spreadRadius: 0),
-            ] ,
+            child: Text(
+              AppLocalizations.of(context)!.next,
+            ),
             onPressed: onPressed,
-          ),
+          )
         ],
       ),
     );

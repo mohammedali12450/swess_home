@@ -3,7 +3,7 @@ description: A new Flutter application.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.7+7
+version: 1.0.9+9
 
 environment:
   sdk: ">=2.16.0 <3.0.0"
@@ -31,7 +31,6 @@ dependencies:
   animated_splash_screen: ^1.1.0
   fluttertoast: ^8.0.8
   cached_network_image: ^3.2.0
-  photo_view: ^0.13.0
   url_launcher: ^6.0.18
   flutter_image_compress: ^1.1.0
   google_maps_flutter: ^2.1.1
@@ -46,12 +45,25 @@ dependencies:
   connectivity_plus: ^2.2.1
   flutter_phoenix: ^1.0.0
   firebase_auth: ^3.3.9
-  country_code_picker: ^2.0.2
   phone_number: ^0.12.0+1
   pinput: ^2.1.4
   flutter_screenutil: ^5.3.1
   intl: ^0.17.0
   provider: ^6.0.2
+  intl_phone_field: ^3.1.0
+
+
+
+#-------------------------------
+
+dependency_overrides:
+  photo_view:
+    git:
+      url: https://github.com/bluefireteam/photo_view
+      ref: master
+
+
+
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +92,36 @@ flutter:
 
   uses-material-design: true
   generate: true
+  fonts:
+    - family: Tajawal
+      fonts:
+        - asset: assets/fonts/tajawal/Tajawal-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/tajawal/Tajawal-Light.ttf
+          weight: 300
+        - asset: assets/fonts/tajawal/Tajawal-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/tajawal/Tajawal-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/tajawal/Tajawal-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/tajawal/Tajawal-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/tajawal/Tajawal-Black.ttf
+          weight: 900
+    - family: Hind
+      fonts:
+        - asset: assets/fonts/hind/Hind-Light.ttf
+          weight: 300
+        - asset: assets/fonts/hind/Hind-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/hind/Hind-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/hind/Hind-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/hind/Hind-Bold.ttf
+          weight: 700
   assets:
     - assets/icons/
     - assets/images/
+    - assets/l10n/

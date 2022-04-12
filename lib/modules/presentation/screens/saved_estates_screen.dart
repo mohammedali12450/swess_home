@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:swesshome/constants/colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_state.dart';
@@ -11,10 +10,9 @@ import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SavedEstatesScreen extends StatefulWidget {
   static const String id = "SavedEstatesScreen";
@@ -45,33 +43,12 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: Res.height(75),
-          backgroundColor: AppColors.secondaryColor,
-          automaticallyImplyLeading: false,
-          actions: [
-            Container(
-              margin: EdgeInsets.only(
-                right: Res.width(16),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_forward),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-          ],
-          title: SizedBox(
-            width: inf,
-            child: ResText(
-              "العقارات المحفوظة",
-              textStyle: textStyling(S.s18, W.w5, C.wh),
-              textAlign: TextAlign.right,
-            ),
+          title: Text(
+            AppLocalizations.of(context)!.saved_estates ,
           ),
         ),
         body: RefreshIndicator(
-          color: AppColors.secondaryColor,
+          color: Theme.of(context).colorScheme.primary,
           onRefresh: () async {
             if (BlocProvider.of<UserLoginBloc>(context).user!.token != null) {
               _savedEstatesBloc.add(
@@ -83,22 +60,22 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Container(
-              width: screenWidth,
-              height: screenHeight - Res.height(75),
+              width: 1.sw,
+              height: 1.sh - 75.h,
               padding: kMediumSymHeight,
               child: BlocConsumer<SavedEstatesBloc, SavedEstatesState>(
                 bloc: _savedEstatesBloc,
                 listener: (_, savedEstatesState) {
                   if (savedEstatesState is SavedEstatesFetchError) {
-                    showWonderfulAlertDialog(context, "خطأ", savedEstatesState.error);
+                    showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, savedEstatesState.error);
                   }
                 },
                 builder: (BuildContext context, savedEstatesState) {
                   if (savedEstatesState is SavedEstatesFetchProgress) {
-                    return const EstatesShimmer();
+                    return const PropertyShimmer();
                   }
                   if (savedEstatesState is! SavedEstatesFetchComplete) {
-                    return const FetchResult(content: "حدث خطأ أثناء تنفيذ العملية");
+                    return  FetchResult(content: AppLocalizations.of(context)!.error_happened_when_executing_operation);
                   }
 
                   List<Estate> estates = savedEstatesState.savedEstates;
@@ -110,15 +87,13 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                         children: [
                           Icon(
                             Icons.error_outline,
-                            size: screenWidth / 2,
-                            color: AppColors.secondaryColor.withOpacity(0.64),
+                            size: 0.5.sw,
+                            color: Theme.of(context).colorScheme.primary.withOpacity(0.64),
                           ),
                           kHe24,
-                          ResText(
-                            "! لا يوجد عروض عقارية محفوظة",
-                            textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-                              color: AppColors.black.withOpacity(0.48),
-                            ),
+                          Text(
+                            AppLocalizations.of(context)!.have_not_saved_estates,
+                            style: Theme.of(context).textTheme.headline5,
                           ),
                         ],
                       ),

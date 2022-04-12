@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:swesshome/constants/colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/core/storage/shared_preferences/notifications_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/notifications_bloc/notifications_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/notifications_bloc/notifications_event.dart';
@@ -12,13 +11,11 @@ import 'package:swesshome/modules/business_logic_components/cubits/notifications
 import 'package:swesshome/modules/data/models/my_notification.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
 import 'package:swesshome/modules/presentation/widgets/notification_card.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/notifications_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/date_helper.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotificationScreen extends StatefulWidget {
   static const String id = "NotificationScreen";
@@ -60,49 +57,31 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          toolbarHeight: Res.height(75),
-          backgroundColor: AppColors.secondaryColor,
-          title: SizedBox(
-            width: screenWidth,
-            child: ResText(
-              'الإشعارات',
-              textStyle: textStyling(S.s18, W.w5, C.c1),
-              textAlign: TextAlign.right,
-            ),
+          title: Text(
+            AppLocalizations.of(context)!.notifications,
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.arrow_forward_outlined,
-                color: AppColors.baseColor,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
         ),
         body: (BlocProvider.of<UserLoginBloc>(context).user != null)
             ? RefreshIndicator(
-                color: AppColors.secondaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 onRefresh: () async {
                   _onRefresh();
                 },
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Container(
-                    width: screenWidth,
-                    height: screenHeight - Res.height(75),
+                    width: 1.sw,
+                    height: 1.sh - 75.h,
                     alignment: Alignment.center,
                     padding: EdgeInsets.symmetric(
-                      horizontal: Res.width(12),
-                      vertical: Res.height(8),
+                      horizontal: 12.w,
+                      vertical: 8.h,
                     ),
                     child: BlocConsumer<NotificationsBloc, NotificationsState>(
                         listener: (_, notificationsState) {
                       if (notificationsState is NotificationsFetchError) {
-                        showWonderfulAlertDialog(context, "خطأ", notificationsState.error);
+                        showWonderfulAlertDialog(
+                            context, AppLocalizations.of(context)!.error, notificationsState.error);
                       }
                     }, builder: (context, notificationsState) {
                       if (notificationsState is NotificationsFetchProgress) {
@@ -118,15 +97,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             children: [
                               Icon(
                                 Icons.notifications_outlined,
-                                color: AppColors.secondaryColor.withOpacity(0.12),
-                                size: screenWidth / 2,
+                                color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                                size: 0.5.sw,
                               ),
                               kHe24,
-                              ResText(
-                                "ليس لديك إشعارات",
-                                textStyle: textStyling(S.s24, W.w5, C.c2).copyWith(
-                                  color: AppColors.secondaryColor.withOpacity(0.32),
-                                ),
+                              Text(
+                                AppLocalizations.of(context)!.you_have_not_notifications,
+                                style: Theme.of(context).textTheme.headline5!.copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.primary.withOpacity(0.32),
+                                    ),
                               ),
                             ],
                           );
@@ -143,14 +123,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               date: DateHelper.getDateByFormat(
                                   DateTime.parse(notification.date), "yyyy/MM/dd"),
                               isNew: index < newNotificationsCount,
-                              onTap: (){
-
-                              },
+                              onTap: () {},
                             );
                           },
                         );
                       }
-                      return const FetchResult(content: "حدث خطأ أثناء تنفيذ العملية");
+                      return  FetchResult(
+                          content: AppLocalizations.of(context)!
+                              .error_happened_when_executing_operation);
                     }),
                   ),
                 ),
@@ -164,25 +144,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   children: [
                     Icon(
                       Icons.notifications_outlined,
-                      color: AppColors.secondaryColor.withOpacity(0.12),
-                      size: screenWidth / 2,
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                      size: 0.5.sw,
                     ),
                     kHe24,
-                    ResText(
-                      "قم بتسجيل الدخول لتصلك الإشعارات",
-                      textStyle: textStyling(S.s24, W.w5, C.c2).copyWith(
-                        color: AppColors.secondaryColor.withOpacity(0.32),
+                    Text(
+                      AppLocalizations.of(context)!.sign_in_for_notifications,
+                      style: Theme.of(context).textTheme.headline4!.copyWith(
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.32),
                       ),
                       maxLines: 3,
                     ),
                     kHe32,
-                    MyButton(
-                      width: Res.width(250),
-                      child: ResText(
-                        "تسجيل الدخول",
-                        textStyle: textStyling(S.s16, W.w5, C.wh),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(240.w , 64.h)
                       ),
-                      color: AppColors.secondaryColor,
+                      child: Text(
+                        AppLocalizations.of(context)!.sign_in,
+                      ),
                       onPressed: () {
                         Navigator.push(
                           context,

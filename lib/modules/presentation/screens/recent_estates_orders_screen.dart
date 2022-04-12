@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:swesshome/constants/colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_bloc.dart';
@@ -10,9 +12,8 @@ import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc
 import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/repositories/estate_order_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_order_card.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/clients_orders_shimmer.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RecentEstateOrdersScreen extends StatefulWidget {
   static const String id = "RecentEstateOrdersScreen";
@@ -44,57 +45,50 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: Res.height(75),
-          backgroundColor: AppColors.secondaryColor,
-          automaticallyImplyLeading: false,
-          actions: [
-            Container(
-              margin: EdgeInsets.only(
-                right: Res.width(16),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_forward),
-                onPressed: () {},
-              ),
-            ),
-          ],
-          title: SizedBox(
-            width: inf,
-            child: ResText(
-              "الطلبات العقارية السابقة",
-              textStyle: textStyling(S.s18, W.w5, C.wh),
-              textAlign: TextAlign.right,
-            ),
+          title: Text(
+            AppLocalizations.of(context)!.recent_created_orders,
           ),
         ),
-        body: Container(
-          padding: kMediumSymWidth,
-          child: BlocBuilder<RecentEstatesOrdersBloc, RecentEstatesOrdersState>(
-            bloc: _recentEstatesOrdersBloc,
-            builder: (BuildContext context, recentOrdersState) {
-              if (recentOrdersState is RecentEstatesOrdersFetchProgress) {
-                return const ClientsOrdersShimmer();
-              }
+        body: BlocBuilder<RecentEstatesOrdersBloc, RecentEstatesOrdersState>(
+          bloc: _recentEstatesOrdersBloc,
+          builder: (BuildContext context, recentOrdersState) {
+            if (recentOrdersState is RecentEstatesOrdersFetchProgress) {
+              return const ClientsOrdersShimmer();
+            }
+            if (recentOrdersState is! RecentEstatesOrdersFetchComplete) {
+              return Container();
+            }
 
-              if (recentOrdersState is! RecentEstatesOrdersFetchComplete) {
-                return Container();
-              }
+            List<EstateOrder> orders = recentOrdersState.estateOrders;
+            if (orders.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      documentOutlineIconPath,
+                      width: 0.5.sw,
+                      height: 0.5.sw,
+                      color: Theme.of(context).colorScheme.onBackground.withOpacity(0.42),
+                    ),
+                    48.verticalSpace,
+                    Text(
+                      AppLocalizations.of(context)!.have_not_recent_orders,
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                  ],
+                ),
+              );
 
-              List<EstateOrder> orders = recentOrdersState.estateOrders;
+            }
 
-              if (orders.isEmpty) {
-                return const Center(child: ResText("Empty"));
-              }
+            return ListView.builder(
+                itemCount: orders.length ,
+                itemBuilder: (_, index) {
 
-              return ListView.builder(
-
-                  itemCount: orders.length ,
-                  itemBuilder: (_, index) {
-
-                return EstateOrderCard(estateOrder: orders.elementAt(index));
-              });
-            },
-          ),
+              return EstateOrderCard(estateOrder: orders.elementAt(index));
+            });
+          },
         ),
       ),
     );

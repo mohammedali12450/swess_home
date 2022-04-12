@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swesshome/constants/colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'res_text.dart';
@@ -25,14 +25,14 @@ class FetchResult extends StatelessWidget {
         ),
         Icon(
           iconData ?? Icons.error_outline,
-          size: iconSize ?? screenWidth / 2,
-          color: AppColors.hintColor,
+          size: iconSize ?? 0.5.sw,
+          color: Theme.of(context).hintColor,
         ),
         kHe24,
         ResText(
           content,
           textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-            color: AppColors.black.withOpacity(0.48),
+            color: Theme.of(context).colorScheme.onBackground.withOpacity(0.48),
           ),
         ),
       ],

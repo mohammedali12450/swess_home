@@ -1,9 +1,15 @@
+import 'dart:ui';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/config/routes/app_router.dart';
+import 'package:swesshome/constants/assets_paths.dart';
+import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
@@ -12,8 +18,10 @@ import 'package:swesshome/modules/data/repositories/estate_order_repository.dart
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/data/repositories/reports_repository.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+import 'config/themes/my_themes.dart';
 import 'constants/application_constants.dart';
 import 'core/functions/store_notification.dart';
+import 'core/models/l10n.dart';
 import 'core/notifications/firebase_notifications.dart';
 import 'core/notifications/local_notifications.dart';
 import 'core/storage/shared_preferences/notifications_shared_preferences.dart';
@@ -31,6 +39,8 @@ import 'modules/business_logic_components/bloc/price_domains_bloc/price_domains_
 import 'modules/business_logic_components/bloc/send_estate_bloc/send_estate_bloc.dart';
 import 'modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'modules/business_logic_components/cubits/notifications_cubit.dart';
+import 'modules/data/providers/locale_provider.dart';
+import 'modules/data/providers/theme_provider.dart';
 import 'modules/data/repositories/area_units_repository.dart';
 import 'modules/data/repositories/estate_offer_types_repository.dart';
 import 'modules/data/repositories/estate_types_repository.dart';
@@ -41,6 +51,7 @@ import 'modules/data/repositories/ownership_type_repository.dart';
 import 'modules/data/repositories/period_types_repository.dart';
 import 'modules/data/repositories/price_domains_repository.dart';
 import 'modules/data/repositories/system_variables_repository.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 const bool _clearSharedPreferences = false;
 
@@ -80,6 +91,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   AppRouter appRouter = AppRouter();
   late FirebaseMessaging messaging;
   late NotificationsCubit notificationsCubit;
+  late ThemeMode initialThemeMode;
+  Locale? initialLocale;
 
   @override
   void initState() {
@@ -94,10 +107,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     // Firebase messages initializing :
     initializeFirebaseMessaging();
+
+    // initialize application locale:
+    String? storedLocale = ApplicationSharedPreferences.getLanguageCode();
+    if (storedLocale == null) {
+      initialLocale = Locale(window.locale.languageCode == "ar" ? "ar" : "en");
+    } else {
+      initialLocale = Locale(storedLocale);
+    }
+
+    // initialize application theme mode:
+    bool? isDarkMode = ApplicationSharedPreferences.getIsDarkMode();
+    if (isDarkMode != null) {
+      initialThemeMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+    } else {
+      initialThemeMode = ThemeMode.system;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    precacheImage(const AssetImage(swessHomeIconPath), context);
+
     return MultiBlocProvider(
       providers: [
         // Global Blocs:
@@ -177,11 +208,46 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (_) => ReportBloc(ReportsRepository()),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        onGenerateRoute: appRouter.onGenerateRoute,
-        initialRoute: '/',
-      ),
+      child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => LocaleProvider(initialLocale),
+            ),
+            ChangeNotifierProvider(
+              create: (_) => ThemeProvider(initialThemeMode),
+            ),
+          ],
+          builder: (context, child) {
+            final themeProvider = Provider.of<ThemeProvider>(context);
+            final localeProvider = Provider.of<LocaleProvider>(context);
+
+            return ScreenUtilInit(
+              designSize: const Size(428, 926),
+              minTextAdapt: true,
+              splitScreenMode: false,
+              builder: () => MaterialApp(
+                debugShowCheckedModeBanner: false,
+                onGenerateRoute: appRouter.onGenerateRoute,
+                initialRoute: '/',
+                builder: (context, widget) {
+                  ScreenUtil.setContext(context);
+                  return MediaQuery(
+                      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: widget!);
+                },
+                supportedLocales: L10n.all,
+                locale: localeProvider.locale,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                themeMode: themeProvider.themeMode,
+                theme: MyThemes.lightTheme(context),
+                darkTheme: MyThemes.darkTheme(context),
+              ),
+            );
+          }),
     );
   }
 
@@ -240,7 +306,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
-    print(state.name);
     if (state == AppLifecycleState.resumed) {
       checkNewNotifications();
     }

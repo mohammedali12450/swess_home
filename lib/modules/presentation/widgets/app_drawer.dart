@@ -1,31 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/user.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/created_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
-import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
+import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'my_button.dart';
-import 'res_text.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({Key? key}) : super(key: key);
@@ -47,7 +46,9 @@ class _MyDrawerState extends State<MyDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         BlocBuilder<UserLoginBloc, UserLoginState>(
           builder: (context, userLoginState) {
@@ -55,44 +56,62 @@ class _MyDrawerState extends State<MyDrawer> {
             return Container(
               padding: kMediumSymWidth,
               alignment: Alignment.topCenter,
-              height: Res.height(340),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [AppColors.secondaryColor, AppColors.lastColor],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter),
+              height: 340.h,
+              decoration: BoxDecoration(
+                color: !isDark
+                    ? Theme.of(context).colorScheme.secondary
+                    : Theme.of(context).colorScheme.secondary,
+                // gradient: LinearGradient(colors: [
+                //   Theme.of(context).colorScheme.primary,
+                //   Theme.of(context).colorScheme.secondary
+                // ], begin: Alignment.bottomCenter, end: Alignment.topCenter),
               ),
               child: (user == null)
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.white),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isDark
+                                ? Theme.of(context).colorScheme.onBackground
+                                : Colors.black26,
+                          ),
                           child: Image.asset(
                             swessHomeIconPath,
-                            width: 100,
-                            height: 100,
+                            width: 100.w,
+                            height: 100.w,
                           ),
                         ),
                         kHe12,
-                        ResText(
-                          "تسجيل الدخول",
-                          textStyle: textStyling(S.s22, W.w6, C.wh),
+                        Text(
+                          AppLocalizations.of(context)!.sign_in,
+                          style: Theme.of(context).textTheme.headline4!.copyWith(
+                                color: Theme.of(context).colorScheme.onBackground,
+                              ),
                         ),
                         kHe8,
-                        ResText(
-                          "قم بتسجيل الدخول للاستفادة من ميزات التطبيق, وعرض عقارات مناسبة لطلبك",
-                          textStyle: textStyling(S.s14, W.w5, C.wh).copyWith(height: 1.8),
+                        Text(
+                          AppLocalizations.of(context)!.login_drawer_body,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                                color: Theme.of(context).colorScheme.onBackground,
+                              ),
                           maxLines: 5,
                         ),
                         kHe12,
-                        MyButton(
-                          child: ResText(
-                            "تسجيل الدخول",
-                            textStyle: textStyling(S.s16, W.w5, C.c2),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(200.w, 56.h),
                           ),
-                          width: Res.width(180),
-                          color: AppColors.white,
+                          child: Text(
+                            AppLocalizations.of(context)!.sign_in,
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle1!
+                                .copyWith(color: AppColors.white),
+                          ),
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -111,22 +130,31 @@ class _MyDrawerState extends State<MyDrawer> {
                       children: [
                         kHe24,
                         Container(
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.white),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Theme.of(context).colorScheme.background),
                           child: Image.asset(
                             swessHomeIconPath,
                             width: 100,
                             height: 100,
                           ),
                         ),
-                        kHe12,
-                        ResText(
+                        kHe24,
+                        Text(
                           user.userName,
-                          textStyle: textStyling(S.s24, W.w6, C.wh),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(color: AppColors.white),
                         ),
                         kHe4,
-                        ResText(
+                        Text(
                           user.authentication,
-                          textStyle: textStyling(S.s18, W.w5, C.wh),
+                          textDirection: TextDirection.ltr,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(color: AppColors.white),
                         )
                       ],
                     ),
@@ -134,21 +162,21 @@ class _MyDrawerState extends State<MyDrawer> {
           },
         ),
         RowInformation(
-          content: "العقارات المحفوظة",
+          content: AppLocalizations.of(context)!.saved_estates,
           iconData: Icons.bookmark_border_outlined,
           onTap: () {
             Navigator.pushNamed(context, SavedEstatesScreen.id);
           },
         ),
         RowInformation(
-          content: "العروض العقارية المنشأة",
+          content: AppLocalizations.of(context)!.recent_created_estates,
           iconData: Icons.article_outlined,
           onTap: () {
             Navigator.pushNamed(context, CreatedEstatesScreen.id);
           },
         ),
         RowInformation(
-          content: "اتصل بنا",
+          content: AppLocalizations.of(context)!.call_us,
           iconData: Icons.call_outlined,
           onTap: () {
             launch(
@@ -160,14 +188,21 @@ class _MyDrawerState extends State<MyDrawer> {
           },
         ),
         RowInformation(
-          content: "تقييم التطبيق",
+          content: AppLocalizations.of(context)!.rate_us,
           iconData: Icons.star_rate_outlined,
           onTap: () {
             Navigator.pushNamed(context, RatingScreen.id);
           },
         ),
         RowInformation(
-          content: "مساعدة",
+          content: AppLocalizations.of(context)!.settings,
+          iconData: Icons.settings_outlined,
+          onTap: () {
+            Navigator.pushNamed(context, SettingsScreen.id);
+          },
+        ),
+        RowInformation(
+          content: AppLocalizations.of(context)!.help,
           iconData: Icons.error_outline,
           onTap: () {
             Navigator.pushNamed(context, FAQScreen.id);
@@ -178,44 +213,41 @@ class _MyDrawerState extends State<MyDrawer> {
             User? user = BlocProvider.of<UserLoginBloc>(context).user;
             if (user != null) {
               return RowInformation(
-                content: "تسجيل الخروج",
+                content: AppLocalizations.of(context)!.log_out,
                 iconData: Icons.logout,
                 onTap: () async {
                   await showWonderfulAlertDialog(
                     context,
-                    "تأكيد",
-                    "هل تريد تسجيل الخروج؟",
+                    AppLocalizations.of(context)!.confirmation,
+                    AppLocalizations.of(context)!.logout_confirmation,
                     removeDefaultButton: true,
-                    width: Res.width(400),
+                    width: 400.w,
                     dialogButtons: [
-                      MyButton(
-                        child: ResText(
-                          "إلغاء",
-                          textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(120.w, 56.h), padding: EdgeInsets.zero),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
                         ),
-                        width: Res.width(140),
-                        color: AppColors.secondaryColor,
                         onPressed: () {
                           Navigator.pop(context);
                         },
                       ),
-                      MyButton(
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(120.w, 56.h), padding: EdgeInsets.zero),
                         child: BlocBuilder<ChannelCubit, dynamic>(
                             bloc: isLogoutLoadingCubit,
                             builder: (_, isLogoutLoading) {
                               return (isLogoutLoading)
-                                  ? const SpinKitWave(
-                                      color: AppColors.white,
-                                      size: 16,
+                                  ? SpinKitWave(
+                                      color: Theme.of(context).colorScheme.background,
+                                      size: 16.w,
                                     )
-                                  : ResText(
-                                      "تسجيل الخروج",
-                                      textStyle:
-                                          textStyling(S.s16, W.w5, C.wh).copyWith(height: 1.8),
+                                  : Text(
+                                      AppLocalizations.of(context)!.log_out,
                                     );
                             }),
-                        width: Res.width(140),
-                        color: AppColors.secondaryColor,
                         onPressed: () async {
                           isLogoutLoadingCubit.setState(true);
                           await _logout();
@@ -240,9 +272,9 @@ class _MyDrawerState extends State<MyDrawer> {
       try {
         await userRep.logout(_userLoginBloc.user!.token!);
       } on ConnectionException catch (e) {
-        Navigator.pop(context) ;
-        showWonderfulAlertDialog(context, "خطأ", e.errorMessage);
-        return ;
+        Navigator.pop(context);
+        showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, e.errorMessage);
+        return;
       }
     }
     UserSharedPreferences.removeAccessToken();
@@ -270,30 +302,28 @@ class RowInformation extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: Res.width(16), vertical: Res.height(8)),
-            margin: EdgeInsets.only(top: Res.height(8)),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            margin: EdgeInsets.only(top: 8.h),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                ResText(
-                  content,
-                  textAlign: TextAlign.right,
-                  textStyle: textStyling(S.s16, W.w6, C.bl).copyWith(height: 1.8),
-                ),
-                kWi8,
                 Icon(
                   iconData,
-                  size: Res.width(32),
+                  size: 32.w,
                 ),
-                const Divider(
-                  color: AppColors.black,
+                kWi8,
+                Text(
+                  content,
+                ),
+                Divider(
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ],
             ),
           ),
           kHe12,
-          const Divider(
-            color: AppColors.black,
+          Divider(
+            color: Theme.of(context).colorScheme.onBackground,
             height: 1,
           ),
         ],

@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
 import '../shimmer_widget.dart';
 
 class NotificationsShimmer extends StatelessWidget {
@@ -26,8 +26,8 @@ class NotificationsShimmer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               ShimmerWidget.circular(
-                height: Res.height(28),
-                width: Res.width(150 + rnd.nextInt(200)),
+                height: 28.h,
+                width: (150 + rnd.nextInt(200)).w,
                 shapeBorder: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
                     Radius.circular(8),
@@ -36,8 +36,8 @@ class NotificationsShimmer extends StatelessWidget {
               ),
               kHe24,
               ShimmerWidget.circular(
-                height: Res.height(20),
-                width: Res.width(350 + rnd.nextInt(50)),
+                height: 20.h,
+                width: (350 + rnd.nextInt(50)).w,
                 shapeBorder: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
                     Radius.circular(8),
@@ -48,8 +48,8 @@ class NotificationsShimmer extends StatelessWidget {
               ),
               kHe12 ,
               ShimmerWidget.circular(
-                height: Res.height(20),
-                width: Res.width(100 + rnd.nextInt(100)),
+                height: 20.h,
+                width: (100 + rnd.nextInt(100)).w,
                 shapeBorder: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
                     Radius.circular(8),

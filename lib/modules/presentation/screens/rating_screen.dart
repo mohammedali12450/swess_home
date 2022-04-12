@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/constants/assets_paths.dart';
-import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/rating_bloc/rating_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/rating_bloc/rating_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/rating_bloc/rating_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/repositories/rating_repository%7B.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_snack_bar.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart' as intl;
 
 class RatingScreen extends StatefulWidget {
   static const String id = "RatingScreen";
@@ -33,6 +30,7 @@ class _RatingScreenState extends State<RatingScreen> {
   TextEditingController notesController = TextEditingController();
   ChannelCubit selectedRatingCubit = ChannelCubit(-1);
   final RatingBloc _ratingBloc = RatingBloc(RatingRepository());
+  ChannelCubit textDirectionCubit = ChannelCubit(null);
 
   @override
   Widget build(BuildContext context) {
@@ -40,29 +38,8 @@ class _RatingScreenState extends State<RatingScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          toolbarHeight: Res.height(75),
-          backgroundColor: AppColors.secondaryColor,
-          automaticallyImplyLeading: false,
-          actions: [
-            Container(
-              margin: EdgeInsets.only(
-                right: Res.width(16),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_forward),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-          ],
-          title: SizedBox(
-            width: inf,
-            child: ResText(
-              "تقييم التطبيق",
-              textStyle: textStyling(S.s18, W.w5, C.wh),
-              textAlign: TextAlign.right,
-            ),
+          title: Text(
+            AppLocalizations.of(context)!.rate_us,
           ),
         ),
         body: Padding(
@@ -71,13 +48,10 @@ class _RatingScreenState extends State<RatingScreen> {
             child: Column(
               children: <Widget>[
                 kHe32,
-                SizedBox(
-                  width: inf,
-                  child: ResText(
-                    "قم باختيار التقييم",
-                    textAlign: TextAlign.center,
-                    textStyle: textStyling(S.s18, W.w5, C.bl),
-                  ),
+                Text(
+                  AppLocalizations.of(context)!.select_rating,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline5,
                 ),
                 kHe32,
                 BlocBuilder(
@@ -88,7 +62,7 @@ class _RatingScreenState extends State<RatingScreen> {
                         children: <Widget>[
                           RatingChoiceWidget(
                             assetPath: sadFacePath,
-                            ratingName: "سيئ",
+                            ratingName: AppLocalizations.of(context)!.bad,
                             onTap: () {
                               selectedRatingCubit.setState(1);
                             },
@@ -97,7 +71,7 @@ class _RatingScreenState extends State<RatingScreen> {
                           kWi16,
                           RatingChoiceWidget(
                             assetPath: normalFacePath,
-                            ratingName: "متوسط",
+                            ratingName: AppLocalizations.of(context)!.normal,
                             onTap: () {
                               selectedRatingCubit.setState(2);
                             },
@@ -106,7 +80,7 @@ class _RatingScreenState extends State<RatingScreen> {
                           kWi16,
                           RatingChoiceWidget(
                             assetPath: happyFacePath,
-                            ratingName: "جيد",
+                            ratingName: AppLocalizations.of(context)!.good,
                             onTap: () {
                               selectedRatingCubit.setState(3);
                             },
@@ -119,75 +93,90 @@ class _RatingScreenState extends State<RatingScreen> {
                 kHe24,
                 SizedBox(
                   width: inf,
-                  child: ResText(
-                    ": ملاحظات واقتراحات ( اختياري )",
-                    textStyle: textStyling(S.s18, W.w6, C.bl),
-                    textAlign: TextAlign.right,
+                  child: Text(
+                    AppLocalizations.of(context)!.notes +
+                        " ( ${AppLocalizations.of(context)!.optional} ) :",
+                    style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
                 kHe16,
                 SizedBox(
-                  width: inf,
-                  height: Res.height(200),
-                  child: TextField(
-                    style: textStyling(S.s15, W.w5, C.bl),
-                    maxLines: 8,
-                    maxLength: 250,
-                    textDirection: TextDirection.rtl,
-                    controller: notesController,
-                    decoration: InputDecoration(
-                      hintText: "أكتب الملاحظات والاقتراحات...",
-                      hintStyle: textStyling(S.s15, W.w5, C.hint),
-                      hintTextDirection: TextDirection.rtl,
-                      border: kOutlinedBorderBlack,
-                      focusedBorder: kOutlinedBorderBlack,
-                    ),
+                  width: 1.sw,
+                  height: 200.h,
+                  child: BlocBuilder<ChannelCubit, dynamic>(
+                    bloc: textDirectionCubit,
+                    builder: (_, text) {
+                      return TextField(
+                        textDirection: (text == null)
+                            ? null
+                            : intl.Bidi.detectRtlDirectionality(text)
+                                ? TextDirection.rtl
+                                : TextDirection.ltr,
+                        controller: notesController,
+                        maxLines: 8,
+                        maxLength: 600,
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.enter_rating_notes,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.onBackground.withOpacity(0.48),
+                                width: 0.5),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          textDirectionCubit.setState(value);
+                        },
+                      );
+                    },
                   ),
                 ),
                 kHe24,
-                MyButton(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(fixedSize: Size(220.w, 64.h)),
                   child: BlocConsumer<RatingBloc, RatingState>(
                     bloc: _ratingBloc,
                     listener: (_, ratingState) async {
-
-                      if(ratingState is RatingComplete){
+                      if (ratingState is RatingComplete) {
                         selectedRatingCubit.setState(-1);
-                        notesController.clear() ;
+                        notesController.clear();
                         // unfocused text field :
                         FocusScope.of(context).unfocus();
                       }
 
                       if (ratingState is RatingError) {
-                        await showWonderfulAlertDialog(context, "خطأ", ratingState.error);
+                        await showWonderfulAlertDialog(
+                            context, AppLocalizations.of(context)!.error, ratingState.error);
                       }
                       if (ratingState is RatingComplete) {
-                        MySnackBar.show(context, "شكرا لكم, تم إرسال التقييم بنجاح");
+                        Fluttertoast.showToast(
+                            msg: AppLocalizations.of(context)!.after_rate_message,
+                            toastLength: Toast.LENGTH_LONG);
+                        Navigator.pop(context);
                       }
                     },
                     builder: (_, ratingState) {
                       if (ratingState is RatingProgress) {
-                        return const SpinKitWave(
-                          size: 16,
-                          color: AppColors.white,
+                        return SpinKitWave(
+                          size: 24.w,
+                          color: Theme.of(context).colorScheme.background,
                         );
                       }
-                      return ResText(
-                        "إرسال التقييم",
-                        textStyle: textStyling(S.s16, W.w5, C.wh).copyWith(
-                            color: (ratingState is RatingComplete) ? AppColors.white.withOpacity(0.48) : AppColors.white),
+                      return Text(
+                        AppLocalizations.of(context)!.send_rate,
                       );
                     },
                   ),
-                  width: Res.width(240),
-                  height: Res.height(56),
-                  color: AppColors.secondaryColor,
                   onPressed: () {
-                    if (_ratingBloc.state is RatingProgress || _ratingBloc.state is RatingComplete) {
+                    if (_ratingBloc.state is RatingProgress ||
+                        _ratingBloc.state is RatingComplete) {
                       return;
                     }
-
                     if (selectedRatingCubit.state == -1) {
-                      Fluttertoast.showToast(msg: "يجب تحديد التقييم أولا!");
+                      Fluttertoast.showToast(
+                          msg: AppLocalizations.of(context)!.you_must_select_rate_first);
                       return;
                     }
 
@@ -233,20 +222,25 @@ class RatingChoiceWidget extends StatelessWidget {
       child: Container(
         padding: kSmallAllPadding,
         decoration: BoxDecoration(
-            color: (isPressed) ? AppColors.secondaryColor : Colors.transparent,
-            border: Border.all(color: AppColors.black),
+            color: (isPressed) ? Theme.of(context).colorScheme.primary : Colors.transparent,
+            border: Border.all(color: Theme.of(context).colorScheme.onBackground),
             borderRadius: const BorderRadius.all(Radius.circular(8))),
         child: Column(
           children: [
             SvgPicture.asset(
               assetPath,
-              width: Res.width(80),
-              color: (isPressed) ? AppColors.white : AppColors.black,
+              width: 80.w,
+              color: (isPressed)
+                  ? Theme.of(context).colorScheme.background
+                  : Theme.of(context).colorScheme.onBackground,
             ),
             kHe12,
-            ResText(
+            Text(
               ratingName,
-              textStyle: textStyling(S.s14, W.w5, (isPressed) ? C.wh : C.bl),
+              style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                  color: isPressed
+                      ? Theme.of(context).colorScheme.background
+                      : Theme.of(context).colorScheme.onBackground),
             ),
           ],
         ),

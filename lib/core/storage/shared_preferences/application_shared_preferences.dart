@@ -6,6 +6,11 @@ class ApplicationSharedPreferences {
 
   static const String isWalkThroughPassed = "walk_through_passed";
   static const String isMapTutorialPassed = "map_tutorial_passed";
+  static const String isDarkMode = "is_dark_mode";
+  static const String languageCode = "language_code";
+  static const String isLanguageSelected = "is_language_selected";
+
+
 
   static init() async {
     _preferences = await SharedPreferences.getInstance();
@@ -23,6 +28,11 @@ class ApplicationSharedPreferences {
     bool success = false;
     success = await removeWalkThroughPassState();
     success = success & await removeMapTutorialPassState();
+    success = success & await removeIsDarkMode();
+    success &= await removeLanguageCode();
+    success &= await removeIsLanguageSelected();
+
+
 
     if (success) {
       debugPrint("ApplicationSharedPreferences is clear now!");
@@ -53,4 +63,47 @@ class ApplicationSharedPreferences {
   static bool getWalkThroughPassState() {
     return _preferences.getBool(isWalkThroughPassed)!;
   }
+
+  static setIsDarkMode(bool? isDarkModeSelected) async {
+    if (isDarkModeSelected == null) {
+      removeIsDarkMode();
+      return;
+    }
+    await _preferences.setBool(isDarkMode, isDarkModeSelected);
+  }
+
+  // when isDarkMode is null then will set dynamic mode.
+  static getIsDarkMode() {
+    return _preferences.getBool(isDarkMode);
+  }
+
+  static Future<bool> removeIsDarkMode() async {
+    return await _preferences.remove(isDarkMode);
+  }
+
+
+  static setLanguageCode(String selectedCode) async {
+    await _preferences.setString(languageCode, selectedCode);
+  }
+
+  static String? getLanguageCode() {
+    return _preferences.getString(languageCode) ;
+  }
+
+  static Future<bool> removeLanguageCode() async {
+    return await _preferences.remove(languageCode);
+  }
+
+  static setIsLanguageSelected(bool isSelected) async {
+    await _preferences.setBool(isLanguageSelected, isSelected);
+  }
+
+  static bool getIsLanguageSelected() {
+    return _preferences.getBool(isLanguageSelected) ?? false ;
+  }
+
+  static Future<bool> removeIsLanguageSelected() async {
+    return await _preferences.remove(isLanguageSelected);
+  }
+
 }

@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-import 'res_text.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
+
+import '../../business_logic_components/cubits/channel_cubit.dart';
 
 class MyDropdownList extends StatefulWidget {
   final List<dynamic> elementsList;
   final void Function(dynamic index) onSelect;
-  final bool? isOnChangeNull;
+  final int initElementIndex;
+  final Function()? onTap;
+  final bool isOnChangeNull;
 
-  const MyDropdownList(
-      {Key? key, required this.elementsList, required this.onSelect, this.isOnChangeNull = false})
-      : super(key: key);
+  const MyDropdownList({
+    Key? key,
+    required this.elementsList,
+    required this.onSelect,
+    this.initElementIndex = -1,
+    this.onTap,
+    this.isOnChangeNull = false,
+  }) : super(key: key);
 
   @override
   _MyDropdownListState createState() => _MyDropdownListState();
@@ -27,7 +34,9 @@ class _MyDropdownListState extends State<MyDropdownList> {
     // TODO: implement initState
     super.initState();
     // initializing:
-    _elementSelectCubit = ChannelCubit(widget.elementsList.elementAt(0));
+    _elementSelectCubit = ChannelCubit(
+      widget.elementsList.elementAt((widget.initElementIndex == -1) ? 0 : widget.initElementIndex),
+    );
   }
 
   @override
@@ -35,33 +44,35 @@ class _MyDropdownListState extends State<MyDropdownList> {
     return BlocBuilder<ChannelCubit, dynamic>(
       bloc: _elementSelectCubit,
       builder: (_, selectedItem) {
-        return DropdownButton<dynamic>(
+        selectedItem is String?;
+        selectedItem ??= widget.elementsList.first;
+        return DropdownButton(
           isExpanded: true,
           value: selectedItem,
           items: widget.elementsList.map(
             (dynamic element) {
-              return DropdownMenuItem<dynamic>(
+              return DropdownMenuItem(
                 value: element,
                 child: Container(
-                  width: inf,
+                  width: 1.sw,
                   margin: EdgeInsets.only(
-                    right: Res.width(16),
+                    right: Provider.of<LocaleProvider>(context).isArabic() ? 16.w : 0,
+                    left: Provider.of<LocaleProvider>(context).isArabic() ? 0 : 16.w,
                   ),
-                  child: ResText(
+                  child: Text(
                     element.toString(),
-                    textStyle: textStyling(S.s18, W.w4, C.bl),
-                    textAlign: TextAlign.right,
                   ),
                 ),
               );
             },
           ).toList(),
-          onChanged: (widget.isOnChangeNull == true)
+          onChanged: (widget.isOnChangeNull)
               ? null
               : (selectedElement) {
                   _elementSelectCubit.setState(selectedElement);
-                  widget.onSelect(widget.elementsList.indexOf(selectedElement));
+                  widget.onSelect(widget.elementsList.indexOf(selectedElement!));
                 },
+          onTap: widget.onTap,
         );
       },
     );

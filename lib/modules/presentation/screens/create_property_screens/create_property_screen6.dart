@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart' as intl;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/assets_paths.dart';
-import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
+import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
+import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_screen_finish.dart';
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
-import 'package:swesshome/modules/presentation/widgets/my_button.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-
-import 'create_property_screen_finish.dart';
 
 class CreatePropertyScreen6 extends StatefulWidget {
   static const String id = "CreatePropertyScreen6";
 
   final Estate currentOffer;
 
-  const CreatePropertyScreen6({Key? key, required this.currentOffer})
-      : super(key: key);
+  const CreatePropertyScreen6({Key? key, required this.currentOffer}) : super(key: key);
 
   @override
   _CreatePropertyScreen6State createState() => _CreatePropertyScreen6State();
@@ -25,58 +22,70 @@ class CreatePropertyScreen6 extends StatefulWidget {
 
 class _CreatePropertyScreen6State extends State<CreatePropertyScreen6> {
   TextEditingController descriptionController = TextEditingController();
+  ChannelCubit textDirectionCubit = ChannelCubit(null);
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return CreatePropertyTemplate(
       headerIconPath: documentOutlineIconPath,
-      headerText: "الخطوة السادسة",
+      headerText: AppLocalizations.of(context)!.step_6,
       body: Column(
         children: [
-          kHe24,
           SizedBox(
-            width: inf,
-            child: ResText(
-              ":وصف العقار (اختياري)",
-              textStyle: textStyling(S.s18, W.w6, C.bl),
-              textAlign: TextAlign.right,
+            width: 1.sw,
+            child: Text(AppLocalizations.of(context)!.estate_description +
+                " ( ${AppLocalizations.of(context)!.optional} ) :"),
+          ),
+          16.verticalSpace,
+          SizedBox(
+            width: 1.sw,
+            height: 200.h,
+            child: BlocBuilder<ChannelCubit, dynamic>(
+              bloc: textDirectionCubit,
+              builder: (_, text) {
+                return TextField(
+                  textDirection: (text == null)
+                      ? null
+                      : intl.Bidi.detectRtlDirectionality(text)
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  controller: descriptionController,
+                  maxLines: 8,
+                  maxLength: 600,
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)!.estate_description_hint,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onBackground.withOpacity(0.48),
+                          width: 0.5),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(12),
+                      ),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    textDirectionCubit.setState(value);
+                  },
+                );
+              },
             ),
           ),
-          kHe16,
-          SizedBox(
-            width: inf,
-            height: Res.height(200),
-            child: TextField(
-              style: textStyling(S.s15, W.w5, C.bl),
-              maxLines: 8,
-              maxLength: 600,
-              textDirection: TextDirection.rtl,
-              controller: descriptionController,
-              decoration: InputDecoration(
-                hintText: "أدخل وصف إضافي لعقارك !",
-                hintStyle: textStyling(S.s15, W.w5, C.hint),
-                hintTextDirection: TextDirection.rtl,
-                border: kOutlinedBorderBlack,
-                focusedBorder: kOutlinedBorderBlack,
-              ),
-            ),
-          ),
-          kHe36,
-          MyButton(
-            child: ResText(
-              "إنشاء العرض العقاري",
-              textStyle: textStyling(S.s16, W.w5, C.wh),
-            ),
-            width: Res.width(240),
-            height: Res.height(56),
-            color: AppColors.secondaryColor,
+          64.verticalSpace,
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
+            child: Text(AppLocalizations.of(context)!.create_estate),
             onPressed: () {
               widget.currentOffer.description = descriptionController.text;
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => CreatePropertyScreenFinish(
-                      currentOffer: widget.currentOffer),
+                  builder: (_) => CreatePropertyScreenFinish(currentOffer: widget.currentOffer),
                 ),
               );
             },

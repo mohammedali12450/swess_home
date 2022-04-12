@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CurrentStepViewer extends StatelessWidget {
   final int stepsCount;
@@ -22,7 +21,7 @@ class CurrentStepViewer extends StatelessWidget {
 
 
     return SizedBox(
-      height: Res.height(50),
+      height: 50.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
@@ -30,14 +29,14 @@ class CurrentStepViewer extends StatelessWidget {
         itemBuilder: (context, index) {
           return Container(
             margin: EdgeInsets.symmetric(
-              horizontal: Res.width(5),
+              horizontal: 5.w,
             ),
-            width: Res.width(12),
-            height: Res.height(12),
+            width: 12.w,
+            height: 12.h,
             decoration: BoxDecoration(
                 color: (index+1 == currentStepIndex)
-                    ? (activeCircleColor??AppColors.lastColor)
-                    : (unActiveCircleColor??AppColors.white),
+                    ? (activeCircleColor??Theme.of(context).colorScheme.primary)
+                    : (unActiveCircleColor??Theme.of(context).colorScheme.onBackground.withOpacity(0.32)),
                 shape: BoxShape.circle),
           );
         },

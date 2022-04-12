@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:swesshome/constants/colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
-import 'my_button.dart';
 import 'res_text.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> showWonderfulAlertDialog(
   BuildContext context,
@@ -31,7 +30,7 @@ Future<void> showWonderfulAlertDialog(
     builder: (context) => Dialog(
       elevation: elevation ?? 2,
       child: Container(
-        width: width ?? Res.width(250),
+        width: width ?? 250.w,
         height: height,
         padding: dialogPadding ?? kLargeSymHeight,
         decoration: BoxDecoration(
@@ -51,24 +50,21 @@ Future<void> showWonderfulAlertDialog(
             kHe24,
             ResText(
               body,
-              textStyle: bodyTextStyle ?? textStyling(S.s16, W.w5, C.bl).copyWith(height: 2),
+              textStyle: bodyTextStyle ?? Theme.of(context).textTheme.bodyText2,
               maxLines: 50,
               textAlign: TextAlign.center,
             ),
-            kHe32,
+            kHe24,
             Wrap(
               alignment: WrapAlignment.center,
               direction: Axis.horizontal,
-              spacing: Res.height(12),
-              runSpacing: Res.width(12),
+              spacing: 12.h,
+              runSpacing: 12.w,
               children: [
                     (removeDefaultButton)
                         ? Container()
-                        : MyButton(
-                            color: AppColors.secondaryColor,
-                            borderRadius: 4,
-                            width: defaultButtonWidth ?? Res.width(120),
-                            height: defaultButtonHeight ?? Res.height(56),
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(fixedSize: Size(180.w, 56.h)),
                             onPressed: () {
                               if (onDefaultButtonPressed != null) {
                                 onDefaultButtonPressed();
@@ -76,10 +72,13 @@ Future<void> showWonderfulAlertDialog(
                               }
                               Navigator.pop(context);
                             },
-                            child: ResText(
-                              defaultButtonContent ?? "تم",
-                              textStyle:
-                                  defaultButtonContentStyle ?? textStyling(S.s14, W.w5, C.c1),
+                            child: Text(
+                              defaultButtonContent ?? AppLocalizations.of(context)!.ok,
+                              style: defaultButtonContentStyle ??
+                                  Theme.of(context)
+                                      .textTheme
+                                      .button!
+                                      .copyWith(color: Theme.of(context).colorScheme.background),
                             ),
                           ),
                   ] +

@@ -13,6 +13,7 @@ class SystemVariables {
   final String maximumCountOfStreetImages;
   final String maximumCountOfFloorPlanImages;
   final String maximumCountOfNearbyPlaces;
+  final bool isForStore ;
 
   SystemVariables({
     this.minimumCountOfStreetImages,
@@ -24,6 +25,7 @@ class SystemVariables {
     required this.maximumCountOfFloorPlanImages,
     required this.maximumCountOfNearbyPlaces,
     required this.maximumCountOfStreetImages,
+    required this.isForStore
   });
 
   factory SystemVariables.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,7 @@ class SystemVariables {
       maximumCountOfStreetImages: json["maximum_count_of_street_images"],
       maximumCountOfNearbyPlaces: json["maximum_count_of_nearby_places"],
       maximumCountOfFloorPlanImages: json["maximum_count_of_floor_plan_images"],
+      isForStore: (json['is_for_store'] == 1) ? true : false ,
     );
   }
 }

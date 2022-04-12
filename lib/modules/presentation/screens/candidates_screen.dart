@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:swesshome/constants/colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CandidatesScreen extends StatefulWidget {
   static const String id = "CandidatesScreen";
@@ -23,31 +21,12 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: Res.height(75),
-        backgroundColor: AppColors.secondaryColor,
-        automaticallyImplyLeading: false,
-        actions: [
-          Container(
-            margin: EdgeInsets.only(
-              right: Res.width(16),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_forward),
-              onPressed: () {},
-            ),
-          ),
-        ],
-        title: SizedBox(
-          width: inf,
-          child: ResText(
-            "العقارات المرشحة",
-            textStyle: textStyling(S.s18, W.w5, C.wh),
-            textAlign: TextAlign.right,
-          ),
+        title: Text(
+          AppLocalizations.of(context)!.candidate_estates,
         ),
       ),
       body: Container(
-        padding: kMediumSymWidth,
+        padding: EdgeInsets.symmetric(horizontal: 4.w),
         child: (widget.estates == null || widget.estates!.isEmpty)
             ? Center(
                 child: Column(
@@ -55,15 +34,13 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
                   children: [
                     Icon(
                       Icons.error_outline,
-                      size: screenWidth / 2,
-                      color: AppColors.secondaryColor.withOpacity(0.64),
+                      size: 0.5.sw,
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.64),
                     ),
                     kHe24,
-                    ResText (
-                      "! لا يوجد ترشيحات لهذا الطلب",
-                      textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-                        color: AppColors.black.withOpacity(0.48),
-                      ),
+                    Text (
+                      AppLocalizations.of(context)!.no_candidates_for_this_order,
+                      style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ],
                 ),
@@ -72,7 +49,7 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
                 shrinkWrap: true,
                 itemCount: widget.estates!.length,
                 itemBuilder: (_, index) {
-                  return EstateCard(estate: widget.estates!.elementAt(index));
+                  return EstateCard(estate: widget.estates!.elementAt(index) , removeCloseButton: true,);
                 },
               ),
       ),

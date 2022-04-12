@@ -5,19 +5,6 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeProvider(this.themeMode);
 
-  /// null if themeMode is [system],
-  ///  false if themeMode is [light],
-  ///  true if themeMode is [dark],
-  bool? isDarkMode() {
-    switch (themeMode) {
-      case ThemeMode.system:
-        return null;
-      case ThemeMode.dark:
-        return true;
-      case ThemeMode.light:
-        return false;
-    }
-  }
 
   setTheme(ThemeMode themeMode) {
     this.themeMode = themeMode;
@@ -50,6 +37,17 @@ class ThemeProvider extends ChangeNotifier {
         return ThemeMode.light;
       default:
         return ThemeMode.system;
+    }
+  }
+
+  bool isDarkMode(BuildContext context) {
+    if (themeMode == ThemeMode.dark) {
+      return true;
+    } else if (themeMode == ThemeMode.light) {
+      return false;
+    } else {
+      var brightness = MediaQuery.of(context).platformBrightness;
+      return brightness == Brightness.dark;
     }
   }
 }

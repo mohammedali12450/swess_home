@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'package:swesshome/utils/helpers/responsive.dart';
 
 class ResText extends StatelessWidget {
   final String text;
@@ -33,7 +32,7 @@ class ResText extends StatelessWidget {
     return AutoSizeText(
       text,
       style: textStyle ?? textStyling(S.s14, W.w5, C.c2, fontFamily: F.roboto),
-      textScaleFactor: Res.getTextScale(),
+      textScaleFactor: 1,
       minFontSize: minFontSize,
       maxFontSize: maxFontSize,
       maxLines: maxLines,
