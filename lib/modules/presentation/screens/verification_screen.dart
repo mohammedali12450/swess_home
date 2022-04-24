@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:pinput/pinput.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/send_estate_bloc/send_estate_state.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/send_verification_code_bloc/send_verification_code_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/send_verification_code_bloc/send_verification_code_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/send_verification_code_bloc/send_verification_code_state.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -27,7 +32,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   late String phoneNumber;
   ChannelCubit isVerificationButtonActiveCubit = ChannelCubit(false);
   ChannelCubit isFireBaseLoadingCubit = ChannelCubit(true);
-
   String? verificationId;
 
   TextEditingController verificationCodeController = TextEditingController();
@@ -39,7 +43,11 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     // TODO: implement initState
     super.initState();
     phoneNumber = widget.phoneNumber;
-    verifyPhoneNumber();
+    if (BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore) {
+      verifyPhoneNumber();
+    } else {
+      isFireBaseLoadingCubit.setState(false);
+    }
   }
 
   verifyPhoneNumber() async {
@@ -115,19 +123,16 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                             children: [
                               SizedBox(
                                 width: 300.w,
-                                child: ResText(
-                                  "تم إرسال رمز التأكيد برسالة قصيرة إلى الرقم",
+                                child: Text(
+                                  AppLocalizations.of(context)!.confirmation_code_sent,
                                   maxLines: 5,
-                                  textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(height: 2.2),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
-                              kHe24,
-                              ResText(
-                                phoneNumber,
-                                textStyle:
-                                    textStyling(S.s22, W.w5, C.bl, fontFamily: F.libreFranklin),
+                              Text(
+                                widget.phoneNumber,
                                 textAlign: TextAlign.center,
+                                textDirection: TextDirection.ltr,
                               ),
                               kHe40,
                               Pinput(
@@ -148,40 +153,71 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                               SizedBox(
                                 height: 64.h,
                               ),
-                              BlocBuilder<ChannelCubit, dynamic>(
-                                bloc: isVerificationButtonActiveCubit,
-                                builder: (_, isActive) {
-                                  return ElevatedButton(
-                                    child: Text(
-                                      AppLocalizations.of(context)!.send,
-                                    ),
-                                    onPressed: () async {
-                                      if (isActive && verificationId != null) {
-                                        // Create a PhoneAuthCredential with the code
-                                        PhoneAuthCredential credential =
-                                            PhoneAuthProvider.credential(
-                                                verificationId: verificationId!,
-                                                smsCode: verificationCodeController.text);
-                                        try {
-                                          await auth.signInWithCredential(credential);
-                                          Navigator.pushNamed(context, HomeScreen.id);
-                                        } on ConnectionException catch (_) {
-                                          showWonderfulAlertDialog(
-                                              context,
-                                              AppLocalizations.of(context)!.error,
-                                              AppLocalizations.of(context)!
-                                                  .check_your_internet_connection);
-                                        } catch (e) {
-                                          showWonderfulAlertDialog(
-                                              context,
-                                              AppLocalizations.of(context)!.error,
-                                              AppLocalizations.of(context)!
-                                                  .error_happened_when_executing_operation);
-                                        }
-                                      }
-                                    },
-                                  );
-                                },
+                              BlocProvider(
+                                create: (context) => SendVerificationCodeBloc(),
+                                child: BlocBuilder<SendVerificationCodeBloc,
+                                    SendVerificationCodeState>(
+                                  builder: (context, sendCodeState) {
+                                    return BlocBuilder<ChannelCubit, dynamic>(
+                                      bloc: isVerificationButtonActiveCubit,
+                                      builder: (context, isActive) {
+                                        return ElevatedButton(
+                                          child: (sendCodeState is! SendVerificationCodeProgress)
+                                              ? Text(
+                                                  AppLocalizations.of(context)!.send,
+                                                )
+                                              : SpinKitWave(
+                                                  size: 24.w,
+                                                  color: Colors.white,
+                                                ),
+                                          onPressed: () async {
+                                            if (!isActive) return;
+                                            if (sendCodeState is SendVerificationCodeProgress) {
+                                              return;
+                                            }
+                                            // Syria state :
+                                            if (!BlocProvider.of<SystemVariablesBloc>(context)
+                                                .systemVariables!
+                                                .isForStore) {
+                                              BlocProvider.of<SendVerificationCodeBloc>(context)
+                                                  .add(
+                                                VerificationCodeSendingStarted(
+                                                    phone: widget.phoneNumber,
+                                                    code: verificationCodeController.text),
+                                              );
+                                            } else {
+                                              // Firebase state :
+                                              if (isActive && verificationId != null) {
+                                                // Create a PhoneAuthCredential with the code
+                                                PhoneAuthCredential credential =
+                                                    PhoneAuthProvider.credential(
+                                                        verificationId: verificationId!,
+                                                        smsCode: verificationCodeController.text);
+                                                try {
+                                                  await auth.signInWithCredential(credential);
+                                                  Navigator.pushNamed(context, HomeScreen.id);
+                                                } on ConnectionException catch (_) {
+                                                  showWonderfulAlertDialog(
+                                                      context,
+                                                      AppLocalizations.of(context)!.error,
+                                                      AppLocalizations.of(context)!
+                                                          .check_your_internet_connection);
+                                                } catch (e) {
+                                                  showWonderfulAlertDialog(
+                                                    context,
+                                                    AppLocalizations.of(context)!.error,
+                                                    AppLocalizations.of(context)!
+                                                        .error_happened_when_executing_operation,
+                                                  );
+                                                }
+                                              }
+                                            }
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
                               ),
                             ],
                           );

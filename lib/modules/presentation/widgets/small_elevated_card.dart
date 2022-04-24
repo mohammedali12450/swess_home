@@ -42,10 +42,15 @@ class SmallElevatedCard extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ResText(
-              content,
-              textStyle: textStyling(S.s14, W.w4, C.wh),
-              textAlign: TextAlign.center,
+            Flexible(
+              child: Text(
+                content,
+                style: Theme.of(context).textTheme.caption!.copyWith(
+                  color: Colors.white ,
+                ),
+                maxLines: 5,
+                textAlign: TextAlign.center,
+              ),
             ),
             if(isRemovable)
               IconButton(

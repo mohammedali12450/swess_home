@@ -236,8 +236,14 @@ class _SearchScreenState extends State<SearchScreen> {
                           Expanded(
                             flex: 1,
                             child: ElevatedButton(
+
                               style: ElevatedButton.styleFrom(
-                                  primary: isDarkMode ? const Color(0xff90B8F8) : null),
+                                  primary: isDarkMode ? const Color(0xff90B8F8) : null,
+                              padding: EdgeInsets.zero,
+                                minimumSize: Size(20.w,60.h),
+
+
+                              ),
                               child: Text(
                                 AppLocalizations.of(context)!.clear,
                               ),
@@ -460,97 +466,96 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Container buildSearchWidgets() {
+  SingleChildScrollView buildSearchWidgets() {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
 
     List<String> priceDomainsNames =
         priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
     priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
 
-    return Container(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.estate_type + " :",
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            kHe12,
-            MyDropdownList(
-              elementsList: estatesTypes.map((e) => e.getName(isArabic).split('|').first).toList(),
-              onSelect: (index) {
-                // set search data estate type :
-                widget.searchData.estateTypeId = estatesTypes.elementAt(index).id;
-                // close advanced search section:
-                advancedSearchOpenedCubit.setState(false);
-              },
-            ),
-            kHe24,
-            Text(
-              AppLocalizations.of(context)!.price_domain + " :",
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            kHe12,
-            MyDropdownList(
-              elementsList: priceDomainsNames,
-              onSelect: (index) {
-                // set search data price domain:
-                bool isNoneSelected = (index == 0);
-                widget.searchData.priceDomainId =
-                    (isNoneSelected) ? null : priceDomains.elementAt(index - 1).id;
-              },
-            ),
-            kHe24,
-            BlocBuilder<ChannelCubit, dynamic>(
-              bloc: advancedSearchOpenedCubit,
-              builder: (_, isAdvancedSearchOpened) {
-                // initialize advanced search data every time this section open:
-                if (isAdvancedSearchOpened) {
-                  initializeOfferData(justInitAdvanced: true);
-                }
-                return Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        // change advanced search section open state :
-                        advancedSearchOpenedCubit.setState(!isAdvancedSearchOpened);
-                      },
-                      child: Container(
-                        height: 40.h,
-                        color: isDark
-                            ? Theme.of(context).colorScheme.primary
-                            : AppColors.secondaryColor,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.advanced_search,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1!
-                                  .copyWith(color: AppColors.black),
-                            ),
-                            kWi8,
-                            Icon(
-                                (isAdvancedSearchOpened)
-                                    ? Icons.arrow_drop_down
-                                    : ((!isArabic) ? Icons.arrow_right : Icons.arrow_left),
-                                color: AppColors.black),
-                          ],
-                        ),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.estate_type + " :",
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          kHe12,
+          MyDropdownList(
+            elementsList: estatesTypes.map((e) => e.getName(isArabic).split('|').first).toList(),
+            onSelect: (index) {
+              // set search data estate type :
+              widget.searchData.estateTypeId = estatesTypes.elementAt(index).id;
+              // close advanced search section:
+              advancedSearchOpenedCubit.setState(false);
+            },
+          ),
+          kHe24,
+          Text(
+            AppLocalizations.of(context)!.price_domain + " :",
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          kHe12,
+          MyDropdownList(
+            elementsList: priceDomainsNames,
+            onSelect: (index) {
+              // set search data price domain:
+              bool isNoneSelected = (index == 0);
+              widget.searchData.priceDomainId =
+                  (isNoneSelected) ? null : priceDomains.elementAt(index - 1).id;
+            },
+          ),
+          kHe24,
+          BlocBuilder<ChannelCubit, dynamic>(
+            bloc: advancedSearchOpenedCubit,
+            builder: (_, isAdvancedSearchOpened) {
+              // initialize advanced search data every time this section open:
+              if (isAdvancedSearchOpened) {
+                initializeOfferData(justInitAdvanced: true);
+              }
+              return Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      // change advanced search section open state :
+                      advancedSearchOpenedCubit.setState(!isAdvancedSearchOpened);
+                    },
+                    child: Container(
+                      height: 40.h,
+                      color: isDark
+                          ? Theme.of(context).colorScheme.primary
+                          : AppColors.secondaryColor,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.advanced_search,
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle1!
+                                .copyWith(color: AppColors.black),
+                          ),
+                          kWi8,
+                          Icon(
+                              (isAdvancedSearchOpened)
+                                  ? Icons.arrow_drop_down
+                                  : ((!isArabic) ? Icons.arrow_right : Icons.arrow_left),
+                              color: AppColors.black),
+                        ],
                       ),
                     ),
-                    if (isAdvancedSearchOpened) buildAdvancedSearchWidgets(),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
+                  ),
+                  if (isAdvancedSearchOpened) buildAdvancedSearchWidgets(),
+                ],
+              );
+            },
+          ),
+          72.verticalSpace,
+        ],
       ),
     );
   }

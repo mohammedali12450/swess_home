@@ -437,7 +437,7 @@ class _EstateCardState extends State<EstateCard> {
                             color: Colors.transparent,
                             image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                baseUrl + widget.estate.estateOffice!.logo!,
+                                imagesBaseUrl + widget.estate.estateOffice!.logo!,
                               ),
                             ),
                           ),

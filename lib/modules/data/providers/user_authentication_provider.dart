@@ -47,4 +47,12 @@ class UserAuthenticationProvider {
     }
     return response;
   }
+
+  Future sendVerificationCode(String phone, String code) async {
+
+    NetworkHelper helper = NetworkHelper();
+    Response response =
+    await helper.post(checkConfirmationCode, {"authentication": phone, "code": code});
+    return response;
+  }
 }

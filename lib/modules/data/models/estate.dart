@@ -113,7 +113,7 @@ class Estate {
     AreaUnit areaUnit = AreaUnit.fromJson(json["area_unit"]);
     // estate images :
     List<MyImage> images = [];
-    dynamic jsonImages = json["images"];
+    dynamic jsonImages = json["images"]["data"];
     if (jsonImages is List) {
       images = jsonImages.map((e) => MyImage.fromJson(e)).toList();
     } else if (jsonImages is Map) {

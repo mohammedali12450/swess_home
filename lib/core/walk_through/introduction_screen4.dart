@@ -38,19 +38,31 @@ class _IntroductionScreen4State extends State<IntroductionScreen4> {
                     ),
                     alignment: Alignment.centerRight,
                     width: inf,
-                    child: Container(
-                      width: 80.w,
-                      height: 32.h,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        border: Border.all(
-                            color: Theme.of(context).colorScheme.onBackground, width: 0.5),
-                        borderRadius: const BorderRadius.all(Radius.circular(6)),
-                      ),
-                      child: Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.skip,
-                          style: Theme.of(context).textTheme.caption,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AuthenticationScreen(
+                                popAfterFinish: false,
+                              ),
+                            ),
+                                (route) => false);
+                      },
+                      child: Container(
+                        width: 80.w,
+                        height: 32.h,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(
+                              color: Theme.of(context).colorScheme.onBackground, width: 0.5),
+                          borderRadius: const BorderRadius.all(Radius.circular(6)),
+                        ),
+                        child: Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.skip,
+                            style: Theme.of(context).textTheme.caption,
+                          ),
                         ),
                       ),
                     ),

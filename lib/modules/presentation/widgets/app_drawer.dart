@@ -98,7 +98,7 @@ class _MyDrawerState extends State<MyDrawer> {
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               fixedSize: Size(200.w, 56.h),
-                              primary: AppColors.primaryDark
+                              primary: isDark ? AppColors.primaryDark : AppColors.secondaryColor
                             ),
                             child: Text(
                               AppLocalizations.of(context)!.sign_in,

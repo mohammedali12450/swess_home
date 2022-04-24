@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/walk_through/introduction_screen4.dart';
+import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/current_step_viewer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -38,19 +39,31 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
                     ),
                     alignment: Alignment.centerRight,
                     width: inf,
-                    child: Container(
-                      width: 80.w,
-                      height: 32.h,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        border: Border.all(
-                            color: Theme.of(context).colorScheme.onBackground, width: 0.5),
-                        borderRadius: const BorderRadius.all(Radius.circular(6)),
-                      ),
-                      child: Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.skip,
-                          style: Theme.of(context).textTheme.caption,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AuthenticationScreen(
+                                popAfterFinish: false,
+                              ),
+                            ),
+                                (route) => false);
+                      },
+                      child: Container(
+                        width: 80.w,
+                        height: 32.h,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(
+                              color: Theme.of(context).colorScheme.onBackground, width: 0.5),
+                          borderRadius: const BorderRadius.all(Radius.circular(6)),
+                        ),
+                        child: Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.skip,
+                            style: Theme.of(context).textTheme.caption,
+                          ),
                         ),
                       ),
                     ),

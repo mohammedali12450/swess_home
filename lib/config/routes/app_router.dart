@@ -64,6 +64,7 @@ import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
 import 'package:swesshome/modules/presentation/screens/select_language_screen.dart';
 import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
+import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_internet_connection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

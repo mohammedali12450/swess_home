@@ -18,6 +18,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/user_register_b
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -132,22 +133,25 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 }
               }
               if (registerState is UserRegisterComplete) {
-                BlocProvider.of<UserLoginBloc>(context).user = registerState.user;
+                String phone = registerState.user.authentication;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => VerificationCodeScreen(
+                      phoneNumber: phone,
+                    ),
+                  ),
+                );
 
-                if (registerState.user.token != null) {
-                  // save user token in shared preferences ;
-                  UserSharedPreferences.setAccessToken(registerState.user.token!);
-                  // Send user fcm token to server :
-                  BlocProvider.of<FcmBloc>(context).add(
-                    SendFcmTokenProcessStarted(userToken: registerState.user.token!),
-                  );
-                }
-                if (widget.popAfterFinish!) {
-                  Navigator.pop(context);
-                } else {
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
-                }
+                // if (registerState.user.token != null) {
+                //   // save user token in shared preferences ;
+                //   UserSharedPreferences.setAccessToken(registerState.user.token!);
+                //   // Send user fcm token to server :
+                //   BlocProvider.of<FcmBloc>(context).add(
+                //     SendFcmTokenProcessStarted(userToken: registerState.user.token!),
+                //   );
+                // }
+
               }
             },
           ),

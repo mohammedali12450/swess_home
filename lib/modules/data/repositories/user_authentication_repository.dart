@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/unknown_exception.dart';
 import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/user_authentication_provider.dart';
+import 'package:swesshome/utils/services/network_helper.dart';
 
 class UserAuthenticationRepository {
   UserAuthenticationProvider userAuthenticationProvider = UserAuthenticationProvider();
@@ -72,5 +74,18 @@ class UserAuthenticationRepository {
     if (response.statusCode != 200) {
       throw UnknownException();
     }
+  }
+
+  Future sendVerificationCode(String phone, String code) async {
+
+    Response response;
+    try {
+      response = await userAuthenticationProvider.sendVerificationCode(phone, code);
+    } catch (e) {
+      rethrow;
+    }
+    User user = User.fromJson(jsonDecode(response.toString())["data"]);
+
+    return user;
   }
 }

@@ -15,7 +15,6 @@ import 'package:swesshome/modules/presentation/screens/create_property_screens/c
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
 import 'create_property_screen6.dart';
 import 'package:intl/intl.dart' as intl;
-
 import 'image_count_validate.dart';
 
 class CreatePropertyScreen5 extends StatefulWidget {

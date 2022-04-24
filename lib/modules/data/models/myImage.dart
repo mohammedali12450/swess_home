@@ -9,9 +9,9 @@ class MyImage {
 
   factory MyImage.fromJson(json) {
     return MyImage(
-      url: json["url"],
-      type: json["type"],
-      id : json["id"] ,
+      url: json["url"] ?? "404",
+      type: json["type"] ?? "404",
+      id : json["id"] ?? 1,
     );
   }
 }

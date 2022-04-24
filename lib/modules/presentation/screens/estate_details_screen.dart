@@ -338,7 +338,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             color: Colors.transparent,
                             image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                baseUrl + widget.estate.estateOffice!.logo!,
+                                imagesBaseUrl + widget.estate.estateOffice!.logo!,
                               ),
                             ),
                           ),
@@ -405,10 +405,24 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           ),
                         )
                         .toList(),
+
                   ),
                   16.verticalSpace,
                   const Divider(),
                 ],
+                // Estate id :
+
+                RowInformation(
+                  title: AppLocalizations.of(context)!.estate_id + " :",
+                  content: widget.estate.id.toString(),
+                  icon: SvgPicture.asset(
+                    id1IconPath,
+                    width: 32.w,
+                    height: 32.w,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
+                  onTap: () {},
+                ),
                 // Rent period :
                 if (widget.estate.estateOfferType.id == rentOfferTypeNumber)
                   RowInformation(
@@ -613,7 +627,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         width: 120.w,
                         height: 120.h,
                         child: CachedNetworkImage(
-                            imageUrl: baseUrl + widget.estate.estateOffice!.logo!),
+                            imageUrl: imagesBaseUrl + widget.estate.estateOffice!.logo!),
                       ),
                       kHe8,
                       Text(
