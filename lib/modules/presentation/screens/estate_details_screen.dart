@@ -83,6 +83,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     currency = AppLocalizations.of(context)!.syrian_currency;
 
@@ -405,7 +406,6 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           ),
                         )
                         .toList(),
-
                   ),
                   16.verticalSpace,
                   const Divider(),
@@ -651,17 +651,14 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         },
                         child: Text(
                           AppLocalizations.of(context)!.office_page,
-                          style: textStyling(S.s14, W.w6, C.bl, fontFamily: F.cairo)
-                              .copyWith(decoration: TextDecoration.underline ,
-                          color: Theme.of(context).colorScheme.onBackground
-                          ),
+                          style: textStyling(S.s14, W.w6, C.bl, fontFamily: F.cairo).copyWith(
+                              decoration: TextDecoration.underline,
+                              color: Theme.of(context).colorScheme.onBackground),
                         ),
                       ),
                       kHe24,
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: Size(220.w , 64.h)
-                        ),
+                        style: ElevatedButton.styleFrom(fixedSize: Size(220.w, 64.h)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -748,8 +745,11 @@ class RowInformation extends StatelessWidget {
                   8.horizontalSpace,
                   (widgetContent != null)
                       ? widgetContent!
-                      : Text(
-                          content ?? "",
+                      : Expanded(
+                          child: Text(
+                            content ?? "",
+                            maxLines: 8,
+                          ),
                         ),
                 ],
               ),
