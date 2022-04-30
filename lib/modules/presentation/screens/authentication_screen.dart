@@ -4,10 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/resend_confirmation_code_bloc/resend_confirmation_code_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/resend_confirmation_code_bloc/resend_confirmation_code_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/resend_confirmation_code_bloc/resend_confirmation_code_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_event.dart';
@@ -142,21 +146,11 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     ),
                   ),
                 );
-
-                // if (registerState.user.token != null) {
-                //   // save user token in shared preferences ;
-                //   UserSharedPreferences.setAccessToken(registerState.user.token!);
-                //   // Send user fcm token to server :
-                //   BlocProvider.of<FcmBloc>(context).add(
-                //     SendFcmTokenProcessStarted(userToken: registerState.user.token!),
-                //   );
-                // }
-
               }
             },
           ),
           BlocListener<UserLoginBloc, UserLoginState>(
-            listener: (_, loginState) {
+            listener: (_, loginState) async {
               if (loginState is UserLoginError) {
                 if (loginState.isConnectionError) {
                   showWonderfulAlertDialog(
@@ -164,6 +158,66 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     AppLocalizations.of(context)!.error,
                     AppLocalizations.of(context)!.no_internet_connection,
                   );
+                  return;
+                }
+                if (loginState.isUnauthorizedError) {
+                  await showWonderfulAlertDialog(
+                      context,
+                      AppLocalizations.of(context)!.confirmation,
+                      AppLocalizations.of(context)!.account_not_confirmed_dialog,
+                      removeDefaultButton: true,
+                      dialogButtons: [
+                        BlocProvider<ResendConfirmationCodeBloc>(
+                          create: (context) => ResendConfirmationCodeBloc(),
+                          child:
+                              BlocConsumer<ResendConfirmationCodeBloc, ResendConfirmationCodeState>(
+                            listener: (_, resendCodeState) async {
+                              if (resendCodeState is ResendConfirmationCodeComplete) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => VerificationCodeScreen(
+                                      phoneNumber: phoneNumber,
+                                    ),
+                                  ),
+                                );
+                              }
+                              if (resendCodeState is ResendConfirmationCodeError) {
+                                await showWonderfulAlertDialog(context,
+                                    AppLocalizations.of(context)!.error, resendCodeState.message);
+                              }
+                            },
+                            builder: (context, resendCodeState) {
+                              return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: Size(180.w, 56.h),
+                                ),
+                                child: (resendCodeState is ResendConfirmationCodeProgress)
+                                    ? SpinKitWave(
+                                        color: AppColors.white,
+                                        size: 20.w,
+                                      )
+                                    : Text(AppLocalizations.of(context)!.resend),
+                                onPressed: () {
+                                  // Confirmation Code Resend:
+                                  BlocProvider.of<ResendConfirmationCodeBloc>(context).add(
+                                    ResendConfirmationCodeStarted(phoneNumber: phoneNumber),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(180.w, 56.h),
+                          ),
+                          child: Text(AppLocalizations.of(context)!.cancel),
+                          onPressed: () {
+                            //TODO : Process Cancel
+                          },
+                        ),
+                      ]);
                   return;
                 }
 
@@ -370,8 +424,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 if (!await getFieldsValidationSignIn()) {
                   return;
                 }
-                print(phoneNumber);
-                print(passwordControllerLogin.text);
                 userLoginBloc.add(UserLoginStarted(
                     authentication: phoneNumber, password: passwordControllerLogin.text));
               },

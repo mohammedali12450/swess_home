@@ -154,7 +154,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           builder: (BuildContext context, int index) {
                             return PhotoViewGalleryPageOptions.customChild(
                               child: CachedNetworkImage(
-                                imageUrl: baseUrl + estateImages.elementAt(index),
+                                imageUrl: imagesBaseUrl + estateImages.elementAt(index),
                                 fit: BoxFit.cover,
                                 progressIndicatorBuilder: (_, __, ___) {
                                   return Container(

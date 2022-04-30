@@ -3,21 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:intl/intl.dart' as intl;
 import 'package:pinput/pinput.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/send_estate_bloc/send_estate_state.dart';
+import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_verification_code_bloc/send_verification_code_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_verification_code_bloc/send_verification_code_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_verification_code_bloc/send_verification_code_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/utils/helpers/numbers_helper.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
   final String phoneNumber;
@@ -34,9 +37,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   ChannelCubit isFireBaseLoadingCubit = ChannelCubit(true);
   String? verificationId;
 
-  TextEditingController verificationCodeController = TextEditingController();
-
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  TextEditingController confirmationCodeController = TextEditingController();
 
   @override
   void initState() {
@@ -135,36 +138,78 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                 textDirection: TextDirection.ltr,
                               ),
                               kHe40,
-                              Pinput(
-                                showCursor: false,
-                                defaultPinTheme: defaultPinTheme,
-                                focusedPinTheme: focusedPinTheme,
-                                submittedPinTheme: submittedPinTheme,
-                                onChanged: (code) {
-                                  if (code.length == 6) {
+                              TextField(
+                                controller: confirmationCodeController,
+                                textDirection: TextDirection.ltr,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.headline3,
+                                onChanged: (text) {
+                                  if (NumbersHelper.isNumeric(text) && text.length == 6) {
                                     isVerificationButtonActiveCubit.setState(true);
                                   } else {
                                     isVerificationButtonActiveCubit.setState(false);
                                   }
                                 },
-                                controller: verificationCodeController,
-                                length: 6,
                               ),
                               SizedBox(
                                 height: 64.h,
                               ),
                               BlocProvider(
                                 create: (context) => SendVerificationCodeBloc(),
-                                child: BlocBuilder<SendVerificationCodeBloc,
+                                child: BlocConsumer<SendVerificationCodeBloc,
                                     SendVerificationCodeState>(
+                                  listener: (context, sendCodeState) async {
+                                    if (sendCodeState is SendVerificationCodeComplete) {
+                                      if (sendCodeState.user.token != null) {
+                                        // save user token in shared preferences :
+                                        UserSharedPreferences.setAccessToken(
+                                            sendCodeState.user.token!);
+                                        // Send user fcm token to server :
+                                        BlocProvider.of<FcmBloc>(context).add(
+                                          SendFcmTokenProcessStarted(
+                                              userToken: sendCodeState.user.token!),
+                                        );
+                                        BlocProvider.of<UserLoginBloc>(context).user =
+                                            sendCodeState.user;
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => const HomeScreen(),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                    if (sendCodeState is SendVerificationCodeError) {
+                                      if (sendCodeState.isConnectionError) {
+                                        showWonderfulAlertDialog(
+                                          context,
+                                          AppLocalizations.of(context)!.error,
+                                          AppLocalizations.of(context)!.no_internet_connection,
+                                        );
+                                        return;
+                                      }
+                                      await showWonderfulAlertDialog(context,
+                                          AppLocalizations.of(context)!.error, sendCodeState.error);
+                                    }
+                                  },
                                   builder: (context, sendCodeState) {
                                     return BlocBuilder<ChannelCubit, dynamic>(
                                       bloc: isVerificationButtonActiveCubit,
                                       builder: (context, isActive) {
                                         return ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            fixedSize: Size(220.w, 64.h),
+                                          ),
                                           child: (sendCodeState is! SendVerificationCodeProgress)
                                               ? Text(
                                                   AppLocalizations.of(context)!.send,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText2!
+                                                      .copyWith(
+                                                          color: isActive
+                                                              ? AppColors.white
+                                                              : AppColors.white.withOpacity(0.64)),
                                                 )
                                               : SpinKitWave(
                                                   size: 24.w,
@@ -183,7 +228,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                                   .add(
                                                 VerificationCodeSendingStarted(
                                                     phone: widget.phoneNumber,
-                                                    code: verificationCodeController.text),
+                                                    code: confirmationCodeController.text),
                                               );
                                             } else {
                                               // Firebase state :
@@ -192,7 +237,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                                 PhoneAuthCredential credential =
                                                     PhoneAuthProvider.credential(
                                                         verificationId: verificationId!,
-                                                        smsCode: verificationCodeController.text);
+                                                        smsCode: confirmationCodeController.text);
                                                 try {
                                                   await auth.signInWithCredential(credential);
                                                   Navigator.pushNamed(context, HomeScreen.id);

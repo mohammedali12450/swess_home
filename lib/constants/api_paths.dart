@@ -39,4 +39,5 @@ const getReportsTypesUrl = "api/reportTypes";
 const sendReportUrl = "api/report";
 const ratingUrl = "api/applicationRating";
 const checkConfirmationCode = "api/code/check" ;
+const resendConfirmationCode = "api/code/resend" ;
 

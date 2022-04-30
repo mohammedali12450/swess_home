@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
+import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
 import 'package:swesshome/core/exceptions/unknown_exception.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_event.dart';
@@ -23,7 +24,7 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
         emit(UserLoginComplete());
       } on ConnectionException catch (e) {
         emit(
-          UserLoginError(errorMessage: e.errorMessage , isConnectionError: true),
+          UserLoginError(errorMessage: e.errorMessage, isConnectionError: true),
         );
       } catch (e, stack) {
         if (e is FieldsException) {
@@ -33,6 +34,12 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
                     ? e.jsonErrorFields["errors"] as Map<String, dynamic>
                     : null,
                 errorMessage: e.jsonErrorFields["message"]),
+          );
+        }
+
+        if (e is UnauthorizedException) {
+          emit(
+            UserLoginError(errorMessage: e.message, isUnauthorizedError: true),
           );
         }
         if (e is UnknownException) {

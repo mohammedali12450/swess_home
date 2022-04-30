@@ -11,9 +11,9 @@ class NetworkHelper {
     BaseOptions baseOptions = BaseOptions(
         baseUrl: baseUrl,
         method: 'Get',
-        receiveTimeout: 15000,
-        connectTimeout: 15000,
-        sendTimeout: 15000,
+        receiveTimeout: 70000,
+        connectTimeout: 70000,
+        sendTimeout: 70000,
         followRedirects: false,
         headers: {
           "Content-Type": "application/json",

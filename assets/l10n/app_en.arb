@@ -434,5 +434,7 @@
   "faq_5_content": "You can search for a specific real estate office by clicking on the Publish your real estate offer feature and typing the name of the office you want to look up. You can also search for real estate offices located in a specific area by typing the name of the area. Moreover, the phone number of the real estate will appear with each offer of its own.",
   "no_internet_connection" : "Check your internet connection !",
   "confirmation_code_sent" : "A confirmation code has been sent by SMS to the number",
-  "estate_id": "Property ID"
+  "estate_id": "Property ID",
+  "account_not_confirmed_dialog" : "this account is not activated, press resend to receive new confirmation code.",
+  "resend" : "Resend"
 }

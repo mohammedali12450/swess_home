@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
+import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
 import 'package:swesshome/core/exceptions/unknown_exception.dart';
 import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/data/models/user.dart';
@@ -55,6 +56,13 @@ class UserAuthenticationRepository {
     if (response.statusCode == 422) {
       throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
+
+    if(response.statusCode == 403){
+      throw UnauthorizedException(message: "Unauthorized error !");
+    }
+
+
+
     if (response.statusCode != 200) {
       throw UnknownException();
     }
@@ -87,5 +95,16 @@ class UserAuthenticationRepository {
     User user = User.fromJson(jsonDecode(response.toString())["data"]);
 
     return user;
+  }
+
+
+  Future resendVerificationCode(String phone) async {
+
+    Response response;
+    try {
+      response = await userAuthenticationProvider.resendVerificationCode(phone);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

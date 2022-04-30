@@ -276,7 +276,6 @@ class _SearchScreenState extends State<SearchScreen> {
               return (pattern == null)
                   ? buildRecentSearchedPlaces()
                   : ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemBuilder: (_, index) {
                         return InkWell(

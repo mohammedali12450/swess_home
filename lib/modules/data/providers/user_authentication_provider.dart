@@ -55,4 +55,12 @@ class UserAuthenticationProvider {
     await helper.post(checkConfirmationCode, {"authentication": phone, "code": code});
     return response;
   }
+
+  Future resendVerificationCode(String phone) async {
+
+    NetworkHelper helper = NetworkHelper();
+    Response response =
+    await helper.post(resendConfirmationCode, {"authentication": phone});
+    return response;
+  }
 }
