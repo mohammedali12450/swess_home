@@ -118,7 +118,9 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       flex: 2,
                       child: RateContainer(
                         rate: double.parse(
-                          widget.office.rating.toString(),
+                          double.parse(
+                            widget.office.rating.toString(),
+                          ).toStringAsFixed(1),
                         ),
                       ),
                     ),
@@ -176,13 +178,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                     kWi16,
                     BlocConsumer<LikeAndUnlikeBloc, LikeAndUnlikeState>(
                       bloc: _likeAndUnlikeBloc,
-                      listener: (_, likeAndUnlikeState) async{
+                      listener: (_, likeAndUnlikeState) async {
                         if (likeAndUnlikeState is LikeAndUnlikeError) {
-
                           var error = likeAndUnlikeState.isConnectionError
                               ? AppLocalizations.of(context)!.no_internet_connection
                               : likeAndUnlikeState.error;
-                          await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
+                          await showWonderfulAlertDialog(
+                              context, AppLocalizations.of(context)!.error, error);
                           _likeAndUnlikeBloc
                               .add(ReInitializeLikeState(isLike: widget.office.isLiked));
                         } else if (likeAndUnlikeState is Liked) {
@@ -264,14 +266,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                 kHe24,
                 BlocConsumer<EstateBloc, EstateState>(
                   bloc: _estateBloc,
-                  listener: (_, estateState)async {
+                  listener: (_, estateState) async {
                     if (estateState is EstateFetchError) {
-
                       var error = estateState.isConnectionError
                           ? AppLocalizations.of(context)!.no_internet_connection
                           : estateState.errorMessage;
-                      await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
-
+                      await showWonderfulAlertDialog(
+                          context, AppLocalizations.of(context)!.error, error);
                     }
                   },
                   builder: (_, estateState) {

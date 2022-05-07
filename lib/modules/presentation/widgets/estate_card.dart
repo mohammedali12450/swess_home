@@ -193,7 +193,7 @@ class _EstateCardState extends State<EstateCard> {
                         builder: (BuildContext context, int index) {
                           return PhotoViewGalleryPageOptions.customChild(
                             child: CachedNetworkImage(
-                              imageUrl: baseUrl  + estateImages.elementAt(index),
+                              imageUrl: imagesBaseUrl  + estateImages.elementAt(index),
                               fit: BoxFit.cover,
                               progressIndicatorBuilder: (_, __, ___) {
                                 return Icon(

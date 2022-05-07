@@ -79,16 +79,6 @@ class _EstatesScreenState extends State<EstatesScreen> {
                 Navigator.pop(context);
               },
             ),
-            kWi4,
-            IconButton(
-              icon: const Icon(
-                Icons.public,
-                color: AppColors.white,
-              ),
-              onPressed: () {
-                // TODO : Process this state
-              },
-            ),
             kWi8,
           ],
         ),

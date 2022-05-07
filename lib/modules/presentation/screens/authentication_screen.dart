@@ -327,6 +327,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   phoneDialCodeLogin = phone.countryCode;
                   authenticationErrorLogin.setState(null);
                 },
+                disableLengthCheck: true,
                 autovalidateMode: AutovalidateMode.disabled,
               );
             },
@@ -488,6 +489,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   phoneDialCode = phone.countryCode;
                   authenticationError.setState(null);
                 },
+                disableLengthCheck: true,
+
                 autovalidateMode: AutovalidateMode.disabled,
               );
             },
