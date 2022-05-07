@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
@@ -21,7 +22,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/user_register_b
 import 'package:swesshome/modules/business_logic_components/bloc/user_register_bloc/user_register_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/register.dart';
-import 'package:swesshome/modules/data/models/user.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -256,40 +257,48 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               children: [
                 Builder(
                   builder: (context) => Container(
-                    alignment: Alignment.center,
                     width: 1.sw,
                     height: 1.sh,
                     padding: kSmallSymWidth,
                     color: Theme.of(context).colorScheme.secondary,
-                    child: BlocBuilder<ChannelCubit, dynamic>(
-                      bloc: _isLoginSelected,
-                      builder: (_, isLoginSelected) {
-                        if (isLoginSelected) {
-                          return buildLoginScreen();
-                        }
-                        return buildSignupScreen();
-                      },
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 1.sw,
+                            alignment: Provider.of<LocaleProvider>(context).isArabic()
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.close,
+                                color: Theme.of(context).colorScheme.onBackground,
+                              ),
+                              onPressed: () {
+                                if (widget.popAfterFinish!) {
+                                  Navigator.pop(context);
+                                } else {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context, HomeScreen.id, (route) => false);
+                                }
+                              },
+                            ),
+                          ),
+                          BlocBuilder<ChannelCubit, dynamic>(
+                            bloc: _isLoginSelected,
+                            builder: (_, isLoginSelected) {
+                              if (isLoginSelected) {
+                                return buildLoginScreen();
+                              }
+                              return buildSignupScreen();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color: Theme.of(context).colorScheme.onBackground,
-                    ),
-                    onPressed: () {
-                      if (widget.popAfterFinish!) {
-                        Navigator.pop(context);
-                      } else {
-                        Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
-                      }
-                    },
-                  ),
-                ),
-                ...kBackgroundDrawings(context),
               ],
             ),
           ),
@@ -483,14 +492,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             builder: (_, errorMessage) {
               return IntlPhoneField(
                 controller: authenticationController,
-                decoration: InputDecoration(errorText: errorMessage),
+                decoration: InputDecoration(errorText: errorMessage , errorMaxLines: 2),
                 initialCountryCode: isForStore ? 'LB' : 'SY',
                 onChanged: (phone) {
                   phoneDialCode = phone.countryCode;
                   authenticationError.setState(null);
                 },
                 disableLengthCheck: true,
-
                 autovalidateMode: AutovalidateMode.disabled,
               );
             },
@@ -523,6 +531,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                           _passwordVisibilityCubit.setState(!isVisible);
                         },
                       ),
+                      isCollapsed: false,
                     ),
                   );
                 },
@@ -546,6 +555,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 decoration: InputDecoration(
                   errorText: errorMessage,
                   hintText: AppLocalizations.of(context)!.enter_first_name,
+                  suffix: null,
+                  suffixIcon: null,
+                  isCollapsed: false,
                 ),
               );
             },
@@ -567,6 +579,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 decoration: InputDecoration(
                   errorText: errorMessage,
                   hintText: AppLocalizations.of(context)!.enter_last_name,
+                  isCollapsed: false,
                 ),
               );
             },

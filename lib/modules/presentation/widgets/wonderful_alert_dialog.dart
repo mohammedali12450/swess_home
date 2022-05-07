@@ -1,30 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'res_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/constants/colors.dart';
 
 Future<void> showWonderfulAlertDialog(
-  BuildContext context,
-  String title,
-  String body, {
-  String? defaultButtonContent,
-  double? defaultButtonWidth,
-  double? defaultButtonHeight,
-  Function()? onDefaultButtonPressed,
-  TextStyle? titleTextStyle,
-  TextStyle? bodyTextStyle,
-  TextStyle? defaultButtonContentStyle,
-  bool removeDefaultButton = false,
-  List<Widget>? dialogButtons,
-  double? width,
-  double? height,
-  EdgeInsets? dialogPadding,
-  double? elevation,
-  Color? backgroundColor,
-  double? borderRadius,
-}) async {
+    BuildContext context,
+    String title,
+    String body, {
+      String? defaultButtonContent,
+      double? defaultButtonWidth,
+      double? defaultButtonHeight,
+      Function()? onDefaultButtonPressed,
+      TextStyle? titleTextStyle,
+      TextStyle? bodyTextStyle,
+      TextStyle? defaultButtonContentStyle,
+      bool removeDefaultButton = false,
+      List<Widget>? dialogButtons,
+      double? width,
+      double? height,
+      EdgeInsets? dialogPadding,
+      double? elevation,
+      Color? backgroundColor,
+      double? borderRadius,
+    }) async {
   await showDialog(
     context: context,
     builder: (context) => Dialog(
@@ -32,9 +30,9 @@ Future<void> showWonderfulAlertDialog(
       child: Container(
         width: width ?? 250.w,
         height: height,
-        padding: dialogPadding ?? kLargeSymHeight,
+        padding: dialogPadding ?? EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
         decoration: BoxDecoration(
-          color: backgroundColor ?? Colors.white,
+          color: backgroundColor ?? Theme.of(context).colorScheme.background,
           borderRadius: BorderRadius.all(
             Radius.circular(borderRadius ?? 8),
           ),
@@ -43,46 +41,50 @@ Future<void> showWonderfulAlertDialog(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.min,
           children: [
-            ResText(
+            Text(
               title,
-              textStyle: titleTextStyle ?? textStyling(S.s18, W.w6, C.bl),
+              style: titleTextStyle ?? Theme.of(context).textTheme.bodyText1,
             ),
-            kHe24,
-            ResText(
+            24.verticalSpace,
+            Text(
               body,
-              textStyle: bodyTextStyle ?? Theme.of(context).textTheme.bodyText2,
+              style: bodyTextStyle ??
+                  Theme.of(context).textTheme.bodyText2!.copyWith(
+                    height: 1.8,
+                  ),
               maxLines: 50,
               textAlign: TextAlign.center,
             ),
-            kHe24,
+            32.verticalSpace,
             Wrap(
               alignment: WrapAlignment.center,
               direction: Axis.horizontal,
               spacing: 12.h,
               runSpacing: 12.w,
               children: [
-                    (removeDefaultButton)
-                        ? Container()
-                        : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                fixedSize: Size(200.w, 56.h), padding: EdgeInsets.zero),
-                            onPressed: () {
-                              if (onDefaultButtonPressed != null) {
-                                onDefaultButtonPressed();
-                                return;
-                              }
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              defaultButtonContent ?? AppLocalizations.of(context)!.ok,
-                              style: defaultButtonContentStyle ??
-                                  Theme.of(context)
-                                      .textTheme
-                                      .button!
-                                      .copyWith(color: Theme.of(context).colorScheme.background),
-                            ),
-                          ),
-                  ] +
+                (removeDefaultButton)
+                    ? Container()
+                    : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: Size(88.w, 56.h),
+                      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w)),
+                  onPressed: () {
+                    if (onDefaultButtonPressed != null) {
+                      onDefaultButtonPressed();
+                      return;
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    defaultButtonContent ?? AppLocalizations.of(context)!.ok,
+                    style: defaultButtonContentStyle ??
+                        Theme.of(context)
+                            .textTheme
+                            .subtitle2!
+                            .copyWith(color: AppColors.white),
+                  ),
+                ),
+              ] +
                   (dialogButtons ?? []),
             ),
           ],

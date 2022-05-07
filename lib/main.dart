@@ -53,7 +53,7 @@ import 'modules/data/repositories/price_domains_repository.dart';
 import 'modules/data/repositories/system_variables_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-const bool _clearSharedPreferences = false;
+const bool _clearSharedPreferences = false ;
 
 void main() async {
   // Widget binding:
