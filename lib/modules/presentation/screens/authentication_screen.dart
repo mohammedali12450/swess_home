@@ -21,6 +21,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/user_register_b
 import 'package:swesshome/modules/business_logic_components/bloc/user_register_bloc/user_register_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/register.dart';
+import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -214,6 +215,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                           ),
                           child: Text(AppLocalizations.of(context)!.cancel),
                           onPressed: () {
+                            Navigator.pop(context);
                             //TODO : Process Cancel
                           },
                         ),
@@ -483,6 +485,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 decoration: InputDecoration(errorText: errorMessage),
                 initialCountryCode: isForStore ? 'LB' : 'SY',
                 onChanged: (phone) {
+                  phoneDialCode = phone.countryCode;
                   authenticationError.setState(null);
                 },
                 autovalidateMode: AutovalidateMode.disabled,

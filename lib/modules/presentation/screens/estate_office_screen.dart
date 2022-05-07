@@ -103,7 +103,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                   child: CircleAvatar(
                     radius: 96.w,
                     backgroundColor: Colors.grey,
-                    backgroundImage: CachedNetworkImageProvider(imagesBaseUrl + widget.office.logo!),
+                    backgroundImage: CachedNetworkImageProvider(baseUrl + widget.office.logo!),
                   ),
                 ),
                 24.verticalSpace,

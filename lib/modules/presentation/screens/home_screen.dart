@@ -120,8 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 kHe16,
                 if (BlocProvider.of<SystemVariablesBloc>(context)
                         .systemVariables!
-                        .isVacationsAvailable ||
-                    true) ...[
+                        .isVacationsAvailable) ...[
                   buildVacationCard(),
                   kHe20,
                 ],

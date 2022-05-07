@@ -193,7 +193,7 @@ class _EstateCardState extends State<EstateCard> {
                         builder: (BuildContext context, int index) {
                           return PhotoViewGalleryPageOptions.customChild(
                             child: CachedNetworkImage(
-                              imageUrl: imagesBaseUrl  + estateImages.elementAt(index),
+                              imageUrl: baseUrl  + estateImages.elementAt(index),
                               fit: BoxFit.cover,
                               progressIndicatorBuilder: (_, __, ___) {
                                 return Icon(
@@ -437,7 +437,7 @@ class _EstateCardState extends State<EstateCard> {
                             color: Colors.transparent,
                             image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                imagesBaseUrl + widget.estate.estateOffice!.logo!,
+                                baseUrl + widget.estate.estateOffice!.logo!,
                               ),
                             ),
                           ),

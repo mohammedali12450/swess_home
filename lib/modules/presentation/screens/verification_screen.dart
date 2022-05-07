@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +17,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/send_verificati
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
+import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -24,8 +25,12 @@ import 'package:swesshome/utils/helpers/numbers_helper.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
   final String phoneNumber;
+  final User? user ;
 
-  const VerificationCodeScreen({Key? key, required this.phoneNumber}) : super(key: key);
+
+  const VerificationCodeScreen(
+      {Key? key, required this.phoneNumber, this.user})
+      : super(key: key);
 
   @override
   _VerificationCodeScreenState createState() => _VerificationCodeScreenState();
@@ -37,7 +42,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   ChannelCubit isFireBaseLoadingCubit = ChannelCubit(true);
   String? verificationId;
 
-  FirebaseAuth auth = FirebaseAuth.instance;
+  firebase_auth.FirebaseAuth auth = firebase_auth.FirebaseAuth.instance;
 
   TextEditingController confirmationCodeController = TextEditingController();
 
@@ -56,8 +61,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   verifyPhoneNumber() async {
     await auth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) {},
-      verificationFailed: (FirebaseAuthException e) {},
+      verificationCompleted: (firebase_auth.PhoneAuthCredential credential) {},
+      verificationFailed: (firebase_auth.FirebaseAuthException e) {},
       codeSent: (String verificationId, int? resendToken) {
         this.verificationId = verificationId;
         isFireBaseLoadingCubit.setState(false);
@@ -234,20 +239,36 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                               // Firebase state :
                                               if (isActive && verificationId != null) {
                                                 // Create a PhoneAuthCredential with the code
-                                                PhoneAuthCredential credential =
-                                                    PhoneAuthProvider.credential(
+                                                firebase_auth.PhoneAuthCredential credential =
+                                                firebase_auth.PhoneAuthProvider.credential(
                                                         verificationId: verificationId!,
                                                         smsCode: confirmationCodeController.text);
                                                 try {
                                                   await auth.signInWithCredential(credential);
-                                                  Navigator.pushNamed(context, HomeScreen.id);
+                                                  if (widget.user != null) {
+                                                    print('User in');
+                                                    // save user token in shared preferences :
+                                                    UserSharedPreferences.setAccessToken(
+                                                        widget.user!.token!);
+                                                    // Send user fcm token to server :
+                                                    BlocProvider.of<FcmBloc>(context).add(
+                                                      SendFcmTokenProcessStarted(
+                                                          userToken: widget.user!.token!),
+                                                    );
+                                                    BlocProvider.of<UserLoginBloc>(context).user =
+                                                        widget.user;
+                                                    Navigator.pushAndRemoveUntil(context,
+                                                        MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
+                                                  }
                                                 } on ConnectionException catch (_) {
                                                   showWonderfulAlertDialog(
                                                       context,
                                                       AppLocalizations.of(context)!.error,
                                                       AppLocalizations.of(context)!
                                                           .check_your_internet_connection);
-                                                } catch (e) {
+                                                } catch (e , stack) {
+                                                  print(e);
+                                                  print(stack);
                                                   showWonderfulAlertDialog(
                                                     context,
                                                     AppLocalizations.of(context)!.error,

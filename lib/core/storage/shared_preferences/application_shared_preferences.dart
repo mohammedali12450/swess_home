@@ -16,11 +16,11 @@ class ApplicationSharedPreferences {
     _preferences = await SharedPreferences.getInstance();
     // Initializing:
     if (_preferences.getBool(isWalkThroughPassed) == null) {
-      _preferences.setBool(isWalkThroughPassed, false);
+      await _preferences.setBool(isWalkThroughPassed, false);
     }
 
     if (_preferences.getBool(isMapTutorialPassed) == null) {
-      _preferences.setBool(isMapTutorialPassed, false);
+      await _preferences.setBool(isMapTutorialPassed, false);
     }
   }
 
@@ -61,7 +61,7 @@ class ApplicationSharedPreferences {
   }
 
   static bool getWalkThroughPassState() {
-    return _preferences.getBool(isWalkThroughPassed)!;
+    return _preferences.getBool(isWalkThroughPassed) ?? false;
   }
 
   static setIsDarkMode(bool? isDarkModeSelected) async {

@@ -6,7 +6,7 @@
 
 
     <application
-        android:label="swesshome"
+        android:label="Swess Home"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

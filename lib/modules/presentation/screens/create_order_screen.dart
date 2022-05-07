@@ -235,7 +235,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       border: Border.all(color: Colors.black),
                     ),
                     child: TextField(
-                      style: textStyling(S.s16, W.w5, C.bl),
                       controller: notesController,
                       textDirection: TextDirection.rtl,
                       decoration: InputDecoration(
