@@ -500,6 +500,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   authenticationError.setState(null);
                 },
                 disableLengthCheck: true,
+<<<<<<< HEAD
+=======
+
+>>>>>>> e064a0e (final release pronet)
                 autovalidateMode: AutovalidateMode.disabled,
               );
             },

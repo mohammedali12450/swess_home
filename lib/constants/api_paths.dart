@@ -1,4 +1,4 @@
-const String baseUrl = "http://swesshomerealestate.com/" ;
+const String baseUrl = "http://185.194.124.106:80/" ;
 const String imagesBaseUrl = "http://185.194.124.106:80/storage/" ;
 const String userRegisterUrl = "api/user/register" ;
 const String userLoginByTokenUrl = "api/getUserByToken" ;

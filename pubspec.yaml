@@ -3,7 +3,11 @@ description: A new Flutter application.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
+<<<<<<< HEAD
 version: 1.0.2+4
+=======
+version: 1.0.0+3
+>>>>>>> e064a0e (final release pronet)
 
 environment:
   sdk: ">=2.16.0 <3.0.0"
