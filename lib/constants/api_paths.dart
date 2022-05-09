@@ -41,4 +41,4 @@ const ratingUrl = "api/applicationRating";
 const checkConfirmationCode = "api/code/check" ;
 const resendConfirmationCode = "api/code/resend" ;
 
-
+const test = "master" ;
