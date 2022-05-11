@@ -6,6 +6,9 @@ class SearchData {
   int? locationId;
 
   int? priceDomainId;
+
+
+
   int? ownershipId;
 
   int? interiorStatusId;
