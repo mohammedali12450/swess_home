@@ -54,7 +54,7 @@ class EstateOfficeCard extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 64.w,
                   backgroundColor: Colors.grey,
-                  backgroundImage: CachedNetworkImageProvider(imagesBaseUrl + office.logo!),
+                  backgroundImage: CachedNetworkImageProvider(baseUrl + office.logo!),
                 ),
               ),
             ),
