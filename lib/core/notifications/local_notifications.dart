@@ -9,9 +9,23 @@ FlutterLocalNotificationsPlugin();
 //android:
 const AndroidInitializationSettings initializationSettingsAndroid =
 AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  final IOSInitializationSettings initializationSettingsIOS =
+      IOSInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+          onDidReceiveLocalNotification: (
+            int id,
+            String? title,
+            String? body,
+            String? payload,
+          ) async {
+          
+          });
 //initializing:
-InitializationSettings initializationSettings = const InitializationSettings(
-  android: initializationSettingsAndroid,);
+InitializationSettings initializationSettings =  InitializationSettings(
+  android: initializationSettingsAndroid,iOS: initializationSettingsIOS);
 
 // Android Notifications Channel //
 const AndroidNotificationChannel androidNotificationsChannel = AndroidNotificationChannel(
