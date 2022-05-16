@@ -274,6 +274,19 @@ class MapSampleState extends State<MapSample> {
                   );
                 },
               ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Container(
+                   decoration: BoxDecoration( color: Colors.white,
+                   borderRadius: BorderRadius.circular(100),
+                   ),
+                    child: IconButton(onPressed: (){
+                      Navigator.pop(context);
+                    }, icon: Icon(Icons.arrow_back)),
+                  ),
+                ),),
           ],
         ),
       ),

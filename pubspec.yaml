@@ -82,7 +82,7 @@ flutter_native_splash:
 
 flutter_icons:
   android: true
-  ios: true
+  ios: false
   image_path: "assets/icons/swesshome_icon.png"
   adaptive_icon_background: "#ffffff"
   remove_alpha_ios: true

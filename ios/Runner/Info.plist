@@ -45,5 +45,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+    <string>I need to access your Camera</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>I need to access your Photo Library</string>
 </dict>
 </plist>
