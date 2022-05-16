@@ -85,7 +85,7 @@ flutter_icons:
   ios: true
   image_path: "assets/icons/swesshome_icon.png"
   adaptive_icon_background: "#ffffff"
-
+  remove_alpha_ios: true
 
 
 flutter:
