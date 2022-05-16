@@ -436,5 +436,7 @@
   "confirmation_code_sent" : "A confirmation code has been sent by SMS to the number",
   "estate_id": "Property ID",
   "account_not_confirmed_dialog" : "this account is not activated, press resend to receive new confirmation code.",
-  "resend" : "Resend"
+  "resend" : "Resend",
+  "clear_notifications_dialog": "Do you want to clear all notifications ?"
+
 }

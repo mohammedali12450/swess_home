@@ -8,6 +8,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/created_estates
 import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
+import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
@@ -40,7 +41,9 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
   }
 
   _onRefresh() {
-    if (BlocProvider.of<UserLoginBloc>(context).user!.token != null) {
+
+    User? user = BlocProvider.of<UserLoginBloc>(context).user ;
+    if (user!=null && user.token != null) {
       _createdEstatesBloc.add(
         CreatedEstatesFetchStarted(token: BlocProvider.of<UserLoginBloc>(context).user!.token!),
       );
@@ -78,6 +81,13 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
               }
               },
               builder: (_, createdEstatesFetchState) {
+
+                if (createdEstatesFetchState is CreatedEstatesFetchNone) {
+                  return FetchResult(
+                      content:
+                      AppLocalizations.of(context)!.have_not_created_estates);
+                }
+
                 if (createdEstatesFetchState is CreatedEstatesFetchProgress) {
                   return const PropertyShimmer();
                 }

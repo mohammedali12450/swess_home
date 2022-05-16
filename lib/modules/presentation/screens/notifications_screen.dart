@@ -9,6 +9,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/notifications_b
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/my_notification.dart';
+import 'package:swesshome/modules/data/repositories/notifications_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/notification_card.dart';
@@ -60,6 +61,41 @@ class _NotificationScreenState extends State<NotificationScreen> {
           title: Text(
             AppLocalizations.of(context)!.notifications,
           ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              child: IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () async {
+                  await showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.confirmation,
+                    AppLocalizations.of(context)!.clear_notifications_dialog,
+                    removeDefaultButton: true,
+                    dialogButtons: [
+                      ElevatedButton(
+                        onPressed: () async {
+                          NotificationRepository notificationRepo = NotificationRepository();
+                          await notificationRepo.clearNotifications(
+                            token,
+                          );
+                          Navigator.pop(context);
+                          notificationsBloc.add(NotificationsFetchStarted(token: token));
+                        },
+                        child: Text(AppLocalizations.of(context)!.yes),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(AppLocalizations.of(context)!.cancel),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            )
+          ],
         ),
         body: (BlocProvider.of<UserLoginBloc>(context).user != null)
             ? RefreshIndicator(

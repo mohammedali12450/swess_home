@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -68,6 +69,9 @@ import 'package:swesshome/modules/presentation/screens/verification_screen.dart'
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_internet_connection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/utils/services/network_helper.dart';
+
+import '../../constants/api_paths.dart';
 
 class AppRouter {
   late LocationsBloc locationsBloc;
@@ -113,6 +117,8 @@ class AppRouter {
                 screenFunction: () async {
                   // Check internet connection :
                   await checkInternetConnection(context);
+                  // Fetch BaseUrl :
+                  await fetchBaseUrl();
                   // Fetch application data :
                   fetchApplicationData(context);
                   int seconds = 0;
@@ -306,6 +312,21 @@ class AppRouter {
         defaultButtonContent: AppLocalizations.of(context)!.restart_application,
         defaultButtonWidth: 200.w,
       );
+    }
+  }
+
+  Future fetchBaseUrl() async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+    try {
+      response = await helper.get(fetchBaseUrlUrl);
+    } catch (e) {
+      throw e;
+    }
+    if (response.data == "0") {
+      print("PPPRRRROOOOO");
+      baseUrl = proNetBaseUrl;
+      imagesBaseUrl = proNetImagesUrl;
     }
   }
 }

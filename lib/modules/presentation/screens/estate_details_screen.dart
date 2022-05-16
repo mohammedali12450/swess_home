@@ -154,7 +154,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           builder: (BuildContext context, int index) {
                             return PhotoViewGalleryPageOptions.customChild(
                               child: CachedNetworkImage(
-                                imageUrl: baseUrl + estateImages.elementAt(index),
+                                imageUrl: imagesBaseUrl + estateImages.elementAt(index),
                                 fit: BoxFit.cover,
                                 progressIndicatorBuilder: (_, __, ___) {
                                   return Container(
@@ -339,7 +339,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             color: Colors.transparent,
                             image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                baseUrl + widget.estate.estateOffice!.logo!,
+                                imagesBaseUrl + widget.estate.estateOffice!.logo!,
                               ),
                             ),
                           ),
@@ -635,7 +635,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         width: 120.w,
                         height: 120.h,
                         child: CachedNetworkImage(
-                            imageUrl: baseUrl + widget.estate.estateOffice!.logo!),
+                            imageUrl: imagesBaseUrl + widget.estate.estateOffice!.logo!),
                       ),
                       kHe8,
                       Text(

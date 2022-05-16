@@ -7,6 +7,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_b
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
+import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
@@ -31,7 +32,8 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
     // TODO: implement initState
     super.initState();
     _savedEstatesBloc = SavedEstatesBloc(EstateRepository());
-    if (BlocProvider.of<UserLoginBloc>(context).user!.token != null) {
+    User? user =BlocProvider.of<UserLoginBloc>(context).user ;
+    if (user != null && user.token != null) {
       _savedEstatesBloc.add(
         SavedEstatesFetchStarted(token: BlocProvider.of<UserLoginBloc>(context).user!.token!),
       );
@@ -75,6 +77,14 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                   }
                 },
                 builder: (BuildContext context, savedEstatesState) {
+
+
+                  if (savedEstatesState is SavedEstatesFetchNone) {
+                    return FetchResult(
+                        content:
+                        AppLocalizations.of(context)!.have_not_saved_estates);
+                  }
+
                   if (savedEstatesState is SavedEstatesFetchProgress) {
                     return const PropertyShimmer();
                   }

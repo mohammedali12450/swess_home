@@ -154,6 +154,10 @@ class _EstateCardState extends State<EstateCard> {
       }
     }
 
+
+    print(imagesBaseUrl + widget.estate.estateOffice!.logo!);
+
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
       width: 1.sw,
@@ -193,7 +197,7 @@ class _EstateCardState extends State<EstateCard> {
                         builder: (BuildContext context, int index) {
                           return PhotoViewGalleryPageOptions.customChild(
                             child: CachedNetworkImage(
-                              imageUrl: baseUrl  + estateImages.elementAt(index),
+                              imageUrl: imagesBaseUrl  + estateImages.elementAt(index),
                               fit: BoxFit.cover,
                               progressIndicatorBuilder: (_, __, ___) {
                                 return Icon(
@@ -437,7 +441,7 @@ class _EstateCardState extends State<EstateCard> {
                             color: Colors.transparent,
                             image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                baseUrl + widget.estate.estateOffice!.logo!,
+                                imagesBaseUrl + widget.estate.estateOffice!.logo!,
                               ),
                             ),
                           ),

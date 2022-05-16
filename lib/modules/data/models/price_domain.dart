@@ -20,9 +20,9 @@ class PriceDomain {
     return isArabic ? ("بين " + min + " و " + max) : ("between $min and $max");
   }
 
-
-
   factory PriceDomain.fromJson(json) {
+
+
     return PriceDomain(
       id: json['id'],
       min: json['min'],

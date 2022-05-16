@@ -45,7 +45,7 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
                     maxScale: 3.0,
                     minScale: 1.0,
                     child: CachedNetworkImage(
-                      imageUrl: baseUrl + widget.images.elementAt(index),
+                      imageUrl: imagesBaseUrl + widget.images.elementAt(index),
                       fit: BoxFit.cover,
                       progressIndicatorBuilder: (_, __, ___) {
                         return Icon(
