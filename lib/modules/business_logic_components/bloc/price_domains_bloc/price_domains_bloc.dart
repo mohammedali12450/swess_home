@@ -9,8 +9,6 @@ class PriceDomainsBloc extends Bloc<PriceDomainsEvent, PriceDomainsState> {
   PriceDomainsRepository priceDomainsRepository;
   List<PriceDomain>? priceDomains;
 
-
-
   PriceDomainsBloc(this.priceDomainsRepository) : super(PriceDomainsFetchNone()) {
     on<PriceDomainsFetchStarted>((event, emit) async {
       emit(PriceDomainsFetchProgress());

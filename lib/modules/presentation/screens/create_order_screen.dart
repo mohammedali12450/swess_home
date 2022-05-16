@@ -75,11 +75,16 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   @override
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
-    List<String> priceDomainsNames = priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
-    priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
+    List<String> priceDomainsNames =
+        priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
+    // priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
+    // Remove duplicates:
+    priceDomainsNames = priceDomainsNames.toSet().toList();
+    print(priceDomainsNames);
+
 
     return BlocListener<EstateOrderBloc, EstateOrderState>(
-      listener: (_, estateOrderState)async {
+      listener: (_, estateOrderState) async {
         if (estateOrderState is SendEstateOrderComplete) {
           Navigator.pushNamed(context, AfterEstateOrderScreen.id);
         } else if (estateOrderState is SendEstateOrderError) {
@@ -164,8 +169,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           if (selectedLocation != null) {
                             officeAddressController.text = selectedLocation!.getLocationName();
                             locationErrorCubit.setState(null);
-                          }else{
-                            officeAddressController.clear() ;
+                          } else {
+                            officeAddressController.clear();
                           }
                         },
                         controller: officeAddressController,
@@ -179,7 +184,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           enabledBorder: OutlineInputBorder(
                             borderRadius: const BorderRadius.all(Radius.circular(10)),
                             borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.onBackground.withOpacity(0.4),),
+                              color: Theme.of(context).colorScheme.onBackground.withOpacity(0.4),
+                            ),
                           ),
                         ),
                       );
@@ -250,7 +256,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   Center(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(280 , 64) ,
+                        fixedSize: const Size(280, 64),
                       ),
                       child: BlocBuilder<EstateOrderBloc, EstateOrderState>(
                         builder: (_, estateOrderState) {

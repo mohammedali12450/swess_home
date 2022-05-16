@@ -28,4 +28,16 @@ class NotificationsProvider {
 
     return response;
   }
+
+
+  Future clearNotifications(String token)async{
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+    try {
+      response = await helper.delete(clearNotificationsUrl, token: token);
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
 }

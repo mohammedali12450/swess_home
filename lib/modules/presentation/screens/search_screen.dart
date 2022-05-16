@@ -236,13 +236,10 @@ class _SearchScreenState extends State<SearchScreen> {
                           Expanded(
                             flex: 1,
                             child: ElevatedButton(
-
                               style: ElevatedButton.styleFrom(
-                                  primary: isDarkMode ? const Color(0xff90B8F8) : null,
-                              padding: EdgeInsets.zero,
-                                minimumSize: Size(20.w,60.h),
-
-
+                                primary: isDarkMode ? const Color(0xff90B8F8) : null,
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size(20.w, 60.h),
                               ),
                               child: Text(
                                 AppLocalizations.of(context)!.clear,
@@ -471,6 +468,7 @@ class _SearchScreenState extends State<SearchScreen> {
     List<String> priceDomainsNames =
         priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
     priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
+    priceDomainsNames = priceDomainsNames.toSet().toList();
 
     return SingleChildScrollView(
       child: Column(
@@ -522,9 +520,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     },
                     child: Container(
                       height: 40.h,
-                      color: isDark
-                          ? Theme.of(context).colorScheme.primary
-                          : AppColors.secondaryColor,
+                      color:
+                          isDark ? Theme.of(context).colorScheme.primary : AppColors.secondaryColor,
                       padding: EdgeInsets.symmetric(
                         horizontal: 8.w,
                       ),

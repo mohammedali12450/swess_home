@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
+import 'package:swesshome/constants/colors.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
 
 class CreatePropertyTemplate extends StatefulWidget {
   final String headerIconPath;
@@ -20,6 +23,7 @@ class _CreatePropertyTemplateState extends State<CreatePropertyTemplate> {
   @override
   Widget build(BuildContext context) {
     bool isKeyboardOpened = MediaQuery.of(context).viewInsets.bottom != 0;
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -76,6 +80,25 @@ class _CreatePropertyTemplateState extends State<CreatePropertyTemplate> {
                 child: widget.body,
               ),
             ),
+            Positioned(
+              top: 42.h,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                width: 1.sw,
+                alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: AppColors.white,
+                    size: 28.w,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ),
+
           ],
         ),
       ),

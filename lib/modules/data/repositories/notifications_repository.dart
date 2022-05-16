@@ -43,4 +43,18 @@ class NotificationRepository {
 
     return notifications;
   }
+
+  Future clearNotifications(String token)async{
+    Response response;
+
+    try {
+      response = await _notificationsProvider.clearNotifications(token);
+    } catch (e) {
+      rethrow;
+    }
+
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: "حدث أثناء الاتصال بالسيرفر");
+    }
+  }
 }
