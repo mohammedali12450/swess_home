@@ -36,6 +36,41 @@ class UserAuthenticationProvider {
     return response;
   }
 
+  Future forgetPassword(String mobile) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+    try {
+      response = await helper.post(forgetPasswordUrl, {"authentication": mobile});
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+  Future verificationCode(String mobile,String code) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+    try {
+      response = await helper.post(verificationUrl, {"authentication": mobile,"code":code});
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+
+  Future resetPassword(String mobile,String password,String confirmPassword) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+    try {
+      response = await helper.post(resetPasswordUrl, {"authentication": mobile,"password":password,"password_confirmation":confirmPassword});
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+
+
+
+
   Future logout(String token) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
@@ -61,6 +96,20 @@ class UserAuthenticationProvider {
     NetworkHelper helper = NetworkHelper();
     Response response =
     await helper.post(resendConfirmationCode, {"authentication": phone});
+    return response;
+  }
+
+
+
+  Future deleteUser(String? token) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+
+    try {
+      response = await helper.delete(deleteUserUrl,token: token);
+    } catch (_) {
+      rethrow;
+    }
     return response;
   }
 }

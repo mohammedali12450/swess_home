@@ -17,14 +17,32 @@ class EstateOfficeProvider {
     return response;
   }
 
-  Future<Response> getEstatesByLocationId(int locationId, String? token) async {
+  // Future getEstatesByLocationId(int locationId) async {
+  //   NetworkHelper helper = NetworkHelper();
+  //   Response response;
+  //
+  //   try {
+  //     response = await helper.post(
+  //         "http://swesshomerealestate.com/api/estate/searchEstateByregionsByestatefeatures",
+  //         queryParameters: {"locationId": locationId});
+  //   } catch (_) {
+  //     rethrow;
+  //   }
+  //
+  //   return response;
+  // }
+
+  Future getEstatesByLocationId(int locationId) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
 
     try {
-      response = await helper.get(searchEstateOfficeByLocationIdUrl,
-          queryParameters: {"location_id": locationId}, token: token);
-    } catch (_) {
+      response = await helper.post(
+           "http://swesshomerealestate.com/api/office/searchByRegions",
+          {"location_id": locationId},);
+      print(response.statusCode);
+      print(response);
+    } catch (e) {
       rethrow;
     }
 

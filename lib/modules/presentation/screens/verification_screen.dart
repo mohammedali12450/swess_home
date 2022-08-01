@@ -1,22 +1,29 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pinput/pinput.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
+import 'package:swesshome/core/storage/shared_preferences/otp_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_verification_code_bloc/send_verification_code_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_verification_code_bloc/send_verification_code_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_verification_code_bloc/send_verification_code_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
+import 'package:swesshome/modules/data/models/otp_model.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -46,29 +53,54 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
   TextEditingController confirmationCodeController = TextEditingController();
 
+  final _waitingTime = BehaviorSubject<int>.seeded(0);
+  late ResendVerificationCodeBloc resendVerificationCodeBloc;
+  Timer timer = new Timer(Duration.zero, () {});
+
+  get waitingTimeValue => _waitingTime.value;
+
+  setWaitingTime(int currentDuration) {
+    _waitingTime.sink.add(currentDuration);
+  }
+
+  startWaitingTimer(initValue) {
+    dataStore.setLastOtpRequestValue(
+      OtpRequestValueModel(requestedTime: DateTime.now(), textValue: dataStore.user.data!.authentication ),
+    );
+    setWaitingTime(initValue);
+    timer = new Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (waitingTimeValue == 0) {
+        timer.cancel();
+      } else {
+        setWaitingTime(waitingTimeValue - 1);
+      }
+    });
+  }
+
+  initWaitingTime() {
+    dataStore.getLastOtpRequestValue().then((value) {
+      if (value.textValue != dataStore.user.data!.authentication ||
+          value.requestedTime!.isBefore(
+              DateTime.now().subtract(Duration(minutes: 1)))) {
+        setWaitingTime(0);
+      } else {
+        startWaitingTimer(
+            59 - (DateTime.now().difference(value.requestedTime!)).inSeconds);
+      }
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    resendVerificationCodeBloc = BlocProvider.of<ResendVerificationCodeBloc>(context);
     phoneNumber = widget.phoneNumber;
     if (BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore) {
-      verifyPhoneNumber();
     } else {
       isFireBaseLoadingCubit.setState(false);
     }
-  }
-
-  verifyPhoneNumber() async {
-    await auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted: (firebase_auth.PhoneAuthCredential credential) {},
-      verificationFailed: (firebase_auth.FirebaseAuthException e) {},
-      codeSent: (String verificationId, int? resendToken) {
-        this.verificationId = verificationId;
-        isFireBaseLoadingCubit.setState(false);
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
+    initWaitingTime();
   }
 
   @override
@@ -256,6 +288,32 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                   },
                                 ),
                               ),
+
+                              62.verticalSpace,
+                              Center(child:  Text(AppLocalizations.of(context)!.did_code,style: Theme.of(context).textTheme.bodyText2,)),
+                              6.verticalSpace,
+                              StreamBuilder<int>(
+                                  stream: _waitingTime.stream,
+                                  builder: (context, snapshot){
+                                    if(waitingTimeValue > 0) {
+                                      return _timerCountDown();
+                                    } else {
+                                      return InkWell(
+                                        onTap: (){
+                                          resendVerificationCodeBloc.add(
+                                            ResendVerificationCodeStarted(
+                                                mobile: widget.phoneNumber,verificationCode:confirmationCodeController.text ),
+                                          );
+                                          startWaitingTimer(59);
+                                          FocusScope.of(context).unfocus();
+                                        },
+                                        child: Center(
+                                          child: Text(AppLocalizations.of(context)!.resend_code,style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
+                                        ),
+                                      );
+                                    }
+                                  }
+                              ),
                             ],
                           );
                   },
@@ -267,4 +325,22 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       ),
     );
   }
+  Widget _timerCountDown() {
+    return StreamBuilder<int>(
+        initialData: 0,
+        stream: _waitingTime.stream,
+        builder: (context, waitingTimeSnapshot) {
+          if (waitingTimeSnapshot.data != 0) {
+            return Center(
+              child: Text(
+                '00:${waitingTimeSnapshot.data}',
+                style: const TextStyle(fontSize: 20),
+              ),
+            );
+          } else {
+            return Container();
+          }
+        });
+  }
 }
+

@@ -31,6 +31,7 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
   late List<EstateOfferType> offerTypes;
 
   late Estate _currentOffer;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -50,54 +51,68 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
     return CreatePropertyTemplate(
       headerIconPath: homeOutlineIconPath,
       headerText: AppLocalizations.of(context)!.step_1,
-      body: Column(
-        children: [
-          24.verticalSpace,
-          SizedBox(
-            width: 1.sw,
-            child: Text(
-              AppLocalizations.of(context)!.estate_type + " :",
+      body: Form(
+        key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: Column(
+          children: [
+            24.verticalSpace,
+            SizedBox(
+              width: 1.sw,
+              child: Text(
+                AppLocalizations.of(context)!.estate_type + " :",
+              ),
             ),
-          ),
-          16.verticalSpace,
-          MyDropdownList(
-            elementsList: estateTypes.map((e) => e.getName(isArabic).split('|').first).toList(),
-            onSelect: (index) {
-              _currentOffer.estateType = estateTypes.elementAt(index);
-            },
-          ),
-          24.verticalSpace,
-          SizedBox(
-            width: 1.sw,
-            child: Text(
-              AppLocalizations.of(context)!.offer_type + " :",
+            16.verticalSpace,
+            MyDropdownList(
+              elementsList: estateTypes.map((e) => e.getName(isArabic).split('|').first).toList(),
+              onSelect: (index) {
+                _currentOffer.estateType = estateTypes.elementAt(index);
+              },
+              validator: (value) =>
+              value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+              selectedItem: AppLocalizations.of(context)!.please_select,
             ),
-          ),
-          16.verticalSpace,
-          MyDropdownList(
-            elementsList: offerTypes.map((e) => e.getName(isArabic)).toList(),
-            onSelect: (index) {
-              _currentOffer.estateOfferType = offerTypes.elementAt(index);
-            },
-          ),
-          const Spacer(),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
-            child: Text(
-              AppLocalizations.of(context)!.next,
-              textAlign: TextAlign.center,
+            24.verticalSpace,
+            SizedBox(
+              width: 1.sw,
+              child: Text(
+                AppLocalizations.of(context)!.offer_type + " :",
+              ),
             ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CreatePropertyScreen2(currentOffer: _currentOffer),
-                ),
-              );
-            },
-          ),
-          12.verticalSpace,
-        ],
+            16.verticalSpace,
+            MyDropdownList(
+              elementsList: offerTypes.map((e) => e.getName(isArabic)).toList(),
+              onSelect: (index) {
+                _currentOffer.estateOfferType = offerTypes.elementAt(index);
+              },
+              validator: (value) =>
+              value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+              selectedItem: AppLocalizations.of(context)!.please_select,
+            ),
+            const Spacer(),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
+              child: Text(
+                AppLocalizations.of(context)!.next,
+                textAlign: TextAlign.center,
+              ),
+              onPressed: () {
+    if (_formKey.currentState!.validate()) {
+      print("Dsadsadasdadas");
+      _formKey.currentState!.save();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => CreatePropertyScreen2(currentOffer: _currentOffer),
+        ),
+      );
+    }
+              },
+            ),
+            12.verticalSpace,
+          ],
+        ),
       ),
     );
   }

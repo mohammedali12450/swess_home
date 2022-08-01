@@ -6,6 +6,7 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RowInformationSwitcher extends StatefulWidget {
   final String content;
@@ -79,7 +80,7 @@ class _RowInformationSwitcherState extends State<RowInformationSwitcher> {
                       color:
                       (isPressed) ? Theme.of(context).colorScheme.primary : Colors.transparent),
                   child: Text(
-                    widget.switcherContent,
+                    (isPressed)? widget.switcherContent : AppLocalizations.of(context)!.no,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.subtitle1!.copyWith(
                         color: (isPressed)

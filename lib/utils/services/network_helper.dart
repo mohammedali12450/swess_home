@@ -41,12 +41,13 @@ class NetworkHelper {
         onError: (error, handler) {
           if (kDebugMode) {
             print(error.message);
+            print(error.response!.data);
           }
           handler.next(error);
         },
         onRequest: (requestOptions, handler) {
           if (kDebugMode) {
-            print("${requestOptions.method} : ${requestOptions.path}");
+            print("${requestOptions.method} : ${requestOptions.uri}");
           }
           handler.next(requestOptions);
         },

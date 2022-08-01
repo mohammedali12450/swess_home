@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
+import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
 import 'package:swesshome/core/exceptions/unknown_exception.dart';
 import 'package:swesshome/modules/data/models/register.dart';
@@ -30,6 +31,44 @@ class UserAuthenticationRepository {
 
     User user = User.fromJson(jsonDecode(response.toString())["data"]);
     return user;
+  }
+
+  Future verificationCode(String mobile,String code) async {
+    Response response;
+
+    try {
+      response = await userAuthenticationProvider.verificationCode(mobile,code);
+    } catch (e) {
+      rethrow;
+    }
+
+    if (response.statusCode == 422) {
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+    }
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: jsonDecode(response.toString())["message"]);
+    }
+    // User user = User.fromJson(jsonDecode(response.toString())["data"]);
+    // return user;
+  }
+
+  Future resetPassword(String mobile,String password,String confirmPassword) async {
+    Response response;
+
+    try {
+      response = await userAuthenticationProvider.resetPassword(mobile,password,confirmPassword);
+    } catch (e) {
+      rethrow;
+    }
+
+    if (response.statusCode == 422) {
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+    }
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: jsonDecode(response.toString())["message"]);
+    }
+    // User user = User.fromJson(jsonDecode(response.toString())["data"]);
+    // return user;
   }
 
   Future<User> loginByToken(String token) async {
@@ -71,6 +110,25 @@ class UserAuthenticationRepository {
     return user;
   }
 
+  Future forgetPassword(String mobile) async {
+    Response response;
+
+    try {
+      response = await userAuthenticationProvider.forgetPassword(mobile);
+    } catch (e) {
+      rethrow;
+    }
+
+    if (response.statusCode == 422) {
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+    }
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: jsonDecode(response.toString())["message"]);
+    }
+    // User user = User.fromJson(jsonDecode(response.toString())["data"]);
+    // return user;
+  }
+
   Future logout(String token) async {
     Response response;
 
@@ -81,6 +139,18 @@ class UserAuthenticationRepository {
     }
     if (response.statusCode != 200) {
       throw UnknownException();
+    }
+  }
+  Future deleteUser(String token) async {
+    Response response;
+
+    try {
+      response = await userAuthenticationProvider.deleteUser(token);
+    } catch (e) {
+      rethrow;
+    }
+    if (response.statusCode != 200) {
+      throw UnauthorizedException(message: "Unauthorized error !");
     }
   }
 

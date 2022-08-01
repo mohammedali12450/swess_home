@@ -28,11 +28,11 @@ class EstateOfficesRepository {
     return estateOffices;
   }
 
-  Future<List<EstateOffice>> searchEstateOfficesByLocationId(int locationId, String? token) async {
+  Future<List<EstateOffice>> searchEstateOfficesByLocationId(int locationId) async {
     Response response;
 
     try {
-      response = await _estateOfficeProvider.getEstatesByLocationId(locationId, token);
+      response = await _estateOfficeProvider.getEstatesByLocationId(locationId);
     } catch (_) {
       rethrow;
     }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 
 import '../../business_logic_components/cubits/channel_cubit.dart';
 
@@ -12,6 +13,8 @@ class MyDropdownList extends StatefulWidget {
   final int initElementIndex;
   final Function()? onTap;
   final bool isOnChangeNull;
+  final String? selectedItem;
+  final FormFieldValidator? validator;
 
   const MyDropdownList({
     Key? key,
@@ -19,7 +22,7 @@ class MyDropdownList extends StatefulWidget {
     required this.onSelect,
     this.initElementIndex = -1,
     this.onTap,
-    this.isOnChangeNull = false,
+    this.isOnChangeNull = false, this.selectedItem, this.validator,
   }) : super(key: key);
 
   @override
@@ -41,14 +44,21 @@ class _MyDropdownListState extends State<MyDropdownList> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return BlocBuilder<ChannelCubit, dynamic>(
       bloc: _elementSelectCubit,
       builder: (_, selectedItem) {
         selectedItem is String?;
         selectedItem ??= widget.elementsList.first;
-        return DropdownButton(
+        return DropdownButtonFormField(
+          validator: widget.validator,
+          decoration:  InputDecoration(
+              hintText: widget.selectedItem,
+              hintStyle: TextStyle(
+                color: isDark ? Colors.white :Colors.black,
+                fontSize: 12,
+              )),
           isExpanded: true,
-          value: selectedItem,
           items: widget.elementsList.map(
             (dynamic element) {
               return DropdownMenuItem(

@@ -79,7 +79,7 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                       style: Theme.of(context).textTheme.headline3,
                       maxLines: 10,
                       textAlign: TextAlign.center),
-                  kHe24,
+                  // kHe16,
                   SizedBox(
                     width: 0.5.sw,
                     child: Stack(
@@ -96,7 +96,7 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                       ],
                     ),
                   ),
-                  64.verticalSpace,
+                  // 24.verticalSpace,
                   Text(
                     AppLocalizations.of(context)!.application_name,
                     style: Theme.of(context).textTheme.headline4,

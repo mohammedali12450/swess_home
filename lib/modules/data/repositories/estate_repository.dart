@@ -4,9 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:swesshome/constants/enums.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/core/exceptions/unknown_exception.dart';
+import 'package:swesshome/main.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/search_data.dart';
 import 'package:swesshome/modules/data/providers/estate_provider.dart';
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
 class EstateRepository {
   final EstateProvider _estateProvider = EstateProvider();
@@ -31,14 +33,21 @@ class EstateRepository {
 
     try {
       response = await _estateProvider.search(searchData, isAdvanced, page, token);
+      print(response.statusCode);
     } catch (e) {
+      print(e);
       rethrow;
     }
-
-    if (response.statusCode != 200) {
+    if ((response.statusCode == 201) && (page == 1) ) {
+       showWonderfulAlertDialog(
+        navigatorKey.currentContext!,
+        "ssss",
+        "sdas",
+      );
+    }
+    if (response.statusCode != 201 && response.statusCode != 202) {
       throw GeneralException(errorMessage: "حدث خطأ");
     }
-
     dynamic jsonEstates = jsonDecode(response.toString())["data"];
     List<Estate> estates = [];
     // check if result estates is list :
@@ -142,6 +151,7 @@ class EstateRepository {
 
   Future saveEstate(String? token, int estateId) async {
     Response response = await _estateProvider.saveEstate(token, estateId);
+
     if (response.statusCode != 200) {
       throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر");
     }

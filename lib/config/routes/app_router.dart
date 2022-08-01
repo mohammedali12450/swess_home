@@ -39,6 +39,8 @@ import 'package:swesshome/modules/business_logic_components/bloc/period_types_bl
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_state.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_state.dart';
@@ -61,6 +63,7 @@ import 'package:swesshome/modules/presentation/screens/notifications_screen.dart
 import 'package:swesshome/modules/presentation/screens/office_search_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
+import 'package:swesshome/modules/presentation/screens/reset_password_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
 import 'package:swesshome/modules/presentation/screens/select_language_screen.dart';
@@ -75,6 +78,7 @@ import '../../constants/api_paths.dart';
 
 class AppRouter {
   late LocationsBloc locationsBloc;
+  late RegionsBloc regionsBloc;
   late OwnershipTypeBloc ownershipTypeBloc;
   late EstateTypesBloc estateTypesBloc;
   late InteriorStatusesBloc interiorStatusesBloc;
@@ -190,6 +194,10 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const AuthenticationScreen(),
         );
+        case ResetPasswordScreen.id:
+        return MaterialPageRoute(
+          builder: (_) => const ResetPasswordScreen(phoneNumber: '',),
+        );
       case SearchLocationScreen.id:
         return MaterialPageRoute(
           builder: (_) => const SearchLocationScreen(),
@@ -238,6 +246,7 @@ class AppRouter {
   void fetchApplicationData(BuildContext context) {
     userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
     locationsBloc = BlocProvider.of<LocationsBloc>(context);
+    regionsBloc = BlocProvider.of<RegionsBloc>(context);
     ownershipTypeBloc = BlocProvider.of<OwnershipTypeBloc>(context);
     estateTypesBloc = BlocProvider.of<EstateTypesBloc>(context);
     interiorStatusesBloc = BlocProvider.of<InteriorStatusesBloc>(context);
@@ -248,6 +257,7 @@ class AppRouter {
     systemVariablesBloc = BlocProvider.of<SystemVariablesBloc>(context);
     reportBloc = BlocProvider.of<ReportBloc>(context);
     locationsBloc.add(LocationsFetchStarted());
+    regionsBloc.add(RegionsFetchStarted());
     ownershipTypeBloc.add(OwnershipTypeFetchStarted());
     estateTypesBloc.add(EstateTypesFetchStarted());
     interiorStatusesBloc.add(InteriorStatusesFetchStarted());

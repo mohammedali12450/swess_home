@@ -97,14 +97,21 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [
-                kHe32,
+                kHe44,
                 Hero(
                   tag: widget.office.id.toString(),
-                  child: CircleAvatar(
-                    radius: 96.w,
-                    backgroundColor: Colors.grey,
-                    backgroundImage: CachedNetworkImageProvider(baseUrl + widget.office.logo!),
-                  ),
+                  child: Container(
+                      width: 300.w,
+                      height: 180.h,
+                      decoration:BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        image:  DecorationImage(image:NetworkImage(imagesBaseUrl + widget.office.logo!,),fit: BoxFit.fill),))
+
+                  // CircleAvatar(
+                  //   radius: 96.w,
+                  //   backgroundColor: Colors.grey,
+                  //   backgroundImage: CachedNetworkImageProvider(imagesBaseUrl + widget.office.logo!),
+                  // ),
                 ),
                 24.verticalSpace,
                 // Account name and rate :
@@ -171,6 +178,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           const Icon(Icons.add),
                           Text(
                             AppLocalizations.of(context)!.post_estate,
+                            style: TextStyle(fontSize: 14),
                           )
                         ],
                       ),

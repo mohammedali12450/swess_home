@@ -52,6 +52,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
   List<File>? floorPlanPropertyImages;
 
   bool isCompressing = false;
+  final _formKey = GlobalKey<FormState>();
 
   late SystemVariables _systemVariables;
 
@@ -95,138 +96,160 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
       headerIconPath: (isLands || isShops) ? imageOutlineIconPath : chairOutlineIconPath,
       headerText: AppLocalizations.of(context)!.step_4,
       body: (isLands || isShops)
-          ? SingleChildScrollView(
+          ? Form(
+        key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: SingleChildScrollView(
         child: Column(
-          children: [
-            buildImagesSelectors(
-              onPropertyImagesSelected: (images) {
-                propertyImages =
-                (images == null) ? null : images.map((e) => e as File).toList();
-              },
-              onStreetImagesSelected: (images) {
-                streetPropertyImages =
-                (images == null) ? null : images.map((e) => e as File).toList();
-              },
-              onFloorPlanImagesSelected: (images) {
-                floorPlanPropertyImages =
-                (images == null) ? null : images.map((e) => e as File).toList();
-              },
-              compressStateListener: (compressState) {
-                isCompressing = compressState;
-              },
-              maximumCountOfEstateImages:
-              int.parse(_systemVariables.maximumCountOfEstateImages),
-              maximumCountOfStreetImages:
-              int.parse(_systemVariables.maximumCountOfStreetImages),
-              maximumCountOfFloorPlanImages:
-              int.parse(_systemVariables.maximumCountOfFloorPlanImages),
-              minimumCountOfEstateImages: _systemVariables.minimumCountOfEstateImages,
-            ),
+            children: [
+              buildImagesSelectors(
+                onPropertyImagesSelected: (images) {
+                  propertyImages =
+                  (images == null) ? null : images.map((e) => e as File).toList();
+                },
+                onStreetImagesSelected: (images) {
+                  streetPropertyImages =
+                  (images == null) ? null : images.map((e) => e as File).toList();
+                },
+                onFloorPlanImagesSelected: (images) {
+                  floorPlanPropertyImages =
+                  (images == null) ? null : images.map((e) => e as File).toList();
+                },
+                compressStateListener: (compressState) {
+                  isCompressing = compressState;
+                },
+                maximumCountOfEstateImages:
+                int.parse(_systemVariables.maximumCountOfEstateImages),
+                maximumCountOfStreetImages:
+                int.parse(_systemVariables.maximumCountOfStreetImages),
+                maximumCountOfFloorPlanImages:
+                int.parse(_systemVariables.maximumCountOfFloorPlanImages),
+                minimumCountOfEstateImages: _systemVariables.minimumCountOfEstateImages,
+              ),
+              32.verticalSpace,
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
+                child: Text(
+                  AppLocalizations.of(context)!.next,
+                ),
+                onPressed: () {
+                  if (isCompressing) {
+                    Fluttertoast.showToast(
+                        msg: AppLocalizations.of(context)!.wait_compress_message);
+                    return;
+                  }
+                  if (!landsAndShopsValidateDate()) return;
+                  widget.currentOffer.estateImages = propertyImages!;
+                  widget.currentOffer.streetImages = streetPropertyImages;
+                  widget.currentOffer.floorPlanImages = floorPlanPropertyImages;
+    if (_formKey.currentState!.validate()) {
+      print("Dsadsadasdadas");
+      _formKey.currentState!.save();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              CreatePropertyScreen5(currentOffer: widget.currentOffer),
+        ),
+      );
+    }
+                },
+              ),
+            ],
+        ),
+      ),
+          )
+          : Form(
+        key: _formKey,
+            child: Column(
+        children: [
+            if (isSell & isHouse) ...[
+              24.verticalSpace,
+              SizedBox(
+                width: 1.sw,
+                child: Text(
+                  AppLocalizations.of(context)!.ownership_type + " :",
+                ),
+              ),
+              16.verticalSpace,
+              MyDropdownList(
+                elementsList: ownershipTypes.map((e) => e.getName(isArabic)).toList(),
+                onSelect: (index) {
+                  widget.currentOffer.ownershipType = ownershipTypes.elementAt(index);
+                },
+                validator: (value) =>
+                value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                selectedItem: AppLocalizations.of(context)!.please_select,
+              ),
+            ],
+            if (!isLands) ...[
+              24.verticalSpace,
+              SizedBox(
+                width: 1.sw,
+                child: Text(
+                  AppLocalizations.of(context)!.interior_status + " :",
+                ),
+              ),
+              16.verticalSpace,
+              MyDropdownList(
+                elementsList: interiorStatuses.map((e) => e.getName(isArabic)).toList(),
+                onSelect: (index) {
+                  widget.currentOffer.interiorStatus = interiorStatuses.elementAt(index);
+                },
+                validator: (value) =>
+                value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                selectedItem: AppLocalizations.of(context)!.please_select,
+              ),
+            ],
             32.verticalSpace,
+            if (!isShops || !isLands)
+              RowInformationSwitcher(
+                content: AppLocalizations.of(context)!.is_the_estate_furnished,
+                switcherContent: AppLocalizations.of(context)!.yes,
+                onSelected: (isPressed) {
+                  widget.currentOffer.isFurnished = isPressed;
+                },
+              ),
+            if (isFarmsOrVacations) ...[
+              // 28.verticalSpace,
+              // RowInformationSwitcher(
+              //   content: AppLocalizations.of(context)!.is_the_estate_on_beach,
+              //   switcherContent: AppLocalizations.of(context)!.yes,
+              //   onSelected: (isPressed) {
+              //     widget.currentOffer.isOnBeach = isPressed;
+              //   },
+              // ),
+              28.verticalSpace,
+              RowInformationSwitcher(
+                content: AppLocalizations.of(context)!.is_the_estate_has_pool,
+                switcherContent: AppLocalizations.of(context)!.yes,
+                onSelected: (isPressed) {
+                  widget.currentOffer.hasSwimmingPool = isPressed;
+                },
+              ),
+            ],
+            36.verticalSpace,
             ElevatedButton(
               style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
               child: Text(
                 AppLocalizations.of(context)!.next,
               ),
               onPressed: () {
-                if (isCompressing) {
-                  Fluttertoast.showToast(
-                      msg: AppLocalizations.of(context)!.wait_compress_message);
-                  return;
-                }
-                if (!landsAndShopsValidateDate()) return;
-                widget.currentOffer.estateImages = propertyImages!;
-                widget.currentOffer.streetImages = streetPropertyImages;
-                widget.currentOffer.floorPlanImages = floorPlanPropertyImages;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CreatePropertyScreen5(currentOffer: widget.currentOffer),
-                  ),
-                );
-              },
-            ),
-          ],
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) =>
+                CreatePropertyScreen5(currentOffer: widget.currentOffer),
         ),
-      )
-          : Column(
-        children: [
-          if (isSell & isHouse) ...[
-            24.verticalSpace,
-            SizedBox(
-              width: 1.sw,
-              child: Text(
-                AppLocalizations.of(context)!.ownership_type + " :",
-              ),
-            ),
-            16.verticalSpace,
-            MyDropdownList(
-              elementsList: ownershipTypes.map((e) => e.getName(isArabic)).toList(),
-              onSelect: (index) {
-                widget.currentOffer.ownershipType = ownershipTypes.elementAt(index);
+      );
+    }
               },
             ),
-          ],
-          if (!isLands) ...[
-            24.verticalSpace,
-            SizedBox(
-              width: 1.sw,
-              child: Text(
-                AppLocalizations.of(context)!.interior_status + " :",
-              ),
-            ),
-            16.verticalSpace,
-            MyDropdownList(
-              elementsList: interiorStatuses.map((e) => e.getName(isArabic)).toList(),
-              onSelect: (index) {
-                widget.currentOffer.interiorStatus = interiorStatuses.elementAt(index);
-              },
-            ),
-          ],
-          32.verticalSpace,
-          if (!isShops || !isLands)
-            RowInformationSwitcher(
-              content: AppLocalizations.of(context)!.is_the_estate_furnished,
-              switcherContent: AppLocalizations.of(context)!.yes,
-              onSelected: (isPressed) {
-                widget.currentOffer.isFurnished = isPressed;
-              },
-            ),
-          if (isFarmsOrVacations) ...[
-            28.verticalSpace,
-            RowInformationSwitcher(
-              content: AppLocalizations.of(context)!.is_the_estate_on_beach,
-              switcherContent: AppLocalizations.of(context)!.yes,
-              onSelected: (isPressed) {
-                widget.currentOffer.isOnBeach = isPressed;
-              },
-            ),
-            28.verticalSpace,
-            RowInformationSwitcher(
-              content: AppLocalizations.of(context)!.is_the_estate_has_pool,
-              switcherContent: AppLocalizations.of(context)!.yes,
-              onSelected: (isPressed) {
-                widget.currentOffer.hasSwimmingPool = isPressed;
-              },
-            ),
-          ],
-          36.verticalSpace,
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
-            child: Text(
-              AppLocalizations.of(context)!.next,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CreatePropertyScreen5(currentOffer: widget.currentOffer),
-                ),
-              );
-            },
-          ),
         ],
       ),
+          ),
     );
   }
 

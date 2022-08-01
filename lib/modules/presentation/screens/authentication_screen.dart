@@ -25,6 +25,7 @@ import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+import 'package:swesshome/modules/presentation/screens/forget_password_screen.dart';
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'home_screen.dart';
@@ -382,6 +383,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           ),
           Row(
             children: [
+              InkWell(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=> ForgetPasswordScreen()));
+                },
+                  child: Text(AppLocalizations.of(context)!.forget_password,style: Theme.of(context).textTheme.bodyText2,)),
+             const Spacer(),
               BlocBuilder<ChannelCubit, dynamic>(
                 bloc: _checkBoxStateCubit,
                 builder: (_, isChecked) {

@@ -22,7 +22,7 @@ const sendEstateUrl = "api/user/newEstate";
 const sendEstateOrderUrl = "api/estateOrder/newEstateOrder";
 const logoutUrl = "api/logout";
 const searchEstateOfficeByNameUrl = "api/office/searchByName";
-const searchEstateOfficeByLocationIdUrl = "api/office/searchByLocation";
+const searchEstateOfficeByLocationIdUrl = "api/office/searchByRegions";
 const getOfficeEstatesUrl = "api/getOfficeAcceptedEstates";
 const systemVariablesUrl = "api/systemVariables";
 const notificationTypesUrl = "api/notificationTypes";
@@ -45,7 +45,11 @@ const getReportsTypesUrl = "api/reportTypes";
 const sendReportUrl = "api/report";
 const ratingUrl = "api/applicationRating";
 const checkConfirmationCode = "api/code/check";
+const forgetPasswordUrl = "api/forgetUserPasswordSendCode";
+const resetPasswordUrl = "api/ResetUserPassword";
+const verificationUrl = "api/forgetUserPasswordCheck";
 
 const resendConfirmationCode = "api/code/resend";
+const deleteUserUrl = "api/user/deleteUserInformation";
 
 const test = "master";

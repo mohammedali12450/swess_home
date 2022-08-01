@@ -26,7 +26,7 @@ class EstateProvider {
 
     try {
       response = await helper.post(
-          (isAdvanced) ? advancedSearchUrl : searchUrl,
+          (isAdvanced) ? advancedSearchUrl : "http://swesshomerealestate.com/api/estate/searchEstateByregionsByestatefeatures",
           FormData.fromMap(
             searchData.toJson(isAdvanced),
           ),
@@ -98,6 +98,8 @@ class EstateProvider {
 
     try {
       response = await helper.post(url, data, token: token);
+      print(url);
+      print(response);
     } catch (e) {
       rethrow;
     }
@@ -133,6 +135,7 @@ class EstateProvider {
   Future saveEstate(String? token, int estateId) async {
     NetworkHelper helper = NetworkHelper();
     Response response = await helper.post(saveEstateUrl, {"estate_id": estateId}, token: token);
+    print(response.data);
     return response;
   }
 

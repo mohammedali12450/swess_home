@@ -33,7 +33,7 @@ class SearchOfficesBloc extends Bloc<SearchOfficesEvents, SearchOfficesStates> {
 
       try {
         List<EstateOffice> results = await estateOfficesRepository.searchEstateOfficesByLocationId(
-            event.locationId, event.token);
+            event.locationId);
         emit(
           SearchOfficesFetchComplete(results: results),
         );

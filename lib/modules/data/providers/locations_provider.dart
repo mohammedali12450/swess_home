@@ -6,7 +6,7 @@ class LocationsProvider{
 
   Future getLocations()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(locationsUrl) ;
+    Response response = await helper.get("http://swesshomerealestate.com/api/getallsublocations") ;
     return response ;
   }
 }

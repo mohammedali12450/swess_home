@@ -12,8 +12,13 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/reset_password_bloc/reset_password_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/verification_bloc/verification_bloc.dart';
 import 'package:swesshome/modules/data/repositories/estate_order_repository.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/data/repositories/reports_repository.dart';
@@ -54,6 +59,7 @@ import 'modules/data/repositories/system_variables_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 const bool _clearSharedPreferences = false ;
+final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   // Widget binding:
@@ -137,6 +143,21 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         BlocProvider(
           create: (_) => LocationsBloc(),
+        ),
+        BlocProvider(
+          create: (_) => RegionsBloc(),
+        ),
+        BlocProvider(
+          create: (_) => ForgetPasswordBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+        ),
+        BlocProvider(
+          create: (_) => VerificationCodeBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+        ),
+        BlocProvider(
+          create: (_) => ResendVerificationCodeBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+        ),
+        BlocProvider(
+          create: (_) => ResetPasswordBloc(userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
           create: (_) => OwnershipTypeBloc(
@@ -226,6 +247,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               minTextAdapt: true,
               splitScreenMode: false,
               builder: () => MaterialApp(
+                navigatorKey: navigatorKey,
                 debugShowCheckedModeBanner: false,
                 onGenerateRoute: appRouter.onGenerateRoute,
                 initialRoute: '/',

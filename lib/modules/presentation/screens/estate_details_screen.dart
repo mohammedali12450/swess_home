@@ -124,7 +124,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 color: AppColors.white,
               ),
               onPressed: () {
-                Share.share('check out my website https://example.com');
+                Share.share('Check out my Proposal http://www.swesshome.com/estate/${widget.estate.id}');
               },
             ),
           ],
@@ -519,7 +519,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   if (widget.estate.isOnBeach != null)
                     RowInformation(
                       title: AppLocalizations.of(context)!.on_beach + " :",
-                      content: widget.estate.hasSwimmingPool!
+                      content: widget.estate.isOnBeach!
                           ? AppLocalizations.of(context)!.yes
                           : AppLocalizations.of(context)!.no,
                       icon: Icon(
@@ -648,8 +648,18 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         style: Theme.of(context).textTheme.headline6,
                       ),
                       kHe8,
-                      InkWell(
-                        onTap: () {
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(fixedSize: Size(140.w, 50.h)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!.office_page,
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -657,12 +667,6 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             ),
                           );
                         },
-                        child: Text(
-                          AppLocalizations.of(context)!.office_page,
-                          style: textStyling(S.s14, W.w6, C.bl, fontFamily: F.cairo).copyWith(
-                              decoration: TextDecoration.underline,
-                              color: Theme.of(context).colorScheme.onBackground),
-                        ),
                       ),
                       kHe24,
                       ElevatedButton(

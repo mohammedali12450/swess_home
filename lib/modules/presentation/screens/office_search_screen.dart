@@ -7,6 +7,7 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/enums.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_bloc.dart';
@@ -17,6 +18,7 @@ import 'package:swesshome/modules/data/models/location.dart';
 import 'package:swesshome/modules/data/repositories/estate_offices_repository.dart';
 import 'package:swesshome/modules/presentation/screens/estate_office_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
+import 'package:swesshome/modules/presentation/screens/search_region_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_office_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/offices_list_shimmer.dart';
@@ -46,6 +48,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
 
   late List<Location> locations;
   LocationViewer? selectedLocation;
+  RegionViewer? selectedRegion;
   String? token;
 
   @override
@@ -72,10 +75,12 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          titleSpacing: 0,
           title: Row(
             children: [
               Text(
                 AppLocalizations.of(context)!.search_for_estate_agent,
+                style: const TextStyle(fontSize: 15),
               ),
               const Spacer(),
               BlocBuilder<ChannelCubit, dynamic>(
@@ -85,30 +90,33 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                     onTap: () {
                       textFieldController.clear();
                       searchOfficesBloc.add(SearchOfficesCleared());
-                      searchTypeCubit.setState((searchType == OfficeSearchType.name)
-                          ? OfficeSearchType.area
-                          : OfficeSearchType.name);
+                      searchTypeCubit.setState((searchType == OfficeSearchType.area)
+                          ? OfficeSearchType.neighborhood
+                          : searchType == OfficeSearchType.name ? OfficeSearchType.area : OfficeSearchType.name);
                     },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(4),
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8,left: 8),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 8.h,
                         ),
-                        border: Border.all(color: AppColors.white),
-                      ),
-                      child: Text(
-                        (searchType == OfficeSearchType.name)
-                            ? AppLocalizations.of(context)!.search_by_area
-                            : AppLocalizations.of(context)!.search_by_name,
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .caption!
-                            .copyWith(color: AppColors.white, fontSize: 15.sp),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(4),
+                          ),
+                          border: Border.all(color: AppColors.white),
+                        ),
+                        child: Text(
+                          (searchType == OfficeSearchType.area)
+                              ? AppLocalizations.of(context)!.search_neighborhood
+                              : (searchType == OfficeSearchType.name)? AppLocalizations.of(context)!.search_by_area:AppLocalizations.of(context)!.search_by_name,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .caption!
+                              .copyWith(color: AppColors.white, fontSize: 15.sp),
+                        ),
                       ),
                     ),
                   );
@@ -131,7 +139,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                     readOnly: (searchType == OfficeSearchType.area),
                     controller: textFieldController,
                     onTap: () async {
-                      if (searchType == OfficeSearchType.area) {
+                      if (searchType == OfficeSearchType.neighborhood) {
                         selectedLocation = await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -141,11 +149,33 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         // unfocused text field :
                         FocusScope.of(context).unfocus();
                         if (selectedLocation != null) {
+                          print("im hereeeee");
+                          print(selectedLocation!.id);
                           searchOfficesBloc.add(
                             SearchOfficesByLocationStarted(
-                                locationId: selectedLocation!.id, token: token),
+                                locationId: selectedLocation!.id),
                           );
                           textFieldController.text = selectedLocation!.getLocationName();
+                        }
+                        return;
+                      }
+                      else if (searchType == OfficeSearchType.area){
+                        selectedRegion = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const SearchRegionScreen(),
+                          ),
+                        ) as RegionViewer;
+                        // unfocused text field :
+                        FocusScope.of(context).unfocus();
+                        if (selectedRegion != null) {
+                          print("im here 2222");
+                          print(selectedRegion!.id);
+                          searchOfficesBloc.add(
+                            SearchOfficesByLocationStarted(
+                                locationId: selectedRegion!.id),
+                          );
+                          textFieldController.text = selectedRegion!.getRegionName();
                         }
                         return;
                       }
@@ -170,9 +200,10 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                       color: AppColors.white,
                     ),
                     decoration: InputDecoration(
-                      hintText: (searchType == OfficeSearchType.name)
-                          ? AppLocalizations.of(context)!.enter_office_name
-                          : AppLocalizations.of(context)!.enter_area_name,
+                      hintText: (searchType == OfficeSearchType.area)
+
+                          ? AppLocalizations.of(context)!.enter_area_name
+                          : (searchType == OfficeSearchType.neighborhood) ?AppLocalizations.of(context)!.enter_neighborhood_name : AppLocalizations.of(context)!.enter_office_name,
                       hintStyle: Theme
                           .of(context)
                           .textTheme
@@ -198,7 +229,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
           child: BlocBuilder<ChannelCubit, dynamic>(
             bloc: searchTypeCubit,
             builder: (_, searchType) {
-              if (searchType == OfficeSearchType.area && selectedLocation == null) {
+              if (searchType == OfficeSearchType.area && searchType == OfficeSearchType.neighborhood && selectedLocation == null) {
                 return Container();
               }
 

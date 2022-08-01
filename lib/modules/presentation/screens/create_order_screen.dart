@@ -59,6 +59,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   int? selectedPriceDomainId;
 
   LocationViewer? selectedLocation;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -128,176 +129,196 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             title: Text(
               AppLocalizations.of(context)!.create_estate_order,
             ),
-            actions: [
-              Container(
-                margin: EdgeInsets.only(
-                  left: (isArabic) ? 16.w : 0,
-                  right: (!isArabic) ? 16.w : 0,
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.history,
-                    color: AppColors.white,
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, RecentEstateOrdersScreen.id);
-                  },
-                ),
-              )
-            ],
+            // actions: [
+            //   // Container(
+            //   //   margin: EdgeInsets.only(
+            //   //     left: (isArabic) ? 16.w : 0,
+            //   //     right: (!isArabic) ? 16.w : 0,
+            //   //   ),
+            //   //   child: IconButton(
+            //   //     icon: const Icon(
+            //   //       Icons.history,
+            //   //       color: AppColors.white,
+            //   //     ),
+            //   //     onPressed: () {
+            //   //       Navigator.pushNamed(context, RecentEstateOrdersScreen.id);
+            //   //     },
+            //   //   ),
+            //   // )
+            // ],
           ),
-          body: Container(
-            padding: kMediumSymWidth,
-            child: SingleChildScrollView(
-              controller: scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  kHe16,
-                  Text(
-                    AppLocalizations.of(context)!.estate_location + " :",
-                  ),
-                  kHe12,
-                  BlocBuilder<ChannelCubit, dynamic>(
-                    bloc: locationErrorCubit,
-                    builder: (_, errorMessage) {
-                      return TextField(
-                        textDirection: TextDirection.rtl,
-                        onTap: () async {
-                          selectedLocation = await Navigator.of(context)
-                              .pushNamed(SearchLocationScreen.id) as LocationViewer?;
-                          if (selectedLocation != null) {
-                            officeAddressController.text = selectedLocation!.getLocationName();
-                            locationErrorCubit.setState(null);
-                          } else {
-                            officeAddressController.clear();
-                          }
-                        },
-                        controller: officeAddressController,
-                        keyboardType: TextInputType.text,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          errorText: errorMessage,
-                          hintText: AppLocalizations.of(context)!.estate_location_hint,
-                          contentPadding: kSmallSymWidth,
-                          errorBorder: kOutlinedBorderRed,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: const BorderRadius.all(Radius.circular(10)),
-                            borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.onBackground.withOpacity(0.4),
+          body: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Container(
+              padding: kMediumSymWidth,
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    kHe16,
+                    Text(
+                      AppLocalizations.of(context)!.estate_location + " :",
+                    ),
+                    kHe12,
+                    BlocBuilder<ChannelCubit, dynamic>(
+                      bloc: locationErrorCubit,
+                      builder: (_, errorMessage) {
+                        return TextField(
+                          textDirection: TextDirection.rtl,
+                          onTap: () async {
+                            selectedLocation = await Navigator.of(context)
+                                .pushNamed(SearchLocationScreen.id) as LocationViewer?;
+                            if (selectedLocation != null) {
+                              officeAddressController.text = selectedLocation!.getLocationName();
+                              locationErrorCubit.setState(null);
+                            } else {
+                              officeAddressController.clear();
+                            }
+                          },
+                          controller: officeAddressController,
+                          keyboardType: TextInputType.text,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            errorText: errorMessage,
+                            hintText: AppLocalizations.of(context)!.estate_location_hint,
+                            contentPadding: kSmallSymWidth,
+                            errorBorder: kOutlinedBorderRed,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.onBackground.withOpacity(0.4),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                  kHe24,
-                  Text(
-                    AppLocalizations.of(context)!.estate_type + " :",
-                  ),
-                  kHe12,
-                  MyDropdownList(
-                    elementsList:
-                        estatesTypes.map((e) => e.getName(isArabic).split('|').first).toList(),
-                    onSelect: (index) {
-                      selectedEstateTypeId = estatesTypes.elementAt(index).id;
-                    },
-                  ),
-                  kHe24,
-                  Text(
-                    AppLocalizations.of(context)!.offer_type + " :",
-                  ),
-                  kHe12,
-                  MyDropdownList(
-                    elementsList: offerTypes.map((e) => e.getName(isArabic)).toList(),
-                    onSelect: (index) {
-                      selectedEstateOfferTypeId = offerTypes.elementAt(index).id;
-                    },
-                  ),
-                  kHe24,
-                  Text(
-                    AppLocalizations.of(context)!.price_domain + " :",
-                  ),
-                  kHe24,
-                  MyDropdownList(
-                    elementsList: priceDomainsNames,
-                    onSelect: (index) {
-                      bool isNoneSelected = index == 0;
-                      selectedPriceDomainId =
-                          (isNoneSelected) ? null : priceDomains.elementAt(index - 1).id;
-                    },
-                  ),
-                  kHe24,
-                  Text(
-                    AppLocalizations.of(context)!.notes + " :",
-                  ),
-                  kHe16,
-                  Container(
-                    width: inf,
-                    padding: kSmallSymWidth,
-                    height: 250.h,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(12)),
-                      border: Border.all(color: Colors.black),
-                    ),
-                    child: TextField(
-                      controller: notesController,
-                      textDirection: TextDirection.rtl,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        hintText: AppLocalizations.of(context)!.order_create_notes_descriptions,
-                      ),
-                      maxLines: 8,
-                    ),
-                  ),
-                  kHe24,
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(280, 64),
-                      ),
-                      child: BlocBuilder<EstateOrderBloc, EstateOrderState>(
-                        builder: (_, estateOrderState) {
-                          if (estateOrderState is SendEstateOrderProgress) {
-                            return SpinKitWave(
-                              color: Theme.of(context).colorScheme.background,
-                              size: 24.w,
-                            );
-                          }
-                          return Text(
-                            AppLocalizations.of(context)!.send_order,
-                          );
-                        },
-                      ),
-                      onPressed: () {
-                        if (selectedLocation == null) {
-                          locationErrorCubit
-                              .setState(AppLocalizations.of(context)!.this_field_is_required);
-                          scrollController.animateTo(0,
-                              duration: const Duration(milliseconds: 500), curve: Curves.ease);
-                          return;
-                        }
-
-                        EstateOrder estateOrder = EstateOrder(
-                          locationId: selectedLocation!.id,
-                          estateTypeId: selectedEstateTypeId,
-                          estateOfferId: selectedEstateOfferTypeId,
-                          priceDomainId: selectedPriceDomainId,
-                          description: (notesController.text.isEmpty) ? null : notesController.text,
-                        );
-
-                        User? user = BlocProvider.of<UserLoginBloc>(context).user;
-                        String? token = (user == null) ? null : user.token;
-                        BlocProvider.of<EstateOrderBloc>(context).add(
-                          SendEstateOrderStarted(order: estateOrder, token: token),
                         );
                       },
                     ),
-                  ),
-                  kHe32,
-                ],
+                    kHe24,
+                    Text(
+                      AppLocalizations.of(context)!.estate_type + " :",
+                    ),
+                    kHe12,
+                    MyDropdownList(
+                      elementsList:
+                          estatesTypes.map((e) => e.getName(isArabic).split('|').first).toList(),
+                      onSelect: (index) {
+                        selectedEstateTypeId = estatesTypes.elementAt(index).id;
+                      },
+                      validator: (value) =>
+                      value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                      selectedItem: AppLocalizations.of(context)!.please_select,
+                    ),
+                    kHe24,
+                    Text(
+                      AppLocalizations.of(context)!.offer_type + " :",
+                    ),
+                    kHe12,
+                    MyDropdownList(
+                      elementsList: offerTypes.map((e) => e.getName(isArabic)).toList(),
+                      onSelect: (index) {
+                        selectedEstateOfferTypeId = offerTypes.elementAt(index).id;
+                      },
+                      validator: (value) =>
+                      value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                      selectedItem: AppLocalizations.of(context)!.please_select,
+                    ),
+                    kHe24,
+                    Text(
+                      AppLocalizations.of(context)!.price_domain + " :",
+                    ),
+                    kHe24,
+                    MyDropdownList(
+                      elementsList: priceDomainsNames,
+                      onSelect: (index) {
+                        bool isNoneSelected = index == 0;
+                        selectedPriceDomainId =
+                            (isNoneSelected) ? null : priceDomains.elementAt(index - 1).id;
+                      },
+                      validator: (value) =>
+                      value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                      selectedItem: AppLocalizations.of(context)!.please_select,
+                    ),
+                    kHe24,
+                    Text(
+                      AppLocalizations.of(context)!.notes + " :",
+                    ),
+                    kHe16,
+                    Container(
+                      width: inf,
+                      padding: kSmallSymWidth,
+                      height: 250.h,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(12)),
+                        border: Border.all(color: Colors.black),
+                      ),
+                      child: TextField(
+                        maxLength: 600,
+                        controller: notesController,
+                        textDirection: TextDirection.rtl,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          hintText: AppLocalizations.of(context)!.order_create_notes_descriptions,
+                        ),
+                        maxLines: 8,
+                      ),
+                    ),
+                    kHe24,
+                    Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: const Size(280, 64),
+                        ),
+                        child: BlocBuilder<EstateOrderBloc, EstateOrderState>(
+                          builder: (_, estateOrderState) {
+                            if (estateOrderState is SendEstateOrderProgress) {
+                              return SpinKitWave(
+                                color: Theme.of(context).colorScheme.background,
+                                size: 24.w,
+                              );
+                            }
+                            return Text(
+                              AppLocalizations.of(context)!.send_order,
+                            );
+                          },
+                        ),
+                        onPressed: () {
+                          if (selectedLocation == null) {
+                            locationErrorCubit
+                                .setState(AppLocalizations.of(context)!.this_field_is_required);
+                            scrollController.animateTo(0,
+                                duration: const Duration(milliseconds: 500), curve: Curves.ease);
+                            return;
+                          }
+
+                          EstateOrder estateOrder = EstateOrder(
+                            locationId: selectedLocation!.id,
+                            estateTypeId: selectedEstateTypeId,
+                            estateOfferId: selectedEstateOfferTypeId,
+                            priceDomainId: selectedPriceDomainId,
+                            description: (notesController.text.isEmpty) ? null : notesController.text,
+                          );
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+
+                            User? user = BlocProvider
+                                .of<UserLoginBloc>(context)
+                                .user;
+                            String? token = (user == null) ? null : user.token;
+                            BlocProvider.of<EstateOrderBloc>(context).add(
+                              SendEstateOrderStarted(
+                                  order: estateOrder, token: token),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    kHe32,
+                  ],
+                ),
               ),
             ),
           ),

@@ -8,6 +8,7 @@ import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/constants/enums.dart';
 import 'package:swesshome/core/storage/shared_preferences/recent_searches_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
@@ -16,6 +17,9 @@ import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/l
 import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/ownership_type_bloc/ownership_type_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate_type.dart';
@@ -27,6 +31,7 @@ import 'package:swesshome/modules/data/models/search_data.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/estates_screen.dart';
+import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/row_informations_choices.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -49,11 +54,15 @@ class _SearchScreenState extends State<SearchScreen> {
   ChannelCubit patternCubit = ChannelCubit(null);
   ChannelCubit locationDetectedCubit = ChannelCubit(false);
   ChannelCubit advancedSearchOpenedCubit = ChannelCubit(false);
+  ChannelCubit searchTypeCubit = ChannelCubit(NewSearchType.area);
+  RegionsBloc regionsBloc = RegionsBloc();
 
   // controllers:
   TextEditingController locationController = TextEditingController();
+  TextEditingController textFieldController = TextEditingController();
 
   // others:
+  late List<Location> region;
   late List<EstateType> estatesTypes;
   late List<PriceDomain> priceDomains;
   late List<OwnershipType> ownershipsTypes;
@@ -63,6 +72,9 @@ class _SearchScreenState extends State<SearchScreen> {
   bool isShops = false;
   bool isHouse = false;
   bool isFarmsAndVacations = false;
+  RegionViewer? selectedRegion;
+  String? token;
+  final _formKey = GlobalKey<FormState>();
 
   initializeEstateBooleanVariables() {
     isSell = (widget.searchData.estateOfferTypeId == sellOfferTypeNumber);
@@ -95,6 +107,9 @@ class _SearchScreenState extends State<SearchScreen> {
     // TODO: implement initState
     super.initState();
     // Fetch lists :
+    region = BlocProvider
+        .of<RegionsBloc>(context)
+        .locations ?? [];
     estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
     priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
     ownershipsTypes = BlocProvider.of<OwnershipTypeBloc>(context).ownershipTypes!;
@@ -117,11 +132,58 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          titleSpacing: 0,
           backgroundColor: isDarkMode ? const Color(0xff26282B) : null,
-          title: Text(
-            isSell
-                ? AppLocalizations.of(context)!.sell_estates
-                : AppLocalizations.of(context)!.rent_estates,
+          title: Row(
+            children: [
+              Text(
+                isSell
+                    ? AppLocalizations.of(context)!.sell_estates
+                    : AppLocalizations.of(context)!.rent_estates,
+                style: TextStyle(fontSize: 17),
+              ),
+              const Spacer(),
+              BlocBuilder<ChannelCubit, dynamic>(
+                bloc: searchTypeCubit,
+                builder: (_, searchType) {
+                  return InkWell(
+                    onTap: () {
+                      textFieldController.clear();
+                      locationController.clear();
+                      regionsBloc.add(SearchRegionCleared());
+                      searchTypeCubit.setState((searchType == NewSearchType.area)
+                          ? NewSearchType.neighborhood
+                          : NewSearchType.area);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8,left: 8),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(4),
+                          ),
+                          border: Border.all(color: AppColors.white),
+                        ),
+                        child: Text(
+                          (searchType == NewSearchType.area)
+                              ? AppLocalizations.of(context)!.search_neighborhood
+                              : AppLocalizations.of(context)!.search_by_area,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .caption!
+                              .copyWith(color: AppColors.white, fontSize: 15.sp),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              )
+            ],
           ),
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(64.h),
@@ -133,129 +195,177 @@ class _SearchScreenState extends State<SearchScreen> {
                 horizontal: 12.w,
               ),
               child: Center(
-                child: TextField(
-                  readOnly: locationDetectedCubit.state,
-                  onTap: () {
-                    locationController.clear();
-                    locationDetectedCubit.setState(false);
-                    patternCubit.setState(null);
+                child: BlocBuilder<ChannelCubit, dynamic>(
+                  bloc: searchTypeCubit,
+                  builder: (_, searchType){
+                    return TextField(
+                      readOnly: locationDetectedCubit.state,
+                      onTap: () {
+                        if(searchType == NewSearchType.area){
+                          locationController.clear();
+                          locationDetectedCubit.setState(false);
+                          patternCubit.setState(null);
 
-                    if (locationController.text.isEmpty) {
-                      patternCubit.setState("");
-                      return;
-                    }
-                  },
-                  controller: locationController,
-                  textDirection: TextDirection.rtl,
-                  style: Theme.of(context).textTheme.subtitle1!.copyWith(color: AppColors.white),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                    ),
-                    border: kUnderlinedBorderWhite,
-                    focusedBorder: kUnderlinedBorderWhite,
-                    enabledBorder: kUnderlinedBorderWhite,
-                    hintText: AppLocalizations.of(context)!.search_place_hint,
-                    hintStyle: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          if (locationController.text.isEmpty) {
+                            patternCubit.setState("");
+                            return;
+                          }
+                        }else{
+                          locationController.clear();
+                          locationDetectedCubit.setState(false);
+                          patternCubit.setState(null);
+
+                          if (locationController.text.isEmpty) {
+                            patternCubit.setState("");
+                            return;
+                          }
+                        }
+                      },
+                      controller: locationController,
+                      textDirection: TextDirection.rtl,
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(color: AppColors.white),
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                        ),
+                        border: kUnderlinedBorderWhite,
+                        focusedBorder: kUnderlinedBorderWhite,
+                        enabledBorder: kUnderlinedBorderWhite,
+                        hintText: (searchType == NewSearchType.area)
+                            ? AppLocalizations.of(context)!.enter_area_name
+                            : AppLocalizations.of(context)!.enter_neighborhood_name ,
+                        hintStyle: Theme.of(context).textTheme.subtitle1!.copyWith(
                           color: AppColors.white.withOpacity(0.48),
                         ),
-                  ),
-                  onChanged: (value) {
-                    patternCubit.setState(value);
-                  },
+                      ),
+                      onChanged: (value) {
+                        if (value.isEmpty) {
+                          regionsBloc.add(SearchRegionCleared());
+                          return;
+                        }else{
+                          patternCubit.setState(value);
+                        }
+                      },
+                    );
+                  }
                 ),
               ),
             ),
           ),
         ),
-        body: SizedBox(
-          height: 1.sh,
-          child: Stack(children: [
-            Container(
-              padding: kMediumSymHeight,
-              child: BlocBuilder<ChannelCubit, dynamic>(
-                bloc: locationDetectedCubit,
-                builder: (_, isLocationDetected) {
-                  return (isLocationDetected) ? buildSearchWidgets() : buildLocationDetector();
-                },
-              ),
-            ),
-            (locationDetectedCubit.state)
-                ? Positioned(
-                    bottom: 0,
-                    child: Container(
-                      padding: kSmallSymWidth,
-                      width: 1.sw,
-                      alignment: Alignment.bottomCenter,
-                      height: 72.h,
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.background,
-                          boxShadow: [lowElevation]),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: ElevatedButton(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    AppLocalizations.of(context)!.search,
-                                    style: Theme.of(context).textTheme.headline5!.copyWith(
-                                        color: Theme.of(context).colorScheme.background,
-                                        height: 1.4),
-                                  ),
-                                  kWi8,
-                                  Icon(
-                                    Icons.search,
-                                    color: Theme.of(context).colorScheme.background,
-                                  ),
-                                ],
-                              ),
-                              onPressed: () {
-                                if (locationDetectedCubit.state == false) {
-                                  Fluttertoast.showToast(msg: AppLocalizations.of(context)!.search);
-                                }
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => EstatesScreen(
-                                      searchData: EstateFetchStarted(
-                                        searchData: widget.searchData,
-                                        isAdvanced: advancedSearchOpenedCubit.state,
-                                        token: userToken,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          kWi4,
-                          Expanded(
-                            flex: 1,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: isDarkMode ? const Color(0xff90B8F8) : null,
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size(20.w, 60.h),
-                              ),
-                              child: Text(
-                                AppLocalizations.of(context)!.clear,
-                              ),
-                              onPressed: () {
-                                locationController.clear();
-                                locationDetectedCubit.setState(false);
-                              },
-                            ),
-                          ),
-                        ],
+        body: Form(
+          key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: SizedBox(
+            height: 1.sh,
+            child: Stack(children: [
+              BlocBuilder<ChannelCubit, dynamic>(
+                bloc: searchTypeCubit,
+                  builder: (_, searchType) {
+                  if(searchType == NewSearchType.area){
+                   return Container(
+                      padding: kMediumSymHeight,
+                      child: BlocBuilder<ChannelCubit, dynamic>(
+                        bloc: locationDetectedCubit,
+                        builder: (_, isLocationDetected) {
+                          return (isLocationDetected) ? buildSearchWidgets() : buildRegionsDetector();
+                        },
                       ),
+                    );
+                  }
+                  return  Container(
+                    padding: kMediumSymHeight,
+                    child: BlocBuilder<ChannelCubit, dynamic>(
+                      bloc: locationDetectedCubit,
+                      builder: (_, isLocationDetected) {
+                        return (isLocationDetected) ? buildSearchWidgets() : buildLocationDetector();
+                      },
                     ),
-                  )
-                : Container(),
-          ]),
+                  );
+                  }
+              ),
+              (locationDetectedCubit.state)
+                  ? Positioned(
+                      bottom: 0,
+                      child: Container(
+                        padding: kSmallSymWidth,
+                        width: 1.sw,
+                        alignment: Alignment.bottomCenter,
+                        height: 72.h,
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.background,
+                            boxShadow: [lowElevation]),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: ElevatedButton(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!.search,
+                                      style: Theme.of(context).textTheme.headline5!.copyWith(
+                                          color: Theme.of(context).colorScheme.background,
+                                          height: 1.4),
+                                    ),
+                                    kWi8,
+                                    Icon(
+                                      Icons.search,
+                                      color: Theme.of(context).colorScheme.background,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: () {
+                                  if (locationDetectedCubit.state == false) {
+                                    Fluttertoast.showToast(msg: AppLocalizations.of(context)!.search);
+                                  }
+                                  if (_formKey.currentState!.validate()) {
+                                    _formKey.currentState!.save();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            EstatesScreen(
+                                              searchData: EstateFetchStarted(
+                                                searchData: widget.searchData,
+                                                isAdvanced: advancedSearchOpenedCubit
+                                                    .state,
+                                                token: userToken,
+                                              ),
+                                            ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            kWi4,
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: isDarkMode ? const Color(0xff90B8F8) : null,
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: Size(20.w, 60.h),
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context)!.clear,
+                                ),
+                                onPressed: () {
+                                  locationController.clear();
+                                  locationDetectedCubit.setState(false);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Container(),
+            ]),
+          ),
         ),
       ),
     );
@@ -298,6 +408,124 @@ class _SearchScreenState extends State<SearchScreen> {
                             width: inf,
                             child: Text(
                               locations.elementAt(index).getLocationName(),
+                              textAlign: TextAlign.right,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1!
+                                  .copyWith(color: Theme.of(context).colorScheme.onBackground),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (_, index) {
+                        return const Divider();
+                      },
+                      itemCount: locations.length,
+                    );
+            },
+          );
+        }
+        return Container();
+      },
+    );
+  }
+
+  BlocBuilder buildRegionsDetector() {
+    return BlocBuilder<RegionsBloc, RegionsState>(
+      builder: (_, regionsFetchState) {
+        if (regionsFetchState is RegionsFetchComplete) {
+          return BlocBuilder<ChannelCubit, dynamic>(
+            bloc: patternCubit,
+            builder: (_, pattern) {
+              List<RegionViewer> locations =
+                  BlocProvider.of<RegionsBloc>(context).getRegionsViewers(pattern);
+              return (pattern == null)
+                  ? buildRecentSearchedPlaces()
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder: (_, index) {
+                        return InkWell(
+                          onTap: () async {
+                            // set location name in location text field:
+                            locationController.text = locations.elementAt(index).getRegionName();
+                            // initialize search data again :
+                            initializeOfferData();
+                            // set search data location id:
+                            widget.searchData.locationId = locations.elementAt(index).id;
+                            // set location detected state :
+                            locationDetectedCubit.setState(true);
+                            // unfocused text field :
+                            FocusScope.of(context).unfocus();
+                            // save location as recent search:
+                            await saveAsRecentSearch(locations.elementAt(index).id);
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical: 8.h,
+                            ),
+                            padding: kMediumSymWidth,
+                            width: inf,
+                            child: Text(
+                              locations.elementAt(index).getRegionName(),
+                              textAlign: TextAlign.right,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1!
+                                  .copyWith(color: Theme.of(context).colorScheme.onBackground),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (_, index) {
+                        return const Divider();
+                      },
+                      itemCount: locations.length,
+                    );
+            },
+          );
+        }
+        return Container();
+      },
+    );
+  }
+
+  BlocBuilder buildSubRegionsDetector() {
+    return BlocBuilder<RegionsBloc, RegionsState>(
+      builder: (_, regionsFetchState) {
+        if (regionsFetchState is RegionsFetchComplete) {
+          return BlocBuilder<ChannelCubit, dynamic>(
+            bloc: patternCubit,
+            builder: (_, pattern) {
+              List<RegionViewer> locations =
+                  BlocProvider.of<RegionsBloc>(context).getRegionsViewers(pattern);
+              return (pattern == null)
+                  ? buildRecentSearchedPlaces()
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder: (_, index) {
+                        return InkWell(
+                          onTap: () async {
+                            // set location name in location text field:
+                            locationController.text = locations.elementAt(index).getRegionName();
+                            // initialize search data again :
+                            initializeOfferData();
+                            // set search data location id:
+                            widget.searchData.locationId = locations.elementAt(index).id;
+                            // set location detected state :
+                            locationDetectedCubit.setState(true);
+                            // unfocused text field :
+                            FocusScope.of(context).unfocus();
+                            // save location as recent search:
+                            await saveAsRecentSearch(locations.elementAt(index).id);
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical: 8.h,
+                            ),
+                            padding: kMediumSymWidth,
+                            width: inf,
+                            child: Text(
+                              locations.elementAt(index).getRegionName(),
                               textAlign: TextAlign.right,
                               style: Theme.of(context)
                                   .textTheme
@@ -365,7 +593,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     removeDefaultButton: true,
                     dialogButtons: [
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(fixedSize: Size(110.w, 56.h)),
+                        style: ElevatedButton.styleFrom(fixedSize: Size(120.w, 56.h)),
                         child: Text(
                           AppLocalizations.of(context)!.cancel,
                         ),
@@ -374,7 +602,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         },
                       ),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(fixedSize: Size(110.w, 56.h)),
+                        style: ElevatedButton.styleFrom(fixedSize: Size(120.w, 56.h)),
                         child: Text(
                           AppLocalizations.of(context)!.yes,
                         ),
@@ -487,6 +715,9 @@ class _SearchScreenState extends State<SearchScreen> {
               // close advanced search section:
               advancedSearchOpenedCubit.setState(false);
             },
+            validator: (value) =>
+            value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+            selectedItem: AppLocalizations.of(context)!.please_select,
           ),
           kHe24,
           Text(
@@ -502,6 +733,9 @@ class _SearchScreenState extends State<SearchScreen> {
               widget.searchData.priceDomainId =
                   (isNoneSelected) ? null : priceDomains.elementAt(index - 1).id;
             },
+            validator: (value) =>
+            value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+            selectedItem: AppLocalizations.of(context)!.please_select,
           ),
           kHe24,
           BlocBuilder<ChannelCubit, dynamic>(
@@ -593,6 +827,9 @@ class _SearchScreenState extends State<SearchScreen> {
               widget.searchData.ownershipId =
                   (isNoneSelected) ? null : ownershipsTypes.elementAt(index - 1).id;
             },
+            validator: (value) =>
+            value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+            selectedItem: AppLocalizations.of(context)!.please_select,
           ),
         ],
         if (!isLands && !isShops) ...[
@@ -613,6 +850,9 @@ class _SearchScreenState extends State<SearchScreen> {
               widget.searchData.interiorStatusId =
                   (isNoneSelected) ? null : interiorStatuses.elementAt(index - 1).id;
             },
+            validator: (value) =>
+            value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+            selectedItem: AppLocalizations.of(context)!.please_select,
           ),
         ],
         if (isHouse) ...[

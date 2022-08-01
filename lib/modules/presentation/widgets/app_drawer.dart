@@ -20,6 +20,7 @@ import 'package:swesshome/modules/presentation/screens/created_estates_screen.da
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
+import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -47,6 +48,7 @@ class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    User? user = BlocProvider.of<UserLoginBloc>(context).user;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +138,7 @@ class _MyDrawerState extends State<MyDrawer> {
                           ),
                           kHe24,
                           Text(
-                            user.userName,
+                            user.userName +" "+ user.lastName,
                             style: Theme.of(context)
                                 .textTheme
                                 .headline4!
@@ -156,20 +158,27 @@ class _MyDrawerState extends State<MyDrawer> {
               );
             },
           ),
-          RowInformation(
+           user != null ? RowInformation(
             content: AppLocalizations.of(context)!.saved_estates,
             iconData: Icons.bookmark_border_outlined,
             onTap: () {
               Navigator.pushNamed(context, SavedEstatesScreen.id);
             },
-          ),
-          RowInformation(
+          ):Container(),
+          user != null? RowInformation(
             content: AppLocalizations.of(context)!.recent_created_estates,
             iconData: Icons.article_outlined,
             onTap: () {
               Navigator.pushNamed(context, CreatedEstatesScreen.id);
             },
-          ),
+          ):Container(),
+          user != null? RowInformation(
+            content:   AppLocalizations.of(context)!.recent_created_orders,
+            iconData: Icons.history,
+            onTap: () {
+              Navigator.pushNamed(context, RecentEstateOrdersScreen.id);
+            },
+          ):Container(),
           RowInformation(
             content: AppLocalizations.of(context)!.call_us,
             iconData: Icons.call_outlined,

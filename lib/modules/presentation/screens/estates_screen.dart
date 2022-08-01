@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,6 +21,7 @@ import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+import 'package:swesshome/utils/helpers/my_snack_bar.dart';
 import 'package:swesshome/utils/helpers/show_my_snack_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -107,6 +109,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                 } else if (estatesFetchState is EstateFetchComplete) {
                   estates.addAll(estatesFetchState.estates);
                   BlocProvider.of<EstateBloc>(context).isFetching = false;
+
                 } else if (estatesFetchState is EstateFetchError && estates.isEmpty) {
                   BlocProvider.of<EstateBloc>(context).isFetching = false;
                   return RefreshIndicator(

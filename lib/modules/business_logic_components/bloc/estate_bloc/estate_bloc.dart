@@ -38,7 +38,7 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
         emit(EstateFetchProgress());
         try {
           List<Estate> estates = await estateRepository.getOfficeEstates(event.officeId);
-          emit(EstateFetchComplete(estates: estates));
+          emit(EstateFetchComplete(estates: estates,));
         } on ConnectionException catch (e) {
           emit(
             EstateFetchError(errorMessage: e.errorMessage),

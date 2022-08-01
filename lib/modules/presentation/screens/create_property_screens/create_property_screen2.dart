@@ -57,6 +57,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
   TextEditingController floorController = TextEditingController();
   TextEditingController roomsCountController = TextEditingController();
   TextEditingController periodController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -130,6 +131,9 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
             onSelect: (index) {
               widget.currentOffer.areaUnit = areaTypes.elementAt(index);
             },
+            selectedItem: AppLocalizations.of(context)!.please_select_here,
+            validator: (value) =>
+            value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
           ),
         ),
       ),
@@ -138,220 +142,234 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
     return CreatePropertyTemplate(
       headerIconPath: areaOutlineIconPath,
       headerText: AppLocalizations.of(context)!.step_2,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            24.verticalSpace,
-            Text(
-              AppLocalizations.of(context)!.estate_area + " :",
-            ),
-            16.verticalSpace,
-            Row(children: (isArabic) ? priceWidget.reversed.toList() : priceWidget),
-            24.verticalSpace,
-            Text(
-              (isSell)
-                  ? AppLocalizations.of(context)!.estate_price + " :"
-                  : AppLocalizations.of(context)!.estate_rent_price + " :",
-            ),
-            16.verticalSpace,
-            Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: BlocBuilder<ChannelCubit, dynamic>(
-                    bloc: priceErrorCubit,
-                    builder: (_, errorMessage) {
-                      late String hintText;
-
-                      if (isForStore) {
-                        hintText = (isSell)
-                            ? AppLocalizations.of(context)!.estate_price_hint_lebanon
-                            : AppLocalizations.of(context)!.estate_rent_price_hint_lebanon;
-                      } else {
-                        hintText = (isSell)
-                            ? AppLocalizations.of(context)!.estate_price_hint_syrian
-                            : AppLocalizations.of(context)!.estate_rent_price_hint_syrian;
-                      }
-
-                      return TextField(
-                        textDirection: TextDirection.ltr,
-                        controller: priceController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          hintText: hintText,
-                          errorText: errorMessage,
-                          isDense: true,
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Theme.of(context).colorScheme.onBackground),
-                          ),
-                        ),
-                        cursorColor: Theme.of(context).colorScheme.onBackground,
-                        onChanged: (value) {
-                          if (!NumbersHelper.isNumeric(value.replaceAll(",", ""))) {
-                            priceErrorCubit.setState(AppLocalizations.of(context)!.invalid_value);
-                            return;
-                          }
-                          priceController.text =
-                              NumbersHelper.getMoneyFormat(int.parse(value.replaceAll(',', '')));
-                          priceController.selection = TextSelection.fromPosition(
-                            TextPosition(offset: priceController.text.length),
-                          );
-                          priceErrorCubit.setState(null);
-                        },
-                      );
-                    },
-                  ),
-                ),
-                12.horizontalSpace,
+      body: Form(
+        key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              24.verticalSpace,
+              Text(
+                AppLocalizations.of(context)!.estate_area + " :",
+              ),
+              16.verticalSpace,
+              Row(children: (isArabic) ? priceWidget.reversed.toList() : priceWidget),
+              24.verticalSpace,
+              Text(
                 (isSell)
-                    ? Container()
-                    : Expanded(
-                        flex: 2,
-                        child: GestureDetector(
-                          onTap: () {
-                            SystemChannels.textInput.invokeMethod('TextInput.hide');
-                            FocusScope.of(context).unfocus();
+                    ? AppLocalizations.of(context)!.estate_price + " :"
+                    : AppLocalizations.of(context)!.estate_rent_price + " :",
+              ),
+              16.verticalSpace,
+              Row(
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: BlocBuilder<ChannelCubit, dynamic>(
+                      bloc: priceErrorCubit,
+                      builder: (_, errorMessage) {
+                        late String hintText;
+
+                        if (isForStore) {
+                          hintText = (isSell)
+                              ? AppLocalizations.of(context)!.estate_price_hint_lebanon
+                              : AppLocalizations.of(context)!.estate_rent_price_hint_lebanon;
+                        } else {
+                          hintText = (isSell)
+                              ? AppLocalizations.of(context)!.estate_price_hint_syrian
+                              : AppLocalizations.of(context)!.estate_rent_price_hint_syrian;
+                        }
+
+                        return TextField(
+                          textDirection: TextDirection.ltr,
+                          controller: priceController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: hintText,
+                            errorText: errorMessage,
+                            isDense: true,
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                            ),
+                          ),
+                          cursorColor: Theme.of(context).colorScheme.onBackground,
+                          onChanged: (value) {
+                            if (!NumbersHelper.isNumeric(value.replaceAll(",", ""))) {
+                              priceErrorCubit.setState(AppLocalizations.of(context)!.invalid_value);
+                              return;
+                            }
+                            priceController.text =
+                                NumbersHelper.getMoneyFormat(int.parse(value.replaceAll(',', '')));
+                            priceController.selection = TextSelection.fromPosition(
+                              TextPosition(offset: priceController.text.length),
+                            );
+                            priceErrorCubit.setState(null);
                           },
-                          child: MyDropdownList(
-                            isOnChangeNull: isKeyboardOpened,
-                            elementsList: periodTypes
-                                .map((e) => e.getName(isArabic).split("|").first)
-                                .toList(),
-                            onSelect: (index) {
-                              widget.currentOffer.periodType = periodTypes.elementAt(index);
-                              selectedPeriodCubit!.setState(
-                                periodTypes
-                                    .elementAt(index)
-                                    .getName(isArabic)
-                                    .split("|")
-                                    .elementAt(1),
-                              );
+                        );
+                      },
+                    ),
+                  ),
+                  12.horizontalSpace,
+                  (isSell)
+                      ? Container()
+                      : Expanded(
+                          flex: 2,
+                          child: GestureDetector(
+                            onTap: () {
+                              SystemChannels.textInput.invokeMethod('TextInput.hide');
+                              FocusScope.of(context).unfocus();
                             },
+                            child: MyDropdownList(
+                              isOnChangeNull: isKeyboardOpened,
+                              elementsList: periodTypes
+                                  .map((e) => e.getName(isArabic).split("|").first)
+                                  .toList(),
+                              onSelect: (index) {
+                                widget.currentOffer.periodType = periodTypes.elementAt(index);
+                                selectedPeriodCubit!.setState(
+                                  periodTypes
+                                      .elementAt(index)
+                                      .getName(isArabic)
+                                      .split("|")
+                                      .elementAt(1),
+                                );
+                              },
+                              validator: (value) =>
+                              value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                              selectedItem: AppLocalizations.of(context)!.please_select_here,
+                            ),
                           ),
                         ),
+                ],
+              ),
+              if (!isSell) ...[
+                24.verticalSpace,
+                Text(
+                  AppLocalizations.of(context)!.estate_rent_period + " :",
+                  textAlign: TextAlign.right,
+                ),
+                12.verticalSpace,
+                BlocBuilder<ChannelCubit, dynamic>(
+                  bloc: periodErrorCubit,
+                  builder: (_, errorMessage) {
+                    return TextField(
+                      textDirection: TextDirection.ltr,
+                      controller: periodController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        errorText: errorMessage,
+                        suffix: BlocBuilder<ChannelCubit, dynamic>(
+                          bloc: selectedPeriodCubit,
+                          builder: (_, periodName) {
+                            return Padding(
+                              padding: EdgeInsets.only(right: 12.w),
+                              child: Text(
+                                periodName,
+                              ),
+                            );
+                          },
+                        ),
+                        isDense: true,
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                        ),
                       ),
+                      cursorColor: Theme.of(context).colorScheme.onBackground,
+                      onChanged: (_) {
+                        periodErrorCubit.setState(null);
+                      },
+                    );
+                  },
+                ),
               ],
-            ),
-            if (!isSell) ...[
-              24.verticalSpace,
-              Text(
-                AppLocalizations.of(context)!.estate_rent_period + " :",
-                textAlign: TextAlign.right,
-              ),
-              12.verticalSpace,
-              BlocBuilder<ChannelCubit, dynamic>(
-                bloc: periodErrorCubit,
-                builder: (_, errorMessage) {
-                  return TextField(
-                    textDirection: TextDirection.ltr,
-                    controller: periodController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      errorText: errorMessage,
-                      suffix: BlocBuilder<ChannelCubit, dynamic>(
-                        bloc: selectedPeriodCubit,
-                        builder: (_, periodName) {
-                          return Padding(
-                            padding: EdgeInsets.only(right: 12.w),
-                            child: Text(
-                              periodName,
-                            ),
-                          );
-                        },
-                      ),
-                      isDense: true,
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
-                      ),
+              if (isHouse) ...[
+                24.verticalSpace,
+                Text(
+                  AppLocalizations.of(context)!.rooms_count +
+                      " ( ${AppLocalizations.of(context)!.optional} ) :",
+                ),
+                16.verticalSpace,
+                TextField(
+                  controller: roomsCountController,
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)!.rooms_count_hint,
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
                     ),
-                    cursorColor: Theme.of(context).colorScheme.onBackground,
-                    onChanged: (_) {
-                      periodErrorCubit.setState(null);
-                    },
-                  );
-                },
-              ),
-            ],
-            if (isHouse) ...[
-              24.verticalSpace,
-              Text(
-                AppLocalizations.of(context)!.rooms_count +
-                    " ( ${AppLocalizations.of(context)!.optional} ) :",
-              ),
-              16.verticalSpace,
-              TextField(
-                controller: roomsCountController,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.rooms_count_hint,
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
                   ),
+                  cursorColor: Theme.of(context).colorScheme.onBackground,
                 ),
-                cursorColor: Theme.of(context).colorScheme.onBackground,
-              ),
-              24.verticalSpace,
-              Text(
-                AppLocalizations.of(context)!.floor_number +
-                    " ( ${AppLocalizations.of(context)!.optional} ) :",
-              ),
-              16.verticalSpace,
-              TextField(
-                controller: floorController,
-                textDirection: TextDirection.ltr,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.floor_hint,
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
-                  ),
+                24.verticalSpace,
+                Text(
+                  AppLocalizations.of(context)!.floor_number +
+                      " ( ${AppLocalizations.of(context)!.optional} ) :",
                 ),
-                cursorColor: Theme.of(context).colorScheme.onBackground,
-              ),
-            ],
-            if (isSell && !isHouse) ...[
-              24.verticalSpace,
-              Text(
-                AppLocalizations.of(context)!.ownership_type + " :",
-              ),
-              16.verticalSpace,
-              MyDropdownList(
-                elementsList: ownershipTypes.map((e) => e.getName(isArabic)).toList(),
-                onSelect: (index) {
-                  widget.currentOffer.ownershipType = ownershipTypes.elementAt(index);
-                },
-              ),
-            ],
-            40.verticalSpace,
-            Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
-                child: Text(
-                  AppLocalizations.of(context)!.next,
-                ),
-                onPressed: () {
-                  if (!validateData()) return;
-                  widget.currentOffer.area = areaController.text;
-                  widget.currentOffer.price = priceController.text.replaceAll(",", "");
-                  if (!isSell) {
-                    widget.currentOffer.period = periodController.text;
-                  }
-                  if (isHouse) {
-                    widget.currentOffer.roomsCount = roomsCountController.text;
-                    widget.currentOffer.floor = floorController.text;
-                  }
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CreatePropertyScreen3(currentOffer: widget.currentOffer),
+                16.verticalSpace,
+                TextField(
+                  controller: floorController,
+                  textDirection: TextDirection.ltr,
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)!.floor_hint,
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
                     ),
-                  );
-                },
+                  ),
+                  cursorColor: Theme.of(context).colorScheme.onBackground,
+                ),
+              ],
+              if (isSell && !isHouse) ...[
+                24.verticalSpace,
+                Text(
+                  AppLocalizations.of(context)!.ownership_type + " :",
+                ),
+                16.verticalSpace,
+                MyDropdownList(
+                  elementsList: ownershipTypes.map((e) => e.getName(isArabic)).toList(),
+                  onSelect: (index) {
+                    widget.currentOffer.ownershipType = ownershipTypes.elementAt(index);
+                  },
+                  validator: (value) =>
+                  value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                  selectedItem: AppLocalizations.of(context)!.please_select,
+                ),
+              ],
+              40.verticalSpace,
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
+                  child: Text(
+                    AppLocalizations.of(context)!.next,
+                  ),
+                  onPressed: () {
+                    if (!validateData()) return;
+                    widget.currentOffer.area = areaController.text;
+                    widget.currentOffer.price = priceController.text.replaceAll(",", "");
+                    if (!isSell) {
+                      widget.currentOffer.period = periodController.text;
+                    }
+                    if (isHouse) {
+                      widget.currentOffer.roomsCount = roomsCountController.text;
+                      widget.currentOffer.floor = floorController.text;
+                    }
+    if (_formKey.currentState!.validate()) {
+      print("Dsadsadasdadas");
+      _formKey.currentState!.save();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              CreatePropertyScreen3(currentOffer: widget.currentOffer),
+        ),
+      );
+    }
+                  },
+                ),
               ),
-            ),
-            42.verticalSpace,
-          ],
+              42.verticalSpace,
+            ],
+          ),
         ),
       ),
     );
