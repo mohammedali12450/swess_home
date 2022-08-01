@@ -439,6 +439,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 }
                 userLoginBloc.add(UserLoginStarted(
                     authentication: phoneNumber, password: passwordControllerLogin.text));
+                FocusScope.of(context).unfocus();
               },
             ),
           ),
@@ -493,7 +494,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             builder: (_, errorMessage) {
               return IntlPhoneField(
                 controller: authenticationController,
-                decoration: InputDecoration(errorText: errorMessage , errorMaxLines: 2),
+                decoration: InputDecoration(errorText: errorMessage, errorMaxLines: 2),
                 initialCountryCode: isForStore ? 'LB' : 'SY',
                 onChanged: (phone) {
                   phoneDialCode = phone.countryCode;
@@ -630,6 +631,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         lastName: lastNameController.text),
                   ),
                 );
+                FocusScope.of(context).unfocus();
               },
             ),
           ),

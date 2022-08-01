@@ -278,7 +278,7 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> with Widg
                 );
               },
             ),
-            12.verticalSpace,
+            42.verticalSpace,
           ],
         ),
       ),

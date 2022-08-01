@@ -350,7 +350,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                 },
               ),
             ),
-            12.verticalSpace,
+            42.verticalSpace,
           ],
         ),
       ),
