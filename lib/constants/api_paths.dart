@@ -48,6 +48,10 @@ const checkConfirmationCode = "api/code/check";
 const forgetPasswordUrl = "api/forgetUserPasswordSendCode";
 const resetPasswordUrl = "api/ResetUserPassword";
 const verificationUrl = "api/forgetUserPasswordCheck";
+const allregionsUrl = "api/allregions";
+const allLocationUrl = "api/getallsublocations";
+const newSearchUrl = "api/estate/searchEstateByregionsByestatefeatures";
+const searchByregionUrl = "api/office/searchByRegions";
 
 const resendConfirmationCode = "api/code/resend";
 const deleteUserUrl = "api/user/deleteUserInformation";

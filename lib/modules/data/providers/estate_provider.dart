@@ -26,7 +26,7 @@ class EstateProvider {
 
     try {
       response = await helper.post(
-          (isAdvanced) ? advancedSearchUrl : "http://swesshomerealestate.com/api/estate/searchEstateByregionsByestatefeatures",
+          (isAdvanced) ? advancedSearchUrl : newSearchUrl,
           FormData.fromMap(
             searchData.toJson(isAdvanced),
           ),

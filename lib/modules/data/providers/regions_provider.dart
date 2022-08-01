@@ -6,7 +6,7 @@ class RegionsProvider{
 
   Future getRegions()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get("http://swesshomerealestate.com/api/allregions") ;
+    Response response = await helper.get(allregionsUrl) ;
     return response ;
   }
 }

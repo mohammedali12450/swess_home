@@ -38,7 +38,7 @@ class EstateOfficeProvider {
 
     try {
       response = await helper.post(
-           "http://swesshomerealestate.com/api/office/searchByRegions",
+        searchByregionUrl,
           {"location_id": locationId},);
       print(response.statusCode);
       print(response);
