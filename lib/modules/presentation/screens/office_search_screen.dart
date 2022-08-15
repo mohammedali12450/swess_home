@@ -149,8 +149,6 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         // unfocused text field :
                         FocusScope.of(context).unfocus();
                         if (selectedLocation != null) {
-                          print("im hereeeee");
-                          print(selectedLocation!.id);
                           searchOfficesBloc.add(
                             SearchOfficesByLocationStarted(
                                 locationId: selectedLocation!.id),
@@ -169,8 +167,6 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         // unfocused text field :
                         FocusScope.of(context).unfocus();
                         if (selectedRegion != null) {
-                          print("im here 2222");
-                          print(selectedRegion!.id);
                           searchOfficesBloc.add(
                             SearchOfficesByLocationStarted(
                                 locationId: selectedRegion!.id),

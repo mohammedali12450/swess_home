@@ -9,6 +9,7 @@ import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/search_data.dart';
 import 'package:swesshome/modules/data/providers/estate_provider.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EstateRepository {
   final EstateProvider _estateProvider = EstateProvider();
@@ -41,11 +42,18 @@ class EstateRepository {
     if ((response.statusCode == 201) && (page == 1) ) {
        showWonderfulAlertDialog(
         navigatorKey.currentContext!,
-        "ssss",
-        "sdas",
+         AppLocalizations.of(navigatorKey.currentContext!)!.warning,
+           AppLocalizations.of(navigatorKey.currentContext!)!.war,
       );
     }
-    if (response.statusCode != 201 && response.statusCode != 202) {
+    if ((response.statusCode == 202) && (page == 1) ) {
+      showWonderfulAlertDialog(
+        navigatorKey.currentContext!,
+        AppLocalizations.of(navigatorKey.currentContext!)!.warning,
+        AppLocalizations.of(navigatorKey.currentContext!)!.sorry,
+      );
+    }
+    if (response.statusCode != 201 && response.statusCode != 202 && response.statusCode != 200) {
       throw GeneralException(errorMessage: "حدث خطأ");
     }
     dynamic jsonEstates = jsonDecode(response.toString())["data"];

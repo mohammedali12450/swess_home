@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -49,6 +50,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   // Other:
   late String phoneDialCode;
   PhoneNumber? phoneNumber;
+  bool isForStore = false;
+  late String phoneDialCodeLogin;
   ScrollController scrollController = ScrollController();
 
   @override
@@ -58,10 +61,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     forgetPasswordBloc = BlocProvider.of<ForgetPasswordBloc>(context);
     //TODO: edit is out of syria
     // Dial code initializing:
-    if (BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore) {
+    isForStore = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore;
+    if (isForStore) {
       phoneDialCode = "+961";
+      phoneDialCodeLogin = "+961";
     } else {
       phoneDialCode = "+963";
+      phoneDialCodeLogin = "+963";
     }
   }
 
@@ -97,6 +103,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                AppLocalizations.of(context)!.localeName == "en"? forgetState.errorMessage!:"هذا الحساب غير موجود",
               defaultButtonContent: AppLocalizations.of(context)!.ok,
             );
+             print("+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,);
           }
         }
         if (forgetState is ForgetPasswordComplete) {
@@ -160,30 +167,46 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         BlocBuilder<ChannelCubit, dynamic>(
           bloc: officePhoneErrorLogin,
           builder: (_, errorMessage) {
-            return TextField(
-              textDirection: TextDirection.ltr,
-              onChanged: (_) {
+            return IntlPhoneField(
+              controller: officePhoneControllerLogin,
+              decoration: InputDecoration(errorText: errorMessage, errorMaxLines: 2),
+              initialCountryCode: isForStore ? 'LB' : 'SY',
+              onChanged: (phone) {
+                phoneDialCode = phone.countryCode;
                 officePhoneErrorLogin.setState(null);
               },
-              cursorColor: Theme.of(context).colorScheme.onBackground,
-              controller: officePhoneControllerLogin,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                prefixIcon: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  child: Text(
-                    phoneDialCode,
-                    style: Theme.of(context).textTheme.caption,
-                    textDirection: TextDirection.ltr,
-                  ),
-                ),
-                errorText: errorMessage,
-                hintText: AppLocalizations.of(context)!.enter_mobile_number,
-              ),
+              disableLengthCheck: true,
+              autovalidateMode: AutovalidateMode.disabled,
             );
           },
         ),
+        // BlocBuilder<ChannelCubit, dynamic>(
+        //   bloc: officePhoneErrorLogin,
+        //   builder: (_, errorMessage) {
+        //     return TextField(
+        //       textDirection: TextDirection.ltr,
+        //       onChanged: (_) {
+        //         officePhoneErrorLogin.setState(null);
+        //       },
+        //       cursorColor: Theme.of(context).colorScheme.onBackground,
+        //       controller: officePhoneControllerLogin,
+        //       keyboardType: TextInputType.phone,
+        //       decoration: InputDecoration(
+        //         prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        //         prefixIcon: Padding(
+        //           padding: EdgeInsets.symmetric(horizontal: 12.w),
+        //           child: Text(
+        //             phoneDialCode,
+        //             style: Theme.of(context).textTheme.caption,
+        //             textDirection: TextDirection.ltr,
+        //           ),
+        //         ),
+        //         errorText: errorMessage,
+        //         hintText: AppLocalizations.of(context)!.enter_mobile_number,
+        //       ),
+        //     );
+        //   },
+        // ),
         56.verticalSpace,
         Center(
           child: ElevatedButton(
@@ -195,6 +218,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               if (!await signInFieldsValidation()) {
                 return;
               }
+              print("+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,);
               forgetPasswordBloc.add(
                 ForgetPasswordStarted(
                   mobile: "+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,),

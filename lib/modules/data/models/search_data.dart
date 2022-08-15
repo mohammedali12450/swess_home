@@ -24,7 +24,7 @@ class SearchData {
       {this.estateOfferTypeId,
       this.locationId,
       this.estateTypeId,
-      this.priceDomainId});
+      this.priceDomainId,this.ownershipId,this.interiorStatusId});
 
   Map<String, dynamic> toJson(bool isAdvanced) {
     return {

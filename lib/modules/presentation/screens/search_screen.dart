@@ -54,7 +54,7 @@ class _SearchScreenState extends State<SearchScreen> {
   ChannelCubit patternCubit = ChannelCubit(null);
   ChannelCubit locationDetectedCubit = ChannelCubit(false);
   ChannelCubit advancedSearchOpenedCubit = ChannelCubit(false);
-  ChannelCubit searchTypeCubit = ChannelCubit(NewSearchType.area);
+  ChannelCubit searchTypeCubit = ChannelCubit(NewSearchType.neighborhood);
   RegionsBloc regionsBloc = RegionsBloc();
 
   // controllers:
@@ -94,8 +94,8 @@ class _SearchScreenState extends State<SearchScreen> {
     widget.searchData.isFurnished = null;
     widget.searchData.hasSwimmingPool = null;
     widget.searchData.isOnBeach = null;
-    widget.searchData.interiorStatusId = null;
-    widget.searchData.ownershipId = null;
+    // widget.searchData.interiorStatusId = null;
+    // widget.searchData.ownershipId = null;
     initializeEstateBooleanVariables();
   }
 
@@ -198,13 +198,15 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: BlocBuilder<ChannelCubit, dynamic>(
                   bloc: searchTypeCubit,
                   builder: (_, searchType){
-                    return TextField(
+                    return TextFormField(
+                      validator: (value) => value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
                       readOnly: locationDetectedCubit.state,
                       onTap: () {
                         if(searchType == NewSearchType.area){
                           locationController.clear();
                           locationDetectedCubit.setState(false);
                           patternCubit.setState(null);
+                          FocusScope.of(context).unfocus();
 
                           if (locationController.text.isEmpty) {
                             patternCubit.setState("");
@@ -214,6 +216,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           locationController.clear();
                           locationDetectedCubit.setState(false);
                           patternCubit.setState(null);
+                          FocusScope.of(context).unfocus();
 
                           if (locationController.text.isEmpty) {
                             patternCubit.setState("");
@@ -323,6 +326,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                   }
                                   if (_formKey.currentState!.validate()) {
                                     _formKey.currentState!.save();
+                                    print("adsas");
+                                    print(widget.searchData.toJson(true));
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -489,64 +494,64 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  BlocBuilder buildSubRegionsDetector() {
-    return BlocBuilder<RegionsBloc, RegionsState>(
-      builder: (_, regionsFetchState) {
-        if (regionsFetchState is RegionsFetchComplete) {
-          return BlocBuilder<ChannelCubit, dynamic>(
-            bloc: patternCubit,
-            builder: (_, pattern) {
-              List<RegionViewer> locations =
-                  BlocProvider.of<RegionsBloc>(context).getRegionsViewers(pattern);
-              return (pattern == null)
-                  ? buildRecentSearchedPlaces()
-                  : ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (_, index) {
-                        return InkWell(
-                          onTap: () async {
-                            // set location name in location text field:
-                            locationController.text = locations.elementAt(index).getRegionName();
-                            // initialize search data again :
-                            initializeOfferData();
-                            // set search data location id:
-                            widget.searchData.locationId = locations.elementAt(index).id;
-                            // set location detected state :
-                            locationDetectedCubit.setState(true);
-                            // unfocused text field :
-                            FocusScope.of(context).unfocus();
-                            // save location as recent search:
-                            await saveAsRecentSearch(locations.elementAt(index).id);
-                          },
-                          child: Container(
-                            margin: EdgeInsets.symmetric(
-                              vertical: 8.h,
-                            ),
-                            padding: kMediumSymWidth,
-                            width: inf,
-                            child: Text(
-                              locations.elementAt(index).getRegionName(),
-                              textAlign: TextAlign.right,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1!
-                                  .copyWith(color: Theme.of(context).colorScheme.onBackground),
-                            ),
-                          ),
-                        );
-                      },
-                      separatorBuilder: (_, index) {
-                        return const Divider();
-                      },
-                      itemCount: locations.length,
-                    );
-            },
-          );
-        }
-        return Container();
-      },
-    );
-  }
+  // BlocBuilder buildSubRegionsDetector() {
+  //   return BlocBuilder<RegionsBloc, RegionsState>(
+  //     builder: (_, regionsFetchState) {
+  //       if (regionsFetchState is RegionsFetchComplete) {
+  //         return BlocBuilder<ChannelCubit, dynamic>(
+  //           bloc: patternCubit,
+  //           builder: (_, pattern) {
+  //             List<RegionViewer> locations =
+  //                 BlocProvider.of<RegionsBloc>(context).getRegionsViewers(pattern);
+  //             return (pattern == null)
+  //                 ? buildRecentSearchedPlaces()
+  //                 : ListView.separated(
+  //                     shrinkWrap: true,
+  //                     itemBuilder: (_, index) {
+  //                       return InkWell(
+  //                         onTap: () async {
+  //                           // set location name in location text field:
+  //                           locationController.text = locations.elementAt(index).getRegionName();
+  //                           // initialize search data again :
+  //                           initializeOfferData();
+  //                           // set search data location id:
+  //                           widget.searchData.locationId = locations.elementAt(index).id;
+  //                           // set location detected state :
+  //                           locationDetectedCubit.setState(true);
+  //                           // unfocused text field :
+  //                           FocusScope.of(context).unfocus();
+  //                           // save location as recent search:
+  //                           await saveAsRecentSearch(locations.elementAt(index).id);
+  //                         },
+  //                         child: Container(
+  //                           margin: EdgeInsets.symmetric(
+  //                             vertical: 8.h,
+  //                           ),
+  //                           padding: kMediumSymWidth,
+  //                           width: inf,
+  //                           child: Text(
+  //                             locations.elementAt(index).getRegionName(),
+  //                             textAlign: TextAlign.right,
+  //                             style: Theme.of(context)
+  //                                 .textTheme
+  //                                 .subtitle1!
+  //                                 .copyWith(color: Theme.of(context).colorScheme.onBackground),
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                     separatorBuilder: (_, index) {
+  //                       return const Divider();
+  //                     },
+  //                     itemCount: locations.length,
+  //                   );
+  //           },
+  //         );
+  //       }
+  //       return Container();
+  //     },
+  //   );
+  // }
 
   List<LocationViewer>? getStoredRecentSearches() {
     // TODO: get data from shared preferences :
@@ -832,7 +837,7 @@ class _SearchScreenState extends State<SearchScreen> {
             selectedItem: AppLocalizations.of(context)!.please_select,
           ),
         ],
-        if (!isLands && !isShops) ...[
+        if (!isLands) ...[
           kHe24,
           SizedBox(
             width: inf,
@@ -882,12 +887,12 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           kHe24,
           RowInformationChoices(
-            content: AppLocalizations.of(context)!.is_the_estate_on_beach,
+            content: AppLocalizations.of(context)!.is_the_estate_furnished,
             choices: choices,
             onSelect: (currentIndex) {
-              // set search data Beach status :
-              widget.searchData.isOnBeach =
-                  (currentIndex == 0) ? null : ((currentIndex == 1) ? true : false);
+              // set search data furnished status :
+              widget.searchData.isFurnished =
+              (currentIndex == 0) ? null : ((currentIndex == 1) ? true : false);
             },
             hasSpacerBetween: true,
           ),
