@@ -160,7 +160,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           textDirection: TextDirection.ltr,
           cursorColor: Theme.of(context).colorScheme.onBackground,
           controller: newPasswordController,
-          keyboardType: TextInputType.phone,
+          keyboardType: TextInputType.text,
           decoration: InputDecoration(
             hintText: AppLocalizations.of(context)!.enter_your_new_password,
           ),
@@ -173,7 +173,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           textDirection: TextDirection.ltr,
           cursorColor: Theme.of(context).colorScheme.onBackground,
           controller: confirmPasswordController,
-          keyboardType: TextInputType.phone,
+          keyboardType: TextInputType.text,
           decoration: InputDecoration(
             hintText: AppLocalizations.of(context)!.confirm_your_new_password,
           ),
