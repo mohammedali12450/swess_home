@@ -10,14 +10,16 @@ import 'package:swesshome/modules/data/repositories/user_authentication_reposito
 import 'user_login_state.dart';
 
 class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
-  UserAuthenticationRepository userAuthenticationRepository = UserAuthenticationRepository();
+  UserAuthenticationRepository userAuthenticationRepository =
+      UserAuthenticationRepository();
   User? user;
 
   UserLoginBloc(this.userAuthenticationRepository) : super(UserLoginNone()) {
     on<UserLoginStarted>((event, emit) async {
       emit(UserLoginProgress());
       try {
-        user = await userAuthenticationRepository.login(event.authentication, event.password);
+        user = await userAuthenticationRepository.login(
+            event.authentication, event.password);
         if (user!.token != null) {
           UserSharedPreferences.setAccessToken(user!.token!);
         }
@@ -33,7 +35,13 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
                 errorResponse: (e.jsonErrorFields["errors"] != null)
                     ? e.jsonErrorFields["errors"] as Map<String, dynamic>
                     : null,
-                errorMessage: e.jsonErrorFields["message"]),
+                errorMessage: (e.jsonErrorFields["message"] != null)
+                    ? e.jsonErrorFields["message"]
+                    : null,
+                multiLoginErrorMessage:
+                    (e.jsonErrorFields["messagelogin"] != null)
+                        ? e.jsonErrorFields["messagelogin"]
+                        : null),
           );
         }
 

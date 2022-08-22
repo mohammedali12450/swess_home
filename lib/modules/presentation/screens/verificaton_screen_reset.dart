@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -12,37 +10,33 @@ import 'package:rxdart/rxdart.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/otp_shared_preferences.dart';
-import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/verification_bloc/verifiaction_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/verification_bloc/verification_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/verification_bloc/verification_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/otp_model.dart';
-import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
-import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/reset_password_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class VerificationCodeScreenReset extends StatefulWidget {
   static const String id = 'VerificationCodeScreenReset';
   final String phoneNumber;
 
-  const VerificationCodeScreenReset({Key? key, required this.phoneNumber}) : super(key: key);
+  const VerificationCodeScreenReset({Key? key, required this.phoneNumber})
+      : super(key: key);
 
   @override
-  _VerificationCodeScreenResetState createState() => _VerificationCodeScreenResetState();
+  _VerificationCodeScreenResetState createState() =>
+      _VerificationCodeScreenResetState();
 }
 
-class _VerificationCodeScreenResetState extends State<VerificationCodeScreenReset> {
+class _VerificationCodeScreenResetState
+    extends State<VerificationCodeScreenReset> {
   // Blocs and cubits :
   final ChannelCubit officePhoneError = ChannelCubit(null);
   final ChannelCubit officePhoneErrorLogin = ChannelCubit(null);
@@ -54,13 +48,12 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
   // Controllers:
   TextEditingController verificationCodeController = TextEditingController();
 
-
   // Other:
   late String phoneDialCode;
   PhoneNumber? phoneNumber;
   ScrollController scrollController = ScrollController();
   final _waitingTime = BehaviorSubject<int>.seeded(0);
-  Timer timer = new Timer(Duration.zero, () {});
+  Timer timer = Timer(Duration.zero, () {});
 
   get waitingTimeValue => _waitingTime.value;
 
@@ -70,10 +63,12 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
 
   startWaitingTimer(initValue) {
     dataStore.setLastOtpRequestValue(
-      OtpRequestValueModel(requestedTime: DateTime.now(), textValue: dataStore.user.data!.authentication ),
+      OtpRequestValueModel(
+          requestedTime: DateTime.now(),
+          textValue: dataStore.user.data!.authentication),
     );
     setWaitingTime(initValue);
-    timer = new Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (waitingTimeValue == 0) {
         timer.cancel();
       } else {
@@ -85,8 +80,8 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
   initWaitingTime() {
     dataStore.getLastOtpRequestValue().then((value) {
       if (value.textValue != dataStore.user.data!.authentication ||
-          value.requestedTime!.isBefore(
-              DateTime.now().subtract(Duration(minutes: 1)))) {
+          value.requestedTime!
+              .isBefore(DateTime.now().subtract(const Duration(minutes: 1)))) {
         setWaitingTime(0);
       } else {
         startWaitingTimer(
@@ -100,10 +95,13 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
     // TODO: implement initState
     super.initState();
     verificationCodeBloc = BlocProvider.of<VerificationCodeBloc>(context);
-    resendVerificationCodeBloc = BlocProvider.of<ResendVerificationCodeBloc>(context);
+    resendVerificationCodeBloc =
+        BlocProvider.of<ResendVerificationCodeBloc>(context);
     //TODO: edit is out of syria
     // Dial code initializing:
-    if (BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore) {
+    if (BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore) {
       phoneDialCode = "+961";
     } else {
       phoneDialCode = "+963";
@@ -124,7 +122,7 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
     return MultiBlocListener(
       listeners: [
         BlocListener<VerificationCodeBloc, VerificationCodeState>(
-          listener: (_, verifyState)  {
+          listener: (_, verifyState) {
             if (verifyState is VerificationCodeError) {
               if (verifyState.isConnectionError) {
                 showWonderfulAlertDialog(
@@ -141,18 +139,24 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
                 showWonderfulAlertDialog(
                   context,
                   AppLocalizations.of(context)!.error,
-                  AppLocalizations.of(context)!.localeName == "en"? verifyState.errorMessage!:"الكود خطأ",
+                  AppLocalizations.of(context)!.localeName == "en"
+                      ? verifyState.errorMessage!
+                      : "الكود خطأ",
                   defaultButtonContent: AppLocalizations.of(context)!.ok,
                 );
               }
             }
             if (verifyState is VerificationCodeComplete) {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>ResetPasswordScreen(phoneNumber: widget.phoneNumber)));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => ResetPasswordScreen(
+                          phoneNumber: widget.phoneNumber)));
             }
           },
         ),
         BlocListener<ResendVerificationCodeBloc, ResendVerificationCodeState>(
-          listener: (_, resendVerifyState)  {
+          listener: (_, resendVerifyState) {
             if (resendVerifyState is ResendVerificationCodeError) {
               if (resendVerifyState.isConnectionError) {
                 showWonderfulAlertDialog(
@@ -169,7 +173,9 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
                 showWonderfulAlertDialog(
                   context,
                   AppLocalizations.of(context)!.error,
-                  AppLocalizations.of(context)!.localeName == "en"? resendVerifyState.errorMessage!:"الكود خطأ",
+                  AppLocalizations.of(context)!.localeName == "en"
+                      ? resendVerifyState.errorMessage!
+                      : "الكود خطأ",
                   defaultButtonContent: AppLocalizations.of(context)!.ok,
                 );
               }
@@ -179,10 +185,8 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
             }
           },
         ),
-
-
       ],
-      child:Scaffold(
+      child: Scaffold(
         resizeToAvoidBottomInset: true,
         body: Container(
           width: 1.sw,
@@ -254,7 +258,8 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
               onPressed: () async {
                 verificationCodeBloc.add(
                   VerificationCodeStarted(
-                      mobile: widget.phoneNumber,verificationCode:verificationCodeController.text ),
+                      mobile: widget.phoneNumber,
+                      verificationCode: verificationCodeController.text),
                 );
                 FocusScope.of(context).unfocus();
               },
@@ -288,35 +293,42 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
           ),
         ),
         62.verticalSpace,
-        Center(child:  Text(AppLocalizations.of(context)!.did_code,style: Theme.of(context).textTheme.bodyText2,)),
+        Center(
+            child: Text(
+          AppLocalizations.of(context)!.did_code,
+          style: Theme.of(context).textTheme.bodyText2,
+        )),
         6.verticalSpace,
         StreamBuilder<int>(
             stream: _waitingTime.stream,
-            builder: (context, snapshot){
-              if(waitingTimeValue > 0) {
+            builder: (context, snapshot) {
+              if (waitingTimeValue > 0) {
                 return _timerCountDown();
               } else {
                 return InkWell(
-                  onTap: (){
+                  onTap: () {
                     resendVerificationCodeBloc.add(
                       ResendVerificationCodeStarted(
-                          mobile: widget.phoneNumber,verificationCode:verificationCodeController.text ),
+                          mobile: widget.phoneNumber,
+                          verificationCode: verificationCodeController.text),
                     );
                     startWaitingTimer(59);
                     FocusScope.of(context).unfocus();
                   },
                   child: Center(
-                    child: Text(AppLocalizations.of(context)!.resend_code,style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
+                    child: Text(
+                      AppLocalizations.of(context)!.resend_code,
+                      style: const TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: Colors.blueAccent),
+                    ),
                   ),
                 );
               }
-            }
-        ),
+            }),
       ],
     );
   }
-
-
 
   getButtonsBorderRadius(bool isLeft) {
     Radius radius = const Radius.circular(12);
@@ -328,6 +340,7 @@ class _VerificationCodeScreenResetState extends State<VerificationCodeScreenRese
       bottomLeft: (isLeft) ? radius : zeroRadius,
     );
   }
+
   Widget _timerCountDown() {
     return StreamBuilder<int>(
         initialData: 0,

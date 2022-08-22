@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:pinput/pinput.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/core/storage/shared_preferences/otp_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
@@ -55,7 +53,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
   final _waitingTime = BehaviorSubject<int>.seeded(0);
   late ResendVerificationCodeBloc resendVerificationCodeBloc;
-  Timer timer = new Timer(Duration.zero, () {});
+  Timer timer = Timer(Duration.zero, () {});
 
   get waitingTimeValue => _waitingTime.value;
 
@@ -68,7 +66,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       OtpRequestValueModel(requestedTime: DateTime.now(), textValue: dataStore.user.data!.authentication ),
     );
     setWaitingTime(initValue);
-    timer = new Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (waitingTimeValue == 0) {
         timer.cancel();
       } else {
@@ -81,7 +79,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     dataStore.getLastOtpRequestValue().then((value) {
       if (value.textValue != dataStore.user.data!.authentication ||
           value.requestedTime!.isBefore(
-              DateTime.now().subtract(Duration(minutes: 1)))) {
+              DateTime.now().subtract(const Duration(minutes: 1)))) {
         setWaitingTime(0);
       } else {
         startWaitingTimer(
@@ -308,7 +306,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                           FocusScope.of(context).unfocus();
                                         },
                                         child: Center(
-                                          child: Text(AppLocalizations.of(context)!.resend_code,style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
+                                          child: Text(AppLocalizations.of(context)!.resend_code,style: const TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
                                         ),
                                       );
                                     }

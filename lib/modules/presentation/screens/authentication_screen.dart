@@ -28,6 +28,7 @@ import 'package:swesshome/modules/data/repositories/user_authentication_reposito
 import 'package:swesshome/modules/presentation/screens/forget_password_screen.dart';
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+import '../pages/terms_condition_page.dart';
 import 'home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -36,7 +37,8 @@ class AuthenticationScreen extends StatefulWidget {
 
   final bool? popAfterFinish;
 
-  const AuthenticationScreen({Key? key, this.popAfterFinish = true}) : super(key: key);
+  const AuthenticationScreen({Key? key, this.popAfterFinish = true})
+      : super(key: key);
 
   @override
   _AuthenticationScreenState createState() => _AuthenticationScreenState();
@@ -47,6 +49,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   final ChannelCubit _passwordVisibilityCubit = ChannelCubit(false);
   final ChannelCubit _checkBoxStateCubit = ChannelCubit(false);
   final ChannelCubit _isLoginSelected = ChannelCubit(true);
+  final ChannelCubit _termsisCheckedCubit = ChannelCubit(false);
   ChannelCubit authenticationError = ChannelCubit(null);
   ChannelCubit authenticationErrorLogin = ChannelCubit(null);
   ChannelCubit passwordError = ChannelCubit(null);
@@ -77,7 +80,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     userRegisterBloc = UserRegisterBloc(UserAuthenticationRepository());
     userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
     // Dial code initializing:
-    isForStore = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore;
+    isForStore = BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore;
     if (isForStore) {
       phoneDialCode = "+961";
       phoneDialCodeLogin = "+961";
@@ -104,7 +109,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
   void loginErrorHandling(errorResponseMap) {
     if (errorResponseMap.containsKey("authentication")) {
-      authenticationErrorLogin.setState(errorResponseMap["authentication"].first);
+      authenticationErrorLogin
+          .setState(errorResponseMap["authentication"].first);
     }
     if (errorResponseMap.containsKey("password")) {
       passwordErrorLogin.setState(errorResponseMap["password"].first);
@@ -137,7 +143,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   signUpErrorHandling(registerState.errorResponse);
                 } else if (registerState.errorMessage != null) {
                   showWonderfulAlertDialog(
-                      context, AppLocalizations.of(context)!.error, registerState.errorMessage!);
+                      context,
+                      AppLocalizations.of(context)!.error,
+                      registerState.errorMessage!);
                 }
               }
               if (registerState is UserRegisterComplete) {
@@ -168,15 +176,17 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   await showWonderfulAlertDialog(
                       context,
                       AppLocalizations.of(context)!.confirmation,
-                      AppLocalizations.of(context)!.account_not_confirmed_dialog,
+                      AppLocalizations.of(context)!
+                          .account_not_confirmed_dialog,
                       removeDefaultButton: true,
                       dialogButtons: [
                         BlocProvider<ResendConfirmationCodeBloc>(
                           create: (context) => ResendConfirmationCodeBloc(),
-                          child:
-                              BlocConsumer<ResendConfirmationCodeBloc, ResendConfirmationCodeState>(
+                          child: BlocConsumer<ResendConfirmationCodeBloc,
+                              ResendConfirmationCodeState>(
                             listener: (_, resendCodeState) async {
-                              if (resendCodeState is ResendConfirmationCodeComplete) {
+                              if (resendCodeState
+                                  is ResendConfirmationCodeComplete) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -186,9 +196,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                   ),
                                 );
                               }
-                              if (resendCodeState is ResendConfirmationCodeError) {
-                                await showWonderfulAlertDialog(context,
-                                    AppLocalizations.of(context)!.error, resendCodeState.message);
+                              if (resendCodeState
+                                  is ResendConfirmationCodeError) {
+                                await showWonderfulAlertDialog(
+                                    context,
+                                    AppLocalizations.of(context)!.error,
+                                    resendCodeState.message);
                               }
                             },
                             builder: (context, resendCodeState) {
@@ -196,16 +209,21 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                 style: ElevatedButton.styleFrom(
                                   fixedSize: Size(180.w, 56.h),
                                 ),
-                                child: (resendCodeState is ResendConfirmationCodeProgress)
+                                child: (resendCodeState
+                                        is ResendConfirmationCodeProgress)
                                     ? SpinKitWave(
                                         color: AppColors.white,
                                         size: 20.w,
                                       )
-                                    : Text(AppLocalizations.of(context)!.resend),
+                                    : Text(
+                                        AppLocalizations.of(context)!.resend),
                                 onPressed: () {
                                   // Confirmation Code Resend:
-                                  BlocProvider.of<ResendConfirmationCodeBloc>(context).add(
-                                    ResendConfirmationCodeStarted(phoneNumber: phoneNumber),
+                                  BlocProvider.of<ResendConfirmationCodeBloc>(
+                                          context)
+                                      .add(
+                                    ResendConfirmationCodeStarted(
+                                        phoneNumber: phoneNumber),
                                   );
                                 },
                               );
@@ -230,23 +248,36 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   loginErrorHandling(loginState.errorResponse);
                 } else if (loginState.errorMessage != null) {
                   showWonderfulAlertDialog(
-                      context, AppLocalizations.of(context)!.error, loginState.errorMessage!);
+                      context,
+                      AppLocalizations.of(context)!.error,
+                      loginState.errorMessage!);
+                } else if (loginState.multiLoginErrorMessage != null) {
+                  String phone = authenticationControllerLogin.text;
+                  MaterialPageRoute(
+                    builder: (_) => VerificationCodeScreen(
+                      phoneNumber: phone,
+                    ),
+                  );
                 }
               }
               if (loginState is UserLoginComplete) {
                 if (userLoginBloc.user!.token != null) {
                   // save user token in shared preferences ;
-                  UserSharedPreferences.setAccessToken(userLoginBloc.user!.token!);
+                  UserSharedPreferences.setAccessToken(
+                      userLoginBloc.user!.token!);
                   // Send user fcm token to server :
                   BlocProvider.of<FcmBloc>(context).add(
-                    SendFcmTokenProcessStarted(userToken: userLoginBloc.user!.token!),
+                    SendFcmTokenProcessStarted(
+                        userToken: userLoginBloc.user!.token!),
                   );
                 }
                 if (widget.popAfterFinish!) {
                   Navigator.pop(context);
                 } else {
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                      (route) => false);
                 }
               }
             },
@@ -269,13 +300,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         children: [
                           Container(
                             width: 1.sw,
-                            alignment: Provider.of<LocaleProvider>(context).isArabic()
-                                ? Alignment.centerRight
-                                : Alignment.centerLeft,
+                            alignment:
+                                Provider.of<LocaleProvider>(context).isArabic()
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
                             child: IconButton(
                               icon: Icon(
                                 Icons.close,
-                                color: Theme.of(context).colorScheme.onBackground,
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
                               ),
                               onPressed: () {
                                 if (widget.popAfterFinish!) {
@@ -356,7 +389,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 bloc: _passwordVisibilityCubit,
                 builder: (context, isVisible) {
                   return TextField(
-                    style: Theme.of(context).textTheme.subtitle1!.copyWith(height: 2),
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1!
+                        .copyWith(height: 2),
                     onChanged: (_) {
                       passwordErrorLogin.setState(null);
                     },
@@ -368,7 +404,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       hintText: AppLocalizations.of(context)!.enter_password,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          (!isVisible) ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          (!isVisible)
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           color: Theme.of(context).colorScheme.onBackground,
                         ),
                         onPressed: () {
@@ -384,11 +422,17 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           Row(
             children: [
               InkWell(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_)=> ForgetPasswordScreen()));
-                },
-                  child: Text(AppLocalizations.of(context)!.forget_password,style: Theme.of(context).textTheme.bodyText2,)),
-             const Spacer(),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const ForgetPasswordScreen()));
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!.forget_password,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  )),
+              const Spacer(),
               BlocBuilder<ChannelCubit, dynamic>(
                 bloc: _checkBoxStateCubit,
                 builder: (_, isChecked) {
@@ -436,7 +480,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 },
               ),
               onPressed: () async {
-                if (BlocProvider.of<UserLoginBloc>(context).state is UserLoginProgress) {
+                if (BlocProvider.of<UserLoginBloc>(context).state
+                    is UserLoginProgress) {
                   return;
                 }
 
@@ -445,7 +490,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   return;
                 }
                 userLoginBloc.add(UserLoginStarted(
-                    authentication: phoneNumber, password: passwordControllerLogin.text));
+                    authentication: phoneNumber,
+                    password: passwordControllerLogin.text));
                 FocusScope.of(context).unfocus();
               },
             ),
@@ -458,16 +504,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   primary: Colors.transparent,
                   shadowColor: Colors.transparent,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                    side: BorderSide(
+                        color: Theme.of(context).colorScheme.primary),
                     borderRadius: const BorderRadius.all(
                       Radius.circular(8),
                     ),
                   )),
               child: Text(AppLocalizations.of(context)!.create_account,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2!
-                      .copyWith(color: Theme.of(context).colorScheme.onBackground)),
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground)),
               onPressed: () {
                 _isLoginSelected.setState(false);
               },
@@ -501,7 +546,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             builder: (_, errorMessage) {
               return IntlPhoneField(
                 controller: authenticationController,
-                decoration: InputDecoration(errorText: errorMessage, errorMaxLines: 2),
+                decoration:
+                    InputDecoration(errorText: errorMessage, errorMaxLines: 2),
                 initialCountryCode: isForStore ? 'LB' : 'SY',
                 onChanged: (phone) {
                   phoneDialCode = phone.countryCode;
@@ -533,7 +579,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       hintText: AppLocalizations.of(context)!.enter_password,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          (isVisible) ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          (isVisible)
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           color: Theme.of(context).colorScheme.onBackground,
                         ),
                         onPressed: () {
@@ -594,6 +642,45 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             },
           ),
           64.verticalSpace,
+          BlocBuilder<ChannelCubit, dynamic>(
+              bloc: _termsisCheckedCubit,
+              builder: (_, isChecked) {
+                return Row(
+                  children: [
+                    Checkbox(
+                      activeColor: AppColors.primaryColor,
+                      value: isChecked,
+                      onChanged: (_) {
+                        _termsisCheckedCubit.setState(!isChecked);
+                      },
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const TermsAndConditionsPage()));
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!
+                                .accept_terms_condition,
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                          Text(
+                            AppLocalizations.of(context)!.terms_condition,
+                            style: TextStyle(
+                                fontSize: 16.sp, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }),
+          //64.verticalSpace,
           Center(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -650,16 +737,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   primary: Colors.transparent,
                   shadowColor: Colors.transparent,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                    side: BorderSide(
+                        color: Theme.of(context).colorScheme.primary),
                     borderRadius: const BorderRadius.all(
                       Radius.circular(8),
                     ),
                   )),
               child: Text(AppLocalizations.of(context)!.sign_in,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2!
-                      .copyWith(color: Theme.of(context).colorScheme.onBackground)),
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground)),
               onPressed: () {
                 _isLoginSelected.setState(true);
               },
@@ -674,12 +760,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     bool isValidationSuccess = true;
     // phone number validate :
     try {
-      final parsedPhoneNumber =
-          await PhoneNumberUtil().parse(phoneDialCode + authenticationController.text);
+      final parsedPhoneNumber = await PhoneNumberUtil()
+          .parse(phoneDialCode + authenticationController.text);
       phoneNumber = parsedPhoneNumber.international.replaceAll(" ", "");
     } catch (e) {
       print(e);
-      authenticationError.setState(AppLocalizations.of(context)!.invalid_mobile_number);
+      authenticationError
+          .setState(AppLocalizations.of(context)!.invalid_mobile_number);
       return false;
     }
     return isValidationSuccess;
@@ -689,12 +776,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     bool isValidationSuccess = true;
     // phone number validate :
     try {
-      final parsedPhoneNumber =
-          await PhoneNumberUtil().parse(phoneDialCodeLogin + authenticationControllerLogin.text);
+      final parsedPhoneNumber = await PhoneNumberUtil()
+          .parse(phoneDialCodeLogin + authenticationControllerLogin.text);
       phoneNumber = parsedPhoneNumber.international.replaceAll(" ", "");
     } catch (e) {
       print(e);
-      authenticationErrorLogin.setState(AppLocalizations.of(context)!.invalid_mobile_number);
+      authenticationErrorLogin
+          .setState(AppLocalizations.of(context)!.invalid_mobile_number);
       return false;
     }
     return isValidationSuccess;

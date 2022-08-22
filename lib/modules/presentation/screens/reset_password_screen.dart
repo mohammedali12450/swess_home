@@ -168,7 +168,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         16.verticalSpace,
         TextFormField(
           validator: (value) {
-            return confirmPasswordValidator1(value!, context,confirmPasswordController.text);
+            return confirmPasswordValidator1(value!, context, confirmPasswordController.text);
           },
           textDirection: TextDirection.ltr,
           cursorColor: Theme.of(context).colorScheme.onBackground,

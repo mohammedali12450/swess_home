@@ -8,6 +8,7 @@ class UserLoginProgress extends UserLoginState {}
 
 class UserLoginError extends UserLoginState {
   final String? errorMessage;
+  final String? multiLoginErrorMessage;
 
   Map<String, dynamic>? errorResponse;
   final bool isConnectionError;
@@ -17,6 +18,7 @@ class UserLoginError extends UserLoginState {
   UserLoginError({
     this.errorMessage,
     this.errorResponse,
+    this.multiLoginErrorMessage,
     this.isConnectionError = false,
     this.isUnauthorizedError = false,
   });
