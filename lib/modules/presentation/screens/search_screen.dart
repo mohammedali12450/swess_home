@@ -703,6 +703,14 @@ class _SearchScreenState extends State<SearchScreen> {
     priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
     priceDomainsNames = priceDomainsNames.toSet().toList();
 
+
+    List<String> estateTypesAdd = estatesTypes.map((e) => e.getName(isArabic).split('|').first).toList();
+    estateTypesAdd.insert(
+      0,
+      AppLocalizations.of(context)!.unselected,
+    );
+    estateTypesAdd = estateTypesAdd.toSet().toList();
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -743,52 +751,52 @@ class _SearchScreenState extends State<SearchScreen> {
             selectedItem: AppLocalizations.of(context)!.please_select,
           ),
           kHe24,
-          BlocBuilder<ChannelCubit, dynamic>(
-            bloc: advancedSearchOpenedCubit,
-            builder: (_, isAdvancedSearchOpened) {
-              // initialize advanced search data every time this section open:
-              if (isAdvancedSearchOpened) {
-                initializeOfferData(justInitAdvanced: true);
-              }
-              return Column(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      // change advanced search section open state :
-                      advancedSearchOpenedCubit.setState(!isAdvancedSearchOpened);
-                    },
-                    child: Container(
-                      height: 40.h,
-                      color:
-                          isDark ? Theme.of(context).colorScheme.primary : AppColors.secondaryColor,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.advanced_search,
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle1!
-                                .copyWith(color: AppColors.black),
-                          ),
-                          kWi8,
-                          Icon(
-                              (isAdvancedSearchOpened)
-                                  ? Icons.arrow_drop_down
-                                  : ((!isArabic) ? Icons.arrow_right : Icons.arrow_left),
-                              color: AppColors.black),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (isAdvancedSearchOpened) buildAdvancedSearchWidgets(),
-                ],
-              );
-            },
-          ),
+          // BlocBuilder<ChannelCubit, dynamic>(
+          //   bloc: advancedSearchOpenedCubit,
+          //   builder: (_, isAdvancedSearchOpened) {
+          //     // initialize advanced search data every time this section open:
+          //     if (isAdvancedSearchOpened) {
+          //       initializeOfferData(justInitAdvanced: true);
+          //     }
+          //     return Column(
+          //       children: [
+          //         InkWell(
+          //           onTap: () {
+          //             // change advanced search section open state :
+          //             advancedSearchOpenedCubit.setState(!isAdvancedSearchOpened);
+          //           },
+          //           child: Container(
+          //             height: 40.h,
+          //             color:
+          //                 isDark ? Theme.of(context).colorScheme.primary : AppColors.secondaryColor,
+          //             padding: EdgeInsets.symmetric(
+          //               horizontal: 8.w,
+          //             ),
+          //             child: Row(
+          //               mainAxisAlignment: MainAxisAlignment.start,
+          //               children: [
+          //                 Text(
+          //                   AppLocalizations.of(context)!.advanced_search,
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .subtitle1!
+          //                       .copyWith(color: AppColors.black),
+          //                 ),
+          //                 kWi8,
+          //                 Icon(
+          //                     (isAdvancedSearchOpened)
+          //                         ? Icons.arrow_drop_down
+          //                         : ((!isArabic) ? Icons.arrow_right : Icons.arrow_left),
+          //                     color: AppColors.black),
+          //               ],
+          //             ),
+          //           ),
+          //         ),
+          //         if (isAdvancedSearchOpened) buildAdvancedSearchWidgets(),
+          //       ],
+          //     );
+          //   },
+          // ),
           72.verticalSpace,
         ],
       ),
