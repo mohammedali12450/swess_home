@@ -53,7 +53,7 @@ class UserAuthenticationProvider {
     Response response;
     try {
       response = await helper
-          .post(hostingerBaseUrl+verificationUrl, {"authentication": mobile, "code": code});
+          .post(verificationUrl, {"authentication": mobile, "code": code});
     } catch (e) {
       rethrow;
     }
@@ -81,7 +81,7 @@ class UserAuthenticationProvider {
     Response response;
 
     try {
-      response = await helper.delete(hostingerBaseUrl+logoutUrl, token: token);
+      response = await helper.delete(logoutUrl, token: token);
     } catch (_) {
       rethrow;
     }
@@ -91,7 +91,7 @@ class UserAuthenticationProvider {
   Future sendVerificationCode(String phone, String code) async {
     NetworkHelper helper = NetworkHelper();
     Response response = await helper
-        .post(hostingerBaseUrl+checkConfirmationCode, {"authentication": phone, "code": code});
+        .post(checkConfirmationCode, {"authentication": phone, "code": code});
     return response;
   }
 
@@ -100,7 +100,7 @@ class UserAuthenticationProvider {
     print("ninininininini");
     print(phone);
     Response response = await helper
-        .post(hostingerBaseUrl+multiLoginUrl, {"authentication": phone, "code": code});
+        .post(multiLoginUrl, {"authentication": phone, "code": code});
     print("ghina is very smart  $response");
     return response;
   }
@@ -108,7 +108,7 @@ class UserAuthenticationProvider {
   Future resendVerificationCode(String phone) async {
     NetworkHelper helper = NetworkHelper();
     Response response =
-        await helper.post(hostingerBaseUrl+resendConfirmationCode, {"authentication": phone});
+        await helper.post(resendConfirmationCode, {"authentication": phone});
     return response;
   }
 

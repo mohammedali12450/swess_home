@@ -99,7 +99,7 @@ class UserAuthenticationRepository {
 
     if (response.statusCode == 422) {
       throw FieldsException(
-          jsonErrorFields: jsonDecode(response.toString())["message"]);
+          jsonErrorFields: jsonDecode(response.toString()));
     }
 
     if (response.statusCode == 403) {

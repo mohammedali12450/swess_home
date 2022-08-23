@@ -292,7 +292,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
   Future _logout() async {
     UserAuthenticationRepository userRep = UserAuthenticationRepository();
-    if (UserSharedPreferences.getAccessToken() != null) {
+    if (UserSharedPreferences.getAccessToken() == null) {
       Navigator.pop(context);
       Navigator.push(
         context,

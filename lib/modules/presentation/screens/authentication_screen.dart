@@ -29,6 +29,7 @@ import 'package:swesshome/modules/presentation/screens/forget_password_screen.da
 import 'package:swesshome/modules/presentation/screens/verification_login_code.dart';
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+import '../../../constants/validators.dart';
 import '../pages/terms_condition_page.dart';
 import 'home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -251,7 +252,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 if (loginState.errorMessage != null) {
                   if (loginState.errorMessage!.contains("تم")) {
                     print("hi baba");
-                    String phone = authenticationControllerLogin.text;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -260,12 +260,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         ),
                       ),
                     );
-                  } else {
-                    showWonderfulAlertDialog(
-                        context,
-                        AppLocalizations.of(context)!.error,
-                        loginState.errorMessage!);
+                    return;
                   }
+                  showWonderfulAlertDialog(
+                      context,
+                      AppLocalizations.of(context)!.error,
+                      loginState.errorMessage!);
                 }
               }
               if (loginState is UserLoginComplete) {
@@ -764,6 +764,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
+  ScrollController scrollController = ScrollController();
+
   Future<bool> getFieldsValidation() async {
     bool isValidationSuccess = true;
     // phone number validate :
@@ -777,6 +779,17 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           .setState(AppLocalizations.of(context)!.invalid_mobile_number);
       return false;
     }
+
+    // passwords verification :
+    if (passwordValidator1(passwordController.text, context) != null) {
+      passwordError
+          .setState(passwordValidator1(passwordController.text, context));
+      scrollController.animateTo(100.h,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      return false;
+    }
+    passwordError.setState(null);
+
     return isValidationSuccess;
   }
 

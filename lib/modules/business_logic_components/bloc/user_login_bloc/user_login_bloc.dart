@@ -31,9 +31,7 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
           UserLoginError(errorMessage: e.errorMessage, isConnectionError: true),
         );
       } catch (e, stack) {
-        print(e.runtimeType);
         if (e is FieldsException) {
-          print("sana");
           emit(
             UserLoginError(
                 errorResponse: (e.jsonErrorFields["errors"] != null)
@@ -46,18 +44,15 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
         }
 
         if (e is GeneralException) {
-          print("ghinaaaaaa");
           emit(UserLoginError(errorMessage: e.errorMessage));
         }
 
         if (e is UnauthorizedException) {
-          print("marwa");
           emit(
             UserLoginError(errorMessage: e.message, isUnauthorizedError: true),
           );
         }
         if (e is UnknownException) {
-          print("mama");
           emit(
             UserLoginError(errorMessage: "خطأ غير معروف"),
           );
