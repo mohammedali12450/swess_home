@@ -22,7 +22,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
         emit(NotificationsFetchError(error: e.errorMessage , isConnectionError: true));
       } catch (e) {
         if (e is GeneralException) {
-          emit(NotificationsFetchError(error: e.errorMessage));
+          emit(NotificationsFetchError(error: e.errorMessage!));
         }
       }
     });

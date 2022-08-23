@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
@@ -8,7 +7,6 @@ import 'package:swesshome/core/exceptions/unknown_exception.dart';
 import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/user_authentication_provider.dart';
-import 'package:swesshome/utils/services/network_helper.dart';
 
 class UserAuthenticationRepository {
   UserAuthenticationProvider userAuthenticationProvider =
@@ -100,7 +98,8 @@ class UserAuthenticationRepository {
     }
 
     if (response.statusCode == 422) {
-      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+      throw FieldsException(
+          jsonErrorFields: jsonDecode(response.toString())["message"]);
     }
 
     if (response.statusCode == 403) {
@@ -108,7 +107,8 @@ class UserAuthenticationRepository {
     }
 
     if (response.statusCode == 401) {
-      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+      throw GeneralException(
+          errorMessage: jsonDecode(response.toString())["messagelogin"]);
     }
 
     if (response.statusCode != 200) {
@@ -172,6 +172,28 @@ class UserAuthenticationRepository {
           await userAuthenticationProvider.sendVerificationCode(phone, code);
     } catch (e) {
       rethrow;
+    }
+    if (response.statusCode == 403) {
+      throw FieldsException(
+          jsonErrorFields: jsonDecode(response.toString())["message"]);
+    }
+    User user = User.fromJson(jsonDecode(response.toString())["data"]);
+
+    return user;
+  }
+
+  Future sendVerificationLoginCode(String phone, String code) async {
+    Response response;
+    try {
+      response = await userAuthenticationProvider.sendVerificationLoginCode(
+          phone, code);
+      print(response);
+    } catch (e) {
+      rethrow;
+    }
+    if (response.statusCode == 403) {
+      throw FieldsException(
+          jsonErrorFields: jsonDecode(response.toString())["message"]);
     }
     User user = User.fromJson(jsonDecode(response.toString())["data"]);
 

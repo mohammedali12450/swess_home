@@ -19,7 +19,7 @@ class SavedEstatesBloc extends Bloc<SavedEstatesEvent, SavedEstatesState> {
         emit(SavedEstatesFetchError(error: e.errorMessage , isConnectionError: true));
       } catch (e) {
         if (e is GeneralException) {
-          emit(SavedEstatesFetchError(error: e.errorMessage));
+          emit(SavedEstatesFetchError(error: e.errorMessage!));
         }
       }
     });

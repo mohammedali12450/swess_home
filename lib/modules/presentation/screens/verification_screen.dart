@@ -30,11 +30,9 @@ import 'package:swesshome/utils/helpers/numbers_helper.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
   final String phoneNumber;
-  final User? user ;
+  final User? user;
 
-
-  const VerificationCodeScreen(
-      {Key? key, required this.phoneNumber, this.user})
+  const VerificationCodeScreen({Key? key, required this.phoneNumber, this.user})
       : super(key: key);
 
   @override
@@ -63,7 +61,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
   startWaitingTimer(initValue) {
     dataStore.setLastOtpRequestValue(
-      OtpRequestValueModel(requestedTime: DateTime.now(), textValue: dataStore.user.data!.authentication ),
+      OtpRequestValueModel(
+          requestedTime: DateTime.now(),
+          textValue: dataStore.user.data!.authentication),
     );
     setWaitingTime(initValue);
     timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
@@ -78,8 +78,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   initWaitingTime() {
     dataStore.getLastOtpRequestValue().then((value) {
       if (value.textValue != dataStore.user.data!.authentication ||
-          value.requestedTime!.isBefore(
-              DateTime.now().subtract(const Duration(minutes: 1)))) {
+          value.requestedTime!
+              .isBefore(DateTime.now().subtract(const Duration(minutes: 1)))) {
         setWaitingTime(0);
       } else {
         startWaitingTimer(
@@ -92,9 +92,12 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    resendVerificationCodeBloc = BlocProvider.of<ResendVerificationCodeBloc>(context);
+    resendVerificationCodeBloc =
+        BlocProvider.of<ResendVerificationCodeBloc>(context);
     phoneNumber = widget.phoneNumber;
-    if (BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore) {
+    if (BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore) {
     } else {
       isFireBaseLoadingCubit.setState(false);
     }
@@ -103,7 +106,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       width: 1.sw,
       height: 1.sh,
@@ -133,7 +135,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                               SizedBox(
                                 width: 300.w,
                                 child: Text(
-                                  AppLocalizations.of(context)!.confirmation_code_sent,
+                                  AppLocalizations.of(context)!
+                                      .confirmation_code_sent,
                                   maxLines: 5,
                                   textAlign: TextAlign.center,
                                 ),
@@ -150,10 +153,13 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.headline3,
                                 onChanged: (text) {
-                                  if (NumbersHelper.isNumeric(text) && text.length == 6) {
-                                    isVerificationButtonActiveCubit.setState(true);
+                                  if (NumbersHelper.isNumeric(text) &&
+                                      text.length == 6) {
+                                    isVerificationButtonActiveCubit
+                                        .setState(true);
                                   } else {
-                                    isVerificationButtonActiveCubit.setState(false);
+                                    isVerificationButtonActiveCubit
+                                        .setState(false);
                                   }
                                 },
                               ),
@@ -165,7 +171,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                 child: BlocConsumer<SendVerificationCodeBloc,
                                     SendVerificationCodeState>(
                                   listener: (context, sendCodeState) async {
-                                    if (sendCodeState is SendVerificationCodeComplete) {
+                                    if (sendCodeState
+                                        is SendVerificationCodeComplete) {
                                       if (sendCodeState.user.token != null) {
                                         // save user token in shared preferences :
                                         UserSharedPreferences.setAccessToken(
@@ -173,10 +180,11 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                         // Send user fcm token to server :
                                         BlocProvider.of<FcmBloc>(context).add(
                                           SendFcmTokenProcessStarted(
-                                              userToken: sendCodeState.user.token!),
+                                              userToken:
+                                                  sendCodeState.user.token!),
                                         );
-                                        BlocProvider.of<UserLoginBloc>(context).user =
-                                            sendCodeState.user;
+                                        BlocProvider.of<UserLoginBloc>(context)
+                                            .user = sendCodeState.user;
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -185,17 +193,21 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                         );
                                       }
                                     }
-                                    if (sendCodeState is SendVerificationCodeError) {
-                                      if (sendCodeState.isConnectionError) {
+                                    if (sendCodeState
+                                        is SendVerificationCodeError) {
+                                      if (sendCodeState.isConnectionError!) {
                                         showWonderfulAlertDialog(
                                           context,
                                           AppLocalizations.of(context)!.error,
-                                          AppLocalizations.of(context)!.no_internet_connection,
+                                          AppLocalizations.of(context)!
+                                              .no_internet_connection,
                                         );
                                         return;
                                       }
-                                      await showWonderfulAlertDialog(context,
-                                          AppLocalizations.of(context)!.error, sendCodeState.error);
+                                      await showWonderfulAlertDialog(
+                                          context,
+                                          AppLocalizations.of(context)!.error,
+                                          sendCodeState.errorMessage!);
                                     }
                                   },
                                   builder: (context, sendCodeState) {
@@ -206,16 +218,20 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                           style: ElevatedButton.styleFrom(
                                             fixedSize: Size(220.w, 64.h),
                                           ),
-                                          child: (sendCodeState is! SendVerificationCodeProgress)
+                                          child: (sendCodeState
+                                                  is! SendVerificationCodeProgress)
                                               ? Text(
-                                                  AppLocalizations.of(context)!.send,
+                                                  AppLocalizations.of(context)!
+                                                      .send,
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyText2!
                                                       .copyWith(
                                                           color: isActive
                                                               ? AppColors.white
-                                                              : AppColors.white.withOpacity(0.64)),
+                                                              : AppColors.white
+                                                                  .withOpacity(
+                                                                      0.64)),
                                                 )
                                               : SpinKitWave(
                                                   size: 24.w,
@@ -223,57 +239,89 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                                 ),
                                           onPressed: () async {
                                             if (!isActive) return;
-                                            if (sendCodeState is SendVerificationCodeProgress) {
+                                            if (sendCodeState
+                                                is SendVerificationCodeProgress) {
                                               return;
                                             }
                                             // Syria state :
-                                            if (!BlocProvider.of<SystemVariablesBloc>(context)
+                                            if (!BlocProvider.of<
+                                                        SystemVariablesBloc>(
+                                                    context)
                                                 .systemVariables!
                                                 .isForStore) {
-                                              BlocProvider.of<SendVerificationCodeBloc>(context)
+                                              BlocProvider.of<
+                                                          SendVerificationCodeBloc>(
+                                                      context)
                                                   .add(
                                                 VerificationCodeSendingStarted(
                                                     phone: widget.phoneNumber,
-                                                    code: confirmationCodeController.text),
+                                                    code:
+                                                        confirmationCodeController
+                                                            .text),
                                               );
                                             } else {
                                               // Firebase state :
-                                              if (isActive && verificationId != null) {
+                                              if (isActive &&
+                                                  verificationId != null) {
                                                 // Create a PhoneAuthCredential with the code
-                                                firebase_auth.PhoneAuthCredential credential =
-                                                firebase_auth.PhoneAuthProvider.credential(
-                                                        verificationId: verificationId!,
-                                                        smsCode: confirmationCodeController.text);
+                                                firebase_auth
+                                                        .PhoneAuthCredential
+                                                    credential = firebase_auth
+                                                            .PhoneAuthProvider
+                                                        .credential(
+                                                            verificationId:
+                                                                verificationId!,
+                                                            smsCode:
+                                                                confirmationCodeController
+                                                                    .text);
                                                 try {
-                                                  await auth.signInWithCredential(credential);
+                                                  await auth
+                                                      .signInWithCredential(
+                                                          credential);
                                                   if (widget.user != null) {
                                                     print('User in');
                                                     // save user token in shared preferences :
-                                                    UserSharedPreferences.setAccessToken(
-                                                        widget.user!.token!);
+                                                    UserSharedPreferences
+                                                        .setAccessToken(widget
+                                                            .user!.token!);
                                                     // Send user fcm token to server :
-                                                    BlocProvider.of<FcmBloc>(context).add(
+                                                    BlocProvider.of<FcmBloc>(
+                                                            context)
+                                                        .add(
                                                       SendFcmTokenProcessStarted(
-                                                          userToken: widget.user!.token!),
+                                                          userToken: widget
+                                                              .user!.token!),
                                                     );
-                                                    BlocProvider.of<UserLoginBloc>(context).user =
-                                                        widget.user;
-                                                    Navigator.pushAndRemoveUntil(context,
-                                                        MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
+                                                    BlocProvider.of<
+                                                                UserLoginBloc>(
+                                                            context)
+                                                        .user = widget.user;
+                                                    Navigator.pushAndRemoveUntil(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (_) =>
+                                                                const HomeScreen()),
+                                                        (route) => false);
                                                   }
                                                 } on ConnectionException catch (_) {
                                                   showWonderfulAlertDialog(
                                                       context,
-                                                      AppLocalizations.of(context)!.error,
-                                                      AppLocalizations.of(context)!
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .error,
+                                                      AppLocalizations.of(
+                                                              context)!
                                                           .check_your_internet_connection);
-                                                } catch (e , stack) {
+                                                } catch (e, stack) {
                                                   print(e);
                                                   print(stack);
                                                   showWonderfulAlertDialog(
                                                     context,
-                                                    AppLocalizations.of(context)!.error,
-                                                    AppLocalizations.of(context)!
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .error,
+                                                    AppLocalizations.of(
+                                                            context)!
                                                         .error_happened_when_executing_operation,
                                                   );
                                                 }
@@ -286,32 +334,44 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                   },
                                 ),
                               ),
-
                               62.verticalSpace,
-                              Center(child:  Text(AppLocalizations.of(context)!.did_code,style: Theme.of(context).textTheme.bodyText2,)),
+                              Center(
+                                  child: Text(
+                                AppLocalizations.of(context)!.did_code,
+                                style: Theme.of(context).textTheme.bodyText2,
+                              )),
                               6.verticalSpace,
                               StreamBuilder<int>(
                                   stream: _waitingTime.stream,
-                                  builder: (context, snapshot){
-                                    if(waitingTimeValue > 0) {
+                                  builder: (context, snapshot) {
+                                    if (waitingTimeValue > 0) {
                                       return _timerCountDown();
                                     } else {
                                       return InkWell(
-                                        onTap: (){
+                                        onTap: () {
                                           resendVerificationCodeBloc.add(
                                             ResendVerificationCodeStarted(
-                                                mobile: widget.phoneNumber,verificationCode:confirmationCodeController.text ),
+                                                mobile: widget.phoneNumber,
+                                                verificationCode:
+                                                    confirmationCodeController
+                                                        .text),
                                           );
                                           startWaitingTimer(59);
                                           FocusScope.of(context).unfocus();
                                         },
                                         child: Center(
-                                          child: Text(AppLocalizations.of(context)!.resend_code,style: const TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
+                                          child: Text(
+                                            AppLocalizations.of(context)!
+                                                .resend_code,
+                                            style: const TextStyle(
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                color: Colors.blueAccent),
+                                          ),
                                         ),
                                       );
                                     }
-                                  }
-                              ),
+                                  }),
                             ],
                           );
                   },
@@ -323,6 +383,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       ),
     );
   }
+
   Widget _timerCountDown() {
     return StreamBuilder<int>(
         initialData: 0,
@@ -341,4 +402,3 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
         });
   }
 }
-

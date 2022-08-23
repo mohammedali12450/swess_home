@@ -55,7 +55,7 @@ const searchByregionUrl = "api/office/searchByRegions";
 
 const resendConfirmationCode = "api/code/resend";
 const deleteUserUrl = "api/user/deleteUserInformation";
-
+const multiLoginUrl = "api/checklogincode";
 
 
 

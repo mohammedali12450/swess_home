@@ -7,8 +7,6 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/core/walk_through/introduction_screen1.dart';
@@ -68,7 +66,6 @@ import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
 import 'package:swesshome/modules/presentation/screens/select_language_screen.dart';
 import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
-import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_internet_connection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -335,7 +332,7 @@ class AppRouter {
     }
     if (response.data == "0") {
       print("PPPRRRROOOOO");
-      baseUrl = proNetBaseUrl;
+      baseUrl = hostingerBaseUrl;
       imagesBaseUrl = proNetImagesUrl;
     }
   }

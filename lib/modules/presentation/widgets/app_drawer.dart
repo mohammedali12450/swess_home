@@ -83,24 +83,28 @@ class _MyDrawerState extends State<MyDrawer> {
                           kHe12,
                           Text(
                             AppLocalizations.of(context)!.sign_in,
-                            style: Theme.of(context).textTheme.headline4!.copyWith(
-                                  color: AppColors.white,
-                                ),
+                            style:
+                                Theme.of(context).textTheme.headline4!.copyWith(
+                                      color: AppColors.white,
+                                    ),
                           ),
                           kHe8,
                           Text(
                             AppLocalizations.of(context)!.login_drawer_body,
                             textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                                  color: AppColors.white,
-                                ),
+                            style:
+                                Theme.of(context).textTheme.subtitle2!.copyWith(
+                                      color: AppColors.white,
+                                    ),
                             maxLines: 5,
                           ),
                           kHe16,
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 fixedSize: Size(200.w, 56.h),
-                                primary: isDark ? AppColors.primaryDark : AppColors.secondaryColor),
+                                primary: isDark
+                                    ? AppColors.primaryDark
+                                    : AppColors.secondaryColor),
                             child: Text(
                               AppLocalizations.of(context)!.sign_in,
                               style: Theme.of(context)
@@ -138,11 +142,13 @@ class _MyDrawerState extends State<MyDrawer> {
                           ),
                           kHe24,
                           Text(
-                            user.userName +" "+ user.lastName,
+                            user.userName + " " + user.lastName,
                             style: Theme.of(context)
                                 .textTheme
                                 .headline4!
-                                .copyWith(color: Colors.white, fontWeight: FontWeight.w500),
+                                .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
                           ),
                           kHe4,
                           Text(
@@ -151,34 +157,42 @@ class _MyDrawerState extends State<MyDrawer> {
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText2!
-                                .copyWith(color: Colors.white, fontWeight: FontWeight.w500),
+                                .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
                           )
                         ],
                       ),
               );
             },
           ),
-           user != null ? RowInformation(
-            content: AppLocalizations.of(context)!.saved_estates,
-            iconData: Icons.bookmark_border_outlined,
-            onTap: () {
-              Navigator.pushNamed(context, SavedEstatesScreen.id);
-            },
-          ):Container(),
-          user != null? RowInformation(
-            content: AppLocalizations.of(context)!.recent_created_estates,
-            iconData: Icons.article_outlined,
-            onTap: () {
-              Navigator.pushNamed(context, CreatedEstatesScreen.id);
-            },
-          ):Container(),
-          user != null? RowInformation(
-            content:   AppLocalizations.of(context)!.recent_created_orders,
-            iconData: Icons.history,
-            onTap: () {
-              Navigator.pushNamed(context, RecentEstateOrdersScreen.id);
-            },
-          ):Container(),
+          user != null
+              ? RowInformation(
+                  content: AppLocalizations.of(context)!.saved_estates,
+                  iconData: Icons.bookmark_border_outlined,
+                  onTap: () {
+                    Navigator.pushNamed(context, SavedEstatesScreen.id);
+                  },
+                )
+              : Container(),
+          user != null
+              ? RowInformation(
+                  content: AppLocalizations.of(context)!.recent_created_estates,
+                  iconData: Icons.article_outlined,
+                  onTap: () {
+                    Navigator.pushNamed(context, CreatedEstatesScreen.id);
+                  },
+                )
+              : Container(),
+          user != null
+              ? RowInformation(
+                  content: AppLocalizations.of(context)!.recent_created_orders,
+                  iconData: Icons.history,
+                  onTap: () {
+                    Navigator.pushNamed(context, RecentEstateOrdersScreen.id);
+                  },
+                )
+              : Container(),
           RowInformation(
             content: AppLocalizations.of(context)!.call_us,
             iconData: Icons.call_outlined,
@@ -229,13 +243,16 @@ class _MyDrawerState extends State<MyDrawer> {
                       dialogButtons: [
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              fixedSize: Size(140.w, 56.h), padding: EdgeInsets.zero),
+                              fixedSize: Size(140.w, 56.h),
+                              padding: EdgeInsets.zero),
                           child: BlocBuilder<ChannelCubit, dynamic>(
                             bloc: isLogoutLoadingCubit,
                             builder: (_, isLogoutLoading) {
                               return (isLogoutLoading)
                                   ? SpinKitWave(
-                                      color: Theme.of(context).colorScheme.background,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background,
                                       size: 16.w,
                                     )
                                   : Text(
@@ -251,7 +268,8 @@ class _MyDrawerState extends State<MyDrawer> {
                         ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              fixedSize: Size(140.w, 56.h), padding: EdgeInsets.zero),
+                              fixedSize: Size(140.w, 56.h),
+                              padding: EdgeInsets.zero),
                           child: Text(
                             AppLocalizations.of(context)!.cancel,
                           ),
@@ -274,6 +292,16 @@ class _MyDrawerState extends State<MyDrawer> {
 
   Future _logout() async {
     UserAuthenticationRepository userRep = UserAuthenticationRepository();
+    if (UserSharedPreferences.getAccessToken() != null) {
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const AuthenticationScreen(),
+        ),
+      );
+      return;
+    }
     if (_userLoginBloc.user != null && _userLoginBloc.user!.token != null) {
       try {
         await userRep.logout(_userLoginBloc.user!.token!);
@@ -302,7 +330,10 @@ class RowInformation extends StatelessWidget {
   final Function() onTap;
 
   const RowInformation(
-      {Key? key, required this.iconData, required this.content, required this.onTap})
+      {Key? key,
+      required this.iconData,
+      required this.content,
+      required this.onTap})
       : super(key: key);
 
   @override

@@ -7,6 +7,7 @@ import 'package:swesshome/core/storage/shared_preferences/user_shared_preference
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_event.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+import '../../../../core/exceptions/general_exception.dart';
 import 'user_login_state.dart';
 
 class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
@@ -23,13 +24,16 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
         if (user!.token != null) {
           UserSharedPreferences.setAccessToken(user!.token!);
         }
+
         emit(UserLoginComplete());
       } on ConnectionException catch (e) {
         emit(
           UserLoginError(errorMessage: e.errorMessage, isConnectionError: true),
         );
       } catch (e, stack) {
+        print(e.runtimeType);
         if (e is FieldsException) {
+          print("sana");
           emit(
             UserLoginError(
                 errorResponse: (e.jsonErrorFields["errors"] != null)
@@ -37,20 +41,23 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
                     : null,
                 errorMessage: (e.jsonErrorFields["message"] != null)
                     ? e.jsonErrorFields["message"]
-                    : null,
-                multiLoginErrorMessage:
-                    (e.jsonErrorFields["messagelogin"] != null)
-                        ? e.jsonErrorFields["messagelogin"]
-                        : null),
+                    : null),
           );
         }
 
+        if (e is GeneralException) {
+          print("ghinaaaaaa");
+          emit(UserLoginError(errorMessage: e.errorMessage));
+        }
+
         if (e is UnauthorizedException) {
+          print("marwa");
           emit(
             UserLoginError(errorMessage: e.message, isUnauthorizedError: true),
           );
         }
         if (e is UnknownException) {
+          print("mama");
           emit(
             UserLoginError(errorMessage: "خطأ غير معروف"),
           );

@@ -23,7 +23,7 @@ class SearchOfficesBloc extends Bloc<SearchOfficesEvents, SearchOfficesStates> {
         emit(SearchOfficesFetchError(errorMessage: e.errorMessage));
       } catch (e) {
         if (e is GeneralException) {
-          emit(SearchOfficesFetchError(errorMessage: e.errorMessage));
+          emit(SearchOfficesFetchError(errorMessage: e.errorMessage!));
         }
       }
     });

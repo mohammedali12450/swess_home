@@ -27,7 +27,7 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
           );
         } on GeneralException catch (e) {
           emit(
-            EstateFetchError(errorMessage: e.errorMessage),
+            EstateFetchError(errorMessage: e.errorMessage!),
           );
         }
       },
@@ -45,7 +45,7 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
           );
         } on GeneralException catch (e) {
           emit(
-            EstateFetchError(errorMessage: e.errorMessage),
+            EstateFetchError(errorMessage: e.errorMessage!),
           );
         }
       },

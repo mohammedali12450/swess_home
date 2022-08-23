@@ -26,6 +26,7 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/forget_password_screen.dart';
+import 'package:swesshome/modules/presentation/screens/verification_login_code.dart';
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import '../pages/terms_condition_page.dart';
@@ -246,18 +247,25 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
                 if (loginState.errorResponse != null) {
                   loginErrorHandling(loginState.errorResponse);
-                } else if (loginState.errorMessage != null) {
-                  showWonderfulAlertDialog(
+                }
+                if (loginState.errorMessage != null) {
+                  if (loginState.errorMessage!.contains("تم")) {
+                    print("hi baba");
+                    String phone = authenticationControllerLogin.text;
+                    Navigator.push(
                       context,
-                      AppLocalizations.of(context)!.error,
-                      loginState.errorMessage!);
-                } else if (loginState.multiLoginErrorMessage != null) {
-                  String phone = authenticationControllerLogin.text;
-                  MaterialPageRoute(
-                    builder: (_) => VerificationCodeScreen(
-                      phoneNumber: phone,
-                    ),
-                  );
+                      MaterialPageRoute(
+                        builder: (_) => VerificationLoginCodeScreen(
+                          phoneNumber: phoneNumber,
+                        ),
+                      ),
+                    );
+                  } else {
+                    showWonderfulAlertDialog(
+                        context,
+                        AppLocalizations.of(context)!.error,
+                        loginState.errorMessage!);
+                  }
                 }
               }
               if (loginState is UserLoginComplete) {

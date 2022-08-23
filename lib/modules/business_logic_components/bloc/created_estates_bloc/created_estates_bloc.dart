@@ -20,7 +20,7 @@ class CreatedEstatesBloc extends Bloc<CreatedEstatesEvent, CreatedEstatesState> 
           emit(CreatedEstatesFetchError(error: e.errorMessage , isConnectionError: true));
         } catch (e) {
           if (e is GeneralException) {
-            emit(CreatedEstatesFetchError(error: e.errorMessage));
+            emit(CreatedEstatesFetchError(error: e.errorMessage!));
           }
         }
       },

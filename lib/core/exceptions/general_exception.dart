@@ -1,11 +1,5 @@
-
-
-
-
-
-class GeneralException implements Exception{
-
-  final String errorMessage ;
+class GeneralException implements Exception {
+  final String? errorMessage;
 
   GeneralException({required this.errorMessage});
 }

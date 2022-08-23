@@ -20,7 +20,7 @@ class EstateOrderBloc extends Bloc<EstateOrderEvent, EstateOrderState> {
         emit(SendEstateOrderError(error: e.errorMessage, isConnectionError: true));
       } catch (e, stack) {
         if (e is GeneralException) {
-          emit(SendEstateOrderError(error: e.errorMessage));
+          emit(SendEstateOrderError(error: e.errorMessage!));
         } else if (e is UnauthorizedException) {
           emit(SendEstateOrderError(error: e.message, isAuthorizationError: true));
         }

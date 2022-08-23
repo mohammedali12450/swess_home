@@ -20,7 +20,7 @@ class SaveAndUnSaveEstateBloc extends Bloc<SaveAndUnSaveEstateEvent, SaveAndUnSa
         emit(EstateSaveAndUnSaveError(error: e.errorMessage , isConnectionError: true));
       } catch (e, stack) {
         if (e is GeneralException) {
-          emit(EstateSaveAndUnSaveError(error: e.errorMessage));
+          emit(EstateSaveAndUnSaveError(error: e.errorMessage!));
         }
         print(e);
         print(stack);
@@ -36,7 +36,7 @@ class SaveAndUnSaveEstateBloc extends Bloc<SaveAndUnSaveEstateEvent, SaveAndUnSa
         emit(EstateSaveAndUnSaveError(error: e.errorMessage));
       } catch (e, stack) {
         if (e is GeneralException) {
-          emit(EstateSaveAndUnSaveError(error: e.errorMessage));
+          emit(EstateSaveAndUnSaveError(error: e.errorMessage!));
         }
         print(e);
         print(stack);

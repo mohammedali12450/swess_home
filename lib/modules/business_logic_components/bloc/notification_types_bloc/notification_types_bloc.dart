@@ -20,7 +20,7 @@ class NotificationTypesBloc
         emit(NotificationTypesFetchComplete()) ;
       } catch (e, stack) {
         if (e is GeneralException) {
-          emit(NotificationTypesFetchError(error: e.errorMessage));
+          emit(NotificationTypesFetchError(error: e.errorMessage!));
         }
         print(e);
         print(stack);
