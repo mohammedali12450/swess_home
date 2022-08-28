@@ -40,7 +40,6 @@ class _MyDrawerState extends State<MyDrawer> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
   }
@@ -205,13 +204,15 @@ class _MyDrawerState extends State<MyDrawer> {
               );
             },
           ),
-          RowInformation(
-            content: AppLocalizations.of(context)!.rate_us,
-            iconData: Icons.star_rate_outlined,
-            onTap: () {
-              Navigator.pushNamed(context, RatingScreen.id);
-            },
-          ),
+          user != null
+              ? RowInformation(
+                  content: AppLocalizations.of(context)!.rate_us,
+                  iconData: Icons.star_rate_outlined,
+                  onTap: () {
+                    Navigator.pushNamed(context, RatingScreen.id);
+                  },
+                )
+              : Container(),
           RowInformation(
             content: AppLocalizations.of(context)!.settings,
             iconData: Icons.settings_outlined,
@@ -301,8 +302,8 @@ class _MyDrawerState extends State<MyDrawer> {
         ),
       );
       return;
-    }
-    if (_userLoginBloc.user != null && _userLoginBloc.user!.token != null) {
+    } else if (_userLoginBloc.user != null &&
+        _userLoginBloc.user!.token != null) {
       try {
         await userRep.logout(_userLoginBloc.user!.token!);
       } on ConnectionException catch (e) {

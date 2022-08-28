@@ -328,11 +328,11 @@ class AppRouter {
     try {
       response = await helper.get(fetchBaseUrlUrl);
     } catch (e) {
-      throw e;
+      rethrow;
     }
     if (response.data == "0") {
       print("PPPRRRROOOOO");
-      baseUrl = hostingerBaseUrl;
+      baseUrl = proNetBaseUrl;
       imagesBaseUrl = proNetImagesUrl;
     }
   }

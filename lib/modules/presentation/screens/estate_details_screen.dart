@@ -516,18 +516,18 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       ),
                       onTap: () {},
                     ),
-                  if (widget.estate.isOnBeach != null)
-                    RowInformation(
-                      title: AppLocalizations.of(context)!.on_beach + " :",
-                      content: widget.estate.isOnBeach!
-                          ? AppLocalizations.of(context)!.yes
-                          : AppLocalizations.of(context)!.no,
-                      icon: Icon(
-                        Icons.beach_access_outlined,
-                        size: 32.w,
-                      ),
-                      onTap: () {},
-                    ),
+                  // if (widget.estate.isOnBeach != null)
+                  //   RowInformation(
+                  //     title: AppLocalizations.of(context)!.on_beach + " :",
+                  //     content: widget.estate.isOnBeach!
+                  //         ? AppLocalizations.of(context)!.yes
+                  //         : AppLocalizations.of(context)!.no,
+                  //     icon: Icon(
+                  //       Icons.beach_access_outlined,
+                  //       size: 32.w,
+                  //     ),
+                  //     onTap: () {},
+                  //   ),
                 ],
                 // Estate ownership type :
                 if (isSell)
@@ -649,13 +649,13 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       ),
                       kHe8,
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(fixedSize: Size(140.w, 50.h)),
+                        style: ElevatedButton.styleFrom(fixedSize: Size(155.w, 50.h)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
                               AppLocalizations.of(context)!.office_page,
-                              style: TextStyle(fontSize: 12),
+                              style: const TextStyle(fontSize: 12),
                             ),
                           ],
                         ),

@@ -21,7 +21,6 @@ import 'package:swesshome/modules/presentation/screens/authentication_screen.dar
 import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_screen.dart';
-import 'package:swesshome/modules/presentation/screens/search_region_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

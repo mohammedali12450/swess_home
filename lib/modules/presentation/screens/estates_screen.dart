@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,9 +20,9 @@ import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/my_snack_bar.dart';
-import 'package:swesshome/utils/helpers/show_my_snack_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'authentication_screen.dart';
 
 class EstatesScreen extends StatefulWidget {
   static const String id = "EstatesScreen";
@@ -84,172 +83,177 @@ class _EstatesScreenState extends State<EstatesScreen> {
             kWi8,
           ],
         ),
-        body: Container(
-          child: BlocProvider<EstateBloc>(
-            create: (_) => EstateBloc(
-              EstateRepository(),
-            )..add(widget.searchData),
-            child: BlocConsumer<EstateBloc, EstateState>(
-              listener: (_, estateFetchState) async{
-                if (estateFetchState is EstateFetchComplete) {
-                  if (estateFetchState.estates.isEmpty && estates.isNotEmpty) {
-                    isEstatesFinished = true;
-                  }
+        body: BlocProvider<EstateBloc>(
+          create: (_) => EstateBloc(
+            EstateRepository(),
+          )..add(widget.searchData),
+          child: BlocConsumer<EstateBloc, EstateState>(
+            listener: (_, estateFetchState) async {
+              if (estateFetchState is EstateFetchComplete) {
+                if (estateFetchState.estates.isEmpty && estates.isNotEmpty) {
+                  isEstatesFinished = true;
                 }
-                if (estateFetchState is EstateFetchError) {
-                  var error = estateFetchState.isConnectionError
-                      ? AppLocalizations.of(context)!.no_internet_connection
-                      : estateFetchState.errorMessage;
-                  await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);  }
-              },
-              builder: (context, estatesFetchState) {
-                if (estatesFetchState is EstateFetchNone ||
-                    (estatesFetchState is EstateFetchProgress && estates.isEmpty)) {
-                  return const PropertyShimmer();
-                } else if (estatesFetchState is EstateFetchComplete) {
-                  estates.addAll(estatesFetchState.estates);
-                  BlocProvider.of<EstateBloc>(context).isFetching = false;
+              }
+              if (estateFetchState is EstateFetchError) {
+                var error = estateFetchState.isConnectionError
+                    ? AppLocalizations.of(context)!.no_internet_connection
+                    : estateFetchState.errorMessage;
+                await showWonderfulAlertDialog(
+                    context, AppLocalizations.of(context)!.error, error);
+              }
+            },
+            builder: (context, estatesFetchState) {
+              if (estatesFetchState is EstateFetchNone ||
+                  (estatesFetchState is EstateFetchProgress &&
+                      estates.isEmpty)) {
+                return const PropertyShimmer();
+              } else if (estatesFetchState is EstateFetchComplete) {
+                estates.addAll(estatesFetchState.estates);
+                BlocProvider.of<EstateBloc>(context).isFetching = false;
+              } else if (estatesFetchState is EstateFetchError &&
+                  estates.isEmpty) {
+                BlocProvider.of<EstateBloc>(context).isFetching = false;
+                return RefreshIndicator(
+                  color: Theme.of(context).colorScheme.primary,
+                  onRefresh: () async {
+                    BlocProvider.of<EstateBloc>(context).add(widget.searchData);
+                  },
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                        width: 1.sw,
+                        height: 1.sh - 75.h,
+                        child: FetchResult(
+                            content: AppLocalizations.of(context)!
+                                .error_happened_when_executing_operation)),
+                  ),
+                );
+              }
 
-                } else if (estatesFetchState is EstateFetchError && estates.isEmpty) {
-                  BlocProvider.of<EstateBloc>(context).isFetching = false;
-                  return RefreshIndicator(
-                    color: Theme.of(context).colorScheme.primary,
-                    onRefresh: () async {
-                      BlocProvider.of<EstateBloc>(context).add(widget.searchData);
-                    },
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: SizedBox(
-                          width: 1.sw,
-                          height: 1.sh - 75.h,
-                          child: FetchResult(
-                              content: AppLocalizations.of(context)!
-                                  .error_happened_when_executing_operation)),
-                    ),
-                  );
-                }
-
-                if (estates.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search,
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.24),
-                          size: 120,
-                        ),
-                        kHe24,
-                        Text(
-                          AppLocalizations.of(context)!.no_results_body,
-                          style: Theme.of(context).textTheme.headline5,
-                        ),
-                        kHe12,
-                        Text(
-                          AppLocalizations.of(context)!.no_results_hint,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(fontWeight: FontWeight.w400),
-                        ),
-                        kHe40,
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: Size(220.w, 64.h),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.search_again,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
-                      ],
-                    ),
-                  );
-                }
-                return SingleChildScrollView(
-                  controller: _scrollController
-                    ..addListener(
-                      () {
-                        if (_scrollController.offset ==
-                                _scrollController.position.maxScrollExtent &&
-                            !BlocProvider.of<EstateBloc>(context).isFetching &&
-                            !isEstatesFinished) {
-                          BlocProvider.of<EstateBloc>(context)
-                            ..isFetching = true
-                            ..add(widget.searchData);
-                        }
-                      },
-                    ),
+              if (estates.isEmpty) {
+                return Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: estates.length,
-                        itemBuilder: (_, index) {
-                          return EstateCard(
-                            estate: estates.elementAt(index),
-                            onClosePressed: () {
-                              showReportModalBottomSheet(estates.elementAt(index).id);
-                            },
-                            removeCloseButton: false,
-                          );
-                        },
+                      Icon(
+                        Icons.search,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.24),
+                        size: 120,
                       ),
-                      if (BlocProvider.of<EstateBloc>(context).isFetching)
-                        Container(
-                          margin: EdgeInsets.only(
-                            top: 12.h,
-                          ),
-                          child: SpinKitWave(
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 50,
-                          ),
+                      kHe24,
+                      Text(
+                        AppLocalizations.of(context)!.no_results_body,
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                      kHe12,
+                      Text(
+                        AppLocalizations.of(context)!.no_results_hint,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(fontWeight: FontWeight.w400),
+                      ),
+                      kHe40,
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: Size(220.w, 64.h),
                         ),
-                      if (isEstatesFinished)
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                            vertical: 50.h,
-                          ),
-                          width: 1.sw,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              kWi16,
-                              Expanded(
-                                flex: 2,
-                                child: Divider(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  thickness: 1,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: ResText(
-                                  "انتهت النتائج",
-                                  textAlign: TextAlign.center,
-                                  textStyle: textStyling(S.s18, W.w5, C.bl),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Divider(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  thickness: 1,
-                                ),
-                              ),
-                              kWi16,
-                            ],
-                          ),
-                        )
+                        child: Text(
+                          AppLocalizations.of(context)!.search_again,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      )
                     ],
                   ),
                 );
-              },
-            ),
+              }
+              return SingleChildScrollView(
+                controller: _scrollController
+                  ..addListener(
+                    () {
+                      if (_scrollController.offset ==
+                              _scrollController.position.maxScrollExtent &&
+                          !BlocProvider.of<EstateBloc>(context).isFetching &&
+                          !isEstatesFinished) {
+                        BlocProvider.of<EstateBloc>(context)
+                          ..isFetching = true
+                          ..add(widget.searchData);
+                      }
+                    },
+                  ),
+                child: Column(
+                  children: [
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: estates.length,
+                      itemBuilder: (_, index) {
+                        return EstateCard(
+                          estate: estates.elementAt(index),
+                          onClosePressed: () {
+                            showReportModalBottomSheet(
+                                estates.elementAt(index).id);
+                          },
+                          removeCloseButton: false,
+                        );
+                      },
+                    ),
+                    if (BlocProvider.of<EstateBloc>(context).isFetching)
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 12.h,
+                        ),
+                        child: SpinKitWave(
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 50,
+                        ),
+                      ),
+                    if (isEstatesFinished)
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          vertical: 50.h,
+                        ),
+                        width: 1.sw,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            kWi16,
+                            Expanded(
+                              flex: 2,
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.primary,
+                                thickness: 1,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: ResText(
+                                "انتهت النتائج",
+                                textAlign: TextAlign.center,
+                                textStyle: textStyling(S.s18, W.w5, C.bl),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.primary,
+                                thickness: 1,
+                              ),
+                            ),
+                            kWi16,
+                          ],
+                        ),
+                      )
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -262,8 +266,8 @@ class _EstatesScreenState extends State<EstatesScreen> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.only(topRight: Radius.circular(16), topLeft: Radius.circular(16)),
+        borderRadius: BorderRadius.only(
+            topRight: Radius.circular(16), topLeft: Radius.circular(16)),
       ),
       backgroundColor: Colors.white,
       builder: (_) {
@@ -276,7 +280,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                 SizedBox(
                   width: 1.sw,
                   child: ResText(
-                    "ما الذي تراه غير مناسب في هذا العقار؟",
+                    AppLocalizations.of(context)!.report_estate,
                     textAlign: TextAlign.right,
                     textStyle: textStyling(S.s18, W.w6, C.bl),
                   ),
@@ -289,12 +293,46 @@ class _EstatesScreenState extends State<EstatesScreen> {
                   itemBuilder: (_, index) => InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      ReportsRepository reportRepository = ReportsRepository();
-                      if (await reportRepository.sendReport(
-                          userToken, reports.elementAt(index).id, estateId)) {
-                        Fluttertoast.showToast(msg: "تم إرسال الإبلاغ");
+                      if (userToken != null) {
+                        ReportsRepository reportRepository =
+                            ReportsRepository();
+                        if (await reportRepository.sendReport(
+                            userToken, reports.elementAt(index).id, estateId)) {
+                          Fluttertoast.showToast(
+                              msg: AppLocalizations.of(context)!.send_report);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: AppLocalizations.of(context)!
+                                  .error_send_report);
+                        }
                       } else {
-                        Fluttertoast.showToast(msg: "حدث خطأ أثناء إرسال البلاغ!");
+                        await showWonderfulAlertDialog(
+                            context,
+                            AppLocalizations.of(context)!.confirmation,
+                            AppLocalizations.of(context)!
+                                .this_features_require_login,
+                            removeDefaultButton: true,
+                            dialogButtons: [
+                              ElevatedButton(
+                                child: Text(
+                                  AppLocalizations.of(context)!.sign_in,
+                                ),
+                                onPressed: () async {
+                                  await Navigator.pushNamed(
+                                      context, AuthenticationScreen.id);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              ElevatedButton(
+                                child: Text(
+                                  AppLocalizations.of(context)!.cancel,
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                            width: 400.w);
                       }
                     },
                     child: Container(

@@ -5,9 +5,9 @@ const String hostingerImagesBaseUrl = "http://swesshomerealestate.com/";
 String baseUrl = hostingerBaseUrl;
 String imagesBaseUrl = hostingerImagesBaseUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl" ;
-const String userRegisterUrl = "api/user/register";
-const String userLoginByTokenUrl = "api/getUserByToken";
-const String userLoginUrl = "api/login";
+const userRegisterUrl = "api/user/register";
+const userLoginByTokenUrl = "api/getUserByToken";
+const userLoginUrl = "api/login1";
 const ownershipTypesUrl = "api/ownershipTypes";
 const estateTypesUrl = "api/estateTypes";
 const interiorStatusesUrl = "api/interiorStatuses";
@@ -52,11 +52,9 @@ const allregionsUrl = "api/allregions";
 const allLocationUrl = "api/getallsublocations";
 const newSearchUrl = "api/estate/searchEstateByregionsByestatefeatures";
 const searchByregionUrl = "api/office/searchByRegions";
-
 const resendConfirmationCode = "api/code/resend";
 const deleteUserUrl = "api/user/deleteUserInformation";
 const multiLoginUrl = "api/checklogincode";
-
-
+const termsAndConditionsUrl = "api/termsandconditions/" ;
 
 const test = "master";

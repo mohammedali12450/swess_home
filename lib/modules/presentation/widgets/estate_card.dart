@@ -298,7 +298,7 @@ class _EstateCardState extends State<EstateCard> {
                               padding: EdgeInsets.zero,
                               icon: const Icon(
                                 Icons.close,
-                                size: 16,
+                                size: 22,
                                 color: AppColors.white,
                               ),
                               onPressed: () {

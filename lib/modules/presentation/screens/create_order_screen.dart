@@ -63,10 +63,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
-    offerTypes = BlocProvider.of<EstateOfferTypesBloc>(context).estateOfferTypes!;
+    offerTypes =
+        BlocProvider.of<EstateOfferTypesBloc>(context).estateOfferTypes!;
     priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
 
     selectedEstateTypeId = estatesTypes.first.id;
@@ -82,7 +82,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     // Remove duplicates:
     priceDomainsNames = priceDomainsNames.toSet().toList();
     print(priceDomainsNames);
-
 
     return BlocListener<EstateOrderBloc, EstateOrderState>(
       listener: (_, estateOrderState) async {
@@ -119,7 +118,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             var error = estateOrderState.isConnectionError
                 ? AppLocalizations.of(context)!.no_internet_connection
                 : estateOrderState.error;
-            await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
+            await showWonderfulAlertDialog(
+                context, AppLocalizations.of(context)!.error, error);
           }
         }
       },
@@ -169,9 +169,11 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           textDirection: TextDirection.rtl,
                           onTap: () async {
                             selectedLocation = await Navigator.of(context)
-                                .pushNamed(SearchLocationScreen.id) as LocationViewer?;
+                                    .pushNamed(SearchLocationScreen.id)
+                                as LocationViewer?;
                             if (selectedLocation != null) {
-                              officeAddressController.text = selectedLocation!.getLocationName();
+                              officeAddressController.text =
+                                  selectedLocation!.getLocationName();
                               locationErrorCubit.setState(null);
                             } else {
                               officeAddressController.clear();
@@ -182,13 +184,18 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           readOnly: true,
                           decoration: InputDecoration(
                             errorText: errorMessage,
-                            hintText: AppLocalizations.of(context)!.estate_location_hint,
+                            hintText: AppLocalizations.of(context)!
+                                .estate_location_hint,
                             contentPadding: kSmallSymWidth,
                             errorBorder: kOutlinedBorderRed,
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
                               borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.onBackground.withOpacity(0.4),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onBackground
+                                    .withOpacity(0.4),
                               ),
                             ),
                           ),
@@ -201,13 +208,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                     ),
                     kHe12,
                     MyDropdownList(
-                      elementsList:
-                          estatesTypes.map((e) => e.getName(isArabic).split('|').first).toList(),
+                      elementsList: estatesTypes
+                          .map((e) => e.getName(isArabic).split('|').first)
+                          .toList(),
                       onSelect: (index) {
                         selectedEstateTypeId = estatesTypes.elementAt(index).id;
                       },
-                      validator: (value) =>
-                      value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                      validator: (value) => value == null
+                          ? AppLocalizations.of(context)!.this_field_is_required
+                          : null,
                       selectedItem: AppLocalizations.of(context)!.please_select,
                     ),
                     kHe24,
@@ -216,12 +225,21 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                     ),
                     kHe12,
                     MyDropdownList(
-                      elementsList: offerTypes.map((e) => e.getName(isArabic)).toList(),
+                      elementsList: offerTypes.map((e) {
+                        if (e.id == 1) {
+                          return EstateOfferType(
+                                  id: 1, nameArabic: "شراء", nameEnglish: "buy")
+                              .getName(isArabic);
+                        }
+                        return e.getName(isArabic);
+                      }).toList(),
                       onSelect: (index) {
-                        selectedEstateOfferTypeId = offerTypes.elementAt(index).id;
+                        selectedEstateOfferTypeId =
+                            offerTypes.elementAt(index).id;
                       },
-                      validator: (value) =>
-                      value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                      validator: (value) => value == null
+                          ? AppLocalizations.of(context)!.this_field_is_required
+                          : null,
                       selectedItem: AppLocalizations.of(context)!.please_select,
                     ),
                     kHe24,
@@ -233,11 +251,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       elementsList: priceDomainsNames,
                       onSelect: (index) {
                         bool isNoneSelected = index == 0;
-                        selectedPriceDomainId =
-                            (isNoneSelected) ? null : priceDomains.elementAt(index - 1).id;
+                        selectedPriceDomainId = (isNoneSelected)
+                            ? null
+                            : priceDomains.elementAt(index - 1).id;
                       },
-                      validator: (value) =>
-                      value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                      validator: (value) => value == null
+                          ? AppLocalizations.of(context)!.this_field_is_required
+                          : null,
                       selectedItem: AppLocalizations.of(context)!.please_select,
                     ),
                     kHe24,
@@ -250,7 +270,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       padding: kSmallSymWidth,
                       height: 250.h,
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(Radius.circular(12)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12)),
                         border: Border.all(color: Colors.black),
                       ),
                       child: TextField(
@@ -261,7 +282,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           border: InputBorder.none,
                           focusedBorder: InputBorder.none,
                           enabledBorder: InputBorder.none,
-                          hintText: AppLocalizations.of(context)!.order_create_notes_descriptions,
+                          hintText: AppLocalizations.of(context)!
+                              .order_create_notes_descriptions,
                         ),
                         maxLines: 8,
                       ),
@@ -287,10 +309,12 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                         ),
                         onPressed: () {
                           if (selectedLocation == null) {
-                            locationErrorCubit
-                                .setState(AppLocalizations.of(context)!.this_field_is_required);
+                            locationErrorCubit.setState(
+                                AppLocalizations.of(context)!
+                                    .this_field_is_required);
                             scrollController.animateTo(0,
-                                duration: const Duration(milliseconds: 500), curve: Curves.ease);
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.ease);
                             return;
                           }
 
@@ -299,14 +323,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                             estateTypeId: selectedEstateTypeId,
                             estateOfferId: selectedEstateOfferTypeId,
                             priceDomainId: selectedPriceDomainId,
-                            description: (notesController.text.isEmpty) ? null : notesController.text,
+                            description: (notesController.text.isEmpty)
+                                ? null
+                                : notesController.text,
                           );
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
 
-                            User? user = BlocProvider
-                                .of<UserLoginBloc>(context)
-                                .user;
+                            User? user =
+                                BlocProvider.of<UserLoginBloc>(context).user;
                             String? token = (user == null) ? null : user.token;
                             BlocProvider.of<EstateOrderBloc>(context).add(
                               SendEstateOrderStarted(

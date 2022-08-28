@@ -116,10 +116,14 @@ class _RatingScreenState extends State<RatingScreen> {
                         maxLines: 8,
                         maxLength: 600,
                         decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!.enter_rating_notes,
+                          hintText:
+                              AppLocalizations.of(context)!.enter_rating_notes,
                           border: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.onBackground.withOpacity(0.48),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onBackground
+                                    .withOpacity(0.48),
                                 width: 0.5),
                             borderRadius: const BorderRadius.all(
                               Radius.circular(12),
@@ -148,13 +152,16 @@ class _RatingScreenState extends State<RatingScreen> {
 
                       if (ratingState is RatingError) {
                         var error = ratingState.isConnectionError
-                            ? AppLocalizations.of(context)!.no_internet_connection
+                            ? AppLocalizations.of(context)!
+                                .no_internet_connection
                             : ratingState.error;
-                        await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
+                        await showWonderfulAlertDialog(context,
+                            AppLocalizations.of(context)!.error, error);
                       }
                       if (ratingState is RatingComplete) {
                         Fluttertoast.showToast(
-                            msg: AppLocalizations.of(context)!.after_rate_message,
+                            msg: AppLocalizations.of(context)!
+                                .after_rate_message,
                             toastLength: Toast.LENGTH_LONG);
                         Navigator.pop(context);
                       }
@@ -178,13 +185,15 @@ class _RatingScreenState extends State<RatingScreen> {
                     }
                     if (selectedRatingCubit.state == -1) {
                       Fluttertoast.showToast(
-                          msg: AppLocalizations.of(context)!.you_must_select_rate_first);
+                          msg: AppLocalizations.of(context)!
+                              .you_must_select_rate_first);
                       return;
                     }
 
                     String? token;
                     if (BlocProvider.of<UserLoginBloc>(context).user != null) {
-                      token = BlocProvider.of<UserLoginBloc>(context).user!.token!;
+                      token =
+                          BlocProvider.of<UserLoginBloc>(context).user!.token!;
                     }
                     _ratingBloc.add(
                       RatingStarted(
@@ -224,8 +233,11 @@ class RatingChoiceWidget extends StatelessWidget {
       child: Container(
         padding: kSmallAllPadding,
         decoration: BoxDecoration(
-            color: (isPressed) ? Theme.of(context).colorScheme.primary : Colors.transparent,
-            border: Border.all(color: Theme.of(context).colorScheme.onBackground),
+            color: (isPressed)
+                ? Theme.of(context).colorScheme.primary
+                : Colors.transparent,
+            border:
+                Border.all(color: Theme.of(context).colorScheme.onBackground),
             borderRadius: const BorderRadius.all(Radius.circular(8))),
         child: Column(
           children: [

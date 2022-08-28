@@ -27,7 +27,7 @@ class UserAuthenticationProvider {
     Response response;
 
     try {
-      response = await helper.post(hostingerBaseUrl+userLoginUrl,
+      response = await helper.post(userLoginUrl,
           {"authentication": authentication, "password": password});
     } catch (_) {
       rethrow;

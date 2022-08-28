@@ -32,10 +32,11 @@ import '../../business_logic_components/bloc/send_veification_login_code/send_ve
 
 class VerificationLoginCodeScreen extends StatefulWidget {
   final String phoneNumber;
+  final String? message;
   final User? user;
 
   const VerificationLoginCodeScreen(
-      {Key? key, required this.phoneNumber, this.user})
+      {Key? key, required this.phoneNumber, this.message, this.user})
       : super(key: key);
 
   @override
@@ -136,6 +137,11 @@ class _VerificationLoginCodeScreenState
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Text(
+                                widget.message!,
+                                textAlign: TextAlign.center,
+                                textDirection: TextDirection.ltr,
+                              ),
                               SizedBox(
                                   width: 300.w,
                                   child: Text(
@@ -186,7 +192,7 @@ class _VerificationLoginCodeScreenState
                                         );
                                         BlocProvider.of<UserLoginBloc>(context)
                                             .user = sendCodeState.user;
-                                        Navigator.push(
+                                        Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (_) =>

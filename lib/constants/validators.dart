@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 String passwordValidator({String? password, BuildContext? context}) {
   if (password!.isEmpty) {
@@ -22,30 +23,22 @@ String confirmPasswordValidator(
 }
 
 String? passwordValidator1(String? password, BuildContext context) {
-  if (password == null) {
-    return 'Required field';
-  } else if (password.isEmpty) {
-    return "Please enter your password";
+  if (password!.isEmpty) {
+    return AppLocalizations.of(context)!.enter_password;
   } else if (password.length < 6) {
-    return "password must be at least 6 characters";
+    return AppLocalizations.of(context)!.password_least;
   } else if (password.length > 21) {
-    return "password must be at most 21 characters";
+    return AppLocalizations.of(context)!.password_must;
   }
   return null;
 }
 
 String? confirmPasswordValidator1(
-    String password, BuildContext context, String? confirmPassword) {
-  if (confirmPassword == null) {
-    return 'Required field';
-  } else if (confirmPassword.isEmpty) {
-    return "Please enter your password";
-  } else if (confirmPassword.length < 6) {
-    return "password must be at least 6 characters";
+    String? password, BuildContext context, String? confirmPassword) {
+  if (confirmPassword!.isEmpty) {
+    return AppLocalizations.of(context)!.enter_password;
   } else if (password != confirmPassword) {
-    return "password must be at least 6 characters";
-  } else if (password.length > 21) {
-    return "password must be at most 21 characters";
+    return AppLocalizations.of(context)!.password_match;
   }
   return null;
 }

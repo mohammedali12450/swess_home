@@ -23,13 +23,14 @@ import 'package:swesshome/modules/business_logic_components/bloc/user_register_b
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
-import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/forget_password_screen.dart';
 import 'package:swesshome/modules/presentation/screens/verification_login_code.dart';
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import '../../../constants/validators.dart';
+import '../../../utils/helpers/my_snack_bar.dart';
+import '../../data/providers/theme_provider.dart';
 import '../pages/terms_condition_page.dart';
 import 'home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -49,6 +50,7 @@ class AuthenticationScreen extends StatefulWidget {
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
   // Cubits and Blocs
   final ChannelCubit _passwordVisibilityCubit = ChannelCubit(false);
+  final ChannelCubit _repeatPasswordVisibleCubit = ChannelCubit(false);
   final ChannelCubit _checkBoxStateCubit = ChannelCubit(false);
   final ChannelCubit _isLoginSelected = ChannelCubit(true);
   final ChannelCubit _termsisCheckedCubit = ChannelCubit(false);
@@ -56,6 +58,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   ChannelCubit authenticationErrorLogin = ChannelCubit(null);
   ChannelCubit passwordError = ChannelCubit(null);
   ChannelCubit passwordErrorLogin = ChannelCubit(null);
+  ChannelCubit repeatPasswordError = ChannelCubit(null);
   ChannelCubit firstNameError = ChannelCubit(null);
   ChannelCubit lastNameError = ChannelCubit(null);
   late UserRegisterBloc userRegisterBloc;
@@ -63,11 +66,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   late String phoneDialCode;
   late String phoneDialCodeLogin;
   String phoneNumber = "";
+  bool isCheck = false;
 
   // controllers:
   TextEditingController authenticationController = TextEditingController();
   TextEditingController authenticationControllerLogin = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController repeatPasswordController = TextEditingController();
   TextEditingController passwordControllerLogin = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
@@ -251,12 +256,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 }
                 if (loginState.errorMessage != null) {
                   if (loginState.errorMessage!.contains("تم")) {
-                    print("hi baba");
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (_) => VerificationLoginCodeScreen(
                           phoneNumber: phoneNumber,
+                          message: loginState.errorMessage!,
                         ),
                       ),
                     );
@@ -532,6 +537,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   }
 
   SingleChildScrollView buildSignupScreen() {
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,6 +585,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 bloc: _passwordVisibilityCubit,
                 builder: (context, isVisible) {
                   return TextField(
+                    onChanged: (value) {
+                      passwordError.setState(null);
+                    },
                     controller: passwordController,
                     keyboardType: TextInputType.text,
                     obscureText: !isVisible,
@@ -587,7 +596,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       hintText: AppLocalizations.of(context)!.enter_password,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          (isVisible)
+                          (!isVisible)
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
                           color: Theme.of(context).colorScheme.onBackground,
@@ -597,6 +606,50 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         },
                       ),
                       isCollapsed: false,
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+          kHe24,
+          Text(
+            AppLocalizations.of(context)!.repeat_password + " :",
+          ),
+          8.verticalSpace,
+          BlocBuilder<ChannelCubit, dynamic>(
+            bloc: repeatPasswordError,
+            builder: (_, errorMessage) {
+              return BlocBuilder<ChannelCubit, dynamic>(
+                bloc: _repeatPasswordVisibleCubit,
+                builder: (context, isVisible) {
+                  return TextField(
+                    onChanged: (_) {
+                      repeatPasswordError.setState(null);
+                    },
+                    cursorColor: Theme.of(context).colorScheme.onBackground,
+                    controller: repeatPasswordController,
+                    keyboardType: TextInputType.text,
+                    obscureText: !isVisible,
+                    decoration: InputDecoration(
+                      errorText: errorMessage,
+                      hintText:
+                          AppLocalizations.of(context)!.repeat_password_hint,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          (!isVisible)
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                        onPressed: () {
+                          _repeatPasswordVisibleCubit.setState(!isVisible);
+                        },
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.onBackground),
+                      ),
                     ),
                   );
                 },
@@ -649,16 +702,17 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               );
             },
           ),
-          64.verticalSpace,
+          45.verticalSpace,
           BlocBuilder<ChannelCubit, dynamic>(
               bloc: _termsisCheckedCubit,
               builder: (_, isChecked) {
                 return Row(
                   children: [
                     Checkbox(
-                      activeColor: AppColors.primaryColor,
+                      activeColor: isDark ? AppColors.white : AppColors.primaryColor,
                       value: isChecked,
-                      onChanged: (_) {
+                      onChanged: (value) {
+                        isCheck = value!;
                         _termsisCheckedCubit.setState(!isChecked);
                       },
                     ),
@@ -773,6 +827,11 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       final parsedPhoneNumber = await PhoneNumberUtil()
           .parse(phoneDialCode + authenticationController.text);
       phoneNumber = parsedPhoneNumber.international.replaceAll(" ", "");
+      if (!isCheck) {
+        MySnackBar.show(
+            context, AppLocalizations.of(context)!.accept_terms_conditions);
+        return false;
+      }
     } catch (e) {
       print(e);
       authenticationError
@@ -787,8 +846,17 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       scrollController.animateTo(100.h,
           duration: const Duration(seconds: 1), curve: Curves.ease);
       return false;
+    } else if (confirmPasswordValidator1(
+            passwordController.text, context, repeatPasswordController.text) !=
+        null) {
+      repeatPasswordError.setState(confirmPasswordValidator1(
+          passwordController.text, context, repeatPasswordController.text));
+      scrollController.animateTo(100.h,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      return false;
     }
     passwordError.setState(null);
+    repeatPasswordError.setState(null);
 
     return isValidationSuccess;
   }
