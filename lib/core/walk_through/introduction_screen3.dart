@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/core/walk_through/introduction_screen2.dart';
 import 'package:swesshome/core/walk_through/introduction_screen4.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/current_step_viewer.dart';
@@ -41,14 +42,15 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
                     width: inf,
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const AuthenticationScreen(
-                                popAfterFinish: false,
-                              ),
-                            ),
-                                (route) => false);
+                        Navigator.pushNamed(context, IntroductionScreen2.id);
+                        // Navigator.pushAndRemoveUntil(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (_) => const AuthenticationScreen(
+                        //         popAfterFinish: false,
+                        //       ),
+                        //     ),
+                        //         (route) => false);
                       },
                       child: Container(
                         width: 80.w,
@@ -69,12 +71,15 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
                     ),
                   ),
                   const Spacer(),
+                  SizedBox(
+                    height: 50.h,
+                  ),
                   Icon(
                     Icons.add_to_queue,
                     color: Theme.of(context).colorScheme.primary,
                     size: 140.w,
                   ),
-                  64.verticalSpace,
+                  40.verticalSpace,
                   Text(
                     AppLocalizations.of(context)!.introductionTitle3,
                     style: Theme.of(context).textTheme.headline4,
@@ -86,7 +91,9 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
                     maxLines: 10,
                     textAlign: TextAlign.center,
                   ),
-                  kHe40,
+                  SizedBox(
+                    height: 100.h,
+                  ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(180.w, 64.h),

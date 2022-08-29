@@ -57,6 +57,7 @@
   "create_estate_introduction": "يمكنك إنشاء عرض مميز للعقار الذي ترغب بنشره في التطبيق بخطوات سهلة وبسيطة",
   "estate_type": "نوع العقار",
   "offer_type": "نوع العرض",
+  "order_type": "نوع الطلب",
   "next": "التالي",
   "estate_area": "مساحة العقار",
   "estate_price": "سعر العقار",

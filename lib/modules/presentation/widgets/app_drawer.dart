@@ -112,6 +112,7 @@ class _MyDrawerState extends State<MyDrawer> {
                                   .copyWith(color: AppColors.black),
                             ),
                             onPressed: () {
+                              Navigator.of(context).pop();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

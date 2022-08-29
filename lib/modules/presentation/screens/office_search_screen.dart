@@ -27,7 +27,6 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../data/providers/locale_provider.dart';
-import '../../data/providers/theme_provider.dart';
 
 class OfficeSearchScreen extends StatefulWidget {
   static const String id = 'OfficeSearchScreen';
@@ -52,9 +51,9 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
 
   late List<Location> locations;
   List<OfficeSearchType> searchTypes = [
-    OfficeSearchType.neighborhood,
-    OfficeSearchType.area,
     OfficeSearchType.name,
+    OfficeSearchType.area,
+    OfficeSearchType.neighborhood,
   ];
   LocationViewer? selectedLocation;
   RegionViewer? selectedRegion;
@@ -88,8 +87,6 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
               BlocBuilder<ChannelCubit, dynamic>(
                 bloc: searchTypeCubit,
                 builder: (_, searchType) {
-                  bool isDark =
-                      Provider.of<ThemeProvider>(context).isDarkMode(context);
                   return Padding(
                     padding: EdgeInsets.only(left: 18.w, top: 8.w),
                     child: Container(
@@ -102,7 +99,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                       padding: EdgeInsets.only(right: 8.w, bottom: 3.w),
                       height: 48.h,
                       width: 160.w,
-                      child: buildDropDown(isDark),
+                      child: buildDropDown(),
                     ),
                   );
                 },
@@ -322,21 +319,21 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
     );
   }
 
-  DropdownButtonFormField buildDropDown(isDark) {
+  DropdownButtonFormField buildDropDown() {
     return DropdownButtonFormField(
-      icon: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
+      icon: const Padding(
+        padding: EdgeInsets.only(left: 8.0),
         child: Icon(
           Icons.arrow_drop_down_sharp,
-          color: !isDark ? Colors.white : Colors.black,
+          color: Colors.white,
         ),
       ),
-      dropdownColor: isDark ? Colors.white : Colors.black,
+      dropdownColor: Colors.black,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.only(bottom: 8.w),
-          hintText: AppLocalizations.of(context)!.search_neighborhood,
-          hintStyle: TextStyle(
-            color: !isDark ? Colors.white : Colors.black,
+          hintText: AppLocalizations.of(context)!.search_by_name,
+          hintStyle: const TextStyle(
+            color:  Colors.white,
             fontSize: 13,
           )),
       isExpanded: true,
@@ -358,8 +355,8 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                     : (element.name == "neighborhood")
                         ? AppLocalizations.of(context)!.search_neighborhood
                         : AppLocalizations.of(context)!.search_by_name,
-                style: TextStyle(
-                  color: !isDark ? Colors.white : Colors.black,
+                style: const TextStyle(
+                  color: Colors.white,
                   fontSize: 13,
                 ),
               ),

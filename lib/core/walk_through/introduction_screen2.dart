@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/current_step_viewer.dart';
+import 'introduction_screen1.dart';
 import 'introduction_screen3.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -40,14 +41,15 @@ class _IntroductionScreen2State extends State<IntroductionScreen2> {
                     width: inf,
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const AuthenticationScreen(
-                                popAfterFinish: false,
-                              ),
-                            ),
-                            (route) => false);
+                        Navigator.pushNamed(context, IntroductionScreen1.id);
+                        // Navigator.pushAndRemoveUntil(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (_) => const AuthenticationScreen(
+                        //         popAfterFinish: false,
+                        //       ),
+                        //     ),
+                        //     (route) => false);
                       },
                       child: Container(
                         width: 80.w,
@@ -70,12 +72,15 @@ class _IntroductionScreen2State extends State<IntroductionScreen2> {
                     ),
                   ),
                   const Spacer(),
+                  SizedBox(
+                    height: 50.h,
+                  ),
                   Icon(
                     Icons.maps_home_work_outlined,
                     color: Theme.of(context).colorScheme.primary,
                     size: 140.w,
                   ),
-                  64.verticalSpace,
+                  40.verticalSpace,
                   Text(
                     AppLocalizations.of(context)!.introductionTitle2,
                     style: Theme.of(context).textTheme.headline4,
@@ -87,7 +92,9 @@ class _IntroductionScreen2State extends State<IntroductionScreen2> {
                     maxLines: 10,
                     textAlign: TextAlign.center,
                   ),
-                  kHe40,
+                  SizedBox(
+                    height: 80.h,
+                  ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(180.w, 64.h),

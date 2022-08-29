@@ -163,7 +163,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     padding: EdgeInsets.only(right: 8.w, bottom: 3.w),
                     height: 48.h,
                     width: 160.w,
-                    child: buildDropDown(isDark),
+                    child: buildDropDown(),
                   ),
                 );
               },
@@ -193,7 +193,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             locationController.clear();
                             locationDetectedCubit.setState(false);
                             patternCubit.setState(null);
-                            FocusScope.of(context).unfocus();
+                            //FocusScope.of(context).unfocus();
 
                             if (locationController.text.isEmpty) {
                               patternCubit.setState("");
@@ -203,7 +203,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             locationController.clear();
                             locationDetectedCubit.setState(false);
                             patternCubit.setState(null);
-                            FocusScope.of(context).unfocus();
+                            //FocusScope.of(context).unfocus();
 
                             if (locationController.text.isEmpty) {
                               patternCubit.setState("");
@@ -571,49 +571,42 @@ class _SearchScreenState extends State<SearchScreen> {
 //   );
 // }
 
-  DropdownButtonFormField buildDropDown(isDark){
+  DropdownButtonFormField buildDropDown() {
     return DropdownButtonFormField(
-      icon: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
+      icon: const Padding(
+        padding: EdgeInsets.only(left: 8.0),
         child: Icon(
           Icons.arrow_drop_down_sharp,
-          color: !isDark ? Colors.white : Colors.black,
+          color: Colors.white,
         ),
       ),
-      dropdownColor: isDark ? Colors.white : Colors.black,
+      dropdownColor: Colors.black,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.only(bottom: 8.w),
-          hintText:
-          AppLocalizations.of(context)!.search_neighborhood,
-          hintStyle: TextStyle(
-            color: !isDark ? Colors.white : Colors.black,
+          hintText: AppLocalizations.of(context)!.search_neighborhood,
+          hintStyle: const TextStyle(
+            color: Colors.white,
             fontSize: 13,
           )),
       isExpanded: true,
       items: searchTypes.map(
-            (NewSearchType element) {
+        (NewSearchType element) {
           return DropdownMenuItem(
             value: element,
             child: Container(
               width: 1.sw,
               margin: EdgeInsets.only(
-                right: Provider.of<LocaleProvider>(context)
-                    .isArabic()
-                    ? 16.w
-                    : 0,
-                left: Provider.of<LocaleProvider>(context)
-                    .isArabic()
-                    ? 0
-                    : 16.w,
+                right:
+                    Provider.of<LocaleProvider>(context).isArabic() ? 16.w : 0,
+                left:
+                    Provider.of<LocaleProvider>(context).isArabic() ? 0 : 16.w,
               ),
               child: Text(
                 (element.name == "area")
-                    ? AppLocalizations.of(context)!
-                    .search_by_area
-                    : AppLocalizations.of(context)!
-                    .search_neighborhood,
-                style: TextStyle(
-                  color: !isDark ? Colors.white : Colors.black,
+                    ? AppLocalizations.of(context)!.search_by_area
+                    : AppLocalizations.of(context)!.search_neighborhood,
+                style: const TextStyle(
+                  color: Colors.white,
                   fontSize: 13,
                 ),
               ),

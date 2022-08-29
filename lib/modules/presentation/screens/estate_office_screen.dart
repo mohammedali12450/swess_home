@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -9,6 +8,7 @@ import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/enums.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_state.dart';
@@ -54,7 +54,6 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     // Register office visit :
@@ -62,11 +61,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
     if (BlocProvider.of<UserLoginBloc>(context).user != null) {
       userToken = BlocProvider.of<UserLoginBloc>(context).user!.token;
     }
-    _likeAndUnlikeBloc =
-        LikeAndUnlikeBloc((widget.office.isLiked) ? Liked() : Unliked(), EstateRepository());
+    _likeAndUnlikeBloc = LikeAndUnlikeBloc(
+        (widget.office.isLiked) ? Liked() : Unliked(), EstateRepository());
 
     _visitBloc.add(VisitStarted(
-        visitId: widget.office.id, token: userToken, visitType: VisitType.estateOffice));
+        visitId: widget.office.id,
+        token: userToken,
+        visitType: VisitType.estateOffice));
 
     _estateBloc.add(
       OfficeEstatesFetchStarted(officeId: widget.office.id),
@@ -98,20 +99,40 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
             child: Column(
               children: [
                 kHe44,
-                Hero(
-                  tag: widget.office.id.toString(),
-                  child: Container(
-                      width: 300.w,
-                      height: 180.h,
-                      decoration:BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        image:  DecorationImage(image:NetworkImage(imagesBaseUrl + widget.office.logo!,),fit: BoxFit.fill),))
-
-                  // CircleAvatar(
-                  //   radius: 96.w,
-                  //   backgroundColor: Colors.grey,
-                  //   backgroundImage: CachedNetworkImageProvider(imagesBaseUrl + widget.office.logo!),
-                  // ),
+                InkWell(
+                  onTap: () async {
+                    // List<String> images = [widget.office.logo!];
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (_) => ImagesViewerScreen(
+                    //         images, AppLocalizations.of(context)!.estate_office_logo),
+                    //   ),
+                    // );
+                    await showDialog(
+                        context: context,
+                        builder: (_) => ImageDialog(path: widget.office.logo!));
+                  },
+                  child: Hero(
+                      tag: widget.office.id.toString(),
+                      child: Container(
+                          width: 300.w,
+                          height: 180.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18),
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                  imagesBaseUrl + widget.office.logo!,
+                                ),
+                                fit: BoxFit.fill),
+                          ))
+                      // child: CircleAvatar(
+                      //   radius: 96.w,
+                      //   backgroundColor: Colors.grey,
+                      //   backgroundImage: CachedNetworkImageProvider(
+                      //       imagesBaseUrl + widget.office.logo!),
+                      // ),
+                      ),
                 ),
                 24.verticalSpace,
                 // Account name and rate :
@@ -157,17 +178,19 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(fixedSize: Size(180.w, 64.h)),
+                      style: ElevatedButton.styleFrom(
+                          fixedSize: Size(180.w, 64.h)),
                       onPressed: () async {
-                        if (BlocProvider.of<UserLoginBloc>(context).user == null) {
+                        if (BlocProvider.of<UserLoginBloc>(context).user ==
+                            null) {
                           await buildSignInRequiredDialog();
                           return;
                         }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                CreatePropertyIntroductionScreen(officeId: widget.office.id),
+                            builder: (_) => CreatePropertyIntroductionScreen(
+                                officeId: widget.office.id),
                           ),
                         );
                       },
@@ -178,7 +201,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           const Icon(Icons.add),
                           Text(
                             AppLocalizations.of(context)!.post_estate,
-                            style: TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 14),
                           )
                         ],
                       ),
@@ -189,12 +212,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       listener: (_, likeAndUnlikeState) async {
                         if (likeAndUnlikeState is LikeAndUnlikeError) {
                           var error = likeAndUnlikeState.isConnectionError
-                              ? AppLocalizations.of(context)!.no_internet_connection
+                              ? AppLocalizations.of(context)!
+                                  .no_internet_connection
                               : likeAndUnlikeState.error;
-                          await showWonderfulAlertDialog(
-                              context, AppLocalizations.of(context)!.error, error);
-                          _likeAndUnlikeBloc
-                              .add(ReInitializeLikeState(isLike: widget.office.isLiked));
+                          await showWonderfulAlertDialog(context,
+                              AppLocalizations.of(context)!.error, error);
+                          _likeAndUnlikeBloc.add(ReInitializeLikeState(
+                              isLike: widget.office.isLiked));
                         } else if (likeAndUnlikeState is Liked) {
                           widget.office.isLiked = true;
                         } else if (likeAndUnlikeState is Unliked) {
@@ -203,7 +227,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       },
                       builder: (_, likeAndUnlikeState) {
                         return ElevatedButton(
-                          style: ElevatedButton.styleFrom(fixedSize: Size(180.w, 64.h)),
+                          style: ElevatedButton.styleFrom(
+                              fixedSize: Size(180.w, 64.h)),
                           onPressed: () async {
                             if (userToken == null) {
                               await buildSignInRequiredDialog();
@@ -259,7 +284,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                   color: isDark
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).colorScheme.secondary,
-                  alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment:
+                      isArabic ? Alignment.centerRight : Alignment.centerLeft,
                   padding: EdgeInsets.only(
                     right: isArabic ? 8.w : 0,
                     left: !isArabic ? 8.w : 0,
@@ -289,8 +315,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                     }
                     if (estateState is! EstateFetchComplete) {
                       return FetchResult(
-                        content:
-                            AppLocalizations.of(context)!.error_happened_when_executing_operation,
+                        content: AppLocalizations.of(context)!
+                            .error_happened_when_executing_operation,
                         iconSize: 0.25.sw,
                       );
                     }
@@ -357,6 +383,26 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
         ),
       ],
       width: 400.w,
+    );
+  }
+}
+
+class ImageDialog extends StatelessWidget {
+  final String path;
+
+  const ImageDialog({required this.path, Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        width: getScreenWidth(context),
+        //height: 300.h,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: CachedNetworkImageProvider(imagesBaseUrl + path),
+                fit: BoxFit.contain)),
+      ),
     );
   }
 }

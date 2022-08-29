@@ -25,7 +25,8 @@ class CreatePropertyScreen2 extends StatefulWidget {
   static const String id = "CreatePropertyScreen2";
   final Estate currentOffer;
 
-  const CreatePropertyScreen2({Key? key, required this.currentOffer}) : super(key: key);
+  const CreatePropertyScreen2({Key? key, required this.currentOffer})
+      : super(key: key);
 
   @override
   _CreatePropertyScreen2State createState() => _CreatePropertyScreen2State();
@@ -67,7 +68,8 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
     // initializing :
     areaTypes = BlocProvider.of<AreaUnitsBloc>(context).areaUnits!;
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
-    ownershipTypes = BlocProvider.of<OwnershipTypeBloc>(context).ownershipTypes!;
+    ownershipTypes =
+        BlocProvider.of<OwnershipTypeBloc>(context).ownershipTypes!;
     isSell = widget.currentOffer.estateOfferType.id == sellOfferTypeNumber;
     isHouse = widget.currentOffer.estateType.id == housePropertyTypeNumber;
     widget.currentOffer.areaUnit = areaTypes.first;
@@ -77,7 +79,8 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
 
     if (!isSell) {
       widget.currentOffer.periodType = periodTypes.first;
-      selectedPeriodCubit = ChannelCubit(periodTypes.first.getName(true).split("|").elementAt(1));
+      selectedPeriodCubit =
+          ChannelCubit(periodTypes.first.getName(true).split("|").elementAt(1));
     }
   }
 
@@ -86,7 +89,9 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
     bool isKeyboardOpened = MediaQuery.of(context).viewInsets.bottom != 0;
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
 
-    isForStore = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore;
+    isForStore = BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore;
 
     List<Widget> priceWidget = [
       Expanded(
@@ -103,14 +108,16 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                 errorText: errorMessage,
                 isDense: true,
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onBackground),
                 ),
               ),
               cursorColor: Theme.of(context).colorScheme.onBackground,
               onChanged: (value) {
                 areaErrorCubit.setState(null);
                 if (!NumbersHelper.isNumeric(value)) {
-                  areaErrorCubit.setState(AppLocalizations.of(context)!.invalid_value);
+                  areaErrorCubit
+                      .setState(AppLocalizations.of(context)!.invalid_value);
                 }
               },
             );
@@ -125,15 +132,19 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
             SystemChannels.textInput.invokeMethod('TextInput.hide');
             FocusScope.of(context).unfocus();
           },
-          child: MyDropdownList(
-            isOnChangeNull: isKeyboardOpened,
-            elementsList: areaTypes.map((e) => e.getName(isArabic)).toList(),
-            onSelect: (index) {
-              widget.currentOffer.areaUnit = areaTypes.elementAt(index);
-            },
-            selectedItem: AppLocalizations.of(context)!.please_select_here,
-            validator: (value) =>
-            value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 12.5),
+            child: MyDropdownList(
+              isOnChangeNull: isKeyboardOpened,
+              elementsList: areaTypes.map((e) => e.getName(isArabic)).toList(),
+              onSelect: (index) {
+                widget.currentOffer.areaUnit = areaTypes.elementAt(index);
+              },
+              selectedItem: AppLocalizations.of(context)!.please_select_here,
+              validator: (value) => value == null
+                  ? AppLocalizations.of(context)!.this_field_is_required
+                  : null,
+            ),
           ),
         ),
       ),
@@ -154,7 +165,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                 AppLocalizations.of(context)!.estate_area + " :",
               ),
               16.verticalSpace,
-              Row(children: (isArabic) ? priceWidget.reversed.toList() : priceWidget),
+              Row(children: priceWidget),
               24.verticalSpace,
               Text(
                 (isSell)
@@ -173,12 +184,16 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
 
                         if (isForStore) {
                           hintText = (isSell)
-                              ? AppLocalizations.of(context)!.estate_price_hint_lebanon
-                              : AppLocalizations.of(context)!.estate_rent_price_hint_lebanon;
+                              ? AppLocalizations.of(context)!
+                                  .estate_price_hint_lebanon
+                              : AppLocalizations.of(context)!
+                                  .estate_rent_price_hint_lebanon;
                         } else {
                           hintText = (isSell)
-                              ? AppLocalizations.of(context)!.estate_price_hint_syrian
-                              : AppLocalizations.of(context)!.estate_rent_price_hint_syrian;
+                              ? AppLocalizations.of(context)!
+                                  .estate_price_hint_syrian
+                              : AppLocalizations.of(context)!
+                                  .estate_rent_price_hint_syrian;
                         }
 
                         return TextField(
@@ -190,19 +205,25 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                             errorText: errorMessage,
                             isDense: true,
                             focusedBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                              borderSide: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground),
                             ),
                           ),
-                          cursorColor: Theme.of(context).colorScheme.onBackground,
+                          cursorColor:
+                              Theme.of(context).colorScheme.onBackground,
                           onChanged: (value) {
-                            if (!NumbersHelper.isNumeric(value.replaceAll(",", ""))) {
-                              priceErrorCubit.setState(AppLocalizations.of(context)!.invalid_value);
+                            if (!NumbersHelper.isNumeric(
+                                value.replaceAll(",", ""))) {
+                              priceErrorCubit.setState(
+                                  AppLocalizations.of(context)!.invalid_value);
                               return;
                             }
-                            priceController.text =
-                                NumbersHelper.getMoneyFormat(int.parse(value.replaceAll(',', '')));
-                            priceController.selection = TextSelection.fromPosition(
+                            priceController.text = NumbersHelper.getMoneyFormat(
+                                int.parse(value.replaceAll(',', '')));
+                            priceController.selection =
+                                TextSelection.fromPosition(
                               TextPosition(offset: priceController.text.length),
                             );
                             priceErrorCubit.setState(null);
@@ -218,27 +239,36 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                           flex: 2,
                           child: GestureDetector(
                             onTap: () {
-                              SystemChannels.textInput.invokeMethod('TextInput.hide');
+                              SystemChannels.textInput
+                                  .invokeMethod('TextInput.hide');
                               FocusScope.of(context).unfocus();
                             },
-                            child: MyDropdownList(
-                              isOnChangeNull: isKeyboardOpened,
-                              elementsList: periodTypes
-                                  .map((e) => e.getName(isArabic).split("|").first)
-                                  .toList(),
-                              onSelect: (index) {
-                                widget.currentOffer.periodType = periodTypes.elementAt(index);
-                                selectedPeriodCubit!.setState(
-                                  periodTypes
-                                      .elementAt(index)
-                                      .getName(isArabic)
-                                      .split("|")
-                                      .elementAt(1),
-                                );
-                              },
-                              validator: (value) =>
-                              value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
-                              selectedItem: AppLocalizations.of(context)!.please_select_here,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 12.5),
+                              child: MyDropdownList(
+                                isOnChangeNull: isKeyboardOpened,
+                                elementsList: periodTypes
+                                    .map((e) =>
+                                        e.getName(isArabic).split("|").first)
+                                    .toList(),
+                                onSelect: (index) {
+                                  widget.currentOffer.periodType =
+                                      periodTypes.elementAt(index);
+                                  selectedPeriodCubit!.setState(
+                                    periodTypes
+                                        .elementAt(index)
+                                        .getName(isArabic)
+                                        .split("|")
+                                        .elementAt(1),
+                                  );
+                                },
+                                validator: (value) => value == null
+                                    ? AppLocalizations.of(context)!
+                                        .this_field_is_required
+                                    : null,
+                                selectedItem: AppLocalizations.of(context)!
+                                    .please_select_here,
+                              ),
                             ),
                           ),
                         ),
@@ -273,7 +303,9 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                         ),
                         isDense: true,
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                          borderSide: BorderSide(
+                              color:
+                                  Theme.of(context).colorScheme.onBackground),
                         ),
                       ),
                       cursorColor: Theme.of(context).colorScheme.onBackground,
@@ -296,7 +328,8 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context)!.rooms_count_hint,
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                      borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onBackground),
                     ),
                   ),
                   cursorColor: Theme.of(context).colorScheme.onBackground,
@@ -313,7 +346,8 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context)!.floor_hint,
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
+                      borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onBackground),
                     ),
                   ),
                   cursorColor: Theme.of(context).colorScheme.onBackground,
@@ -326,12 +360,15 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                 ),
                 16.verticalSpace,
                 MyDropdownList(
-                  elementsList: ownershipTypes.map((e) => e.getName(isArabic)).toList(),
+                  elementsList:
+                      ownershipTypes.map((e) => e.getName(isArabic)).toList(),
                   onSelect: (index) {
-                    widget.currentOffer.ownershipType = ownershipTypes.elementAt(index);
+                    widget.currentOffer.ownershipType =
+                        ownershipTypes.elementAt(index);
                   },
-                  validator: (value) =>
-                  value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+                  validator: (value) => value == null
+                      ? AppLocalizations.of(context)!.this_field_is_required
+                      : null,
                   selectedItem: AppLocalizations.of(context)!.please_select,
                 ),
               ],
@@ -345,25 +382,27 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                   onPressed: () {
                     if (!validateData()) return;
                     widget.currentOffer.area = areaController.text;
-                    widget.currentOffer.price = priceController.text.replaceAll(",", "");
+                    widget.currentOffer.price =
+                        priceController.text.replaceAll(",", "");
                     if (!isSell) {
                       widget.currentOffer.period = periodController.text;
                     }
                     if (isHouse) {
-                      widget.currentOffer.roomsCount = roomsCountController.text;
+                      widget.currentOffer.roomsCount =
+                          roomsCountController.text;
                       widget.currentOffer.floor = floorController.text;
                     }
-    if (_formKey.currentState!.validate()) {
-      print("Dsadsadasdadas");
-      _formKey.currentState!.save();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) =>
-              CreatePropertyScreen3(currentOffer: widget.currentOffer),
-        ),
-      );
-    }
+                    if (_formKey.currentState!.validate()) {
+                      print("Dsadsadasdadas");
+                      _formKey.currentState!.save();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CreatePropertyScreen3(
+                              currentOffer: widget.currentOffer),
+                        ),
+                      );
+                    }
                   },
                 ),
               ),
@@ -379,7 +418,8 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
     bool validation = true;
 
     if (areaController.text.isEmpty) {
-      areaErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
+      areaErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
       validation = false;
     }
     if (!NumbersHelper.isNumeric(areaController.text)) {
@@ -387,11 +427,13 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
     }
 
     if (priceController.text.isEmpty) {
-      priceErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
+      priceErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
       validation = false;
     }
     if (!isSell && periodController.text.isEmpty) {
-      periodErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
+      periodErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
       validation = false;
     }
 

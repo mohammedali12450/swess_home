@@ -3,9 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_event.dart';
@@ -23,7 +21,6 @@ import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/after_estate_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
-import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -221,7 +218,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                     ),
                     kHe24,
                     Text(
-                      AppLocalizations.of(context)!.offer_type + " :",
+                      AppLocalizations.of(context)!.order_type + " :",
                     ),
                     kHe12,
                     MyDropdownList(

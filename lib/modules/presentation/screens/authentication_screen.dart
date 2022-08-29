@@ -446,21 +446,21 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     style: Theme.of(context).textTheme.bodyText2,
                   )),
               const Spacer(),
-              BlocBuilder<ChannelCubit, dynamic>(
-                bloc: _checkBoxStateCubit,
-                builder: (_, isChecked) {
-                  return Checkbox(
-                    value: isChecked,
-                    onChanged: (_) {
-                      _checkBoxStateCubit.setState(!isChecked);
-                    },
-                  );
-                },
-              ),
-              Text(
-                AppLocalizations.of(context)!.remember_me,
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
+              // BlocBuilder<ChannelCubit, dynamic>(
+              //   bloc: _checkBoxStateCubit,
+              //   builder: (_, isChecked) {
+              //     return Checkbox(
+              //       value: isChecked,
+              //       onChanged: (_) {
+              //         _checkBoxStateCubit.setState(!isChecked);
+              //       },
+              //     );
+              //   },
+              // ),
+              // Text(
+              //   AppLocalizations.of(context)!.remember_me,
+              //   style: Theme.of(context).textTheme.bodyText2,
+              // ),
             ],
           ),
           kHe24,
@@ -702,7 +702,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               );
             },
           ),
-          45.verticalSpace,
+          kHe24,
           BlocBuilder<ChannelCubit, dynamic>(
               bloc: _termsisCheckedCubit,
               builder: (_, isChecked) {

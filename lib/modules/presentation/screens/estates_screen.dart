@@ -55,7 +55,6 @@ class _EstatesScreenState extends State<EstatesScreen> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
@@ -76,7 +75,6 @@ class _EstatesScreenState extends State<EstatesScreen> {
                 color: AppColors.white,
               ),
               onPressed: () {
-                // TODO : Process this state
                 Navigator.pop(context);
               },
             ),
