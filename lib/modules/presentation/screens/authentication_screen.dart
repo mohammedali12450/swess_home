@@ -51,7 +51,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   // Cubits and Blocs
   final ChannelCubit _passwordVisibilityCubit = ChannelCubit(false);
   final ChannelCubit _repeatPasswordVisibleCubit = ChannelCubit(false);
-  final ChannelCubit _checkBoxStateCubit = ChannelCubit(false);
   final ChannelCubit _isLoginSelected = ChannelCubit(true);
   final ChannelCubit _termsisCheckedCubit = ChannelCubit(false);
   ChannelCubit authenticationError = ChannelCubit(null);

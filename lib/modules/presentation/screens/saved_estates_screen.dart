@@ -32,10 +32,11 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
     // TODO: implement initState
     super.initState();
     _savedEstatesBloc = SavedEstatesBloc(EstateRepository());
-    User? user =BlocProvider.of<UserLoginBloc>(context).user ;
+    User? user = BlocProvider.of<UserLoginBloc>(context).user;
     if (user != null && user.token != null) {
       _savedEstatesBloc.add(
-        SavedEstatesFetchStarted(token: BlocProvider.of<UserLoginBloc>(context).user!.token!),
+        SavedEstatesFetchStarted(
+            token: BlocProvider.of<UserLoginBloc>(context).user!.token!),
       );
     }
   }
@@ -55,7 +56,8 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
             if (BlocProvider.of<UserLoginBloc>(context).user!.token != null) {
               _savedEstatesBloc.add(
                 SavedEstatesFetchStarted(
-                    token: BlocProvider.of<UserLoginBloc>(context).user!.token!),
+                    token:
+                        BlocProvider.of<UserLoginBloc>(context).user!.token!),
               );
             }
           },
@@ -77,12 +79,10 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                   }
                 },
                 builder: (BuildContext context, savedEstatesState) {
-
-
                   if (savedEstatesState is SavedEstatesFetchNone) {
                     return FetchResult(
-                        content:
-                        AppLocalizations.of(context)!.have_not_saved_estates);
+                        content: AppLocalizations.of(context)!
+                            .have_not_saved_estates);
                   }
 
                   if (savedEstatesState is SavedEstatesFetchProgress) {
@@ -90,8 +90,8 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                   }
                   if (savedEstatesState is! SavedEstatesFetchComplete) {
                     return FetchResult(
-                        content:
-                            AppLocalizations.of(context)!.error_happened_when_executing_operation);
+                        content: AppLocalizations.of(context)!
+                            .error_happened_when_executing_operation);
                   }
 
                   List<Estate> estates = savedEstatesState.savedEstates;
@@ -104,11 +104,15 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                           Icon(
                             Icons.error_outline,
                             size: 0.5.sw,
-                            color: Theme.of(context).colorScheme.primary.withOpacity(0.64),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.64),
                           ),
                           kHe24,
                           Text(
-                            AppLocalizations.of(context)!.have_not_saved_estates,
+                            AppLocalizations.of(context)!
+                                .have_not_saved_estates,
                             style: Theme.of(context).textTheme.headline5,
                           ),
                         ],

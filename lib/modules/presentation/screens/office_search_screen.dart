@@ -27,6 +27,7 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../data/providers/locale_provider.dart';
+import '../../data/providers/theme_provider.dart';
 
 class OfficeSearchScreen extends StatefulWidget {
   static const String id = 'OfficeSearchScreen';
@@ -87,6 +88,8 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
               BlocBuilder<ChannelCubit, dynamic>(
                 bloc: searchTypeCubit,
                 builder: (_, searchType) {
+                  bool isDark =
+                  Provider.of<ThemeProvider>(context).isDarkMode(context);
                   return Padding(
                     padding: EdgeInsets.only(left: 18.w, top: 8.w),
                     child: Container(
@@ -99,7 +102,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                       padding: EdgeInsets.only(right: 8.w, bottom: 3.w),
                       height: 48.h,
                       width: 160.w,
-                      child: buildDropDown(),
+                      child: buildDropDown(isDark),
                     ),
                   );
                 },
@@ -319,7 +322,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
     );
   }
 
-  DropdownButtonFormField buildDropDown() {
+  DropdownButtonFormField buildDropDown(isDark) {
     return DropdownButtonFormField(
       icon: const Padding(
         padding: EdgeInsets.only(left: 8.0),
@@ -328,7 +331,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
           color: Colors.white,
         ),
       ),
-      dropdownColor: Colors.black,
+      dropdownColor: isDark ? const Color(0xff26282B) : AppColors.primaryColor,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.only(bottom: 8.w),
           hintText: AppLocalizations.of(context)!.search_by_name,

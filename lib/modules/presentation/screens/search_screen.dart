@@ -163,7 +163,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     padding: EdgeInsets.only(right: 8.w, bottom: 3.w),
                     height: 48.h,
                     width: 160.w,
-                    child: buildDropDown(),
+                    child: buildDropDown(isDark),
                   ),
                 );
               },
@@ -329,7 +329,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                   }
                                   if (_formKey.currentState!.validate()) {
                                     _formKey.currentState!.save();
-                                    print("adsas");
                                     print(widget.searchData.toJson(true));
                                     Navigator.push(
                                       context,
@@ -571,7 +570,7 @@ class _SearchScreenState extends State<SearchScreen> {
 //   );
 // }
 
-  DropdownButtonFormField buildDropDown() {
+  DropdownButtonFormField buildDropDown(isDark) {
     return DropdownButtonFormField(
       icon: const Padding(
         padding: EdgeInsets.only(left: 8.0),
@@ -580,7 +579,7 @@ class _SearchScreenState extends State<SearchScreen> {
           color: Colors.white,
         ),
       ),
-      dropdownColor: Colors.black,
+      dropdownColor: isDark ? const Color(0xff26282B) : AppColors.primaryColor,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.only(bottom: 8.w),
           hintText: AppLocalizations.of(context)!.search_neighborhood,
@@ -775,8 +774,6 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   SingleChildScrollView buildSearchWidgets() {
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-
     List<String> priceDomainsNames =
         priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
     priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);

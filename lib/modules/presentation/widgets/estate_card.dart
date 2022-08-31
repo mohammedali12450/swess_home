@@ -155,9 +155,6 @@ class _EstateCardState extends State<EstateCard> {
     }
 
 
-    print(imagesBaseUrl + widget.estate.estateOffice!.logo!);
-
-
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
       width: 1.sw,

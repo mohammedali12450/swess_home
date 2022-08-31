@@ -1,12 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
@@ -15,12 +12,9 @@ import 'package:swesshome/modules/business_logic_components/bloc/forget_password
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:swesshome/modules/data/providers/theme_provider.dart';
-import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/screens/verificaton_screen_reset.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   static const String id = 'ForgetPasswordScreen';
@@ -33,7 +27,7 @@ class ForgetPasswordScreen extends StatefulWidget {
 
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   // Blocs and cubits :
-  final ChannelCubit _passwordVisibleSwitcherCubit = ChannelCubit(false);
+  //final ChannelCubit _passwordVisibleSwitcherCubit = ChannelCubit(false);
   final ChannelCubit officePhoneError = ChannelCubit(null);
   final ChannelCubit officePhoneErrorLogin = ChannelCubit(null);
   final ChannelCubit systemPasswordError = ChannelCubit(null);
@@ -79,8 +73,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextDirection textDirection = Directionality.of(context);
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    // TextDirection textDirection = Directionality.of(context);
+    // bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
 
     return BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
       listener: (_, forgetState)  {
@@ -107,8 +101,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           }
         }
         if (forgetState is ForgetPasswordComplete) {
-
-          print("doneeeeeee");
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(

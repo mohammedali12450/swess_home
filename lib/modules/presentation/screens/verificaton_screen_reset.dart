@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:phone_number/phone_number.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:swesshome/constants/assets_paths.dart';
@@ -19,7 +18,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/verification_bl
 import 'package:swesshome/modules/business_logic_components/bloc/verification_bloc/verification_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/otp_model.dart';
-import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/reset_password_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
@@ -117,8 +115,8 @@ class _VerificationCodeScreenResetState
 
   @override
   Widget build(BuildContext context) {
-    TextDirection textDirection = Directionality.of(context);
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    // TextDirection textDirection = Directionality.of(context);
+    // bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return MultiBlocListener(
       listeners: [
         BlocListener<VerificationCodeBloc, VerificationCodeState>(
@@ -155,36 +153,37 @@ class _VerificationCodeScreenResetState
             }
           },
         ),
-        BlocListener<ResendVerificationCodeBloc, ResendVerificationCodeState>(
-          listener: (_, resendVerifyState) {
-            if (resendVerifyState is ResendVerificationCodeError) {
-              if (resendVerifyState.isConnectionError) {
-                showWonderfulAlertDialog(
-                  context,
-                  AppLocalizations.of(context)!.error,
-                  AppLocalizations.of(context)!.no_internet_connection,
-                );
-                return;
-              }
+        if (waitingTimeValue == 0 || waitingTimeValue == 59)
+          BlocListener<ResendVerificationCodeBloc, ResendVerificationCodeState>(
+            listener: (_, resendVerifyState) {
+              if (resendVerifyState is ResendVerificationCodeError) {
+                if (resendVerifyState.isConnectionError) {
+                  showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.error,
+                    AppLocalizations.of(context)!.no_internet_connection,
+                  );
+                  return;
+                }
 
-              if (resendVerifyState.errorResponse != null) {
-                loginErrorHandling(resendVerifyState.errorResponse);
-              } else if (resendVerifyState.errorMessage != null) {
-                showWonderfulAlertDialog(
-                  context,
-                  AppLocalizations.of(context)!.error,
-                  AppLocalizations.of(context)!.localeName == "en"
-                      ? resendVerifyState.errorMessage!
-                      : "الكود خطأ",
-                  defaultButtonContent: AppLocalizations.of(context)!.ok,
-                );
+                if (resendVerifyState.errorResponse != null) {
+                  loginErrorHandling(resendVerifyState.errorResponse);
+                } else if (resendVerifyState.errorMessage != null) {
+                  showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.error,
+                    AppLocalizations.of(context)!.localeName == "en"
+                        ? resendVerifyState.errorMessage!
+                        : "الكود خطأ",
+                    defaultButtonContent: AppLocalizations.of(context)!.ok,
+                  );
+                }
               }
-            }
-            if (resendVerifyState is ResendVerificationCodeComplete) {
-              print("doneeeeeeesadasdsad");
-            }
-          },
-        ),
+              if (resendVerifyState is ResendVerificationCodeComplete) {
+                print("doneeeeeeesadasdsad");
+              }
+            },
+          ),
       ],
       child: Scaffold(
         resizeToAvoidBottomInset: true,

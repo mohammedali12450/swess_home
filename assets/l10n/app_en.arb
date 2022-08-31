@@ -337,7 +337,7 @@
   "enter_office_name": "Enter office name",
   "enter_area_name": "Enter area name",
   "search_results": "Search results",
-  "no_more_results": "No more results matching your search",
+  "no_more_results": "No more results",
   "no_results_body": "Sorry, there are no results for your search",
   "no_results_hint": "Try to adjust search filter and try again",
   "search_again": "Search again",

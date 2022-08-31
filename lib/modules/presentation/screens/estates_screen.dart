@@ -232,7 +232,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                             Expanded(
                               flex: 3,
                               child: ResText(
-                                "انتهت النتائج",
+                                AppLocalizations.of(context)!.no_more_results,
                                 textAlign: TextAlign.center,
                                 textStyle: textStyling(S.s18, W.w5, C.bl),
                               ),

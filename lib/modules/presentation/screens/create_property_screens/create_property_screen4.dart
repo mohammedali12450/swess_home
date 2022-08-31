@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/interior_statuses_bloc/interior_statuses_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/ownership_type_bloc/ownership_type_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
@@ -20,7 +21,8 @@ import 'package:swesshome/modules/presentation/screens/create_property_screens/i
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
-import 'package:swesshome/modules/presentation/widgets/row_information_switcher.dart';
+
+import '../../../business_logic_components/cubits/channel_cubit.dart';
 
 class CreatePropertyScreen4 extends StatefulWidget {
   static const String id = "CreatePropertyScreen4";
@@ -40,6 +42,10 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
   bool isSell = false;
   bool isFarmsOrVacations = false;
   bool isHouse = false;
+
+  final ChannelCubit _checkFurnishedStateCubit = ChannelCubit(false);
+
+  final ChannelCubit _checkBoolStateCubit = ChannelCubit(false);
 
   late List<OwnershipType> ownershipTypes;
 
@@ -154,7 +160,6 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                         widget.currentOffer.floorPlanImages =
                             floorPlanPropertyImages;
                         if (_formKey.currentState!.validate()) {
-                          print("Dsadsadasdadas");
                           _formKey.currentState!.save();
                           Navigator.push(
                             context,
@@ -222,40 +227,92 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                   ],
                   32.verticalSpace,
                   if (!isShops || !isLands)
-                    Padding(
-                      padding: EdgeInsets.only(left: 100.w),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                left: (isArabic) ? 18.w : 0,
-                                right: (isArabic) ? 0 : 18.w,
+                    BlocBuilder<ChannelCubit, dynamic>(
+                        bloc: _checkFurnishedStateCubit,
+                        builder: (_, isYes) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                    left: (isArabic) ? 8.w : 0,
+                                    right: (isArabic) ? 0 : 8.w,
+                                  ),
+                                  child: Text(AppLocalizations.of(context)!
+                                      .is_the_estate_furnished),
+                                ),
                               ),
-                              child: Text(AppLocalizations.of(context)!
-                                  .is_the_estate_furnished),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: MyDropdownList(
-                              elementsList: [
-                                AppLocalizations.of(context)!.yes,
-                                AppLocalizations.of(context)!.no
-                              ],
-                              onSelect: (index) {
-                                //print(index);
-                                widget.currentOffer.isFurnished =
-                                (index == 0) ? true : false;
-                              },
-                              selectedItem: AppLocalizations.of(context)!.no,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                              Expanded(
+                                flex: 1,
+                                child: InkWell(
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 14.h),
+                                    decoration: BoxDecoration(
+                                      color: isYes
+                                              ? AppColors.primaryColor
+                                              : Colors.white,
+                                      border: Border.all(
+                                        color: AppColors.primaryColor,
+                                        width: 1.5,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.yes,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color:!isYes
+                                                ? AppColors.primaryColor
+                                                : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    widget.currentOffer.isFurnished = true;
+                                    _checkFurnishedStateCubit.setState(true);
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                flex: 1,
+                                child: InkWell(
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 14.h),
+                                    decoration: BoxDecoration(
+                                      color: !isYes
+                                              ? AppColors.primaryColor
+                                              : Colors.white,
+                                      border: Border.all(
+                                        color: AppColors.primaryColor,
+                                        width: 1.5,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.no,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: isYes
+                                            ? AppColors.primaryColor
+                                                : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    widget.currentOffer.isFurnished = false;
+                                    _checkFurnishedStateCubit.setState(false);
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                            ],
+                          );
+                        }),
                   // RowInformationSwitcher(
                   //   content:
                   //       AppLocalizations.of(context)!.is_the_estate_furnished,
@@ -275,40 +332,93 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                     //   },
                     // ),
                     28.verticalSpace,
-                    Padding(
-                      padding: EdgeInsets.only(left: 100.w),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                left: (isArabic) ? 18.w : 0,
-                                right: (isArabic) ? 0 : 18.w,
+                    BlocBuilder<ChannelCubit, dynamic>(
+                        bloc: _checkBoolStateCubit,
+                        builder: (_, isYes) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                    left: (isArabic) ? 8.w : 0,
+                                    right: (isArabic) ? 0 : 8.w,
+                                  ),
+                                  child: Text(AppLocalizations.of(context)!
+                                      .is_the_estate_has_pool),
+                                ),
                               ),
-                              child: Text(AppLocalizations.of(context)!
-                                  .is_the_estate_has_pool),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: MyDropdownList(
-                              elementsList: [
-                                AppLocalizations.of(context)!.yes,
-                                AppLocalizations.of(context)!.no
-                              ],
-                              onSelect: (index) {
-                                //print(index);
-                                widget.currentOffer.hasSwimmingPool =
-                                (index == 0) ? true : false;
-                              },
-                              selectedItem: AppLocalizations.of(context)!.no,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                              Expanded(
+                                flex: 1,
+                                child: InkWell(
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 14.h),
+                                    decoration: BoxDecoration(
+                                      color: isYes
+                                              ? AppColors.primaryColor
+                                              : Colors.white,
+                                      border: Border.all(
+                                        color: AppColors.primaryColor,
+                                        width: 1.5,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.yes,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: !isYes
+                                                ? AppColors.primaryColor
+                                                : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    widget.currentOffer.hasSwimmingPool = true;
+                                    _checkBoolStateCubit.setState(true);
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                flex: 1,
+                                child: InkWell(
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 14.h),
+                                    decoration: BoxDecoration(
+                                      color: !isYes
+                                              ? AppColors.primaryColor
+                                              : Colors.white,
+                                      border: Border.all(
+                                        color: AppColors.primaryColor,
+                                        width: 1.5,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.no,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: isYes
+                                                ? AppColors.primaryColor
+                                                : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    widget.currentOffer.hasSwimmingPool = false;
+                                    _checkBoolStateCubit.setState(false);
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                            ],
+                          );
+                        }),
+
                     // RowInformationSwitcher(
                     //   content:
                     //       AppLocalizations.of(context)!.is_the_estate_has_pool,
@@ -318,7 +428,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                     //   },
                     // ),
                   ],
-                  36.verticalSpace,
+                  60.verticalSpace,
                   ElevatedButton(
                     style:
                         ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),

@@ -45,6 +45,7 @@ class EstateOfficeScreen extends StatefulWidget {
 class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
   final VisitBloc _visitBloc = VisitBloc(EstateRepository());
   late LikeAndUnlikeBloc _likeAndUnlikeBloc;
+  List<Estate> estates = [];
 
   final EstateBloc _estateBloc = EstateBloc(
     EstateRepository(),
@@ -314,14 +315,14 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       return const PropertyShimmer();
                     }
                     if (estateState is! EstateFetchComplete) {
+
                       return FetchResult(
                         content: AppLocalizations.of(context)!
                             .error_happened_when_executing_operation,
                         iconSize: 0.25.sw,
                       );
                     }
-
-                    List<Estate> estates = estateState.estates;
+                    estates.addAll(estateState.estates);
 
                     if (estates.isEmpty) {
                       return Container(

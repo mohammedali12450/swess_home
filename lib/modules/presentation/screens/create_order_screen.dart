@@ -74,9 +74,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     List<String> priceDomainsNames =
-        priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
-    // priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
-    // Remove duplicates:
+    priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
+    priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
     priceDomainsNames = priceDomainsNames.toSet().toList();
     print(priceDomainsNames);
 
@@ -247,15 +246,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                     MyDropdownList(
                       elementsList: priceDomainsNames,
                       onSelect: (index) {
+                        print(index);
                         bool isNoneSelected = index == 0;
                         selectedPriceDomainId = (isNoneSelected)
                             ? null
                             : priceDomains.elementAt(index - 1).id;
                       },
-                      validator: (value) => value == null
-                          ? AppLocalizations.of(context)!.this_field_is_required
-                          : null,
-                      selectedItem: AppLocalizations.of(context)!.please_select,
+                      selectedItem: AppLocalizations.of(context)!.unselected,
                     ),
                     kHe24,
                     Text(
