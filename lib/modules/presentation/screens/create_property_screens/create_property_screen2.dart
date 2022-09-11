@@ -393,7 +393,6 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                       widget.currentOffer.floor = floorController.text;
                     }
                     if (_formKey.currentState!.validate()) {
-                      print("Dsadsadasdadas");
                       _formKey.currentState!.save();
                       Navigator.push(
                         context,

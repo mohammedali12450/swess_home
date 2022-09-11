@@ -19,7 +19,7 @@ class EstateOffice {
 
   int? contractId;
 
-  bool isLiked;
+  bool? isLiked;
 
   EstateOffice(
       {required this.id,
@@ -41,12 +41,33 @@ class EstateOffice {
       logo: jsonMap["logo"],
       name: jsonMap['name'],
       id: jsonMap["id"],
-      isLiked : jsonMap["is_liked"] ,
+      isLiked: jsonMap["is_liked"],
       contractId: jsonMap["contract_id"],
       mobile: jsonMap["mobile"],
-      location: Location.fromJson(jsonMap["location"]),
+      location: jsonMap["location"] == null
+          ? null
+          : Location.fromJson(jsonMap["location"]),
       telephone: jsonMap["telephone"],
       rating: jsonMap["rating"],
     );
   }
 }
+//
+// class EstateOfficeSearch {
+//   int id;
+//   String? name;
+//
+//   String? logo;
+//   Location? location;
+//
+//   EstateOfficeSearch({required this.id, this.name, this.logo, this.location});
+//
+//   factory EstateOfficeSearch.fromJson(Map<String, dynamic> jsonMap) {
+//     return EstateOfficeSearch(
+//       logo: jsonMap["logo"],
+//       name: jsonMap['name'],
+//       id: jsonMap["id"],
+//       location: Location.fromJson(jsonMap["location"]),
+//     );
+//   }
+// }

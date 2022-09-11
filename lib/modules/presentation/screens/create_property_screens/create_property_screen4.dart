@@ -23,6 +23,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 
 import '../../../business_logic_components/cubits/channel_cubit.dart';
+import '../../../data/providers/theme_provider.dart';
 
 class CreatePropertyScreen4 extends StatefulWidget {
   static const String id = "CreatePropertyScreen4";
@@ -100,6 +101,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
   @override
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
 
     return CreatePropertyTemplate(
       headerIconPath:
@@ -177,6 +179,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
             )
           : Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                 children: [
                   if (isSell & isHouse) ...[
@@ -251,9 +254,13 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                     margin:
                                         EdgeInsets.symmetric(horizontal: 14.h),
                                     decoration: BoxDecoration(
-                                      color: isYes
+                                      color: !isDark
+                                          ? isYes
                                               ? AppColors.primaryColor
-                                              : Colors.white,
+                                              : Colors.white
+                                          : isYes
+                                              ? Colors.white
+                                              : AppColors.secondaryDark,
                                       border: Border.all(
                                         color: AppColors.primaryColor,
                                         width: 1.5,
@@ -264,8 +271,12 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                       AppLocalizations.of(context)!.yes,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color:!isYes
+                                        color: !isDark
+                                            ? !isYes
                                                 ? AppColors.primaryColor
+                                                : Colors.white
+                                            : isYes
+                                                ? AppColors.secondaryDark
                                                 : Colors.white,
                                       ),
                                     ),
@@ -284,9 +295,13 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                     margin:
                                         EdgeInsets.symmetric(horizontal: 14.h),
                                     decoration: BoxDecoration(
-                                      color: !isYes
+                                      color: !isDark
+                                          ? !isYes
                                               ? AppColors.primaryColor
-                                              : Colors.white,
+                                              : Colors.white
+                                          : !isYes
+                                              ? Colors.white
+                                              : AppColors.secondaryDark,
                                       border: Border.all(
                                         color: AppColors.primaryColor,
                                         width: 1.5,
@@ -297,8 +312,12 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                       AppLocalizations.of(context)!.no,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: isYes
-                                            ? AppColors.primaryColor
+                                        color: !isDark
+                                            ? isYes
+                                                ? AppColors.primaryColor
+                                                : Colors.white
+                                            : !isYes
+                                                ? AppColors.secondaryDark
                                                 : Colors.white,
                                       ),
                                     ),
@@ -357,8 +376,8 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                         EdgeInsets.symmetric(horizontal: 14.h),
                                     decoration: BoxDecoration(
                                       color: isYes
-                                              ? AppColors.primaryColor
-                                              : Colors.white,
+                                          ? AppColors.primaryColor
+                                          : Colors.white,
                                       border: Border.all(
                                         color: AppColors.primaryColor,
                                         width: 1.5,
@@ -370,8 +389,8 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: !isYes
-                                                ? AppColors.primaryColor
-                                                : Colors.white,
+                                            ? AppColors.primaryColor
+                                            : Colors.white,
                                       ),
                                     ),
                                   ),
@@ -390,8 +409,8 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                         EdgeInsets.symmetric(horizontal: 14.h),
                                     decoration: BoxDecoration(
                                       color: !isYes
-                                              ? AppColors.primaryColor
-                                              : Colors.white,
+                                          ? AppColors.primaryColor
+                                          : Colors.white,
                                       border: Border.all(
                                         color: AppColors.primaryColor,
                                         width: 1.5,
@@ -403,8 +422,8 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: isYes
-                                                ? AppColors.primaryColor
-                                                : Colors.white,
+                                            ? AppColors.primaryColor
+                                            : Colors.white,
                                       ),
                                     ),
                                   ),

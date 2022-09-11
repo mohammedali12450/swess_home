@@ -6,18 +6,30 @@ import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/data/models/estate_office.dart';
 
+import '../screens/estate_office_screen.dart';
 import 'res_text.dart';
 
 class EstateOfficeCard extends StatelessWidget {
   final EstateOffice office;
   final Function() onTap;
 
-  const EstateOfficeCard({Key? key, required this.office, required this.onTap}) : super(key: key);
+  const EstateOfficeCard({Key? key, required this.office,required this.onTap})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+     // onTap: () {
+        // Navigator.push(
+        //   context,
+        //   PageRouteBuilder(
+        //       pageBuilder: (_, __, ___) => EstateOfficeScreen(
+        //             office.id,
+        //           ),
+        //       transitionDuration: const Duration(seconds: 1)),
+        // );
+   //   },
       child: Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(
@@ -54,7 +66,8 @@ class EstateOfficeCard extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 64.w,
                   backgroundColor: Colors.grey,
-                  backgroundImage: CachedNetworkImageProvider(imagesBaseUrl + office.logo!),
+                  backgroundImage:
+                      CachedNetworkImageProvider(imagesBaseUrl + office.logo!),
                 ),
               ),
             ),

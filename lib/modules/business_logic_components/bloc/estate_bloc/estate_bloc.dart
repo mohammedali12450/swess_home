@@ -17,13 +17,14 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
       (event, emit) async {
         emit(EstateFetchProgress());
         try {
-          estates =
-              await estateRepository.search(event.searchData, event.isAdvanced, page, event.token);
+          estates = await estateRepository.search(
+              event.searchData, event.isAdvanced, page, event.token);
           emit(EstateFetchComplete(estates: estates ?? []));
           page++;
         } on ConnectionException catch (e) {
           emit(
-            EstateFetchError(errorMessage: e.errorMessage , isConnectionError: true),
+            EstateFetchError(
+                errorMessage: e.errorMessage, isConnectionError: true),
           );
         } on GeneralException catch (e) {
           emit(
@@ -37,8 +38,11 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
       (event, emit) async {
         emit(EstateFetchProgress());
         try {
-          List<Estate> estates = await estateRepository.getOfficeEstates(event.officeId);
-          emit(EstateFetchComplete(estates: estates,));
+          List<Estate> estates =
+              await estateRepository.getOfficeEstates(event.officeId);
+          emit(EstateFetchComplete(
+            estates: estates,
+          ));
         } on ConnectionException catch (e) {
           emit(
             EstateFetchError(errorMessage: e.errorMessage),

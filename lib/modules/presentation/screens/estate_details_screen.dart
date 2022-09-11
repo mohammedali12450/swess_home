@@ -675,7 +675,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (_) =>
-                            EstateOfficeScreen(widget.estate.estateOffice!),
+                            EstateOfficeScreen(widget.estate.estateOffice!.id),
                       ),
                     );
                   },
@@ -716,7 +716,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (_) => EstateOfficeScreen(
-                                  widget.estate.estateOffice!),
+                                  widget.estate.estateOffice!.id),
                             ),
                           );
                         },

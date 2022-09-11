@@ -17,8 +17,10 @@ import '../../../data/models/estate_offer_type.dart';
 
 class CreatePropertyScreen1 extends StatefulWidget {
   static const String id = "CreatePropertyScreen1";
-  final int officeId ;
-  const CreatePropertyScreen1({Key? key , required this.officeId}) : super(key: key);
+  final int officeId;
+
+  const CreatePropertyScreen1({Key? key, required this.officeId})
+      : super(key: key);
 
   @override
   _CreatePropertyScreen1State createState() => _CreatePropertyScreen1State();
@@ -38,9 +40,10 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
     // TODO: implement initState
     super.initState();
     _currentOffer = Estate.init();
-    _currentOffer.officeId = widget.officeId ;
+    _currentOffer.officeId = widget.officeId;
     estateTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
-    offerTypes = BlocProvider.of<EstateOfferTypesBloc>(context).estateOfferTypes!;
+    offerTypes =
+        BlocProvider.of<EstateOfferTypesBloc>(context).estateOfferTypes!;
     _currentOffer.estateType = estateTypes.first;
     _currentOffer.estateOfferType = offerTypes.first;
   }
@@ -65,12 +68,15 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
             ),
             16.verticalSpace,
             MyDropdownList(
-              elementsList: estateTypes.map((e) => e.getName(isArabic).split('|').first).toList(),
+              elementsList: estateTypes
+                  .map((e) => e.getName(isArabic).split('|').first)
+                  .toList(),
               onSelect: (index) {
                 _currentOffer.estateType = estateTypes.elementAt(index);
               },
-              validator: (value) =>
-              value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+              validator: (value) => value == null
+                  ? AppLocalizations.of(context)!.this_field_is_required
+                  : null,
               selectedItem: AppLocalizations.of(context)!.please_select,
             ),
             24.verticalSpace,
@@ -86,8 +92,9 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
               onSelect: (index) {
                 _currentOffer.estateOfferType = offerTypes.elementAt(index);
               },
-              validator: (value) =>
-              value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
+              validator: (value) => value == null
+                  ? AppLocalizations.of(context)!.this_field_is_required
+                  : null,
               selectedItem: AppLocalizations.of(context)!.please_select,
             ),
             const Spacer(),
@@ -98,16 +105,17 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
                 textAlign: TextAlign.center,
               ),
               onPressed: () {
-    if (_formKey.currentState!.validate()) {
-      print("Dsadsadasdadas");
-      _formKey.currentState!.save();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CreatePropertyScreen2(currentOffer: _currentOffer),
-        ),
-      );
-    }
+                if (_formKey.currentState!.validate()) {
+                  print("Dsadsadasdadas");
+                  _formKey.currentState!.save();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          CreatePropertyScreen2(currentOffer: _currentOffer),
+                    ),
+                  );
+                }
               },
             ),
             12.verticalSpace,

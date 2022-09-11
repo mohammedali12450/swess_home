@@ -6,21 +6,23 @@ import 'package:swesshome/modules/data/models/search_data.dart';
 import 'package:swesshome/utils/services/network_helper.dart';
 
 class EstateProvider {
-  Future sendEstate(Estate estate, String token, {Function(int)? onSendProgress}) async {
+  Future sendEstate(Estate estate, String token,
+      {Function(int)? onSendProgress}) async {
     NetworkHelper helper = NetworkHelper();
     FormData data = FormData.fromMap(await estate.toJson());
     Response response;
 
     try {
-      response =
-          await helper.post(sendEstateUrl, data, token: token, onSendProgress: onSendProgress);
+      response = await helper.post(sendEstateUrl, data,
+          token: token, onSendProgress: onSendProgress);
     } catch (e) {
       rethrow;
     }
     return response;
   }
 
-  Future search(SearchData searchData, bool isAdvanced, int page, String? token) async {
+  Future search(
+      SearchData searchData, bool isAdvanced, int page, String? token) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
 
@@ -43,9 +45,23 @@ class EstateProvider {
     NetworkHelper helper = NetworkHelper();
 
     Response response;
-
     try {
-      response = await helper.get(getOfficeEstatesUrl, queryParameters: {"office_id": officeId});
+      response = await helper
+          .get(getOfficeEstatesUrl, queryParameters: {"office_id": officeId});
+    } catch (e) {
+      rethrow;
+    }
+
+    return response;
+  }
+
+  Future getOfficeDetails(int officeId) async {
+    NetworkHelper helper = NetworkHelper();
+
+    Response response;
+    try {
+      response = await helper
+          .get(getOfficeDetailsUrl, queryParameters: {"office_id": officeId});
     } catch (e) {
       rethrow;
     }
@@ -106,7 +122,8 @@ class EstateProvider {
     return response;
   }
 
-  Future unlikeEstate(String? token, int likeObjectId, LikeType likeType) async {
+  Future unlikeEstate(
+      String? token, int likeObjectId, LikeType likeType) async {
     NetworkHelper helper = NetworkHelper();
 
     Map<String, dynamic> data = {};
@@ -134,15 +151,16 @@ class EstateProvider {
 
   Future saveEstate(String? token, int estateId) async {
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.post(saveEstateUrl, {"estate_id": estateId}, token: token);
+    Response response =
+        await helper.post(saveEstateUrl, {"estate_id": estateId}, token: token);
     print("ghinaa save $response");
     return response;
   }
 
   Future unSaveEstate(String? token, int estateId) async {
     NetworkHelper helper = NetworkHelper();
-    Response response =
-        await helper.delete(unSaveEstateUrl, fromData: {"estate_id": estateId}, token: token);
+    Response response = await helper.delete(unSaveEstateUrl,
+        fromData: {"estate_id": estateId}, token: token);
     print("ghinaa unsave $response");
     return response;
   }
@@ -169,6 +187,13 @@ class EstateProvider {
     }
 
     Response response = await helper.post(url, data, token: token);
+    return response;
+  }
+
+  Future deleteUserNewEstate(String? token, int? id) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response = await helper
+        .delete(deleteUserNewEstateUrl, queryParameters: {"id": id}, token: token);
     return response;
   }
 }

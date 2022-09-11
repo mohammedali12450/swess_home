@@ -8,8 +8,10 @@ class EstateOfficeProvider {
     Response response;
 
     try {
-      response = await helper.get(searchEstateOfficeByNameUrl,
-          queryParameters: {"name": name}, token: token);
+      response = await helper.get(
+          hostingerBaseUrl + searchEstateOfficeByNameUrl,
+          queryParameters: {"name": name},
+          token: token);
     } catch (e) {
       rethrow;
     }
@@ -39,7 +41,8 @@ class EstateOfficeProvider {
     try {
       response = await helper.post(
         searchByregionUrl,
-          {"location_id": locationId},);
+        {"location_id": locationId},
+      );
       print(response.statusCode);
       print(response);
     } catch (e) {

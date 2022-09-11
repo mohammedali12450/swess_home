@@ -108,7 +108,7 @@ class Estate {
     // Offer type :
     EstateOfferType estateOfferType = EstateOfferType.fromJson(json["estate_offer_type"]);
     // estate location :
-    Location location = Location.fromJson(json["location"]);
+    Location? location = Location.fromJson(json["location"]);
     // area unit :
     AreaUnit areaUnit = AreaUnit.fromJson(json["area_unit"]);
     // estate images :

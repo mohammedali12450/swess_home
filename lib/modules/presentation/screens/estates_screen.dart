@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
@@ -22,6 +23,7 @@ import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../data/providers/locale_provider.dart';
 import 'authentication_screen.dart';
 
 class EstatesScreen extends StatefulWidget {
@@ -260,6 +262,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
 
   void showReportModalBottomSheet(int estateId) {
     List<Report> reports = BlocProvider.of<ReportBloc>(context).reports!;
+    bool isArabic = Provider.of<LocaleProvider>(context, listen: false).isArabic();
 
     showModalBottomSheet(
       context: context,
@@ -339,7 +342,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       width: 1.sw,
                       height: 52.h,
                       child: ResText(
-                        reports.elementAt(index).getName(true),
+                        reports.elementAt(index).getName(isArabic),
                         textAlign: TextAlign.right,
                         textStyle: textStyling(S.s15, W.w5, C.bl),
                       ),

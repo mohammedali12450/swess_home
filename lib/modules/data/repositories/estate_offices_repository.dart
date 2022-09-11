@@ -7,7 +7,8 @@ import 'package:swesshome/modules/data/providers/estate_offices_provider.dart';
 class EstateOfficesRepository {
   final EstateOfficeProvider _estateOfficeProvider = EstateOfficeProvider();
 
-  Future<List<EstateOffice>> searchEstateOfficesByName(String name, String? token) async {
+  Future<List<EstateOffice>> searchEstateOfficesByName(
+      String name, String? token) async {
     Response response;
 
     try {
@@ -28,7 +29,8 @@ class EstateOfficesRepository {
     return estateOffices;
   }
 
-  Future<List<EstateOffice>> searchEstateOfficesByLocationId(int locationId) async {
+  Future<List<EstateOffice>> searchEstateOfficesByLocationId(
+      int locationId) async {
     Response response;
 
     try {

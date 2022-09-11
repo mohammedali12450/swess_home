@@ -39,7 +39,7 @@ class SearchOfficesBloc extends Bloc<SearchOfficesEvents, SearchOfficesStates> {
         );
       } on ConnectionException catch (e) {
         emit(SearchOfficesFetchError(errorMessage: e.errorMessage));
-      } catch (e, stack) {
+      } catch (e) {
         if (e is GeneralException) {}
       }
     });

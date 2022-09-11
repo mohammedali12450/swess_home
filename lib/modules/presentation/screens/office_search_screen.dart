@@ -62,7 +62,6 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     locations = BlocProvider.of<LocationsBloc>(context).locations ?? [];
 
@@ -142,7 +141,8 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                               selectedLocation!.getLocationName();
                         }
                         return;
-                      } else if (searchType == OfficeSearchType.area) {
+                      }
+                      else if (searchType == OfficeSearchType.area) {
                         selectedRegion = await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -257,6 +257,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
             ),
           );
         }
+
         List<EstateOffice> results = searchResultsState.results;
 
         if (results.isEmpty) {
@@ -304,11 +305,11 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                           context,
                           PageRouteBuilder(
                               pageBuilder: (_, __, ___) => EstateOfficeScreen(
-                                    results.elementAt(index),
+                                    results.elementAt(index).id,
                                   ),
                               transitionDuration: const Duration(seconds: 1)),
                         );
-                      },
+                     },
                     );
                   },
                   separatorBuilder: (_, __) {
