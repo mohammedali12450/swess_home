@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
@@ -10,14 +11,14 @@ import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_event.dart';
+import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../data/providers/locale_provider.dart';
 import '../../data/repositories/estate_order_repository.dart';
 
 class EstateOrderCard extends StatefulWidget {
   final EstateOrder estateOrder;
-  final Function() onTap;
 
-  const EstateOrderCard({Key? key, required this.estateOrder, required this.onTap})
+  const EstateOrderCard({Key? key, required this.estateOrder})
       : super(key: key);
 
   @override
@@ -69,7 +70,13 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
             alignment: isArabic ? Alignment.centerLeft : Alignment.centerRight,
             width: 1.sw,
             child: InkWell(
-              onTap: widget.onTap(),
+              onTap: () {
+                DeleteEstatesBloc deleteEstatesBloc =
+                    DeleteEstatesBloc(EstateOrderRepository());
+                deleteEstatesBloc.add(DeleteEstatesFetchStarted(
+                    token: BlocProvider.of<UserLoginBloc>(context).user!.token!,
+                    orderId: widget.estateOrder.id!));
+              },
               child: Icon(
                 Icons.close,
                 color: AppColors.hintColor,

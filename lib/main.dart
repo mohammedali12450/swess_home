@@ -57,8 +57,10 @@ import 'modules/data/repositories/period_types_repository.dart';
 import 'modules/data/repositories/price_domains_repository.dart';
 import 'modules/data/repositories/system_variables_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:new_version/new_version.dart';
 
-const bool _clearSharedPreferences = false ;
+const bool _clearSharedPreferences = false;
+
 final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
@@ -102,14 +104,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     // Bind observer :
     WidgetsBinding.instance!.addObserver(this);
 
     // initialize notifications count :
-    notificationsCubit = NotificationsCubit(NotificationsSharedPreferences.getNotificationsCount());
+    notificationsCubit = NotificationsCubit(
+        NotificationsSharedPreferences.getNotificationsCount());
 
     // Firebase messages initializing :
     initializeFirebaseMessaging();
@@ -128,6 +130,44 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       initialThemeMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
     } else {
       initialThemeMode = ThemeMode.system;
+    }
+    // Instantiate NewVersion manager object (Using GCP Console app as example)
+    final newVersion = NewVersion(
+      iOSId: '1591728350',
+      androidId: 'com.real_estate.realestatecustomer',
+    );
+
+    // You can let the plugin handle fetching the status and showing a dialog,
+    // or you can fetch the status and display your own dialog, or no dialog.
+    const simpleBehavior = true;
+    if (simpleBehavior) {
+      basicStatusCheck(newVersion);
+    } else {
+      advancedStatusCheck(newVersion);
+    }
+  }
+
+  basicStatusCheck(NewVersion newVersion) {
+    print("kiki2");
+    newVersion.showAlertIfNecessary(context: context);
+  }
+
+  advancedStatusCheck(NewVersion newVersion) async {
+    print("kiki1");
+    final status = await newVersion.getVersionStatus();
+
+    if (status != null) {
+      print(status.releaseNotes);
+      print(status.appStoreLink);
+      print(status.localVersion);
+      print(status.storeVersion);
+      print(status.canUpdate.toString());
+      newVersion.showUpdateDialog(
+        context: context,
+        versionStatus: status,
+        dialogTitle: 'Custom Title',
+        dialogText: 'Custom Text',
+      );
     }
   }
 
@@ -148,16 +188,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (_) => RegionsBloc(),
         ),
         BlocProvider(
-          create: (_) => ForgetPasswordBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => ForgetPasswordBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
-          create: (_) => VerificationCodeBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => VerificationCodeBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
-          create: (_) => ResendVerificationCodeBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => ResendVerificationCodeBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
-          create: (_) => ResetPasswordBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => ResetPasswordBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
           create: (_) => OwnershipTypeBloc(
@@ -254,7 +298,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 builder: (context, widget) {
                   ScreenUtil.setContext(context);
                   return MediaQuery(
-                      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: widget!);
+                      data:
+                          MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                      child: widget!);
                 },
                 supportedLocales: L10n.all,
                 locale: localeProvider.locale,
@@ -297,7 +343,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             notification.body,
             NotificationDetails(
               android: AndroidNotificationDetails(
-                  androidNotificationsChannel.id, androidNotificationsChannel.name,
+                  androidNotificationsChannel.id,
+                  androidNotificationsChannel.name,
                   channelDescription: androidNotificationsChannel.description,
                   color: Colors.blue,
                   playSound: true),

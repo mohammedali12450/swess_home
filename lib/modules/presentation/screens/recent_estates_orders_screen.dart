@@ -30,8 +30,7 @@ class RecentEstateOrdersScreen extends StatefulWidget {
 
 class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen> {
   late RecentEstatesOrdersBloc _recentEstatesOrdersBloc;
-  DeleteEstatesBloc deleteEstatesBloc =
-      DeleteEstatesBloc(EstateOrderRepository());
+
   String? userToken;
 
   @override
@@ -118,11 +117,6 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen> {
                   itemBuilder: (_, index) {
                     return EstateOrderCard(
                       estateOrder: orders.elementAt(index),
-                      onTap: () {
-                        deleteEstatesBloc.add(DeleteEstatesFetchStarted(
-                            token: userToken,
-                            orderId: orders.elementAt(index).id!));
-                      },
                     );
                   }),
             );

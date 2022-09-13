@@ -45,6 +45,12 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
       userToken = user.token;
       print(userToken);
     }
+
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      final productId = ModalRoute.of(context)!.settings.arguments! as String;
+      print(productId);
+    });
   }
 
   _onRefresh() {
@@ -135,7 +141,6 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
                     return EstateCard(
                       estate: estates.elementAt(index),
                       onClosePressed: () {
-
                         deleteUserNewEstateBloc.add(
                             DeleteUserNewEstateFetchStarted(
                                 token: userToken,
@@ -145,7 +150,6 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
                       removeCloseButton: false,
                       removeBottomBar: true,
                     );
-
                   },
                 );
               },
