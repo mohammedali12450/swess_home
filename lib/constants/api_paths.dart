@@ -60,4 +60,7 @@ const deleteEstateOrderUrl = "api/delete/estateorder";
 const deleteUserNewEstateUrl = "api/delete/usernewestate";
 const getOfficeDetailsUrl = "api/getOfficeByID1";
 
+const isUpdatedForIosUrl = "api/isUpdatedForIos";
+const isUpdatedForAndroidUrl = "api/isUpdatedForAndroid";
+
 const test = "master";

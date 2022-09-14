@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:swesshome/modules/data/models/location.dart';
-import 'package:swesshome/modules/data/providers/locations_provider.dart';
 import 'package:swesshome/modules/data/providers/regions_provider.dart';
 
 class RegionsRepository {

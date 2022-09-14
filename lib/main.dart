@@ -57,7 +57,7 @@ import 'modules/data/repositories/period_types_repository.dart';
 import 'modules/data/repositories/price_domains_repository.dart';
 import 'modules/data/repositories/system_variables_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:new_version/new_version.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 const bool _clearSharedPreferences = false;
 
@@ -101,6 +101,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late NotificationsCubit notificationsCubit;
   late ThemeMode initialThemeMode;
   Locale? initialLocale;
+  PackageInfo packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+  );
 
   @override
   void initState() {
@@ -131,44 +137,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     } else {
       initialThemeMode = ThemeMode.system;
     }
-    // Instantiate NewVersion manager object (Using GCP Console app as example)
-    final newVersion = NewVersion(
-      iOSId: '1591728350',
-      androidId: 'com.real_estate.realestatecustomer',
-    );
-
-    // You can let the plugin handle fetching the status and showing a dialog,
-    // or you can fetch the status and display your own dialog, or no dialog.
-    const simpleBehavior = true;
-    if (simpleBehavior) {
-      basicStatusCheck(newVersion);
-    } else {
-      advancedStatusCheck(newVersion);
-    }
+    _initPackageInfo();
   }
 
-  basicStatusCheck(NewVersion newVersion) {
-    print("kiki2");
-    newVersion.showAlertIfNecessary(context: context);
-  }
-
-  advancedStatusCheck(NewVersion newVersion) async {
-    print("kiki1");
-    final status = await newVersion.getVersionStatus();
-
-    if (status != null) {
-      print(status.releaseNotes);
-      print(status.appStoreLink);
-      print(status.localVersion);
-      print(status.storeVersion);
-      print(status.canUpdate.toString());
-      newVersion.showUpdateDialog(
-        context: context,
-        versionStatus: status,
-        dialogTitle: 'Custom Title',
-        dialogText: 'Custom Text',
-      );
-    }
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      packageInfo = info;
+    });
+    print("my version ${packageInfo.version}");
+    ApplicationSharedPreferences.setVersionAppState(packageInfo.version);
   }
 
   @override
@@ -366,14 +344,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     WidgetsBinding.instance!.removeObserver(this);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       checkNewNotifications();

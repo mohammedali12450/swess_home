@@ -90,8 +90,6 @@ class _VerificationCodeScreenResetState
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
     verificationCodeBloc = BlocProvider.of<VerificationCodeBloc>(context);
     resendVerificationCodeBloc =
         BlocProvider.of<ResendVerificationCodeBloc>(context);
@@ -105,6 +103,7 @@ class _VerificationCodeScreenResetState
       phoneDialCode = "+963";
     }
     initWaitingTime();
+    super.initState();
   }
 
   void loginErrorHandling(errorResponseMap) {

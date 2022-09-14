@@ -70,8 +70,10 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import 'package:swesshome/utils/helpers/my_internet_connection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/utils/services/network_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/api_paths.dart';
+import '../../modules/presentation/screens/update_new_version_screen.dart';
 
 class AppRouter {
   late LocationsBloc locationsBloc;
@@ -91,6 +93,7 @@ class AppRouter {
   String? userAccessToken;
   bool isThereStoredUser = false;
   bool isIntroductionScreenPassed = false;
+  bool needUpdate = false;
 
   AppRouter() {
     userDataFetchBloc = UserDataFetchBloc(
@@ -98,7 +101,8 @@ class AppRouter {
     );
     userAccessToken = UserSharedPreferences.getAccessToken();
     isThereStoredUser = (userAccessToken != null);
-    isIntroductionScreenPassed = ApplicationSharedPreferences.getWalkThroughPassState();
+    isIntroductionScreenPassed =
+        ApplicationSharedPreferences.getWalkThroughPassState();
   }
 
   Route? onGenerateRoute(RouteSettings routerSettings) {
@@ -118,6 +122,13 @@ class AppRouter {
                 screenFunction: () async {
                   // Check internet connection :
                   await checkInternetConnection(context);
+                  // Check if there is new version
+                  await isUpdateApp(
+                      ApplicationSharedPreferences.getVersionAppState(),
+                      context);
+                  if (needUpdate) {
+                    return const UpdateVersionScreen();
+                  }
                   // Fetch BaseUrl :
                   await fetchBaseUrl();
                   // Fetch application data :
@@ -136,7 +147,8 @@ class AppRouter {
                   }
 
                   // Language has not selected yet:
-                  bool isLanguageSelected = ApplicationSharedPreferences.getIsLanguageSelected();
+                  bool isLanguageSelected =
+                      ApplicationSharedPreferences.getIsLanguageSelected();
                   if (!isLanguageSelected) {
                     return const SelectLanguageScreen();
                   }
@@ -191,9 +203,11 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const AuthenticationScreen(),
         );
-        case ResetPasswordScreen.id:
+      case ResetPasswordScreen.id:
         return MaterialPageRoute(
-          builder: (_) => const ResetPasswordScreen(phoneNumber: '',),
+          builder: (_) => const ResetPasswordScreen(
+            phoneNumber: '',
+          ),
         );
       case SearchLocationScreen.id:
         return MaterialPageRoute(
@@ -330,10 +344,32 @@ class AppRouter {
     } catch (e) {
       rethrow;
     }
-    if (response.data == "0") {
+    if (response.data == "1") {
       print("PPPRRRROOOOO");
       baseUrl = proNetBaseUrl;
       imagesBaseUrl = proNetImagesUrl;
     }
+  }
+
+  Future isUpdateApp(String version, context) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+    bool isAndroid = true;
+    try {
+      response = await helper.post(
+        isAndroid ? isUpdatedForAndroidUrl : isUpdatedForIosUrl,
+        {"version1": version},
+      );
+      // token: BlocProvider.of<UserLoginBloc>(context).user!.token);
+    } catch (_) {
+      rethrow;
+    }
+    print(response);
+    //0 if do not need an update
+    //1 if need an update
+    if (response.data == "1") {
+      needUpdate = true;
+    }
+    return response;
   }
 }

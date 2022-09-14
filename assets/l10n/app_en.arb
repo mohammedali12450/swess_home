@@ -470,6 +470,8 @@
   "delete_my_account": "Delete my account",
   "user_deleted":"User has been deleted",
   "warning":"warning",
+  "update":"update",
+  "has_update":"يحوي التطبيق على نسخة جديدة يرجى تحديثه للحصول على ميزات جديدة",
   "war":"We found results matching your search options\n Similar results will be displayed if any",
   "sorry":"Sorry, we found no results matching your search options!\n Similar results will be displayed if any"
 }
