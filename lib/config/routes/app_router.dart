@@ -73,6 +73,7 @@ import 'package:swesshome/utils/services/network_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/api_paths.dart';
+import '../../main.dart';
 import '../../modules/presentation/screens/update_new_version_screen.dart';
 
 class AppRouter {
@@ -223,11 +224,11 @@ class AppRouter {
         );
       case RecentEstateOrdersScreen.id:
         return MaterialPageRoute(
-          builder: (_) => const RecentEstateOrdersScreen(),
+          builder: (_) =>  RecentEstateOrdersScreen(),
         );
       case CreatedEstatesScreen.id:
         return MaterialPageRoute(
-          builder: (_) => const CreatedEstatesScreen(),
+          builder: (_) =>  CreatedEstatesScreen(),
         );
       case SavedEstatesScreen.id:
         return MaterialPageRoute(
@@ -329,6 +330,7 @@ class AppRouter {
         AppLocalizations.of(context)!.check_your_internet_connection,
         onDefaultButtonPressed: () {
           Phoenix.rebirth(context);
+          //RestartWidget.restartApp(context);
         },
         defaultButtonContent: AppLocalizations.of(context)!.restart_application,
         defaultButtonWidth: 200.w,

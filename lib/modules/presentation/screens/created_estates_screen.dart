@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_event.dart';
@@ -15,25 +16,31 @@ import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../constants/colors.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_bloc.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_event.dart';
 
 class CreatedEstatesScreen extends StatefulWidget {
   static const String id = "CreatedEstatesScreen";
 
-  const CreatedEstatesScreen({
-    Key? key,
-  }) : super(key: key);
+  String? estateId;
+
+  CreatedEstatesScreen({Key? key, this.estateId}) : super(key: key);
 
   @override
   _CreatedEstatesScreenState createState() => _CreatedEstatesScreenState();
 }
 
-class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
+class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
+    with SingleTickerProviderStateMixin {
   late CreatedEstatesBloc _createdEstatesBloc;
   DeleteUserNewEstateBloc deleteUserNewEstateBloc =
       DeleteUserNewEstateBloc(EstateRepository());
   String? userToken;
+  late ItemScrollController scrollController;
+  late ItemPositionsListener itemPositionsListener;
+  late AnimationController _animationController;
+  late Animation _colorTween;
 
   @override
   void initState() {
@@ -45,12 +52,26 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
       userToken = user.token;
       print(userToken);
     }
+    scrollController = ItemScrollController();
+    itemPositionsListener = ItemPositionsListener.create();
+    _animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    _colorTween = ColorTween(begin: AppColors.primaryDark, end: AppColors.white)
+        .animate(_animationController);
+    changeColors();
+  }
 
-    super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      final productId = ModalRoute.of(context)!.settings.arguments! as String;
-      print(productId);
-    });
+  Future changeColors() async {
+    while (true) {
+      await Future.delayed(const Duration(seconds: 2), () {
+        if (_animationController.status == AnimationStatus.completed) {
+          _animationController.reverse();
+        } else {
+          _animationController.forward();
+        }
+      });
+      break;
+    }
   }
 
   _onRefresh() {
@@ -133,22 +154,60 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen> {
                   );
                 }
 
-                return ListView.builder(
+                return ScrollablePositionedList.builder(
+                  itemScrollController: scrollController,
+                  itemPositionsListener: itemPositionsListener,
                   physics: const ClampingScrollPhysics(),
-                  shrinkWrap: true,
+                  // shrinkWrap: true,
                   itemCount: estates.length,
                   itemBuilder: (_, index) {
-                    return EstateCard(
-                      estate: estates.elementAt(index),
-                      onClosePressed: () {
-                        deleteUserNewEstateBloc.add(
-                            DeleteUserNewEstateFetchStarted(
-                                token: userToken,
-                                orderId: estates.elementAt(index).id));
-                        _onRefresh();
-                      },
-                      removeCloseButton: false,
-                      removeBottomBar: true,
+                    return AnimatedBuilder(
+                      animation: _colorTween,
+                      builder: (context, child) => EstateCard(
+                        color: (widget.estateId != null)
+                            ? (int.parse(widget.estateId!) ==
+                            estates.elementAt(index).id)
+                            ? _colorTween.value
+                            : AppColors.white
+                            : AppColors.white,
+                        estate: estates.elementAt(index),
+                        onClosePressed: () {
+                          showWonderfulAlertDialog(
+                              context,
+                              AppLocalizations.of(context)!.warning,
+                              AppLocalizations.of(context)!.confirm_delete,
+                              titleTextStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                  fontSize: 20),
+                              removeDefaultButton: true,
+                              dialogButtons: [
+                                ElevatedButton(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.yes,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    deleteUserNewEstateBloc.add(
+                                        DeleteUserNewEstateFetchStarted(
+                                            token: userToken,
+                                            orderId:
+                                                estates.elementAt(index).id));
+                                  },
+                                ),
+                                ElevatedButton(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.cancel,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ]);
+                        },
+                        removeCloseButton: false,
+                        removeBottomBar: true,
+                      ),
                     );
                   },
                 );

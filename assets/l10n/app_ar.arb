@@ -312,6 +312,7 @@
   "call_us": "اتصل بنا",
   "rate_us": "تقييم التطبيق",
   "help": "مساعدة",
+  "confirm_delete": "هل انت متأكد من حذف الطلب العقاري؟",
   "logout_confirmation": "هل تريد تسجيل الخروج؟",
   "sign_in_for_notifications": "قم بتسجيل الدخول لتصلك الإشعارات",
   "sell_estates": "عقارات للبيع",

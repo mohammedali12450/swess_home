@@ -198,11 +198,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   navigatorCreateEstate(id) {
-    Navigator.pushNamed(context, CreatedEstatesScreen.id, arguments: id);
+    Navigator.push(context,
+        MaterialPageRoute(builder: (_) => CreatedEstatesScreen(estateId: id)));
   }
 
   navigatorEstateOrder(id) {
-    Navigator.pushNamed(context, RecentEstateOrdersScreen.id, arguments: id);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => RecentEstateOrdersScreen(estateId: id)));
   }
 
   Future _onRefresh() async {

@@ -54,6 +54,7 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
                 itemCount: widget.estates!.length,
                 itemBuilder: (_, index) {
                   return EstateCard(
+                    color: Theme.of(context).colorScheme.background,
                     estate: widget.estates!.elementAt(index),
                     removeCloseButton: true,
                   );

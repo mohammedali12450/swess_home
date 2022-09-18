@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,39 +17,74 @@ import 'package:swesshome/modules/presentation/widgets/shimmers/clients_orders_s
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
-import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
-import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_event.dart';
+import '../../../constants/colors.dart';
 import '../../data/models/user.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class RecentEstateOrdersScreen extends StatefulWidget {
   static const String id = "RecentEstateOrdersScreen";
 
-  const RecentEstateOrdersScreen({Key? key}) : super(key: key);
+  String? estateId;
+
+  RecentEstateOrdersScreen({Key? key, this.estateId}) : super(key: key);
 
   @override
   _RecentEstateOrdersScreenState createState() =>
       _RecentEstateOrdersScreenState();
 }
 
-class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen> {
+class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
+    with SingleTickerProviderStateMixin {
   late RecentEstatesOrdersBloc _recentEstatesOrdersBloc;
-
+  late ItemScrollController scrollController;
+  late ItemPositionsListener itemPositionsListener;
   String? userToken;
+  List<EstateOrder> orders = [];
+  late AnimationController _animationController;
+  late Animation _colorTween;
+
+  //late Timer timer;
 
   @override
   void initState() {
     super.initState();
     _recentEstatesOrdersBloc = RecentEstatesOrdersBloc(EstateOrderRepository());
-    _onRefresh();
+
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
     if (user != null && user.token != null) {
       userToken = user.token;
     }
-    // deleteEstatesBloc = DeleteEstatesBloc(EstateOrderRepository());
+    _onRefresh();
+
+    scrollController = ItemScrollController();
+    itemPositionsListener = ItemPositionsListener.create();
+    // timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
+    //   setState(() {
+    //     //change your colorProgress here
+    //   });
+    // });
+    _animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    _colorTween = ColorTween(begin: AppColors.primaryDark, end: AppColors.white)
+        .animate(_animationController);
+    changeColors();
+  }
+
+  Future changeColors() async {
+    while (true) {
+      await Future.delayed(const Duration(seconds: 2), () {
+        if (_animationController.status == AnimationStatus.completed) {
+          _animationController.reverse();
+        } else {
+          _animationController.forward();
+        }
+      });
+      break;
+    }
   }
 
   _onRefresh() {
-    if (BlocProvider.of<UserLoginBloc>(context).user!.token != null) {
+    if (userToken != null) {
       _recentEstatesOrdersBloc.add(
         RecentEstatesOrdersFetchStarted(
             token: BlocProvider.of<UserLoginBloc>(context).user!.token!),
@@ -82,7 +120,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen> {
               return Container();
             }
 
-            List<EstateOrder> orders = recentOrdersState.estateOrders;
+            orders = recentOrdersState.estateOrders;
             if (orders.isEmpty) {
               return Center(
                 child: Column(
@@ -107,16 +145,33 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen> {
               );
             }
 
+            if (widget.estateId != null) {
+              SchedulerBinding.instance!.addPostFrameCallback((_) {
+                jumpToOrder(orders);
+              });
+            }
             return RefreshIndicator(
               color: Theme.of(context).colorScheme.primary,
               onRefresh: () async {
                 _onRefresh();
               },
-              child: ListView.builder(
+              child: ScrollablePositionedList.builder(
+                  itemScrollController: scrollController,
+                  itemPositionsListener: itemPositionsListener,
                   itemCount: orders.length,
                   itemBuilder: (_, index) {
-                    return EstateOrderCard(
-                      estateOrder: orders.elementAt(index),
+                    return AnimatedBuilder(
+                      animation: _colorTween,
+                      builder: (context, child) => EstateOrderCard(
+                        estateOrder: orders.elementAt(index),
+                        //color: Theme.of(context).colorScheme.background,
+                        color: (widget.estateId != null)
+                            ? (int.parse(widget.estateId!) ==
+                                    orders.elementAt(index).id)
+                                ? _colorTween.value
+                                : AppColors.white
+                            : AppColors.white,
+                      ),
                     );
                   }),
             );
@@ -124,5 +179,26 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen> {
         ),
       ),
     );
+  }
+
+  jumpToOrder(List<EstateOrder> orders) {
+    int index = getIndexFromId(orders);
+    if (index != -1) {
+      if (scrollController.isAttached) {
+        scrollController.scrollTo(
+            index: index,
+            duration: const Duration(seconds: 2),
+            curve: Curves.ease);
+      }
+    }
+  }
+
+  getIndexFromId(List<EstateOrder> orders) {
+    for (int i = 0; i < orders.length; i++) {
+      if (orders.elementAt(i).id == int.parse(widget.estateId!)) {
+        return i;
+      }
+    }
+    return -1;
   }
 }

@@ -65,12 +65,15 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   // Widget binding:
+  print("baba1");
   WidgetsFlutterBinding.ensureInitialized();
 
   // Firebase initialize //
+  print("baba2");
   await initializeFirebase();
 
   // Shared preferences initializing
+  print("baba3");
   await initializeSharedPreferences();
 
   // Shared preferences clearing :
@@ -80,9 +83,10 @@ void main() async {
 
   // Run application:
   if (!_clearSharedPreferences) {
+    print("baba");
     runApp(
-      Phoenix(
-        child: const MyApp(),
+      const RestartWidget(
+        child: MyApp(),
       ),
     );
   }
@@ -360,5 +364,36 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     await NotificationsSharedPreferences.init();
     await NotificationsSharedPreferences.reload();
     notificationsCubit.checkNewNotifications();
+  }
+}
+
+class RestartWidget extends StatefulWidget {
+  const RestartWidget({Key? key, required this.child}) : super(key: key);
+
+  final Widget child;
+
+  static void restartApp(BuildContext context) {
+    context.findAncestorStateOfType<_RestartWidgetState>()!.restartApp();
+  }
+
+  @override
+  _RestartWidgetState createState() => _RestartWidgetState();
+}
+
+class _RestartWidgetState extends State<RestartWidget> {
+  Key key = UniqueKey();
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyedSubtree(
+      key: key,
+      child: widget.child,
+    );
   }
 }

@@ -124,6 +124,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                     itemCount: estates.length,
                     itemBuilder: (_, index) {
                       return EstateCard(
+                        color: Theme.of(context).colorScheme.background,
                         estate: estates.elementAt(index),
                         removeCloseButton: true,
                       );

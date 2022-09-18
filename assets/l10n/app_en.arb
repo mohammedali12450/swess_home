@@ -367,6 +367,7 @@
   "estate_street": "estate street",
   "more": "more",
   "less": "less",
+  "confirm_delete": "Are you sure to delete the real estate order?",
   "order_create_notes_descriptions": "Write notes about the property you are looking for",
   "send_order": "Send request",
   "after_order_body": "Your request has been sent successfully. Your request will be presented to the offices, and you learn about their nominations and offers in the notifications",

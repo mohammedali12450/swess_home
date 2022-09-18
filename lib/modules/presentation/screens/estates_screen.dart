@@ -194,6 +194,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       itemCount: estates.length,
                       itemBuilder: (_, index) {
                         return EstateCard(
+                          color: Theme.of(context).colorScheme.background,
                           estate: estates.elementAt(index),
                           onClosePressed: () {
                             showReportModalBottomSheet(

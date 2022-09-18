@@ -255,6 +255,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 }
                 if (loginState.errorMessage != null) {
                   if (loginState.errorMessage!.contains("تم")) {
+                    // if (loginState.errorMessage!.contains("تم")) {
+                    //   Navigator.pushReplacement(context,
+                    //       MaterialPageRoute(builder: (_) => const HomeScreen()));
+                    // }
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
@@ -708,7 +712,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 return Row(
                   children: [
                     Checkbox(
-                      activeColor: isDark ? AppColors.white : AppColors.primaryColor,
+                      activeColor:
+                          isDark ? AppColors.white : AppColors.primaryColor,
                       value: isChecked,
                       onChanged: (value) {
                         isCheck = value!;

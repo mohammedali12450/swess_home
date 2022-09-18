@@ -7,6 +7,7 @@ import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/candidates_screen.dart';
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
@@ -17,8 +18,10 @@ import '../../data/repositories/estate_order_repository.dart';
 
 class EstateOrderCard extends StatefulWidget {
   final EstateOrder estateOrder;
+  final Color color;
 
-  const EstateOrderCard({Key? key, required this.estateOrder})
+  const EstateOrderCard(
+      {Key? key, required this.estateOrder, required this.color})
       : super(key: key);
 
   @override
@@ -50,7 +53,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
         horizontal: 8.w,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
+        color: widget.color,
         borderRadius: const BorderRadius.all(
           Radius.circular(8),
         ),
@@ -71,11 +74,40 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
             width: 1.sw,
             child: InkWell(
               onTap: () {
-                DeleteEstatesBloc deleteEstatesBloc =
-                    DeleteEstatesBloc(EstateOrderRepository());
-                deleteEstatesBloc.add(DeleteEstatesFetchStarted(
-                    token: BlocProvider.of<UserLoginBloc>(context).user!.token!,
-                    orderId: widget.estateOrder.id!));
+                showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.warning,
+                    AppLocalizations.of(context)!.confirm_delete,
+                    titleTextStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                        fontSize: 20),
+                    removeDefaultButton: true,
+                    dialogButtons: [
+                      ElevatedButton(
+                        child: Text(
+                          AppLocalizations.of(context)!.yes,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          DeleteEstatesBloc deleteEstatesBloc =
+                              DeleteEstatesBloc(EstateOrderRepository());
+                          deleteEstatesBloc.add(DeleteEstatesFetchStarted(
+                              token: BlocProvider.of<UserLoginBloc>(context)
+                                  .user!
+                                  .token!,
+                              orderId: widget.estateOrder.id!));
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ]);
               },
               child: Icon(
                 Icons.close,
@@ -128,6 +160,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
             width: 1.sw,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
+                //splashFactory: NoSplash.splashFactory,
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
                 primary: (isDark)
                     ? Theme.of(context).colorScheme.primary

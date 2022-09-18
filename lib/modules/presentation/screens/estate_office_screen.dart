@@ -414,6 +414,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       itemCount: newStates.length,
                       itemBuilder: (_, index) {
                         return EstateCard(
+                          color: Theme.of(context).colorScheme.background,
                           estate: newStates.elementAt(index),
                           removeCloseButton: true,
                         );
