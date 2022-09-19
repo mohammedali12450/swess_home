@@ -132,7 +132,6 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         iconSize: 0.25.sw,
                       );
                     }
-                    print("baba ${estateState.results}");
                     return Column(
                       children: [
                         InkWell(

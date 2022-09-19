@@ -16,7 +16,7 @@ class RegionsBloc extends Bloc<RegionsEvent, RegionsState> {
       try {
         locations = await regionsRepository.getRegions();
         emit(RegionsFetchComplete(locations: locations!));
-      } catch (e , stack) {
+      } catch (e, stack) {
         debugPrint(e.toString());
         debugPrint(stack.toString());
       }
@@ -26,16 +26,18 @@ class RegionsBloc extends Bloc<RegionsEvent, RegionsState> {
         RegionsFetchNone(),
       );
     });
-
   }
 
   List<RegionViewer> getRegionsViewers(String? pattern) {
     pattern ??= "";
     List<RegionViewer> result = [];
-    for (Location parentLocation in locations??[]) {
+    result.add(RegionViewer("غير محدد", "غير محدد", null));
+    for (Location parentLocation in locations ?? []) {
       if (parentLocation.locations == null) continue;
       for (Location childLocation in parentLocation.locations!) {
-        if (childLocation.name.contains(pattern) || parentLocation.name.contains(pattern) || (pattern == "")) {
+        if (childLocation.name.contains(pattern) ||
+            parentLocation.name.contains(pattern) ||
+            (pattern == "")) {
           result.add(RegionViewer(
               childLocation.name, parentLocation.name, childLocation.id));
         }
@@ -43,7 +45,6 @@ class RegionsBloc extends Bloc<RegionsEvent, RegionsState> {
     }
     return result;
   }
-
 }
 
 class RegionViewer {
@@ -51,7 +52,7 @@ class RegionViewer {
 
   String parentLocationName;
 
-  int id;
+  int? id;
 
   RegionViewer(this.locationName, this.parentLocationName, this.id);
 

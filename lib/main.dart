@@ -65,15 +65,12 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   // Widget binding:
-  print("baba1");
   WidgetsFlutterBinding.ensureInitialized();
 
   // Firebase initialize //
-  print("baba2");
   await initializeFirebase();
 
   // Shared preferences initializing
-  print("baba3");
   await initializeSharedPreferences();
 
   // Shared preferences clearing :
@@ -83,10 +80,9 @@ void main() async {
 
   // Run application:
   if (!_clearSharedPreferences) {
-    print("baba");
     runApp(
-      const RestartWidget(
-        child: MyApp(),
+       Phoenix(
+        child: const MyApp(),
       ),
     );
   }

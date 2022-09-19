@@ -214,7 +214,7 @@
   "error": "خطأ",
   "select_language": "قم بتحديد اللغة",
   "check_your_internet_connection": "تحقق من اتصالك بشبكة الإنترنت",
-  "restart_application": "إعادة تشغيل التطبيق",
+  "restart_application": "اغلاق",
   "no_clients_orders": "لا يوجد طلبات من المستخدمين",
   "this_feature_will_be_activated_soon": "سيتم تفعيل هذه الميزة قريبا",
   "buy_candidates": "شراء ترشيحات",

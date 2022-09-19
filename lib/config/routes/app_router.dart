@@ -224,11 +224,11 @@ class AppRouter {
         );
       case RecentEstateOrdersScreen.id:
         return MaterialPageRoute(
-          builder: (_) =>  RecentEstateOrdersScreen(),
+          builder: (_) => RecentEstateOrdersScreen(),
         );
       case CreatedEstatesScreen.id:
         return MaterialPageRoute(
-          builder: (_) =>  CreatedEstatesScreen(),
+          builder: (_) => CreatedEstatesScreen(),
         );
       case SavedEstatesScreen.id:
         return MaterialPageRoute(
@@ -328,7 +328,9 @@ class AppRouter {
         context,
         AppLocalizations.of(context)!.error,
         AppLocalizations.of(context)!.check_your_internet_connection,
+        barrierDismissible: false,
         onDefaultButtonPressed: () {
+          exit(0);
           Phoenix.rebirth(context);
           //RestartWidget.restartApp(context);
         },
@@ -346,7 +348,9 @@ class AppRouter {
     } catch (e) {
       rethrow;
     }
-    if (response.data == "1") {
+    //0 if you want to connect to pronet
+    //1 if you want to connect to hostinger
+    if (response.data == "0") {
       print("PPPRRRROOOOO");
       baseUrl = proNetBaseUrl;
       imagesBaseUrl = proNetImagesUrl;

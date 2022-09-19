@@ -8,7 +8,7 @@ class EstateOfficesRepository {
   final EstateOfficeProvider _estateOfficeProvider = EstateOfficeProvider();
 
   Future<List<EstateOffice>> searchEstateOfficesByName(
-      String name, String? token) async {
+      String? name, String? token) async {
     Response response;
 
     try {

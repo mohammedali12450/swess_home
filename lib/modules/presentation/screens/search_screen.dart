@@ -409,8 +409,10 @@ class _SearchScreenState extends State<SearchScreen> {
                             // unfocused text field :
                             FocusScope.of(context).unfocus();
                             // save location as recent search:
-                            await saveAsRecentSearch(
-                                locations.elementAt(index).id);
+                            if(locations.elementAt(index).id != null) {
+                              await saveAsRecentSearch(
+                                locations.elementAt(index).id!);
+                            }
                           },
                           child: Container(
                             margin: EdgeInsets.symmetric(
@@ -475,8 +477,10 @@ class _SearchScreenState extends State<SearchScreen> {
                             // unfocused text field :
                             FocusScope.of(context).unfocus();
                             // save location as recent search:
-                            await saveAsRecentSearch(
-                                locations.elementAt(index).id);
+                            if(locations.elementAt(index).id != null) {
+                              await saveAsRecentSearch(
+                                locations.elementAt(index).id!);
+                            }
                           },
                           child: Container(
                             margin: EdgeInsets.symmetric(
@@ -721,7 +725,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     // unfocused location textField :
                     FocusScope.of(context).unfocus();
                     // store search :
-                    await saveAsRecentSearch(recentPlaces.elementAt(index).id);
+                    await saveAsRecentSearch(recentPlaces.elementAt(index).id!);
                   },
                   child: Container(
                     margin: EdgeInsets.symmetric(

@@ -3,7 +3,7 @@
 abstract class SearchOfficesEvents {}
 
 class SearchOfficesByNameStarted extends SearchOfficesEvents {
-  String name;
+  String? name;
   String? token ;
 
   SearchOfficesByNameStarted({required this.name , required this.token});

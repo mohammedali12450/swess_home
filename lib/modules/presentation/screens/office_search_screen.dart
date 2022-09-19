@@ -135,7 +135,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         if (selectedLocation != null) {
                           searchOfficesBloc.add(
                             SearchOfficesByLocationStarted(
-                                locationId: selectedLocation!.id),
+                                locationId: selectedLocation!.id!),
                           );
                           textFieldController.text =
                               selectedLocation!.getLocationName();
@@ -154,12 +154,18 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         if (selectedRegion != null) {
                           searchOfficesBloc.add(
                             SearchOfficesByLocationStarted(
-                                locationId: selectedRegion!.id),
+                                locationId: selectedRegion!.id!),
                           );
                           textFieldController.text =
                               selectedRegion!.getRegionName();
                         }
                         return;
+                      }
+                      else if(searchType == OfficeSearchType.name){
+                        searchOfficesBloc.add(
+                          SearchOfficesByNameStarted(
+                              name: null, token: token),
+                        );
                       }
                     },
                     onChanged: (newValue) {

@@ -22,8 +22,10 @@ Future<void> showWonderfulAlertDialog(
       double? elevation,
       Color? backgroundColor,
       double? borderRadius,
+      bool barrierDismissible = true,
     }) async {
   await showDialog(
+    barrierDismissible: barrierDismissible,
     context: context,
     builder: (context) => Dialog(
       elevation: elevation ?? 2,
