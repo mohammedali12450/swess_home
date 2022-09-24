@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmer_widget.dart';
 
+import '../../../data/providers/theme_provider.dart';
 
 class ClientsOrdersShimmer extends StatelessWidget {
-
   /// Shimmer clients orders list effect list view
   const ClientsOrdersShimmer({Key? key}) : super(key: key);
 
@@ -21,13 +23,16 @@ class ClientsOrdersShimmer extends StatelessWidget {
   }
 
   Container buildShimmerWidget(BuildContext context) {
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Container(
       width: 1.sw,
       margin: EdgeInsets.symmetric(vertical: 4.h),
       padding: kMediumSymHeight,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Theme.of(context).colorScheme.onBackground.withOpacity(0.24)),
+        color: !isDark ? Colors.white : AppColors.secondaryDark,
+        border: Border.all(
+            color:
+                Theme.of(context).colorScheme.onBackground.withOpacity(0.24)),
         borderRadius: medBorderRadius,
       ),
       child: Column(
@@ -44,20 +49,19 @@ class ClientsOrdersShimmer extends StatelessWidget {
                 height: 24.h,
                 width: 180.w,
               )
-
             ],
           ),
-          kHe16 ,
+          kHe16,
           ShimmerWidget.rectangular(
             height: 24.h,
             width: 200.w,
           ),
-          kHe16 ,
+          kHe16,
           ShimmerWidget.rectangular(
             height: 24.h,
             width: 220.w,
           ),
-          kHe16 ,
+          kHe16,
           ShimmerWidget.rectangular(
             height: 24.h,
             width: 200.w,
@@ -67,12 +71,12 @@ class ClientsOrdersShimmer extends StatelessWidget {
             child: ShimmerWidget.circular(
               height: 48.h,
               width: 120.w,
-              shapeBorder: const RoundedRectangleBorder(borderRadius: lowBorderRadius),
+              shapeBorder:
+                  const RoundedRectangleBorder(borderRadius: lowBorderRadius),
             ),
           ),
         ],
       ),
     );
   }
-
 }

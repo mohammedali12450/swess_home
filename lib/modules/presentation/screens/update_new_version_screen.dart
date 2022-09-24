@@ -47,7 +47,7 @@ class _UpdateVersionScreenState extends State<UpdateVersionScreen> {
 
   Widget buildDialog() {
     return AlertDialog(
-      title: Text(AppLocalizations.of(context)!.warning),
+      title: Text(AppLocalizations.of(context)!.caution),
       titleTextStyle: const TextStyle(
           fontWeight: FontWeight.bold, color: Colors.red, fontSize: 20),
       actionsOverflowButtonSpacing: 20,

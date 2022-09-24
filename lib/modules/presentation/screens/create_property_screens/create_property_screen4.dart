@@ -375,9 +375,13 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                     margin:
                                         EdgeInsets.symmetric(horizontal: 14.h),
                                     decoration: BoxDecoration(
-                                      color: isYes
-                                          ? AppColors.primaryColor
-                                          : Colors.white,
+                                      color: !isDark
+                                          ? isYes
+                                              ? AppColors.primaryColor
+                                              : Colors.white
+                                          : isYes
+                                              ? Colors.white
+                                              : AppColors.secondaryDark,
                                       border: Border.all(
                                         color: AppColors.primaryColor,
                                         width: 1.5,
@@ -388,9 +392,13 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                       AppLocalizations.of(context)!.yes,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: !isYes
-                                            ? AppColors.primaryColor
-                                            : Colors.white,
+                                        color: !isDark
+                                            ? !isYes
+                                                ? AppColors.primaryColor
+                                                : Colors.white
+                                            : isYes
+                                                ? AppColors.secondaryDark
+                                                : Colors.white,
                                       ),
                                     ),
                                   ),
@@ -408,9 +416,13 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                     margin:
                                         EdgeInsets.symmetric(horizontal: 14.h),
                                     decoration: BoxDecoration(
-                                      color: !isYes
-                                          ? AppColors.primaryColor
-                                          : Colors.white,
+                                      color: !isDark
+                                          ? !isYes
+                                              ? AppColors.primaryColor
+                                              : Colors.white
+                                          : !isYes
+                                              ? Colors.white
+                                              : AppColors.secondaryDark,
                                       border: Border.all(
                                         color: AppColors.primaryColor,
                                         width: 1.5,
@@ -421,9 +433,13 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                                       AppLocalizations.of(context)!.no,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: isYes
-                                            ? AppColors.primaryColor
-                                            : Colors.white,
+                                        color: !isDark
+                                            ? isYes
+                                                ? AppColors.primaryColor
+                                                : Colors.white
+                                            : !isYes
+                                                ? AppColors.secondaryDark
+                                                : Colors.white,
                                       ),
                                     ),
                                   ),

@@ -160,6 +160,10 @@ class _EstateCardState extends State<EstateCard> {
       margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
       width: 1.sw,
       decoration: BoxDecoration(
+        border: Border.all(
+          width: 1,
+          color: AppColors.white,
+        ),
         color: widget.color,
         borderRadius: const BorderRadius.all(
           Radius.circular(8),

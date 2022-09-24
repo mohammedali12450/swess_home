@@ -48,14 +48,14 @@ class EstateRepository {
     if ((response.statusCode == 201) && (page == 1)) {
       showWonderfulAlertDialog(
         navigatorKey.currentContext!,
-        AppLocalizations.of(navigatorKey.currentContext!)!.warning,
+        AppLocalizations.of(navigatorKey.currentContext!)!.caution,
         AppLocalizations.of(navigatorKey.currentContext!)!.war,
       );
     }
     if ((response.statusCode == 202) && (page == 1)) {
       showWonderfulAlertDialog(
         navigatorKey.currentContext!,
-        AppLocalizations.of(navigatorKey.currentContext!)!.warning,
+        AppLocalizations.of(navigatorKey.currentContext!)!.caution,
         AppLocalizations.of(navigatorKey.currentContext!)!.sorry,
       );
     }

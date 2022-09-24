@@ -165,9 +165,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     physics: const ClampingScrollPhysics(),
                     itemCount: notifications.length,
                     itemBuilder: (_, index) {
-                      String getId =
-                          notifications.elementAt(index).body.split("(")[1];
-                      getId = getId.split(")")[0];
+                      String? getId;
+                      if (notifications.elementAt(index).body.contains("(")) {
+                        getId =
+                            notifications.elementAt(index).body.split("(")[1];
+                        getId = getId.split(")")[0];
+                      }
+
                       //print("getId $getId");
                       MyNotification notification =
                           notifications.elementAt(index);
@@ -178,9 +182,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             DateTime.parse(notification.date), "yyyy/MM/dd"),
                         isNew: index < newNotificationsCount,
                         onTap: () {
-                          notification.title == "العروض العقارية"
-                              ? navigatorCreateEstate(getId)
-                              : navigatorEstateOrder(getId);
+                          if (notifications
+                              .elementAt(index)
+                              .body
+                              .contains("(")) {
+                            notification.title == "العروض العقارية"
+                                ? navigatorCreateEstate(getId)
+                                : navigatorEstateOrder(getId);
+                          } else {
+                            notification.title == "العروض العقارية"
+                                ? navigatorCreateEstate(null)
+                                : navigatorEstateOrder(null);
+                          }
                         },
                       );
                     },
@@ -197,12 +210,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
-  navigatorCreateEstate(id) {
+  navigatorCreateEstate(String? id) {
     Navigator.push(context,
         MaterialPageRoute(builder: (_) => CreatedEstatesScreen(estateId: id)));
   }
 
-  navigatorEstateOrder(id) {
+  navigatorEstateOrder(String? id) {
     Navigator.push(
         context,
         MaterialPageRoute(

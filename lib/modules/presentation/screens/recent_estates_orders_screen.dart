@@ -5,6 +5,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_event.dart';
@@ -20,6 +22,8 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import '../../../constants/colors.dart';
 import '../../data/models/user.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
+import '../../data/providers/theme_provider.dart';
 
 class RecentEstateOrdersScreen extends StatefulWidget {
   static const String id = "RecentEstateOrdersScreen";
@@ -58,21 +62,23 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
 
     scrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
-    // timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
-    //   setState(() {
-    //     //change your colorProgress here
-    //   });
-    // });
-    _animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
-    _colorTween = ColorTween(begin: AppColors.primaryDark, end: AppColors.white)
-        .animate(_animationController);
-    changeColors();
+    bool isDark =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
+
+    if (widget.estateId != null) {
+      _animationController = AnimationController(
+          vsync: this, duration: const Duration(seconds: 2));
+      _colorTween = ColorTween(
+              begin: AppColors.primaryDark,
+              end: isDark ? AppColors.secondaryDark : AppColors.white)
+          .animate(_animationController);
+      changeColors();
+    }
   }
 
   Future changeColors() async {
     while (true) {
-      await Future.delayed(const Duration(seconds: 2), () {
+      await Future.delayed(const Duration(milliseconds: 1500), () {
         if (_animationController.status == AnimationStatus.completed) {
           _animationController.reverse();
         } else {
@@ -101,81 +107,108 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
             AppLocalizations.of(context)!.recent_created_orders,
           ),
         ),
-        body: BlocConsumer<RecentEstatesOrdersBloc, RecentEstatesOrdersState>(
-          bloc: _recentEstatesOrdersBloc,
-          listener: (context, recentOrdersState) async {
-            if (recentOrdersState is RecentEstatesOrdersFetchError) {
-              var error = recentOrdersState.isConnectionError
-                  ? AppLocalizations.of(context)!.no_internet_connection
-                  : recentOrdersState.error;
-              await showWonderfulAlertDialog(
-                  context, AppLocalizations.of(context)!.error, error);
-            }
+        body: RefreshIndicator(
+          color: Theme.of(context).colorScheme.primary,
+          onRefresh: () async {
+            _onRefresh();
           },
-          builder: (BuildContext context, recentOrdersState) {
-            if (recentOrdersState is RecentEstatesOrdersFetchProgress) {
-              return const ClientsOrdersShimmer();
-            }
-            if (recentOrdersState is! RecentEstatesOrdersFetchComplete) {
-              return Container();
-            }
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              width: 1.sw,
+              height: 1.sh - 75.h,
+              child: BlocConsumer<RecentEstatesOrdersBloc,
+                  RecentEstatesOrdersState>(
+                bloc: _recentEstatesOrdersBloc,
+                listener: (context, recentOrdersState) async {
+                  if (recentOrdersState is RecentEstatesOrdersFetchError) {
+                    var error = recentOrdersState.isConnectionError
+                        ? AppLocalizations.of(context)!.no_internet_connection
+                        : recentOrdersState.error;
+                    await showWonderfulAlertDialog(
+                        context, AppLocalizations.of(context)!.error, error);
+                  }
+                },
+                builder: (BuildContext context, recentOrdersState) {
+                  if (recentOrdersState is RecentEstatesOrdersFetchProgress) {
+                    return const ClientsOrdersShimmer();
+                  }
+                  if (recentOrdersState is! RecentEstatesOrdersFetchComplete) {
+                    return Container();
+                  }
 
-            orders = recentOrdersState.estateOrders;
-            if (orders.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      documentOutlineIconPath,
-                      width: 0.5.sw,
-                      height: 0.5.sw,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onBackground
-                          .withOpacity(0.42),
-                    ),
-                    48.verticalSpace,
-                    Text(
-                      AppLocalizations.of(context)!.have_not_recent_orders,
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            if (widget.estateId != null) {
-              SchedulerBinding.instance!.addPostFrameCallback((_) {
-                jumpToOrder(orders);
-              });
-            }
-            return RefreshIndicator(
-              color: Theme.of(context).colorScheme.primary,
-              onRefresh: () async {
-                _onRefresh();
-              },
-              child: ScrollablePositionedList.builder(
-                  itemScrollController: scrollController,
-                  itemPositionsListener: itemPositionsListener,
-                  itemCount: orders.length,
-                  itemBuilder: (_, index) {
-                    return AnimatedBuilder(
-                      animation: _colorTween,
-                      builder: (context, child) => EstateOrderCard(
-                        estateOrder: orders.elementAt(index),
-                        //color: Theme.of(context).colorScheme.background,
-                        color: (widget.estateId != null)
-                            ? (int.parse(widget.estateId!) ==
-                                    orders.elementAt(index).id)
-                                ? _colorTween.value
-                                : AppColors.white
-                            : AppColors.white,
+                  orders = recentOrdersState.estateOrders;
+                  if (orders.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            documentOutlineIconPath,
+                            width: 0.5.sw,
+                            height: 0.5.sw,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onBackground
+                                .withOpacity(0.42),
+                          ),
+                          48.verticalSpace,
+                          Text(
+                            AppLocalizations.of(context)!
+                                .have_not_recent_orders,
+                            style: Theme.of(context).textTheme.headline4,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
                     );
-                  }),
-            );
-          },
+                  }
+                  bool find = false;
+                  if (widget.estateId != null) {
+                    for (int i = 0; i < orders.length; i++) {
+                      if (orders.elementAt(i).id ==
+                          int.parse(widget.estateId!)) {
+                        find = true;
+                        break;
+                      }
+                    }
+                    if (find) {
+                      SchedulerBinding.instance!.addPostFrameCallback((_) {
+                        jumpToOrder(orders);
+                      });
+                    } else {
+                      Fluttertoast.showToast(
+                          msg: AppLocalizations.of(context)!.delete_request);
+                    }
+                  }
+                  return ScrollablePositionedList.builder(
+                      itemScrollController: scrollController,
+                      itemPositionsListener: itemPositionsListener,
+                      itemCount: orders.length,
+                      itemBuilder: (_, index) {
+                        return (widget.estateId != null && find)
+                            ? AnimatedBuilder(
+                                animation: _colorTween,
+                                builder: (context, _) => EstateOrderCard(
+                                  estateOrder: orders.elementAt(index),
+                                  //color: Theme.of(context).colorScheme.background,
+                                  color: (int.parse(widget.estateId!) ==
+                                          orders.elementAt(index).id)
+                                      ? _colorTween.value
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                ),
+                              )
+                            : EstateOrderCard(
+                                estateOrder: orders.elementAt(index),
+                                color: Theme.of(context).colorScheme.background,
+                              );
+                      });
+                },
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -187,7 +220,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
       if (scrollController.isAttached) {
         scrollController.scrollTo(
             index: index,
-            duration: const Duration(seconds: 2),
+            duration: const Duration(milliseconds: 1000),
             curve: Curves.ease);
       }
     }

@@ -47,7 +47,6 @@ class _EstatesScreenState extends State<EstatesScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isEstatesFinished = false;
     if (BlocProvider.of<UserLoginBloc>(context).user != null) {

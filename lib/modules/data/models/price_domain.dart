@@ -9,9 +9,6 @@ class PriceDomain {
   PriceDomain({required this.id, required this.min, required this.max});
 
   String getTextPriceDomain(bool isArabic) {
-    if (min == "0" && max == "999999999999999999") {
-      return isArabic? "غير محدد" : "undefined";
-    }
     if (min == "0") {
       return isArabic ? ("أقل من " " "+ NumberFormat('###,###,###').format(int.parse(max))) : ("less than" " "+ NumberFormat('###,###,###').format(int.parse(max)));
     }

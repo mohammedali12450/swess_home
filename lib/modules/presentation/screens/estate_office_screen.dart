@@ -30,6 +30,7 @@ import 'package:swesshome/modules/presentation/widgets/rate_container.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../business_logic_components/bloc/office_details_bloc/office_details_bloc.dart';
 import '../../business_logic_components/bloc/office_details_bloc/office_details_event.dart';
@@ -151,24 +152,24 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           },
                           child: Hero(
                               tag: estateState.results.id.toString(),
-                              child: Container(
-                                  width: 300.w,
-                                  height: 180.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(18),
-                                    image: DecorationImage(
-                                        image: NetworkImage(
-                                          imagesBaseUrl +
-                                              estateState.results.logo!,
-                                        ),
-                                        fit: BoxFit.fill),
-                                  ))
-                              // child: CircleAvatar(
-                              //   radius: 96.w,
-                              //   backgroundColor: Colors.grey,
-                              //   backgroundImage: CachedNetworkImageProvider(
-                              //       imagesBaseUrl + widget.office.logo!),
-                              // ),
+                              // child: Container(
+                              //     width: 300.w,
+                              //     height: 180.h,
+                              //     decoration: BoxDecoration(
+                              //       borderRadius: BorderRadius.circular(18),
+                              //       image: DecorationImage(
+                              //           image: NetworkImage(
+                              //             imagesBaseUrl +
+                              //                 estateState.results.logo!,
+                              //           ),
+                              //           fit: BoxFit.fill),
+                              //     ))
+                              child: CircleAvatar(
+                                radius: 96.w,
+                                backgroundColor: Colors.grey,
+                                backgroundImage: CachedNetworkImageProvider(
+                                    imagesBaseUrl + estateState.results.logo!),
+                              ),
                               ),
                         ),
                         24.verticalSpace,
@@ -203,10 +204,17 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           style: Theme.of(context).textTheme.headline5,
                         ),
                         kHe12,
-                        Text(
-                          estateState.results.mobile!,
-                          textDirection: TextDirection.ltr,
-                          style: Theme.of(context).textTheme.subtitle1,
+                        InkWell(
+                          onTap:(){
+                            launch(
+                              "tel://" + estateState.results.mobile!,
+                            );
+                          },
+                          child: Text(
+                            estateState.results.mobile!,
+                            textDirection: TextDirection.ltr,
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
                         ),
                         kHe32,
                         Padding(
@@ -249,8 +257,6 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                 ),
                               ),
                               kWi16,
-
-                              //TODO:hjkl;;;;;;;;;;;;;;;;;;;jhcfhgchgtcdutgc
 
                               Expanded(
                                 flex: 1,
@@ -469,7 +475,7 @@ class ImageDialog extends StatelessWidget {
     return Dialog(
       child: Container(
         width: getScreenWidth(context),
-        //height: 300.h,
+        height: 400.h,
         decoration: BoxDecoration(
             image: DecorationImage(
                 image: CachedNetworkImageProvider(imagesBaseUrl + path),

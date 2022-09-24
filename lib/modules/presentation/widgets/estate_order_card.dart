@@ -54,6 +54,10 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
       ),
       decoration: BoxDecoration(
         color: widget.color,
+        border: Border.all(
+          width: 1,
+          color: AppColors.white,
+        ),
         borderRadius: const BorderRadius.all(
           Radius.circular(8),
         ),
@@ -76,7 +80,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
               onTap: () {
                 showWonderfulAlertDialog(
                     context,
-                    AppLocalizations.of(context)!.warning,
+                    AppLocalizations.of(context)!.caution,
                     AppLocalizations.of(context)!.confirm_delete,
                     titleTextStyle: const TextStyle(
                         fontWeight: FontWeight.bold,
@@ -84,34 +88,39 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                         fontSize: 20),
                     removeDefaultButton: true,
                     dialogButtons: [
-                      ElevatedButton(
-                        child: Text(
-                          AppLocalizations.of(context)!.yes,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          DeleteEstatesBloc deleteEstatesBloc =
-                              DeleteEstatesBloc(EstateOrderRepository());
-                          deleteEstatesBloc.add(DeleteEstatesFetchStarted(
-                              token: BlocProvider.of<UserLoginBloc>(context)
-                                  .user!
-                                  .token!,
-                              orderId: widget.estateOrder.id!));
-                        },
-                      ),
-                      ElevatedButton(
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.yes,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                DeleteEstatesBloc deleteEstatesBloc =
+                                    DeleteEstatesBloc(EstateOrderRepository());
+                                deleteEstatesBloc.add(DeleteEstatesFetchStarted(
+                                    token:
+                                        BlocProvider.of<UserLoginBloc>(context)
+                                            .user!
+                                            .token!,
+                                    orderId: widget.estateOrder.id!));
+                              },
+                            ),
+                            ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.no,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ])
                     ]);
               },
               child: Icon(
                 Icons.close,
-                color: AppColors.hintColor,
+                color: isDark ? AppColors.white : AppColors.hintColor,
               ),
             ),
           ),

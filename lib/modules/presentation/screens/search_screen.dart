@@ -152,7 +152,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 bool isDark =
                     Provider.of<ThemeProvider>(context).isDarkMode(context);
                 return Padding(
-                  padding: EdgeInsets.only(left: 18.w, top: 8.w),
+                  padding: EdgeInsets.only(left: 18.w, top: 8.w, right: 13.w),
                   child: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -160,7 +160,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           color: Colors.white,
                           width: 1.5,
                         )),
-                    padding: EdgeInsets.only(right: 8.w, bottom: 3.w),
+                    padding:
+                        EdgeInsets.only(right: 8.w, bottom: 4.w, left: 8.w),
                     height: 48.h,
                     width: 160.w,
                     child: buildDropDown(isDark),
@@ -407,11 +408,11 @@ class _SearchScreenState extends State<SearchScreen> {
                             // set location detected state :
                             locationDetectedCubit.setState(true);
                             // unfocused text field :
-                            FocusScope.of(context).unfocus();
+                            // FocusScope.of(context).unfocus();
                             // save location as recent search:
-                            if(locations.elementAt(index).id != null) {
+                            if (locations.elementAt(index).id != null) {
                               await saveAsRecentSearch(
-                                locations.elementAt(index).id!);
+                                  locations.elementAt(index).id!);
                             }
                           },
                           child: Container(
@@ -475,11 +476,11 @@ class _SearchScreenState extends State<SearchScreen> {
                             // set location detected state :
                             locationDetectedCubit.setState(true);
                             // unfocused text field :
-                            FocusScope.of(context).unfocus();
+                            //FocusScope.of(context).unfocus();
                             // save location as recent search:
-                            if(locations.elementAt(index).id != null) {
+                            if (locations.elementAt(index).id != null) {
                               await saveAsRecentSearch(
-                                locations.elementAt(index).id!);
+                                  locations.elementAt(index).id!);
                             }
                           },
                           child: Container(
@@ -723,7 +724,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     // change location detect state to detected :
                     locationDetectedCubit.setState(true);
                     // unfocused location textField :
-                    FocusScope.of(context).unfocus();
+                    // FocusScope.of(context).unfocus();
                     // store search :
                     await saveAsRecentSearch(recentPlaces.elementAt(index).id!);
                   },
