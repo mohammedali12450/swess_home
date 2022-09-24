@@ -36,7 +36,7 @@ class CreatedEstatesScreen extends StatefulWidget {
 }
 
 class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late CreatedEstatesBloc _createdEstatesBloc;
   DeleteUserNewEstateBloc deleteUserNewEstateBloc =
       DeleteUserNewEstateBloc(EstateRepository());
@@ -45,6 +45,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
   late ItemPositionsListener itemPositionsListener;
   late AnimationController _animationController;
   late Animation _colorTween;
+  List<Estate> estates = [];
 
   @override
   void initState() {
@@ -58,6 +59,17 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     }
     scrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
+  }
+
+  @override
+  void dispose() {
+    if (widget.estateId != null) {
+      _animationController.dispose();
+    }
+    super.dispose();
+  }
+
+  initAnimation(context) {
     bool isDark =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
 
@@ -97,6 +109,9 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.estateId != null) {
+      initAnimation(context);
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -140,7 +155,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                           .error_happened_when_executing_operation);
                 }
 
-                List<Estate> estates = createdEstatesFetchState.createdEstates;
+                estates = createdEstatesFetchState.createdEstates;
 
                 if (estates.isEmpty) {
                   return Center(
@@ -181,116 +196,49 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                     });
                   } else {
                     Fluttertoast.showToast(
-                        msg: AppLocalizations.of(context)!
-                            .delete_estate_order);
+                        msg: AppLocalizations.of(context)!.delete_estate_order);
                   }
                 }
 
-                return ScrollablePositionedList.builder(
-                  itemScrollController: scrollController,
-                  itemPositionsListener: itemPositionsListener,
-                  physics: const ClampingScrollPhysics(),
-                  // shrinkWrap: true,
-                  itemCount: estates.length,
-                  itemBuilder: (_, index) {
-                    return (widget.estateId != null && find)
-                        ? AnimatedBuilder(
-                            animation: _colorTween,
-                            builder: (context, child) => EstateCard(
-                              color: (int.parse(widget.estateId!) ==
-                                      estates.elementAt(index).id)
-                                  ? _colorTween.value
-                                  : Theme.of(context).colorScheme.background,
+                return RefreshIndicator(
+                  color: Theme.of(context).colorScheme.primary,
+                  onRefresh: () async {
+                    _onRefresh();
+                  },
+                  child: ScrollablePositionedList.builder(
+                    itemScrollController: scrollController,
+                    itemPositionsListener: itemPositionsListener,
+                    physics: const ClampingScrollPhysics(),
+                    // shrinkWrap: true,
+                    itemCount: estates.length,
+                    itemBuilder: (_, index) {
+                      return (widget.estateId != null && find)
+                          ? AnimatedBuilder(
+                              animation: _colorTween,
+                              builder: (context, child) => EstateCard(
+                                color: (int.parse(widget.estateId!) ==
+                                        estates.elementAt(index).id)
+                                    ? _colorTween.value
+                                    : Theme.of(context).colorScheme.background,
+                                estate: estates.elementAt(index),
+                                onClosePressed: () async {
+                                  await onClosePressed(index);
+                                },
+                                removeCloseButton: false,
+                                removeBottomBar: true,
+                              ),
+                            )
+                          : EstateCard(
+                              color: Theme.of(context).colorScheme.background,
                               estate: estates.elementAt(index),
-                              onClosePressed: () {
-                                showWonderfulAlertDialog(
-                                    context,
-                                    AppLocalizations.of(context)!.caution,
-                                    AppLocalizations.of(context)!
-                                        .confirm_delete,
-                                    titleTextStyle: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red,
-                                        fontSize: 20),
-                                    removeDefaultButton: true,
-                                    dialogButtons: [
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            ElevatedButton(
-                                              child: Text(
-                                                AppLocalizations.of(context)!
-                                                    .yes,
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                deleteUserNewEstateBloc.add(
-                                                    DeleteUserNewEstateFetchStarted(
-                                                        token: userToken,
-                                                        orderId: estates
-                                                            .elementAt(index)
-                                                            .id));
-                                              },
-                                            ),
-                                            ElevatedButton(
-                                              child: Text(
-                                                AppLocalizations.of(context)!
-                                                    .no,
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                          ])
-                                    ]);
+                              onClosePressed: () async {
+                                await onClosePressed(index);
                               },
                               removeCloseButton: false,
                               removeBottomBar: true,
-                            ),
-                          )
-                        : EstateCard(
-                            color: Theme.of(context).colorScheme.background,
-                            estate: estates.elementAt(index),
-                            onClosePressed: () {
-                              showWonderfulAlertDialog(
-                                  context,
-                                  AppLocalizations.of(context)!.caution,
-                                  AppLocalizations.of(context)!.confirm_delete,
-                                  titleTextStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red,
-                                      fontSize: 20),
-                                  removeDefaultButton: true,
-                                  dialogButtons: [
-                                    ElevatedButton(
-                                      child: Text(
-                                        AppLocalizations.of(context)!.yes,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        deleteUserNewEstateBloc.add(
-                                            DeleteUserNewEstateFetchStarted(
-                                                token: userToken,
-                                                orderId: estates
-                                                    .elementAt(index)
-                                                    .id));
-                                      },
-                                    ),
-                                    ElevatedButton(
-                                      child: Text(
-                                        AppLocalizations.of(context)!.cancel,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ]);
-                            },
-                            removeCloseButton: false,
-                            removeBottomBar: true,
-                          );
-                  },
+                            );
+                    },
+                  ),
                 );
               },
             ),
@@ -298,6 +246,35 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
         ),
       ),
     );
+  }
+
+  onClosePressed(index) async {
+    showWonderfulAlertDialog(context, AppLocalizations.of(context)!.caution,
+        AppLocalizations.of(context)!.confirm_delete,
+        titleTextStyle: const TextStyle(
+            fontWeight: FontWeight.bold, color: Colors.red, fontSize: 20),
+        removeDefaultButton: true,
+        dialogButtons: [
+          ElevatedButton(
+            child: Text(
+              AppLocalizations.of(context)!.yes,
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+              deleteUserNewEstateBloc.add(DeleteUserNewEstateFetchStarted(
+                  token: userToken, orderId: estates.elementAt(index).id));
+              await _onRefresh();
+            },
+          ),
+          ElevatedButton(
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ]);
   }
 
   jumpToOrder(List<Estate> estates) {

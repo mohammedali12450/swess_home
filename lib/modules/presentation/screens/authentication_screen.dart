@@ -259,7 +259,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     //   Navigator.pushReplacement(context,
                     //       MaterialPageRoute(builder: (_) => const HomeScreen()));
                     // }
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => VerificationLoginCodeScreen(

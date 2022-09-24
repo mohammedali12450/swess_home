@@ -32,6 +32,7 @@ import 'core/notifications/local_notifications.dart';
 import 'core/storage/shared_preferences/notifications_shared_preferences.dart';
 import 'core/storage/shared_preferences/shared_preferences_controllers.dart';
 import 'modules/business_logic_components/bloc/area_units_bloc/area_units_bloc.dart';
+import 'modules/business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
 import 'modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_bloc.dart';
 import 'modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import 'modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
@@ -249,6 +250,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         BlocProvider(
           create: (_) => ReportBloc(ReportsRepository()),
+        ),
+        BlocProvider(
+          create: (_) => DeleteEstatesBloc(EstateOrderRepository()),
         ),
       ],
       child: MultiProvider(

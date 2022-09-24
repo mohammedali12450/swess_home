@@ -15,7 +15,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bl
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_event.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/send_verification_code_bloc/send_verification_code_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';

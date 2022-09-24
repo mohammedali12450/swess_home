@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
@@ -11,17 +10,16 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
-import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_event.dart';
-import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../data/providers/locale_provider.dart';
 import '../../data/repositories/estate_order_repository.dart';
 
 class EstateOrderCard extends StatefulWidget {
   final EstateOrder estateOrder;
   final Color color;
+  final Function onTap;
 
   const EstateOrderCard(
-      {Key? key, required this.estateOrder, required this.color})
+      {Key? key, required this.estateOrder, required this.color, required this.onTap})
       : super(key: key);
 
   @override
@@ -29,6 +27,9 @@ class EstateOrderCard extends StatefulWidget {
 }
 
 class _EstateOrderCardState extends State<EstateOrderCard> {
+  DeleteEstatesBloc deleteEstatesBloc =
+      DeleteEstatesBloc(EstateOrderRepository());
+
   @override
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
@@ -92,21 +93,13 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             ElevatedButton(
-                              child: Text(
-                                AppLocalizations.of(context)!.yes,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                DeleteEstatesBloc deleteEstatesBloc =
-                                    DeleteEstatesBloc(EstateOrderRepository());
-                                deleteEstatesBloc.add(DeleteEstatesFetchStarted(
-                                    token:
-                                        BlocProvider.of<UserLoginBloc>(context)
-                                            .user!
-                                            .token!,
-                                    orderId: widget.estateOrder.id!));
-                              },
-                            ),
+                                child: Text(
+                                  AppLocalizations.of(context)!.yes,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  await widget.onTap();
+                                }),
                             ElevatedButton(
                               child: Text(
                                 AppLocalizations.of(context)!.no,

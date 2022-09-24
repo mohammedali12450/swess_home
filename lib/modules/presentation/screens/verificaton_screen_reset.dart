@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:phone_number/phone_number.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:swesshome/constants/assets_paths.dart';
@@ -20,6 +19,9 @@ import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit
 import 'package:swesshome/modules/data/models/otp_model.dart';
 import 'package:swesshome/modules/presentation/screens/reset_password_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+
+import '../../business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
+import '../../business_logic_components/bloc/forget_password_bloc/forget_password_event.dart';
 
 class VerificationCodeScreenReset extends StatefulWidget {
   static const String id = 'VerificationCodeScreenReset';
@@ -42,13 +44,13 @@ class _VerificationCodeScreenResetState
   final ChannelCubit officeTelephoneError = ChannelCubit(null);
   late VerificationCodeBloc verificationCodeBloc;
   late ResendVerificationCodeBloc resendVerificationCodeBloc;
+  late ForgetPasswordBloc forgetPasswordBloc;
 
   // Controllers:
   TextEditingController verificationCodeController = TextEditingController();
 
   // Other:
   late String phoneDialCode;
-  PhoneNumber? phoneNumber;
   ScrollController scrollController = ScrollController();
   final _waitingTime = BehaviorSubject<int>.seeded(0);
   Timer timer = Timer(Duration.zero, () {});
@@ -77,6 +79,16 @@ class _VerificationCodeScreenResetState
 
   initWaitingTime() {
     dataStore.getLastOtpRequestValue().then((value) {
+      // check if there is no timer to send code
+      if (value.requestedTime!
+          .isBefore(DateTime.now().subtract(const Duration(minutes: 1)))) {
+        forgetPasswordBloc.add(
+          ForgetPasswordStarted(
+            mobile: widget.phoneNumber,
+          ),
+        );
+      }
+
       if (value.textValue != dataStore.user.data!.authentication ||
           value.requestedTime!
               .isBefore(DateTime.now().subtract(const Duration(minutes: 1)))) {
@@ -93,6 +105,9 @@ class _VerificationCodeScreenResetState
     verificationCodeBloc = BlocProvider.of<VerificationCodeBloc>(context);
     resendVerificationCodeBloc =
         BlocProvider.of<ResendVerificationCodeBloc>(context);
+    //send code bloc
+    forgetPasswordBloc = BlocProvider.of<ForgetPasswordBloc>(context);
+
     //TODO: edit is out of syria
     // Dial code initializing:
     if (BlocProvider.of<SystemVariablesBloc>(context)
@@ -152,37 +167,36 @@ class _VerificationCodeScreenResetState
             }
           },
         ),
-        if (waitingTimeValue == 0 || waitingTimeValue == 59)
-          BlocListener<ResendVerificationCodeBloc, ResendVerificationCodeState>(
-            listener: (_, resendVerifyState) {
-              if (resendVerifyState is ResendVerificationCodeError) {
-                if (resendVerifyState.isConnectionError) {
-                  showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.error,
-                    AppLocalizations.of(context)!.no_internet_connection,
-                  );
-                  return;
-                }
+        BlocListener<ResendVerificationCodeBloc, ResendVerificationCodeState>(
+          listener: (_, resendVerifyState) {
+            if (resendVerifyState is ResendVerificationCodeError) {
+              if (resendVerifyState.isConnectionError) {
+                showWonderfulAlertDialog(
+                  context,
+                  AppLocalizations.of(context)!.error,
+                  AppLocalizations.of(context)!.no_internet_connection,
+                );
+                return;
+              }
 
-                if (resendVerifyState.errorResponse != null) {
-                  loginErrorHandling(resendVerifyState.errorResponse);
-                } else if (resendVerifyState.errorMessage != null) {
-                  showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.error,
-                    AppLocalizations.of(context)!.localeName == "en"
-                        ? resendVerifyState.errorMessage!
-                        : "الكود خطأ",
-                    defaultButtonContent: AppLocalizations.of(context)!.ok,
-                  );
-                }
+              if (resendVerifyState.errorResponse != null) {
+                loginErrorHandling(resendVerifyState.errorResponse);
+              } else if (resendVerifyState.errorMessage != null) {
+                showWonderfulAlertDialog(
+                  context,
+                  AppLocalizations.of(context)!.error,
+                  AppLocalizations.of(context)!.localeName == "en"
+                      ? resendVerifyState.errorMessage!
+                      : "الكود خطأ",
+                  defaultButtonContent: AppLocalizations.of(context)!.ok,
+                );
               }
-              if (resendVerifyState is ResendVerificationCodeComplete) {
-                print("doneeeeeeesadasdsad");
-              }
-            },
-          ),
+            }
+            if (resendVerifyState is ResendVerificationCodeComplete) {
+              print("doneeeeeeesadasdsad");
+            }
+          },
+        ),
       ],
       child: Scaffold(
         resizeToAvoidBottomInset: true,

@@ -20,6 +20,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
 import '../../../constants/colors.dart';
+import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
+import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_event.dart';
+import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_state.dart';
 import '../../data/models/user.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -38,7 +41,7 @@ class RecentEstateOrdersScreen extends StatefulWidget {
 }
 
 class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late RecentEstatesOrdersBloc _recentEstatesOrdersBloc;
   late ItemScrollController scrollController;
   late ItemPositionsListener itemPositionsListener;
@@ -62,18 +65,14 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
 
     scrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
-    bool isDark =
-        Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
+  }
 
+  @override
+  void dispose() {
     if (widget.estateId != null) {
-      _animationController = AnimationController(
-          vsync: this, duration: const Duration(seconds: 2));
-      _colorTween = ColorTween(
-              begin: AppColors.primaryDark,
-              end: isDark ? AppColors.secondaryDark : AppColors.white)
-          .animate(_animationController);
-      changeColors();
+      _animationController.dispose();
     }
+    super.dispose();
   }
 
   Future changeColors() async {
@@ -98,8 +97,26 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
     }
   }
 
+  initAnimation(context) {
+    bool isDark =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
+
+    if (widget.estateId != null) {
+      _animationController = AnimationController(
+          vsync: this, duration: const Duration(seconds: 2));
+      _colorTween = ColorTween(
+              begin: AppColors.primaryDark,
+              end: isDark ? AppColors.secondaryDark : AppColors.white)
+          .animate(_animationController);
+      changeColors();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.estateId != null) {
+      initAnimation(context);
+    }
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -181,30 +198,53 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                           msg: AppLocalizations.of(context)!.delete_request);
                     }
                   }
-                  return ScrollablePositionedList.builder(
-                      itemScrollController: scrollController,
-                      itemPositionsListener: itemPositionsListener,
-                      itemCount: orders.length,
-                      itemBuilder: (_, index) {
-                        return (widget.estateId != null && find)
-                            ? AnimatedBuilder(
-                                animation: _colorTween,
-                                builder: (context, _) => EstateOrderCard(
-                                  estateOrder: orders.elementAt(index),
-                                  //color: Theme.of(context).colorScheme.background,
-                                  color: (int.parse(widget.estateId!) ==
-                                          orders.elementAt(index).id)
-                                      ? _colorTween.value
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .background,
-                                ),
-                              )
-                            : EstateOrderCard(
-                                estateOrder: orders.elementAt(index),
-                                color: Theme.of(context).colorScheme.background,
-                              );
-                      });
+                  return RefreshIndicator(
+                    color: Theme.of(context).colorScheme.primary,
+                    onRefresh: () async {
+                      _onRefresh();
+                    },
+                    child: BlocListener<DeleteEstatesBloc, DeleteEstatesState>(
+                      listener: (_, deleteEstateOrderState) async {
+                        if (deleteEstateOrderState
+                            is DeleteEstatesFetchComplete) {
+                          await _onRefresh();
+                        } else if (deleteEstateOrderState
+                            is DeleteEstatesFetchError) {}
+                      },
+                      child: ScrollablePositionedList.builder(
+                          itemScrollController: scrollController,
+                          itemPositionsListener: itemPositionsListener,
+                          itemCount: orders.length,
+                          itemBuilder: (_, index) {
+                            return (widget.estateId != null && find)
+                                ? AnimatedBuilder(
+                                    animation: _colorTween,
+                                    builder: (context, _) => EstateOrderCard(
+                                      estateOrder: orders.elementAt(index),
+                                      //color: Theme.of(context).colorScheme.background,
+                                      color: (int.parse(widget.estateId!) ==
+                                              orders.elementAt(index).id)
+                                          ? _colorTween.value
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .background,
+                                      onTap: () async {
+                                        await deleteEstateOrder(index);
+                                      },
+                                    ),
+                                  )
+                                : EstateOrderCard(
+                                    estateOrder: orders.elementAt(index),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
+                                    onTap: () async {
+                                      await deleteEstateOrder(index);
+                                    },
+                                  );
+                          }),
+                    ),
+                  );
                 },
               ),
             ),
@@ -212,6 +252,15 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
         ),
       ),
     );
+  }
+
+  deleteEstateOrder(index) async {
+    DeleteEstatesBloc deleteEstatesBloc =
+        DeleteEstatesBloc(EstateOrderRepository());
+    deleteEstatesBloc.add(DeleteEstatesFetchStarted(
+        token: BlocProvider.of<UserLoginBloc>(context).user!.token!,
+        orderId: orders.elementAt(index).id!));
+    await _onRefresh();
   }
 
   jumpToOrder(List<EstateOrder> orders) {

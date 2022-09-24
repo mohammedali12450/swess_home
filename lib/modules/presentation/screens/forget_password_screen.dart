@@ -55,7 +55,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     forgetPasswordBloc = BlocProvider.of<ForgetPasswordBloc>(context);
     //TODO: edit is out of syria
     // Dial code initializing:
-    isForStore = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore;
+    isForStore = BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore;
     if (isForStore) {
       phoneDialCode = "+961";
       phoneDialCodeLogin = "+961";
@@ -77,7 +79,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     // bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
 
     return BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
-      listener: (_, forgetState)  {
+      listener: (_, forgetState) {
         if (forgetState is ForgetPasswordError) {
           if (forgetState.isConnectionError) {
             showWonderfulAlertDialog(
@@ -91,24 +93,30 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           if (forgetState.errorResponse != null) {
             loginErrorHandling(forgetState.errorResponse);
           } else if (forgetState.errorMessage != null) {
-             showWonderfulAlertDialog(
+            showWonderfulAlertDialog(
               context,
               AppLocalizations.of(context)!.error,
-               AppLocalizations.of(context)!.localeName == "en"? forgetState.errorMessage!:"هذا الحساب غير موجود",
+              AppLocalizations.of(context)!.localeName == "en"
+                  ? forgetState.errorMessage!
+                  : "هذا الحساب غير موجود",
               defaultButtonContent: AppLocalizations.of(context)!.ok,
             );
-             print("+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,);
+            print(
+              "+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,
+            );
           }
         }
         if (forgetState is ForgetPasswordComplete) {
           Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => VerificationCodeScreenReset(
-                  phoneNumber: "+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,
-                ),
+            context,
+            MaterialPageRoute(
+              builder: (_) => VerificationCodeScreenReset(
+                phoneNumber: "+" +
+                    phoneNumber!.countryCode +
+                    phoneNumber!.nationalNumber,
               ),
-                  );
+            ),
+          );
         }
       },
       child: Scaffold(
@@ -161,7 +169,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           builder: (_, errorMessage) {
             return IntlPhoneField(
               controller: officePhoneControllerLogin,
-              decoration: InputDecoration(errorText: errorMessage, errorMaxLines: 2),
+              decoration:
+                  InputDecoration(errorText: errorMessage, errorMaxLines: 2),
               initialCountryCode: isForStore ? 'LB' : 'SY',
               onChanged: (phone) {
                 phoneDialCode = phone.countryCode;
@@ -210,10 +219,18 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               if (!await signInFieldsValidation()) {
                 return;
               }
-              print("+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,);
-              forgetPasswordBloc.add(
-                ForgetPasswordStarted(
-                  mobile: "+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,),
+              print(
+                "+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,
+              );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => VerificationCodeScreenReset(
+                    phoneNumber: "+" +
+                        phoneNumber!.countryCode +
+                        phoneNumber!.nationalNumber,
+                  ),
+                ),
               );
               FocusScope.of(context).unfocus();
             },
@@ -249,23 +266,23 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     );
   }
 
-
   Future<bool> signInFieldsValidation() async {
     bool isValidationSuccess = true;
     // phone number validate :
     try {
-      String number = NumbersHelper.replaceArabicNumber(officePhoneControllerLogin.text);
+      String number =
+          NumbersHelper.replaceArabicNumber(officePhoneControllerLogin.text);
       phoneNumber = await PhoneNumberUtil().parse(phoneDialCode + number);
     } catch (e) {
       debugPrint(
         e.toString(),
       );
-      officePhoneErrorLogin.setState(AppLocalizations.of(context)!.invalid_mobile_number);
+      officePhoneErrorLogin
+          .setState(AppLocalizations.of(context)!.invalid_mobile_number);
       return false;
     }
     return isValidationSuccess;
   }
-
 
   getButtonsBorderRadius(bool isLeft) {
     Radius radius = const Radius.circular(12);
