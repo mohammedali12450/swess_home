@@ -192,8 +192,8 @@ class EstateProvider {
 
   Future deleteUserNewEstate(String? token, int? id) async {
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper
-        .delete(deleteUserNewEstateUrl, queryParameters: {"id": id}, token: token);
+    Response response = await helper.delete(deleteUserNewEstateUrl,
+        queryParameters: {"id": id}, token: token);
     return response;
   }
 }

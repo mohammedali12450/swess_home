@@ -350,7 +350,7 @@ class AppRouter {
     }
     //0 if you want to connect to pronet
     //1 if you want to connect to hostinger
-    if (response.data == "0") {
+    if (response.data == "1") {
       print("PPPRRRROOOOO");
       baseUrl = proNetBaseUrl;
       imagesBaseUrl = proNetImagesUrl;

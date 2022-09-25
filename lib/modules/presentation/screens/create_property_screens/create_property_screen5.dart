@@ -22,7 +22,8 @@ class CreatePropertyScreen5 extends StatefulWidget {
 
   final Estate currentOffer;
 
-  const CreatePropertyScreen5({Key? key, required this.currentOffer}) : super(key: key);
+  const CreatePropertyScreen5({Key? key, required this.currentOffer})
+      : super(key: key);
 
   @override
   _CreatePropertyScreen5State createState() => _CreatePropertyScreen5State();
@@ -50,13 +51,15 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> {
     super.initState();
     isLands = widget.currentOffer.estateType.id == landsPropertyTypeNumber;
     isShops = widget.currentOffer.estateType.id == shopsPropertyTypeNumber;
-    _systemVariables = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!;
+    _systemVariables =
+        BlocProvider.of<SystemVariablesBloc>(context).systemVariables!;
   }
 
   @override
   Widget build(BuildContext context) {
     return CreatePropertyTemplate(
-      headerIconPath: (isLands || isShops) ? documentOutlineIconPath : imageOutlineIconPath,
+      headerIconPath:
+          (isLands || isShops) ? documentOutlineIconPath : imageOutlineIconPath,
       headerText: AppLocalizations.of(context)!.step_5,
       body: SingleChildScrollView(
         child: Column(
@@ -79,16 +82,20 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> {
                       textDirection: (text == null)
                           ? null
                           : intl.Bidi.detectRtlDirectionality(text)
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
+                              ? TextDirection.rtl
+                              : TextDirection.ltr,
                       controller: descriptionController,
                       maxLines: 8,
                       maxLength: 600,
                       decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)!.estate_description_hint,
+                        hintText: AppLocalizations.of(context)!
+                            .estate_description_hint,
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.onBackground.withOpacity(0.48),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onBackground
+                                  .withOpacity(0.48),
                               width: 0.5),
                           borderRadius: const BorderRadius.all(
                             Radius.circular(12),
@@ -123,11 +130,14 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> {
                 compressStateListener: (compressState) {
                   isCompressing = compressState;
                 },
-                maximumCountOfEstateImages: int.parse(_systemVariables.maximumCountOfEstateImages),
-                maximumCountOfStreetImages: int.parse(_systemVariables.maximumCountOfStreetImages),
+                maximumCountOfEstateImages:
+                    int.parse(_systemVariables.maximumCountOfEstateImages),
+                maximumCountOfStreetImages:
+                    int.parse(_systemVariables.maximumCountOfStreetImages),
                 maximumCountOfFloorPlanImages:
-                int.parse(_systemVariables.maximumCountOfFloorPlanImages),
-                minimumCountOfEstateImages: _systemVariables.minimumCountOfEstateImages,
+                    int.parse(_systemVariables.maximumCountOfFloorPlanImages),
+                minimumCountOfEstateImages:
+                    _systemVariables.minimumCountOfEstateImages,
               ),
             32.verticalSpace,
             ElevatedButton(
@@ -140,7 +150,8 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> {
               onPressed: () {
                 if (!isLands && !isShops) {
                   if (isCompressing) {
-                    Fluttertoast.showToast(msg: "الرجاء الانتظار حتى تنتهي عملية الضغط!");
+                    Fluttertoast.showToast(
+                        msg: "الرجاء الانتظار حتى تنتهي عملية الضغط!");
                     return;
                   }
                   if (!validateData()) return;
@@ -155,8 +166,10 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => (isLands || isShops)
-                        ? CreatePropertyScreenFinish(currentOffer: widget.currentOffer)
-                        : CreatePropertyScreen6(currentOffer: widget.currentOffer),
+                        ? CreatePropertyScreenFinish(
+                            currentOffer: widget.currentOffer)
+                        : CreatePropertyScreen6(
+                            currentOffer: widget.currentOffer),
                   ),
                 );
               },

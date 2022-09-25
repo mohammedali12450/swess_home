@@ -1,11 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:async';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/colors.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
+import 'package:zoom_widget/zoom_widget.dart';
 
 import '../../../constants/api_paths.dart';
 
@@ -13,7 +16,8 @@ class ImagesViewerScreen extends StatefulWidget {
   final List<String> images;
   final String screenTitle;
 
-  const ImagesViewerScreen(this.images, this.screenTitle, {Key? key}) : super(key: key);
+  const ImagesViewerScreen(this.images, this.screenTitle, {Key? key})
+      : super(key: key);
 
   @override
   _ImagesViewerScreenState createState() => _ImagesViewerScreenState();
@@ -24,6 +28,75 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<Image> image = [];
+    for (int i = 0; i < widget.images.length; i++) {
+      image.add(Image.network(imagesBaseUrl + widget.images.elementAt(i)));
+    }
+    Completer<ui.Image> completer = Completer<ui.Image>();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          widget.screenTitle,
+        ),
+      ),
+      body: ListView(
+        children: [
+          SizedBox(
+            height: getScreenHeight(context) - 100,
+            width: 200,
+            child: PageView.builder(
+              onPageChanged: (newIndex) {
+                currentImageCubit.setState(newIndex);
+              },
+              itemCount: image.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                image
+                    .elementAt(index)
+                    .image
+                    .resolve(const ImageConfiguration())
+                    .addListener(ImageStreamListener(
+                        (ImageInfo info, bool synchronousCall) {
+                  if (completer.isCompleted == false) {
+                    completer.complete(info.image);
+                  }
+                }));
+                return Zoom(
+                  initTotalZoomOut: true,
+                  maxScale: 3.0,
+                  backgroundColor: Colors.white,
+                  child: image.elementAt(index),
+                );
+              },
+            ),
+          ),
+          12.verticalSpace,
+          BlocBuilder<ChannelCubit, dynamic>(
+            bloc: currentImageCubit,
+            builder: (_, currentImage) {
+              return Text(
+                AppLocalizations.of(context)!.image_counting(
+                    (currentImageCubit.state + 1).toString(),
+                    widget.images.length.toString()),
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .subtitle2!
+                    .copyWith(color: AppColors.black),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+ /*@override
+  Widget build(BuildContext context) {
+    CachedNetworkImage image = CachedNetworkImage(
+        imageUrl: imagesBaseUrl + widget.images.elementAt(1));
+    print(image.memCacheHeight);
+    print(image.width);
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.black,
@@ -36,8 +109,8 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: 1.sw,
-              height: 1.sw,
+              width: getScreenWidth(context),
+              height: getScreenHeight(context) - 100,
               child: PhotoViewGallery.builder(
                 scrollPhysics: const BouncingScrollPhysics(),
                 builder: (BuildContext context, int index) {
@@ -59,7 +132,8 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
                             topLeft: Radius.circular(12),
                             topRight: Radius.circular(12),
                           ),
-                          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
                         ),
                       ),
                     ),
@@ -76,7 +150,7 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
                 onPageChanged: (newIndex) {
                   currentImageCubit.setState(newIndex);
                 },
-                backgroundDecoration:  BoxDecoration(
+                backgroundDecoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.background,
                 ),
               ),
@@ -87,8 +161,12 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
               builder: (_, currentImage) {
                 return Text(
                   AppLocalizations.of(context)!.image_counting(
-                      (currentImageCubit.state + 1).toString(), widget.images.length.toString()),
-                  style: Theme.of(context).textTheme.subtitle2!.copyWith(color: AppColors.white),
+                      (currentImageCubit.state + 1).toString(),
+                      widget.images.length.toString()),
+                  style: Theme.of(context)
+                      .textTheme
+                      .subtitle2!
+                      .copyWith(color: AppColors.white),
                 );
               },
             ),
@@ -96,5 +174,5 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
         ),
       ),
     );
-  }
+  }*/
 }

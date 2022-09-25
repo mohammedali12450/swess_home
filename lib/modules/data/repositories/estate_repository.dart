@@ -53,11 +53,20 @@ class EstateRepository {
       );
     }
     if ((response.statusCode == 202) && (page == 1)) {
-      showWonderfulAlertDialog(
-        navigatorKey.currentContext!,
-        AppLocalizations.of(navigatorKey.currentContext!)!.caution,
-        AppLocalizations.of(navigatorKey.currentContext!)!.sorry,
-      );
+      if (jsonDecode(response.toString())["data"].isEmpty) {
+        showWonderfulAlertDialog(
+          navigatorKey.currentContext!,
+          AppLocalizations.of(navigatorKey.currentContext!)!.warning,
+          AppLocalizations.of(navigatorKey.currentContext!)!
+              .empty,
+        );
+      } else {
+        showWonderfulAlertDialog(
+          navigatorKey.currentContext!,
+          AppLocalizations.of(navigatorKey.currentContext!)!.caution,
+          AppLocalizations.of(navigatorKey.currentContext!)!.sorry,
+        );
+      }
     }
     if (response.statusCode != 201 &&
         response.statusCode != 202 &&
