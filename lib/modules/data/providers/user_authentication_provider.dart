@@ -97,11 +97,9 @@ class UserAuthenticationProvider {
 
   Future sendVerificationLoginCode(String phone, String code) async {
     NetworkHelper helper = NetworkHelper();
-    print("ninininininini");
-    print(phone);
     Response response = await helper
         .post(multiLoginUrl, {"authentication": phone, "code": code});
-    print("ghina is very smart  $response");
+    print(response);
     return response;
   }
 

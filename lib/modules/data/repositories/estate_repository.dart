@@ -42,7 +42,6 @@ class EstateRepository {
           await _estateProvider.search(searchData, isAdvanced, page, token);
       print(response);
     } catch (e) {
-      print(e);
       rethrow;
     }
     if ((response.statusCode == 201) && (page == 1)) {
@@ -109,10 +108,8 @@ class EstateRepository {
 
   Future getOfficeDetails(int officeId) async {
     Response response;
-
     try {
       response = await _estateProvider.getOfficeDetails(officeId);
-      print("ghina2 : $response");
     } catch (e) {
       rethrow;
     }

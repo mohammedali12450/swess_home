@@ -8,7 +8,7 @@ import 'package:swesshome/modules/data/models/location.dart';
 import 'package:swesshome/modules/data/models/ownership_type.dart';
 import 'package:swesshome/modules/data/models/period_type.dart';
 import 'estate_office.dart';
-import 'myImage.dart';
+import 'my_image.dart';
 
 class Estate {
   int id;

@@ -475,8 +475,8 @@
   "caution":"caution",
   "warning":"warning",
   "update":"update",
-  "empty":"عذرا لا توجد نتائج مطابقة لخيارات البحث",
-  "has_update":"يحوي التطبيق على نسخة جديدة يرجى تحديثه للحصول على ميزات جديدة",
+  "empty":"Sorry, there are no results matching your search options",
+  "has_update":"The application contains a new version, please update it to get new features",
   "war":"We found results matching your search options\n Similar results will be displayed if any",
   "sorry":"Sorry, we found no results matching your search options!\n Similar results will be displayed if any"
 }

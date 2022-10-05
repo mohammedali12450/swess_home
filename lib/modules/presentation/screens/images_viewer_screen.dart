@@ -8,7 +8,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:zoom_widget/zoom_widget.dart';
 
 import '../../../constants/api_paths.dart';
 
@@ -43,7 +42,7 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
         children: [
           SizedBox(
             height: getScreenHeight(context) - 100,
-            width: 200,
+            width: getScreenWidth(context),
             child: PageView.builder(
               onPageChanged: (newIndex) {
                 currentImageCubit.setState(newIndex);
@@ -57,14 +56,15 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
                     .resolve(const ImageConfiguration())
                     .addListener(ImageStreamListener(
                         (ImageInfo info, bool synchronousCall) {
-                  if (completer.isCompleted == false) {
+                  if (!completer.isCompleted) {
                     completer.complete(info.image);
                   }
                 }));
-                return Zoom(
-                  initTotalZoomOut: true,
-                  maxScale: 3.0,
-                  backgroundColor: Colors.white,
+                return InteractiveViewer(
+                  panEnabled: false, // Set it to false to prevent panning.
+                  //boundaryMargin: const EdgeInsets.all(80),
+                  minScale: 0.5,
+                  maxScale: 4,
                   child: image.elementAt(index),
                 );
               },
@@ -78,8 +78,7 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
                 AppLocalizations.of(context)!.image_counting(
                     (currentImageCubit.state + 1).toString(),
                     widget.images.length.toString()),
-                style: Theme
-                    .of(context)
+                style: Theme.of(context)
                     .textTheme
                     .subtitle2!
                     .copyWith(color: AppColors.black),
@@ -91,7 +90,7 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
     );
   }
 
- /*@override
+/*@override
   Widget build(BuildContext context) {
     CachedNetworkImage image = CachedNetworkImage(
         imageUrl: imagesBaseUrl + widget.images.elementAt(1));

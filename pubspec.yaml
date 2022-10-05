@@ -58,7 +58,6 @@ dependencies:
   scrollable_positioned_list: 0.2.2
   #package_info_plus: ^1.0.6
   scroll_to_index:
-  zoom_widget: ^2.0.0
 
 #-------------------------------
 

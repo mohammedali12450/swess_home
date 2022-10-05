@@ -330,7 +330,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                   }
                                   if (_formKey.currentState!.validate()) {
                                     _formKey.currentState!.save();
-                                    print(widget.searchData.toJson(true));
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

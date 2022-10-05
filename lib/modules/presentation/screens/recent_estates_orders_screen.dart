@@ -77,7 +77,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
 
   Future changeColors() async {
     while (true) {
-      await Future.delayed(const Duration(milliseconds: 1500), () {
+      await Future.delayed(const Duration(seconds: 2), () {
         if (_animationController.status == AnimationStatus.completed) {
           _animationController.reverse();
         } else {
@@ -268,9 +268,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
     if (index != -1) {
       if (scrollController.isAttached) {
         scrollController.scrollTo(
-            index: index,
-            duration: const Duration(milliseconds: 1000),
-            curve: Curves.ease);
+            index: index, duration: const Duration(milliseconds: 1000));
       }
     }
   }

@@ -279,7 +279,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                                       .signInWithCredential(
                                                           credential);
                                                   if (widget.user != null) {
-                                                    print('User in');
                                                     // save user token in shared preferences :
                                                     UserSharedPreferences
                                                         .setAccessToken(widget
@@ -312,9 +311,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                                       AppLocalizations.of(
                                                               context)!
                                                           .check_your_internet_connection);
-                                                } catch (e, stack) {
-                                                  print(e);
-                                                  print(stack);
+                                                } catch (e) {
                                                   showWonderfulAlertDialog(
                                                     context,
                                                     AppLocalizations.of(

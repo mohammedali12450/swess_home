@@ -207,5 +207,6 @@ class UserAuthenticationRepository {
     } catch (e) {
       rethrow;
     }
+    return response;
   }
 }

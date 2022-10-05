@@ -77,7 +77,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
     priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
     priceDomainsNames = priceDomainsNames.toSet().toList();
-    print(priceDomainsNames);
 
     return BlocListener<EstateOrderBloc, EstateOrderState>(
       listener: (_, estateOrderState) async {
@@ -246,7 +245,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                     MyDropdownList(
                       elementsList: priceDomainsNames,
                       onSelect: (index) {
-                        print(index);
                         bool isNoneSelected = index == 0;
                         selectedPriceDomainId = (isNoneSelected)
                             ? null

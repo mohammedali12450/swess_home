@@ -106,7 +106,6 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
               ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  print("Dsadsadasdadas");
                   _formKey.currentState!.save();
                   Navigator.push(
                     context,

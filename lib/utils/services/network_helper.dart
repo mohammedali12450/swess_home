@@ -71,7 +71,7 @@ class NetworkHelper {
     assert(url != "", "url can not has blank value!");
     assert(header == null || token == null,
         "you can not pass header and token together, put the token inside your passed header!!");
-    /* Complete informations */
+    /* Complete information */
     if (token != null) {
       _dioInstance.options.headers["authorization"] = 'Bearer $token';
     }
@@ -84,7 +84,7 @@ class NetworkHelper {
     try {
       response = await _dioInstance.get(url, queryParameters: queryParameters);
     } on DioError catch (e) {
-      if(e.type == DioErrorType.other){
+      if (e.type == DioErrorType.other) {
         throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
       }
       if (kDebugMode) {
@@ -106,7 +106,7 @@ class NetworkHelper {
     assert(url != "", "url can not has blank value!");
     assert(headers == null || token == null,
         "you can not pass header and token together, put the token inside your passed header!!");
-    /* Complete informations */
+    /* Complete information */
     if (headers != null) {
       _dioInstance.options.headers = headers;
     }
@@ -128,7 +128,7 @@ class NetworkHelper {
         },
       );
     } on DioError catch (e) {
-      if(e.type == DioErrorType.other){
+      if (e.type == DioErrorType.other) {
         throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
       }
       if (kDebugMode) {
@@ -150,7 +150,7 @@ class NetworkHelper {
     assert(url != "", "url can not has blank value!");
     assert(headers == null || token == null,
         "you can not pass header and token together, put the token inside your passed header!!");
-    /* Complete informations */
+    /* Complete information */
 
     if (headers != null) {
       _dioInstance.options.headers = headers;
@@ -164,7 +164,7 @@ class NetworkHelper {
       response = await _dioInstance.patch(url,
           data: fromData, queryParameters: queryParameters);
     } on DioError catch (e) {
-      if(e.type == DioErrorType.other){
+      if (e.type == DioErrorType.other) {
         throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
       }
       if (kDebugMode) {
@@ -187,7 +187,7 @@ class NetworkHelper {
     assert(url != "", "url can not has blank value!");
     assert(headers == null || token == null,
         "you can not pass header and token together, put the token inside your passed header!!");
-    /* Complete informations */
+    /* Complete information */
 
     if (headers != null) {
       _dioInstance.options.headers = headers;
@@ -201,7 +201,7 @@ class NetworkHelper {
       response = await _dioInstance.delete(url,
           data: fromData, queryParameters: queryParameters);
     } on DioError catch (e) {
-      if(e.type == DioErrorType.other){
+      if (e.type == DioErrorType.other) {
         throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
       }
       if (kDebugMode) {

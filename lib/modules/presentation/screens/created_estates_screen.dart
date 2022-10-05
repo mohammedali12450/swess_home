@@ -55,7 +55,6 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
     if (user != null && user.token != null) {
       userToken = user.token;
-      print(userToken);
     }
     scrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
@@ -86,7 +85,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
   Future changeColors() async {
     while (true) {
-      await Future.delayed(const Duration(milliseconds: 1500), () {
+      await Future.delayed(const Duration(seconds: 2), () {
         if (_animationController.status == AnimationStatus.completed) {
           _animationController.reverse();
         } else {
@@ -283,8 +282,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
       if (scrollController.isAttached) {
         scrollController.scrollTo(
             index: index,
-            duration: const Duration(milliseconds: 1000),
-            curve: Curves.bounceIn);
+            duration: const Duration(milliseconds: 1000));
       }
     }
   }

@@ -19,7 +19,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_event.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
-import 'package:swesshome/modules/data/models/estate_office.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';

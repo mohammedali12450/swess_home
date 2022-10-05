@@ -8,7 +8,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
@@ -100,9 +99,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                   ? forgetState.errorMessage!
                   : "هذا الحساب غير موجود",
               defaultButtonContent: AppLocalizations.of(context)!.ok,
-            );
-            print(
-              "+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,
             );
           }
         }
@@ -219,9 +215,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               if (!await signInFieldsValidation()) {
                 return;
               }
-              print(
-                "+" + phoneNumber!.countryCode + phoneNumber!.nationalNumber,
-              );
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

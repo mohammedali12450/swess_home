@@ -43,7 +43,6 @@ class EstateOfficeProvider {
         searchByregionUrl,
         {"location_id": locationId},
       );
-      print(response.statusCode);
       print(response);
     } catch (e) {
       rethrow;

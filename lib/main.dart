@@ -146,7 +146,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     setState(() {
       packageInfo = info;
     });
-    print("my version ${packageInfo.version}");
     ApplicationSharedPreferences.setVersionAppState(packageInfo.version);
   }
 

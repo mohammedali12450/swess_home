@@ -193,7 +193,6 @@ class _VerificationCodeScreenResetState
               }
             }
             if (resendVerifyState is ResendVerificationCodeComplete) {
-              print("doneeeeeeesadasdsad");
             }
           },
         ),

@@ -108,6 +108,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                 return const PropertyShimmer();
               } else if (estatesFetchState is EstateFetchComplete) {
                 estates.addAll(estatesFetchState.estates);
+                sortEstateByDate();
                 BlocProvider.of<EstateBloc>(context).isFetching = false;
               } else if (estatesFetchState is EstateFetchError &&
                   estates.isEmpty) {
@@ -260,9 +261,18 @@ class _EstatesScreenState extends State<EstatesScreen> {
     );
   }
 
+  sortEstateByDate(){
+    estates.sort((a, b) {
+      //sorting in descending order
+      return DateTime.parse(b.createdAt!)
+          .compareTo(DateTime.parse(a.createdAt!));
+    });
+  }
+
   void showReportModalBottomSheet(int estateId) {
     List<Report> reports = BlocProvider.of<ReportBloc>(context).reports!;
-    bool isArabic = Provider.of<LocaleProvider>(context, listen: false).isArabic();
+    bool isArabic =
+        Provider.of<LocaleProvider>(context, listen: false).isArabic();
 
     showModalBottomSheet(
       context: context,

@@ -7,24 +7,23 @@ class SearchData {
 
   int? priceDomainId;
 
-
-
   int? ownershipId;
 
   int? interiorStatusId;
 
   bool? hasSwimmingPool;
 
-  bool? isFurnished ;
+  bool? isFurnished;
 
   bool? isOnBeach;
-
 
   SearchData(
       {this.estateOfferTypeId,
       this.locationId,
       this.estateTypeId,
-      this.priceDomainId,this.ownershipId,this.interiorStatusId});
+      this.priceDomainId,
+      this.ownershipId,
+      this.interiorStatusId});
 
   Map<String, dynamic> toJson(bool isAdvanced) {
     return {
@@ -34,9 +33,13 @@ class SearchData {
       "price_domain_id": priceDomainId,
       if (isAdvanced) "ownership_type_id": ownershipId,
       if (isAdvanced) "interior_status_id": interiorStatusId,
-      if (isAdvanced) "swimming_pool": (hasSwimmingPool==null)?null:((hasSwimmingPool!)?1:0),
-      if (isAdvanced) "is_furnished": (isFurnished==null)?null:((isFurnished!)?1:0),
-      if (isAdvanced) "on_beach": (isOnBeach==null)?null:((isOnBeach!)?1:0)
+      if (isAdvanced)
+        "swimming_pool":
+            (hasSwimmingPool == null) ? null : ((hasSwimmingPool!) ? 1 : 0),
+      if (isAdvanced)
+        "is_furnished": (isFurnished == null) ? null : ((isFurnished!) ? 1 : 0),
+      if (isAdvanced)
+        "on_beach": (isOnBeach == null) ? null : ((isOnBeach!) ? 1 : 0)
     };
   }
 }

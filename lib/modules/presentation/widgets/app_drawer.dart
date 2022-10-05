@@ -307,7 +307,7 @@ class _MyDrawerState extends State<MyDrawer> {
         _userLoginBloc.user!.token != null) {
       try {
         await userRep.logout(_userLoginBloc.user!.token!);
-      } on ConnectionException catch (e) {
+      } on ConnectionException {
         Navigator.pop(context);
         showWonderfulAlertDialog(
           context,

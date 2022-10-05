@@ -70,10 +70,8 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import 'package:swesshome/utils/helpers/my_internet_connection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/utils/services/network_helper.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/api_paths.dart';
-import '../../main.dart';
 import '../../modules/presentation/screens/update_new_version_screen.dart';
 
 class AppRouter {
@@ -350,7 +348,7 @@ class AppRouter {
     }
     //0 if you want to connect to pronet
     //1 if you want to connect to hostinger
-    if (response.data == "1") {
+    if (response.data == "0") {
       print("PPPRRRROOOOO");
       baseUrl = proNetBaseUrl;
       imagesBaseUrl = proNetImagesUrl;

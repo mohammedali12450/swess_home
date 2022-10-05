@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
-import 'package:swesshome/core/walk_through/introduction_screen1.dart';
-import 'package:swesshome/modules/presentation/screens/select_language_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants/design_constants.dart';
-import 'home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UpdateVersionScreen extends StatefulWidget {

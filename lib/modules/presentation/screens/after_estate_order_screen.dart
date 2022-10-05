@@ -5,10 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'recent_estates_orders_screen.dart';

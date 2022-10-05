@@ -252,8 +252,6 @@ class _VerificationLoginCodeScreenState
                                                     context)
                                                 .systemVariables!
                                                 .isForStore) {
-                                              print(confirmationCodeController
-                                                  .text);
                                               BlocProvider.of<
                                                           SendVerificationCodeLoginBloc>(
                                                       context)
@@ -282,7 +280,6 @@ class _VerificationLoginCodeScreenState
                                                       .signInWithCredential(
                                                           credential);
                                                   if (widget.user != null) {
-                                                    print('User in');
                                                     // save user token in shared preferences :
                                                     UserSharedPreferences
                                                         .setAccessToken(widget
@@ -313,9 +310,7 @@ class _VerificationLoginCodeScreenState
                                                       AppLocalizations.of(
                                                               context)!
                                                           .check_your_internet_connection);
-                                                } catch (e, stack) {
-                                                  print(e);
-                                                  print(stack);
+                                                } catch (e) {
                                                   showWonderfulAlertDialog(
                                                       context,
                                                       AppLocalizations.of(

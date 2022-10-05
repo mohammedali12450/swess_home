@@ -1,11 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:phone_number/phone_number.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
@@ -15,10 +12,8 @@ import 'package:swesshome/modules/business_logic_components/bloc/reset_password_
 import 'package:swesshome/modules/business_logic_components/bloc/reset_password_bloc/reset_password_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   static const String id = 'ResetPasswordScreen';
@@ -70,9 +65,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextDirection textDirection = Directionality.of(context);
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-
     return BlocListener<ResetPasswordBloc, ResetPasswordState>(
       listener: (_, resetState)  {
         if (resetState is ResetPasswordError) {
@@ -190,12 +182,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               // if (!await signInFieldsValidation()) {
               //   return;
               // }
-              print(widget.phoneNumber);
-              print(newPasswordController.text);
-              print(confirmPasswordController.text);
-              print( _formKey.currentState!.validate());
               if (_formKey.currentState!.validate()) {
-                print("Dsadsadasdadas");
                   _formKey.currentState!.save();
                 resetPasswordBloc.add(
                   ResetPasswordStarted(
@@ -204,8 +191,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       confirmPassword: confirmPasswordController.text),
                 );
               }
-
-              print("Dasdsad");
               FocusScope.of(context).unfocus();
             },
             child: BlocBuilder<ResetPasswordBloc, ResetPasswordState>(

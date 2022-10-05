@@ -87,7 +87,6 @@ class EstateProvider {
 
     try {
       response = await helper.get(getSavedEstatesUrl, token: token);
-      print("ghinaa getSaved $response");
     } catch (e) {
       rethrow;
     }
@@ -111,10 +110,8 @@ class EstateProvider {
     }
 
     Response response;
-
     try {
       response = await helper.post(url, data, token: token);
-      print(url);
       print(response);
     } catch (e) {
       rethrow;
@@ -153,7 +150,6 @@ class EstateProvider {
     NetworkHelper helper = NetworkHelper();
     Response response =
         await helper.post(saveEstateUrl, {"estate_id": estateId}, token: token);
-    print("ghinaa save $response");
     return response;
   }
 
@@ -161,7 +157,6 @@ class EstateProvider {
     NetworkHelper helper = NetworkHelper();
     Response response = await helper.delete(unSaveEstateUrl,
         fromData: {"estate_id": estateId}, token: token);
-    print("ghinaa unsave $response");
     return response;
   }
 

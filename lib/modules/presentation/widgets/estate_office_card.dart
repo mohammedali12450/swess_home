@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/data/models/estate_office.dart';
 
-import '../screens/estate_office_screen.dart';
-import 'res_text.dart';
 
 class EstateOfficeCard extends StatelessWidget {
   final EstateOffice office;

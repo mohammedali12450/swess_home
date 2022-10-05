@@ -837,7 +837,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         return false;
       }
     } catch (e) {
-      print(e);
       authenticationError
           .setState(AppLocalizations.of(context)!.invalid_mobile_number);
       return false;
@@ -873,7 +872,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           .parse(phoneDialCodeLogin + authenticationControllerLogin.text);
       phoneNumber = parsedPhoneNumber.international.replaceAll(" ", "");
     } catch (e) {
-      print(e);
       authenticationErrorLogin
           .setState(AppLocalizations.of(context)!.invalid_mobile_number);
       return false;

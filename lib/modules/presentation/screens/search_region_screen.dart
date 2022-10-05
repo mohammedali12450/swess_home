@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';

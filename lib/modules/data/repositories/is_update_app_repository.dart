@@ -10,8 +10,6 @@ class IsUpdateAppRepository {
     Response response =
         await _isUpdateAppProvider.isUpdateApp(isAndroid, version);
     String isUpdateApp = jsonDecode(response.toString());
-    print("response is update app $response");
-    print("is update app $isUpdateApp");
     return isUpdateApp;
   }
 }
