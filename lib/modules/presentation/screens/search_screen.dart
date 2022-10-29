@@ -125,6 +125,7 @@ class _SearchScreenState extends State<SearchScreen> {
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
     if (user != null && user.token != null) {
       userToken = user.token;
+      print(userToken);
     }
   }
 
@@ -152,7 +153,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 bool isDark =
                     Provider.of<ThemeProvider>(context).isDarkMode(context);
                 return Padding(
-                  padding: EdgeInsets.only(left: 18.w, top: 8.w, right: 13.w),
+                  padding: EdgeInsets.only(left: 18.w, top: 8.w, right: 18.w),
                   child: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -161,7 +162,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           width: 1.5,
                         )),
                     padding:
-                        EdgeInsets.only(right: 8.w, bottom: 4.w, left: 8.w),
+                        EdgeInsets.only(right: 8.w, bottom: 3.w, left: 8.w),
                     height: 48.h,
                     width: 160.w,
                     child: buildDropDown(isDark),
@@ -194,7 +195,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             locationController.clear();
                             locationDetectedCubit.setState(false);
                             patternCubit.setState(null);
-                            //FocusScope.of(context).unfocus();
+                            FocusScope.of(context).unfocus();
 
                             if (locationController.text.isEmpty) {
                               patternCubit.setState("");
@@ -204,7 +205,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             locationController.clear();
                             locationDetectedCubit.setState(false);
                             patternCubit.setState(null);
-                            //FocusScope.of(context).unfocus();
+                            FocusScope.of(context).unfocus();
 
                             if (locationController.text.isEmpty) {
                               patternCubit.setState("");
@@ -330,6 +331,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   }
                                   if (_formKey.currentState!.validate()) {
                                     _formKey.currentState!.save();
+                                    print(widget.searchData.toJson(true));
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -407,12 +409,10 @@ class _SearchScreenState extends State<SearchScreen> {
                             // set location detected state :
                             locationDetectedCubit.setState(true);
                             // unfocused text field :
-                            // FocusScope.of(context).unfocus();
+                            FocusScope.of(context).unfocus();
                             // save location as recent search:
-                            if (locations.elementAt(index).id != null) {
-                              await saveAsRecentSearch(
-                                  locations.elementAt(index).id!);
-                            }
+                            await saveAsRecentSearch(
+                                locations.elementAt(index).id!);
                           },
                           child: Container(
                             margin: EdgeInsets.symmetric(
@@ -475,12 +475,10 @@ class _SearchScreenState extends State<SearchScreen> {
                             // set location detected state :
                             locationDetectedCubit.setState(true);
                             // unfocused text field :
-                            //FocusScope.of(context).unfocus();
+                            FocusScope.of(context).unfocus();
                             // save location as recent search:
-                            if (locations.elementAt(index).id != null) {
-                              await saveAsRecentSearch(
-                                  locations.elementAt(index).id!);
-                            }
+                            await saveAsRecentSearch(
+                                locations.elementAt(index).id!);
                           },
                           child: Container(
                             margin: EdgeInsets.symmetric(
@@ -677,9 +675,12 @@ class _SearchScreenState extends State<SearchScreen> {
                         style: ElevatedButton.styleFrom(
                             fixedSize: Size(120.w, 56.h)),
                         child: Text(
-                          AppLocalizations.of(context)!.cancel,
+                          AppLocalizations.of(context)!.yes,
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          await RecentSearchesSharedPreferences
+                              .removeRecentSearches();
+                          patternCubit.setState(null);
                           Navigator.pop(context);
                         },
                       ),
@@ -687,12 +688,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         style: ElevatedButton.styleFrom(
                             fixedSize: Size(120.w, 56.h)),
                         child: Text(
-                          AppLocalizations.of(context)!.yes,
+                          AppLocalizations.of(context)!.cancel,
                         ),
-                        onPressed: () async {
-                          await RecentSearchesSharedPreferences
-                              .removeRecentSearches();
-                          patternCubit.setState(null);
+                        onPressed: () {
                           Navigator.pop(context);
                         },
                       ),
@@ -723,7 +721,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     // change location detect state to detected :
                     locationDetectedCubit.setState(true);
                     // unfocused location textField :
-                    // FocusScope.of(context).unfocus();
+                    FocusScope.of(context).unfocus();
                     // store search :
                     await saveAsRecentSearch(recentPlaces.elementAt(index).id!);
                   },
@@ -780,14 +778,14 @@ class _SearchScreenState extends State<SearchScreen> {
   SingleChildScrollView buildSearchWidgets() {
     List<String> priceDomainsNames =
         priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
-    priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
+    priceDomainsNames.insert(0, AppLocalizations.of(context)!.undefined);
     priceDomainsNames = priceDomainsNames.toSet().toList();
 
     List<String> estateTypesAdd =
         estatesTypes.map((e) => e.getName(isArabic).split('|').first).toList();
     estateTypesAdd.insert(
       0,
-      AppLocalizations.of(context)!.unselected,
+      AppLocalizations.of(context)!.undefined,
     );
     estateTypesAdd = estateTypesAdd.toSet().toList();
 
@@ -832,7 +830,7 @@ class _SearchScreenState extends State<SearchScreen> {
             },
             // validator: (value) =>
             // value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
-            selectedItem: AppLocalizations.of(context)!.unselected,
+            selectedItem: AppLocalizations.of(context)!.undefined,
           ),
           kHe24,
           // BlocBuilder<ChannelCubit, dynamic>(
@@ -889,7 +887,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Column buildAdvancedSearchWidgets() {
     List<String> choices = [
-      AppLocalizations.of(context)!.unselected,
+      AppLocalizations.of(context)!.undefined,
       AppLocalizations.of(context)!.yes,
       AppLocalizations.of(context)!.no
     ];
@@ -897,13 +895,13 @@ class _SearchScreenState extends State<SearchScreen> {
         ownershipsTypes.map((e) => e.getName(isArabic)).toList();
     ownerShipTypesNames.insert(
       0,
-      AppLocalizations.of(context)!.unselected,
+      AppLocalizations.of(context)!.undefined,
     );
     List<String> interiorStatusesNames =
         interiorStatuses.map((e) => e.getName(isArabic)).toList();
     interiorStatusesNames.insert(
       0,
-      AppLocalizations.of(context)!.unselected,
+      AppLocalizations.of(context)!.undefined,
     );
 
     return Column(

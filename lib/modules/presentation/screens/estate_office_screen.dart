@@ -34,6 +34,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../business_logic_components/bloc/office_details_bloc/office_details_bloc.dart';
 import '../../business_logic_components/bloc/office_details_bloc/office_details_event.dart';
 import '../../business_logic_components/bloc/office_details_bloc/office_details_state.dart';
+import '../widgets/report_estate.dart';
 import 'authentication_screen.dart';
 
 class EstateOfficeScreen extends StatefulWidget {
@@ -48,6 +49,7 @@ class EstateOfficeScreen extends StatefulWidget {
 
 class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
   final VisitBloc _visitBloc = VisitBloc(EstateRepository());
+
   // LikeAndUnlikeBloc _likeAndUnlikeBloc = LikeAndUnlikeBloc(
   //     (estateState.results.isLiked!)
   //         ? Liked()
@@ -150,26 +152,26 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                     path: estateState.results.logo!));
                           },
                           child: Hero(
-                              tag: estateState.results.id.toString(),
-                              // child: Container(
-                              //     width: 300.w,
-                              //     height: 180.h,
-                              //     decoration: BoxDecoration(
-                              //       borderRadius: BorderRadius.circular(18),
-                              //       image: DecorationImage(
-                              //           image: NetworkImage(
-                              //             imagesBaseUrl +
-                              //                 estateState.results.logo!,
-                              //           ),
-                              //           fit: BoxFit.fill),
-                              //     ))
-                              child: CircleAvatar(
-                                radius: 96.w,
-                                backgroundColor: Colors.grey,
-                                backgroundImage: CachedNetworkImageProvider(
-                                    imagesBaseUrl + estateState.results.logo!),
-                              ),
-                              ),
+                            tag: estateState.results.id.toString(),
+                            // child: Container(
+                            //     width: 300.w,
+                            //     height: 180.h,
+                            //     decoration: BoxDecoration(
+                            //       borderRadius: BorderRadius.circular(18),
+                            //       image: DecorationImage(
+                            //           image: NetworkImage(
+                            //             imagesBaseUrl +
+                            //                 estateState.results.logo!,
+                            //           ),
+                            //           fit: BoxFit.fill),
+                            //     ))
+                            child: CircleAvatar(
+                              radius: 96.w,
+                              backgroundColor: Colors.grey,
+                              backgroundImage: CachedNetworkImageProvider(
+                                  imagesBaseUrl + estateState.results.logo!),
+                            ),
+                          ),
                         ),
                         24.verticalSpace,
                         // Account name and rate :
@@ -204,7 +206,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         ),
                         kHe12,
                         InkWell(
-                          onTap:(){
+                          onTap: () {
                             launch(
                               "tel://" + estateState.results.mobile!,
                             );
@@ -238,7 +240,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                       MaterialPageRoute(
                                         builder: (_) =>
                                             CreatePropertyIntroductionScreen(
-                                                officeId: estateState.results.id),
+                                                officeId:
+                                                    estateState.results.id),
                                       ),
                                     );
                                   },
@@ -248,7 +251,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                     children: [
                                       const Icon(Icons.add),
                                       Text(
-                                        AppLocalizations.of(context)!.post_estate,
+                                        AppLocalizations.of(context)!
+                                            .post_estate,
                                         style: const TextStyle(fontSize: 14),
                                       )
                                     ],
@@ -256,7 +260,6 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                 ),
                               ),
                               kWi16,
-
                               Expanded(
                                 flex: 1,
                                 child: BlocConsumer<LikeAndUnlikeBloc,
@@ -276,8 +279,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                           error);
                                       _likeAndUnlikeBloc.add(
                                           ReInitializeLikeState(
-                                              isLike:
-                                                  estateState.results.isLiked!));
+                                              isLike: estateState
+                                                  .results.isLiked!));
                                     } else if (likeAndUnlikeState is Liked) {
                                       estateState.results.isLiked = true;
                                     } else if (likeAndUnlikeState is Unliked) {
@@ -300,7 +303,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                                 token: userToken,
                                                 unlikedObjectId:
                                                     estateState.results.id,
-                                                likeType: LikeType.estateOffice),
+                                                likeType:
+                                                    LikeType.estateOffice),
                                           );
                                         }
                                         if (likeAndUnlikeState is Unliked) {
@@ -309,7 +313,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                                 token: userToken,
                                                 likedObjectId:
                                                     estateState.results.id,
-                                                likeType: LikeType.estateOffice),
+                                                likeType:
+                                                    LikeType.estateOffice),
                                           );
                                         }
                                       },
@@ -324,7 +329,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                                   MainAxisAlignment.center,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Icon((likeAndUnlikeState is Liked)
+                                                Icon((likeAndUnlikeState
+                                                        is Liked)
                                                     ? Icons.thumb_up_alt
                                                     : Icons
                                                         .thumb_up_alt_outlined),
@@ -420,7 +426,12 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         return EstateCard(
                           color: Theme.of(context).colorScheme.background,
                           estate: newStates.elementAt(index),
-                          removeCloseButton: true,
+                          onClosePressed: () {
+                            showReportModalBottomSheet(
+                                context, estates.elementAt(index).id);
+                          },
+                          removeCloseButton: false,
+                          //removeCloseButton: true,
                         );
                       },
                     );

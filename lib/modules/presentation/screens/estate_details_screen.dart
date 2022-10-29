@@ -26,6 +26,7 @@ import 'package:swesshome/modules/presentation/widgets/small_elevated_card.dart'
 import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../widgets/report_estate.dart';
 import 'images_viewer_screen.dart';
 import 'map_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -125,7 +126,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
               ),
               onPressed: () {
                 Share.share(
-                    'Check out my Proposal http://www.swesshome.com/estate/${widget.estate.id}');
+                    'Real Estate Offer https://www.swesshome.com/estate/${widget.estate.id}');
               },
             ),
           ],
@@ -240,6 +241,31 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             );
                           },
                         ),
+                        Positioned(
+                          top: 4.h,
+                          right: 8.w,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.black.withOpacity(0.64),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(2),
+                              ),
+                            ),
+                            child: IconButton(
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(
+                                Icons.close,
+                                size: 22,
+                                color: AppColors.white,
+                              ),
+                              onPressed: () {
+                                showReportModalBottomSheet(
+                                    context, widget.estate.id);
+                              },
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),

@@ -330,7 +330,7 @@
   "cancel": "Cancel",
   "recent_searches": "Recent searched places",
   "no_recent_searches": "No recent searches",
-  "unselected": "Unselected",
+  "undefined": "undefined",
   "advanced_search": "Advanced search",
   "search": "Search",
   "select_place_first": "Select place first",

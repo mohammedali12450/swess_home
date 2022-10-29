@@ -88,9 +88,9 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                 bloc: searchTypeCubit,
                 builder: (_, searchType) {
                   bool isDark =
-                  Provider.of<ThemeProvider>(context).isDarkMode(context);
+                      Provider.of<ThemeProvider>(context).isDarkMode(context);
                   return Padding(
-                    padding: EdgeInsets.only(left: 18.w, top: 8.w),
+                    padding: EdgeInsets.only(left: 10.w, top: 8.w, right: 10.w),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
@@ -98,7 +98,8 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                             color: Colors.white,
                             width: 1.5,
                           )),
-                      padding: EdgeInsets.only(right: 8.w, bottom: 3.w),
+                      padding:
+                          EdgeInsets.only(right: 8.w, bottom: 3.w, left: 8.w),
                       height: 48.h,
                       width: 160.w,
                       child: buildDropDown(isDark),
@@ -141,8 +142,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                               selectedLocation!.getLocationName();
                         }
                         return;
-                      }
-                      else if (searchType == OfficeSearchType.area) {
+                      } else if (searchType == OfficeSearchType.area) {
                         selectedRegion = await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -160,11 +160,9 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                               selectedRegion!.getRegionName();
                         }
                         return;
-                      }
-                      else if(searchType == OfficeSearchType.name){
+                      } else if (searchType == OfficeSearchType.name) {
                         searchOfficesBloc.add(
-                          SearchOfficesByNameStarted(
-                              name: null, token: token),
+                          SearchOfficesByNameStarted(name: null, token: token),
                         );
                       }
                     },
@@ -315,7 +313,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                                   ),
                               transitionDuration: const Duration(seconds: 1)),
                         );
-                     },
+                      },
                     );
                   },
                   separatorBuilder: (_, __) {
@@ -343,7 +341,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
           contentPadding: EdgeInsets.only(bottom: 8.w),
           hintText: AppLocalizations.of(context)!.search_by_name,
           hintStyle: const TextStyle(
-            color:  Colors.white,
+            color: Colors.white,
             fontSize: 13,
           )),
       isExpanded: true,

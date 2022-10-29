@@ -75,7 +75,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     List<String> priceDomainsNames =
     priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
-    priceDomainsNames.insert(0, AppLocalizations.of(context)!.unselected);
+    priceDomainsNames.insert(0, AppLocalizations.of(context)!.undefined);
     priceDomainsNames = priceDomainsNames.toSet().toList();
 
     return BlocListener<EstateOrderBloc, EstateOrderState>(
@@ -250,7 +250,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                             ? null
                             : priceDomains.elementAt(index - 1).id;
                       },
-                      selectedItem: AppLocalizations.of(context)!.unselected,
+                      selectedItem: AppLocalizations.of(context)!.undefined,
                     ),
                     kHe24,
                     Text(

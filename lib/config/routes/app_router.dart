@@ -368,7 +368,7 @@ class AppRouter {
     } catch (_) {
       rethrow;
     }
-    print(response);
+    print("ghina: $response");
     //0 if do not need an update
     //1 if need an update
     if (response.data == "1") {

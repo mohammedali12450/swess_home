@@ -1,5 +1,5 @@
-const String proNetBaseUrl = "http://185.194.124.106:80/";
-const String proNetImagesUrl = "http://185.194.124.106:80/storage/";
+const String proNetBaseUrl = "https://backend.swesshome.com/";
+const String proNetImagesUrl = "https://backend.swesshome.com/storage/";
 const String hostingerBaseUrl = "http://swesshomerealestate.com/";
 const String hostingerImagesBaseUrl = "http://swesshomerealestate.com/";
 String baseUrl = hostingerBaseUrl;

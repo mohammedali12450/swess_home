@@ -324,7 +324,7 @@
   "cancel": "إلغاء",
   "recent_searches": "عمليات البحث السابقة",
   "no_recent_searches": "لا يوجد عمليات بحث سابقة",
-  "unselected": "غير محدد",
+  "undefined": "غير محدد",
   "advanced_search": "بحث متقدم",
   "search": "ابحث",
   "select_place_first": "قم بتحديد مكان العقار أولا",
