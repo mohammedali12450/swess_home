@@ -364,11 +364,9 @@ class AppRouter {
         isAndroid ? isUpdatedForAndroidUrl : isUpdatedForIosUrl,
         {"version1": version},
       );
-      // token: BlocProvider.of<UserLoginBloc>(context).user!.token);
     } catch (_) {
       rethrow;
     }
-    print("ghina: $response");
     //0 if do not need an update
     //1 if need an update
     if (response.data == "1") {

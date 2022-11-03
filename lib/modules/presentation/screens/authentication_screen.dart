@@ -52,7 +52,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   final ChannelCubit _passwordVisibilityCubit = ChannelCubit(false);
   final ChannelCubit _repeatPasswordVisibleCubit = ChannelCubit(false);
   final ChannelCubit _isLoginSelected = ChannelCubit(true);
-  final ChannelCubit _termsisCheckedCubit = ChannelCubit(false);
+  final ChannelCubit _termsIsCheckedCubit = ChannelCubit(false);
   ChannelCubit authenticationError = ChannelCubit(null);
   ChannelCubit authenticationErrorLogin = ChannelCubit(null);
   ChannelCubit passwordError = ChannelCubit(null);
@@ -707,7 +707,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           ),
           kHe24,
           BlocBuilder<ChannelCubit, dynamic>(
-              bloc: _termsisCheckedCubit,
+              bloc: _termsIsCheckedCubit,
               builder: (_, isChecked) {
                 return Row(
                   children: [
@@ -717,7 +717,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       value: isChecked,
                       onChanged: (value) {
                         isCheck = value!;
-                        _termsisCheckedCubit.setState(!isChecked);
+                        _termsIsCheckedCubit.setState(!isChecked);
                       },
                     ),
                     TextButton(
