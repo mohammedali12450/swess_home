@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +30,7 @@ import 'package:swesshome/modules/data/repositories/user_authentication_reposito
 import 'package:swesshome/modules/presentation/screens/forget_password_screen.dart';
 import 'package:swesshome/modules/presentation/screens/verification_login_code.dart';
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
+import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import '../../../constants/validators.dart';
 import '../../../utils/helpers/my_snack_bar.dart';
@@ -60,9 +64,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   ChannelCubit repeatPasswordError = ChannelCubit(null);
   ChannelCubit firstNameError = ChannelCubit(null);
   ChannelCubit lastNameError = ChannelCubit(null);
+  ChannelCubit countryError = ChannelCubit(null);
+  ChannelCubit birthdateError = ChannelCubit(null);
   late UserRegisterBloc userRegisterBloc;
   late UserLoginBloc userLoginBloc;
   late String phoneDialCode;
+  String userCountry = "Syrian Arab Republic";
+  DateTime? birthDate;
   late String phoneDialCodeLogin;
   String phoneNumber = "";
   bool isCheck = false;
@@ -75,13 +83,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   TextEditingController passwordControllerLogin = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
+  TextEditingController birthdateController = TextEditingController();
 
   // Others :
   bool isForStore = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     userRegisterBloc = UserRegisterBloc(UserAuthenticationRepository());
     userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
@@ -513,25 +521,24 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             ),
           ),
           kHe16,
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  fixedSize: Size(240.w, 64.h),
-                  primary: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                        color: Theme.of(context).colorScheme.primary),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(8),
-                    ),
-                  )),
-              child: Text(AppLocalizations.of(context)!.create_account,
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground)),
-              onPressed: () {
-                _isLoginSelected.setState(false);
-              },
+          TextButton(
+            onPressed: () {
+              _isLoginSelected.setState(false);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!
+                      .dont_have_an_account,
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.create_account,
+                  style: TextStyle(
+                      fontSize: 16.sp, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ),
         ],
@@ -540,6 +547,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   }
 
   SingleChildScrollView buildSignupScreen() {
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SingleChildScrollView(
       child: Column(
@@ -562,6 +570,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             bloc: authenticationError,
             builder: (_, errorMessage) {
               return IntlPhoneField(
+                onCountryChanged: (country) {
+                  userCountry = country.name;
+                },
                 controller: authenticationController,
                 decoration:
                     InputDecoration(errorText: errorMessage, errorMaxLines: 2),
@@ -705,6 +716,75 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               );
             },
           ),
+          if (userCountry == "Syrian Arab Republic") ...[
+            kHe24,
+            Text(
+              AppLocalizations.of(context)!.country + " :",
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            kHe8,
+            BlocBuilder<ChannelCubit, dynamic>(
+              bloc: countryError,
+              builder: (_, errorMessage) {
+                return MyDropdownList(
+                  elementsList: const ["ghina", "ghina", "ghina"],
+                  onSelect: (index) {},
+                  // validator: (value) => value == null
+                  //     ? AppLocalizations.of(context)!.this_field_is_required
+                  //     : null,
+                  selectedItem: AppLocalizations.of(context)!.please_select,
+                );
+              },
+            ),
+          ],
+
+          kHe24,
+          Text(
+            AppLocalizations.of(context)!.date_of_birth + " :",
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          kHe8,
+          BlocBuilder<ChannelCubit, dynamic>(
+            bloc: birthdateError,
+            builder: (_, errorMessage) {
+              return TextField(
+                onTap: () {
+                  DatePicker.showDatePicker(
+                    context,
+                    showTitleActions: true,
+                    minTime: DateTime(1900, 1, 1),
+                    maxTime: DateTime.now(),
+                    theme: const DatePickerTheme(
+                        headerColor: AppColors.primaryColor,
+                        backgroundColor: AppColors.secondaryColor,
+                        itemStyle: TextStyle(
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
+                        cancelStyle:
+                            TextStyle(color: Colors.white, fontSize: 16),
+                        doneStyle:
+                            TextStyle(color: Colors.white, fontSize: 16)),
+                    onConfirm: (date) {
+                      birthDate = date;
+                      var inputDate = DateFormat('dd/MM/yyyy').format(date);
+                      birthdateController.text = inputDate;
+                    },
+                    currentTime: DateTime.now(),
+                    locale: isArabic ? LocaleType.ar : LocaleType.en,
+                  );
+                },
+                readOnly: true,
+                controller: birthdateController,
+                decoration: InputDecoration(
+                  errorText: errorMessage,
+                  hintText: AppLocalizations.of(context)!.enter_last_name,
+                  isCollapsed: false,
+                ),
+              );
+            },
+          ),
+
           kHe24,
           BlocBuilder<ChannelCubit, dynamic>(
               bloc: _termsIsCheckedCubit,
@@ -796,25 +876,24 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             ),
           ),
           kHe16,
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  fixedSize: Size(240.w, 64.h),
-                  primary: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                        color: Theme.of(context).colorScheme.primary),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(8),
-                    ),
-                  )),
-              child: Text(AppLocalizations.of(context)!.sign_in,
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground)),
-              onPressed: () {
-                _isLoginSelected.setState(true);
-              },
+          TextButton(
+            onPressed: () {
+              _isLoginSelected.setState(true);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!
+                      .already_have_an_account,
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.sign_in,
+                  style: TextStyle(
+                      fontSize: 16.sp, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ),
         ],

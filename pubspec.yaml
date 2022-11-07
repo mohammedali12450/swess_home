@@ -58,6 +58,7 @@ dependencies:
   scrollable_positioned_list: 0.2.2
   #package_info_plus: ^1.0.6
   scroll_to_index:
+  flutter_datetime_picker: ^1.5.1
 
 #-------------------------------
 
