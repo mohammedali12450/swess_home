@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:intl/intl.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +34,7 @@ import '../../../constants/validators.dart';
 import '../../../utils/helpers/my_snack_bar.dart';
 import '../../data/providers/theme_provider.dart';
 import '../pages/terms_condition_page.dart';
+import '../widgets/get_location_gps.dart';
 import 'home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -64,6 +63,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   ChannelCubit repeatPasswordError = ChannelCubit(null);
   ChannelCubit firstNameError = ChannelCubit(null);
   ChannelCubit lastNameError = ChannelCubit(null);
+  ChannelCubit emailError = ChannelCubit(null);
   ChannelCubit countryError = ChannelCubit(null);
   ChannelCubit birthdateError = ChannelCubit(null);
   late UserRegisterBloc userRegisterBloc;
@@ -83,6 +83,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   TextEditingController passwordControllerLogin = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController birthdateController = TextEditingController();
 
   // Others :
@@ -118,6 +119,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     }
     if (errorResponseMap.containsKey("password")) {
       passwordError.setState(errorResponseMap["password"].first);
+    }
+    if (errorResponseMap.containsKey("email")) {
+      passwordError.setState(errorResponseMap["email"].first);
+    }
+    if (errorResponseMap.containsKey("birthOfDate")) {
+      passwordError.setState(errorResponseMap["birthOfDate"].first);
     }
   }
 
@@ -529,18 +536,23 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  AppLocalizations.of(context)!
-                      .dont_have_an_account,
+                  AppLocalizations.of(context)!.dont_have_an_account,
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
                 Text(
                   AppLocalizations.of(context)!.create_account,
-                  style: TextStyle(
-                      fontSize: 16.sp, fontWeight: FontWeight.bold),
+                  style:
+                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
+          TextButton(
+              onPressed: () {
+                // LocationPage.getCurrentPosition();
+                Navigator.pushNamed(context, LocationPage.id);
+              },
+              child: Text("ghina")),
         ],
       ),
     );
@@ -716,6 +728,28 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               );
             },
           ),
+          kHe24,
+          Text(
+            AppLocalizations.of(context)!.email + " :",
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          kHe8,
+          BlocBuilder<ChannelCubit, dynamic>(
+            bloc: emailError,
+            builder: (_, errorMessage) {
+              return TextField(
+                onChanged: (_) {
+                  emailError.setState(null);
+                },
+                controller: emailController,
+                decoration: InputDecoration(
+                  errorText: errorMessage,
+                  hintText: AppLocalizations.of(context)!.enter_your_email,
+                  isCollapsed: false,
+                ),
+              );
+            },
+          ),
           if (userCountry == "Syrian Arab Republic") ...[
             kHe24,
             Text(
@@ -767,8 +801,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                             TextStyle(color: Colors.white, fontSize: 16)),
                     onConfirm: (date) {
                       birthDate = date;
-                      var inputDate = DateFormat('dd/MM/yyyy').format(date);
-                      birthdateController.text = inputDate;
+                      // var inputDate = DateFormat('dd/MM/yyyy').format(date);
+                      // birthdateController.text = inputDate;
                     },
                     currentTime: DateTime.now(),
                     locale: isArabic ? LocaleType.ar : LocaleType.en,
@@ -778,7 +812,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 controller: birthdateController,
                 decoration: InputDecoration(
                   errorText: errorMessage,
-                  hintText: AppLocalizations.of(context)!.enter_last_name,
+                  hintText: AppLocalizations.of(context)!.enter_your_birth_date,
                   isCollapsed: false,
                 ),
               );
@@ -868,7 +902,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         authentication: phoneNumber,
                         password: passwordController.text,
                         firstName: firstNameController.text,
-                        lastName: lastNameController.text),
+                        lastName: lastNameController.text,
+                        birthdate: birthDate!,
+                        email: emailController.text,
+                        country: userCountry == null ? null : userCountry),
                   ),
                 );
                 FocusScope.of(context).unfocus();
@@ -884,14 +921,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  AppLocalizations.of(context)!
-                      .already_have_an_account,
+                  AppLocalizations.of(context)!.already_have_an_account,
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
                 Text(
                   AppLocalizations.of(context)!.sign_in,
-                  style: TextStyle(
-                      fontSize: 16.sp, fontWeight: FontWeight.bold),
+                  style:
+                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -910,11 +946,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       final parsedPhoneNumber = await PhoneNumberUtil()
           .parse(phoneDialCode + authenticationController.text);
       phoneNumber = parsedPhoneNumber.international.replaceAll(" ", "");
-      if (!isCheck) {
-        MySnackBar.show(
-            context, AppLocalizations.of(context)!.accept_terms_conditions);
-        return false;
-      }
     } catch (e) {
       authenticationError
           .setState(AppLocalizations.of(context)!.invalid_mobile_number);
@@ -939,6 +970,14 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     }
     passwordError.setState(null);
     repeatPasswordError.setState(null);
+
+    if (!isCheck) {
+      MySnackBar.show(
+          context, AppLocalizations.of(context)!.accept_terms_conditions);
+      return false;
+    }
+
+
 
     return isValidationSuccess;
   }

@@ -73,6 +73,7 @@ import 'package:swesshome/utils/services/network_helper.dart';
 
 import '../../constants/api_paths.dart';
 import '../../modules/presentation/screens/update_new_version_screen.dart';
+import '../../modules/presentation/widgets/get_location_gps.dart';
 
 class AppRouter {
   late LocationsBloc locationsBloc;
@@ -247,6 +248,10 @@ class AppRouter {
       case LanguagesScreen.id:
         return MaterialPageRoute(
           builder: (_) => const LanguagesScreen(),
+        );
+        case LocationPage.id:
+        return MaterialPageRoute(
+          builder: (_) => const LocationPage(),
         );
       default:
         return null;
