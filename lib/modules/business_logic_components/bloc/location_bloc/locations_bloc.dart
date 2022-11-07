@@ -15,7 +15,7 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
       try {
         locations = await locationsRepository.getLocations();
         emit(LocationsFetchComplete(locations: locations!));
-      } catch (e , stack) {
+      } catch (e, stack) {
         debugPrint(e.toString());
         debugPrint(stack.toString());
       }
@@ -25,10 +25,13 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
   List<LocationViewer> getLocationsViewers(String? pattern) {
     pattern ??= "";
     List<LocationViewer> result = [];
-    for (Location parentLocation in locations??[]) {
+    result.add(LocationViewer("غير محدد", "غير محدد", null));
+    for (Location parentLocation in locations ?? []) {
       if (parentLocation.locations == null) continue;
       for (Location childLocation in parentLocation.locations!) {
-        if (childLocation.name.contains(pattern)|| (pattern == "")) {
+        if (childLocation.name.contains(pattern) ||
+            parentLocation.name.contains(pattern) ||
+            (pattern == "")) {
           result.add(LocationViewer(
               childLocation.name, parentLocation.name, childLocation.id));
         }
@@ -36,7 +39,6 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
     }
     return result;
   }
-
 }
 
 class LocationViewer {
@@ -44,7 +46,7 @@ class LocationViewer {
 
   String parentLocationName;
 
-  int id;
+  int? id;
 
   LocationViewer(this.locationName, this.parentLocationName, this.id);
 

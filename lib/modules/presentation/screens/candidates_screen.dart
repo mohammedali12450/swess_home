@@ -35,11 +35,15 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
                     Icon(
                       Icons.error_outline,
                       size: 0.5.sw,
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.64),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.64),
                     ),
                     kHe24,
-                    Text (
-                      AppLocalizations.of(context)!.no_candidates_for_this_order,
+                    Text(
+                      AppLocalizations.of(context)!
+                          .no_candidates_for_this_order,
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ],
@@ -49,7 +53,11 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
                 shrinkWrap: true,
                 itemCount: widget.estates!.length,
                 itemBuilder: (_, index) {
-                  return EstateCard(estate: widget.estates!.elementAt(index) , removeCloseButton: true,);
+                  return EstateCard(
+                    color: Theme.of(context).colorScheme.background,
+                    estate: widget.estates!.elementAt(index),
+                    removeCloseButton: true,
+                  );
                 },
               ),
       ),

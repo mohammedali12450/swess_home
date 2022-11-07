@@ -5,7 +5,7 @@ class EstateType {
   final String nameEnglish;
 
 
-  getName(bool isArabic){
+  String getName(bool isArabic){
     return isArabic ? nameArabic : nameEnglish ;
   }
 

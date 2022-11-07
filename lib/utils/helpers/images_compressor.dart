@@ -12,8 +12,6 @@ Future<File> compressFile(File file) async {
   var result = await FlutterImageCompress.compressAndGetFile(
     file.absolute.path,
     dir.absolute.path + file.path.split('/').last,
-    minHeight: 800,
-    minWidth: 800,
     format: compressFormat,
   );
   return result!;

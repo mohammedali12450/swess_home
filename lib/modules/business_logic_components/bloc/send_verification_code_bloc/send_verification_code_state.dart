@@ -7,11 +7,12 @@ class SendVerificationCodeNone extends SendVerificationCodeState {}
 class SendVerificationCodeProgress extends SendVerificationCodeState {}
 
 class SendVerificationCodeError extends SendVerificationCodeState {
-  final String error;
+  final String? errorMessage;
 
-  final bool isConnectionError;
+  dynamic errorResponse;
+  final bool? isConnectionError;
 
-  SendVerificationCodeError({required this.error, required this.isConnectionError});
+  SendVerificationCodeError({ this.errorMessage, this.errorResponse,  this.isConnectionError});
 }
 
 class SendVerificationCodeComplete extends SendVerificationCodeState {

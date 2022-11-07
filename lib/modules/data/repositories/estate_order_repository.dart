@@ -19,7 +19,8 @@ class EstateOrderRepository {
     }
 
     if (response.statusCode == 401) {
-      throw UnauthorizedException(message: "يجب تسجيل الدخول لاستخدام هذه الميزة");
+      throw UnauthorizedException(
+          message: "يجب تسجيل الدخول لاستخدام هذه الميزة");
     }
     if (response.statusCode != 201) {
       throw GeneralException(errorMessage: "حدث خطأ أثناء إرسال الطلب");
@@ -34,7 +35,17 @@ class EstateOrderRepository {
     }
 
     var jsonEstateOrders = jsonDecode(response.toString())["data"] as List;
-    List<EstateOrder> orders = jsonEstateOrders.map((e) => EstateOrder.fromJson(e)).toList();
+    List<EstateOrder> orders =
+        jsonEstateOrders.map((e) => EstateOrder.fromJson(e)).toList();
     return orders;
+  }
+
+  Future deleteRecentEstateOrders(String? token, int? orderId) async {
+    Response response =
+        await estateOrderProvider.deleteRecentEstateOrders(token, orderId);
+
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: "حدث خطأ أثناءالاتصال مع السيرفر");
+    }
   }
 }

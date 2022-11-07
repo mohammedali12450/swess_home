@@ -264,7 +264,7 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> with Widg
                   nearbyPlacesText += element;
                   if (index != nearbyPlaces.length - 1) nearbyPlacesText += "|";
                 });
-                widget.currentOffer.locationId = selectedLocation!.id;
+                widget.currentOffer.locationId = selectedLocation!.id!;
                 widget.currentOffer.nearbyPlaces = nearbyPlacesText;
                 widget.currentOffer.latitude =
                 (_selectedPlace != null) ? _selectedPlace!.position.latitude.toString() : null;

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
@@ -12,6 +13,8 @@ import 'package:swesshome/modules/business_logic_components/bloc/system_variable
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/presentation/widgets/popup_tutorial_messages/map_popup_message_tutorial.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+
+import '../../data/providers/theme_provider.dart';
 
 enum TutorialStep {
   none,
@@ -27,7 +30,8 @@ class MapSample extends StatefulWidget {
   final List<Marker>? initialMarkers;
   final bool isView;
 
-  const MapSample({Key? key, this.initialMarkers, this.isView = false}) : super(key: key);
+  const MapSample({Key? key, this.initialMarkers, this.isView = false})
+      : super(key: key);
 
   @override
   State<MapSample> createState() => MapSampleState();
@@ -56,7 +60,9 @@ class MapSampleState extends State<MapSample> {
     }
     if (widget.initialMarkers != null) markers.addAll(widget.initialMarkers!);
 
-    if (BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore) {
+    if (BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore) {
       initialPosition = const CameraPosition(
         target: LatLng(kInitLatitudeLebanon, kInitLongitudeLebanon),
         zoom: 10,
@@ -71,7 +77,8 @@ class MapSampleState extends State<MapSample> {
 
   void showTutorial() async {
     // check if map tutorial passed!!
-    bool? isTutorialPassed = ApplicationSharedPreferences.getMapTutorialPassState();
+    bool? isTutorialPassed =
+        ApplicationSharedPreferences.getMapTutorialPassState();
     if (isTutorialPassed) return;
     await Future.delayed(
       const Duration(seconds: 3),
@@ -81,6 +88,7 @@ class MapSampleState extends State<MapSample> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return WillPopScope(
       onWillPop: () async {
         if (!widget.isView) {
@@ -105,7 +113,8 @@ class MapSampleState extends State<MapSample> {
                   onTap: (position) {
                     if (widget.isView) return;
                     Fluttertoast.showToast(
-                        msg: AppLocalizations.of(context)!.estate_position_selected);
+                        msg: AppLocalizations.of(context)!
+                            .estate_position_selected);
                     mapMarkersCubit.setState(
                       Marker(
                         position: position,
@@ -160,7 +169,8 @@ class MapSampleState extends State<MapSample> {
                                       CameraUpdate.zoomOut(),
                                     );
                                   },
-                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                               12.horizontalSpace,
@@ -192,7 +202,8 @@ class MapSampleState extends State<MapSample> {
                               Container(
                                 decoration: const BoxDecoration(),
                                 child: FloatingActionButton(
-                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
                                   heroTag: "btn1",
                                   child: Icon(
                                     Icons.add,
@@ -221,8 +232,10 @@ class MapSampleState extends State<MapSample> {
                               onPressed: () {
                                 tutorialStepCubit.setState(TutorialStep.moving);
                               },
-                              title: AppLocalizations.of(context)!.zoom_in_zoom_out,
-                              content: AppLocalizations.of(context)!.zoom_in_out_map_dialog,
+                              title: AppLocalizations.of(context)!
+                                  .zoom_in_zoom_out,
+                              content: AppLocalizations.of(context)!
+                                  .zoom_in_out_map_dialog,
                             ),
                           ),
                         ),
@@ -236,7 +249,8 @@ class MapSampleState extends State<MapSample> {
                                 tutorialStepCubit.setState(TutorialStep.select);
                               },
                               title: AppLocalizations.of(context)!.moving,
-                              content: AppLocalizations.of(context)!.navigate_map_dialog,
+                              content: AppLocalizations.of(context)!
+                                  .navigate_map_dialog,
                             ),
                           ),
                         ),
@@ -249,8 +263,10 @@ class MapSampleState extends State<MapSample> {
                               onPressed: () {
                                 tutorialStepCubit.setState(TutorialStep.finish);
                               },
-                              title: AppLocalizations.of(context)!.estate_position_selecting,
-                              content: AppLocalizations.of(context)!.locate_map_dialog,
+                              title: AppLocalizations.of(context)!
+                                  .estate_position_selecting,
+                              content: AppLocalizations.of(context)!
+                                  .locate_map_dialog,
                             ),
                           ),
                         ),
@@ -263,10 +279,12 @@ class MapSampleState extends State<MapSample> {
                               onPressed: () {
                                 tutorialStepCubit.setState(TutorialStep.none);
                                 // Change shared preferences map tutorial
-                                ApplicationSharedPreferences.setMapTutorialPassState(true);
+                                ApplicationSharedPreferences
+                                    .setMapTutorialPassState(true);
                               },
                               title: AppLocalizations.of(context)!.final_step,
-                              content: AppLocalizations.of(context)!.finish_select_map_dialog,
+                              content: AppLocalizations.of(context)!
+                                  .finish_select_map_dialog,
                             ),
                           ),
                         ),
@@ -274,19 +292,29 @@ class MapSampleState extends State<MapSample> {
                   );
                 },
               ),
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Container(
-                   decoration: BoxDecoration( color: Colors.white,
-                   borderRadius: BorderRadius.circular(100),
-                   ),
-                    child: IconButton(onPressed: (){
-                      Navigator.pop(context);
-                    }, icon: Icon(Icons.arrow_back)),
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 40.0, horizontal: 10.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Theme.of(context).colorScheme.primary
+                        : AppColors.primaryColor,
+                    borderRadius: BorderRadius.circular(100),
                   ),
-                ),),
+                  child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: AppColors.secondaryColor,
+                      )),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -294,8 +322,16 @@ class MapSampleState extends State<MapSample> {
   }
 
   Future showConfirmationDialog() async {
-    showWonderfulAlertDialog(context, AppLocalizations.of(context)!.confirmation,
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    showWonderfulAlertDialog(
+        context,
+        AppLocalizations.of(context)!.confirmation,
         AppLocalizations.of(context)!.discard_location_confirmation,
+        titleTextStyle:
+            TextStyle(color: !isDark ? AppColors.black : AppColors.white),
+        bodyTextStyle:
+            TextStyle(color: !isDark ? AppColors.black : AppColors.white),
+        backgroundColor: isDark ? AppColors.secondaryDark : AppColors.white,
         removeDefaultButton: true,
         dialogButtons: [
           ElevatedButton(

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
-import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 
 
 class SmallElevatedCard extends StatelessWidget {

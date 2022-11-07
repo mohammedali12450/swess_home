@@ -18,7 +18,7 @@ class LikeAndUnlikeBloc extends Bloc<LikeAndUnlikeEvent, LikeAndUnlikeState> {
         emit(LikeAndUnlikeError(error: e.errorMessage , isConnectionError: true));
       } catch (e, stack) {
         if (e is GeneralException) {
-          emit(LikeAndUnlikeError(error: e.errorMessage));
+          emit(LikeAndUnlikeError(error: e.errorMessage!));
         }
         print(e);
         print(stack);
@@ -34,7 +34,7 @@ class LikeAndUnlikeBloc extends Bloc<LikeAndUnlikeEvent, LikeAndUnlikeState> {
         emit(LikeAndUnlikeError(error: e.errorMessage));
       } catch (e, stack) {
         if (e is GeneralException) {
-          emit(LikeAndUnlikeError(error: e.errorMessage));
+          emit(LikeAndUnlikeError(error: e.errorMessage!));
         }
         print(e);
         print(stack);

@@ -9,6 +9,7 @@ class ApplicationSharedPreferences {
   static const String isDarkMode = "is_dark_mode";
   static const String languageCode = "language_code";
   static const String isLanguageSelected = "is_language_selected";
+  static const String versionKey = "version_Key";
 
 
 
@@ -32,8 +33,6 @@ class ApplicationSharedPreferences {
     success &= await removeLanguageCode();
     success &= await removeIsLanguageSelected();
 
-
-
     if (success) {
       debugPrint("ApplicationSharedPreferences is clear now!");
     }
@@ -50,6 +49,14 @@ class ApplicationSharedPreferences {
 
   static bool getMapTutorialPassState() {
     return _preferences.getBool(isMapTutorialPassed)!;
+  }
+
+ static setVersionAppState(String isPassed) async {
+    await _preferences.setString(versionKey, isPassed);
+  }
+
+  static String getVersionAppState() {
+    return _preferences.getString(versionKey)!;
   }
 
   static setWalkThroughPassState(bool isPassed) {

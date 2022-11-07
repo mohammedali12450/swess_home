@@ -14,7 +14,6 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/enums.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_event.dart';
@@ -27,6 +26,7 @@ import 'package:swesshome/modules/presentation/widgets/small_elevated_card.dart'
 import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../widgets/report_estate.dart';
 import 'images_viewer_screen.dart';
 import 'map_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -62,7 +62,6 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     // Register estate visit :
@@ -70,20 +69,22 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
     if (BlocProvider.of<UserLoginBloc>(context).user != null) {
       userToken = BlocProvider.of<UserLoginBloc>(context).user!.token;
     }
-    _visitBloc.add(
-        VisitStarted(visitId: widget.estate.id, token: userToken, visitType: VisitType.estate));
+    _visitBloc.add(VisitStarted(
+        visitId: widget.estate.id,
+        token: userToken,
+        visitType: VisitType.estate));
     // switchers initializing:
     isLands = widget.estate.estateType.id == landsPropertyTypeNumber;
     isShops = widget.estate.estateType.id == shopsPropertyTypeNumber;
     isSell = widget.estate.estateOfferType.id == sellOfferTypeNumber;
     isHouse = widget.estate.estateType.id == housePropertyTypeNumber;
-    isFarmsOrVacations = (widget.estate.estateType.id == farmsPropertyTypeNumber) ||
-        (widget.estate.estateType.id == vacationsPropertyTypeNumber);
+    isFarmsOrVacations =
+        (widget.estate.estateType.id == farmsPropertyTypeNumber) ||
+            (widget.estate.estateType.id == vacationsPropertyTypeNumber);
   }
 
   @override
   Widget build(BuildContext context) {
-
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     currency = AppLocalizations.of(context)!.syrian_currency;
 
@@ -124,7 +125,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 color: AppColors.white,
               ),
               onPressed: () {
-                Share.share('check out my website https://example.com');
+                Share.share(
+                    'Real Estate Offer https://www.swesshome.com/estate/${widget.estate.id}');
               },
             ),
           ],
@@ -142,8 +144,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ImagesViewerScreen(
-                              estateImages, AppLocalizations.of(context)!.estate_images),
+                          builder: (_) => ImagesViewerScreen(estateImages,
+                              AppLocalizations.of(context)!.estate_images),
                         ),
                       );
                     },
@@ -154,14 +156,20 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           builder: (BuildContext context, int index) {
                             return PhotoViewGalleryPageOptions.customChild(
                               child: CachedNetworkImage(
-                                imageUrl: imagesBaseUrl + estateImages.elementAt(index),
+                                imageUrl: imagesBaseUrl +
+                                    estateImages.elementAt(index),
                                 fit: BoxFit.cover,
                                 progressIndicatorBuilder: (_, __, ___) {
                                   return Container(
-                                    color: Theme.of(context).colorScheme.background,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
                                     child: Icon(
                                       Icons.camera_alt_outlined,
-                                      color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.6),
                                       size: 120,
                                     ),
                                   );
@@ -203,14 +211,20 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                   children: [
                                     Text(
                                       (currentImageIndex + 1).toString() + '/',
-                                      style: Theme.of(context).textTheme.caption!.copyWith(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .caption!
+                                          .copyWith(
                                             fontFamily: "Hind",
                                             color: AppColors.black,
                                           ),
                                     ),
                                     Text(
                                       estateImages.length.toString(),
-                                      style: Theme.of(context).textTheme.caption!.copyWith(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .caption!
+                                          .copyWith(
                                             fontFamily: "Hind",
                                             color: AppColors.black,
                                           ),
@@ -227,6 +241,31 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             );
                           },
                         ),
+                        Positioned(
+                          top: 4.h,
+                          right: 8.w,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.black.withOpacity(0.64),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(2),
+                              ),
+                            ),
+                            child: IconButton(
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(
+                                Icons.close,
+                                size: 22,
+                                color: AppColors.white,
+                              ),
+                              onPressed: () {
+                                showReportModalBottomSheet(
+                                    context, widget.estate.id);
+                              },
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -246,13 +285,16 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             child: Text(
                               estatePrice,
                               style: GoogleFonts.libreFranklin(
-                                  color: Theme.of(context).colorScheme.onBackground,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground,
                                   fontSize: 24.sp,
                                   fontWeight: FontWeight.w400,
                                   height: 1.5),
                             ),
                           ),
-                          if (widget.estate.estateOfferType.id != rentOfferTypeNumber)
+                          if (widget.estate.estateOfferType.id !=
+                              rentOfferTypeNumber)
                             Padding(
                               padding: EdgeInsets.only(
                                 right: (isArabic) ? 8.w : 0,
@@ -260,25 +302,36 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                               ),
                               child: Text(
                                 currency,
-                                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
                                       height: 1.8,
                                       fontSize: 22.sp,
                                       fontWeight: FontWeight.w400,
                                     ),
                               ),
                             ),
-                          if (widget.estate.estateOfferType.id == rentOfferTypeNumber)
+                          if (widget.estate.estateOfferType.id ==
+                              rentOfferTypeNumber)
                             Padding(
                               padding: EdgeInsets.only(
                                 right: (isArabic) ? 8.w : 0,
                                 left: (!isArabic) ? 8.w : 0,
                               ),
                               child: Text(
-                                AppLocalizations.of(context)!.currency_over_period(
+                                AppLocalizations.of(context)!
+                                    .currency_over_period(
                                   currency,
-                                  widget.estate.periodType!.getName(isArabic)!.split("|").first,
+                                  widget.estate.periodType!
+                                      .getName(isArabic)!
+                                      .split("|")
+                                      .first,
                                 ),
-                                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
                                       height: 1.8,
                                       fontSize: 22.sp,
                                       fontWeight: FontWeight.w400,
@@ -321,8 +374,12 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             right: (!isArabic) ? 12.w : 0,
                           ),
                           child: Text(
-                            AppLocalizations.of(context)!.estate_offer_place_sentence(
-                              widget.estate.estateType.getName(isArabic).split('|').last,
+                            AppLocalizations.of(context)!
+                                .estate_offer_place_sentence(
+                              widget.estate.estateType
+                                  .getName(isArabic)
+                                  .split('|')
+                                  .last,
                               widget.estate.estateOfferType.getName(isArabic),
                               widget.estate.location.getLocationName(),
                             ),
@@ -333,13 +390,22 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       ),
                       Expanded(
                         flex: 1,
-                        child: Container(
-                          height: 75.h,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            image: DecorationImage(
-                              image: CachedNetworkImageProvider(
-                                imagesBaseUrl + widget.estate.estateOffice!.logo!,
+                        child: InkWell(
+                          onTap: () async {
+                            await showDialog(
+                                context: context,
+                                builder: (_) => ImageDialog(
+                                    path: widget.estate.estateOffice!.logo!));
+                          },
+                          child: Container(
+                            height: 75.h,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              image: DecorationImage(
+                                image: CachedNetworkImageProvider(
+                                  imagesBaseUrl +
+                                      widget.estate.estateOffice!.logo!,
+                                ),
                               ),
                             ),
                           ),
@@ -354,14 +420,12 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   width: 1.sw,
                   alignment: AlignmentDirectional.centerStart,
                   color: Theme.of(context).colorScheme.secondary,
-                  padding:
-                      EdgeInsets.only(right: (isArabic) ? 8.w : 0, left: (!isArabic) ? 8.w : 0),
+                  padding: EdgeInsets.only(
+                      right: (isArabic) ? 8.w : 0, left: (!isArabic) ? 8.w : 0),
                   child: Text(
                     AppLocalizations.of(context)!.estate_details + " :",
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle2!
-                        .copyWith(color: Theme.of(context).colorScheme.onBackground),
+                    style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground),
                   ),
                 ),
                 12.verticalSpace,
@@ -370,10 +434,10 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   width: 1.sw,
                   child: Text(
                     widget.estate.description ?? "",
-                    textDirection:
-                        intl.Bidi.detectRtlDirectionality(widget.estate.description ?? "hi")
-                            ? TextDirection.rtl
-                            : TextDirection.ltr,
+                    textDirection: intl.Bidi.detectRtlDirectionality(
+                            widget.estate.description ?? "hi")
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
                     maxLines: 100,
                     style: Theme.of(context).textTheme.subtitle2!.copyWith(
                           height: 1.8,
@@ -426,7 +490,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 // Rent period :
                 if (widget.estate.estateOfferType.id == rentOfferTypeNumber)
                   RowInformation(
-                    title: AppLocalizations.of(context)!.estate_rent_period + " :",
+                    title:
+                        AppLocalizations.of(context)!.estate_rent_period + " :",
                     widgetContent: Row(
                       children: [
                         Text(
@@ -434,7 +499,10 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         ),
                         6.horizontalSpace,
                         Text(
-                          widget.estate.periodType!.getName(isArabic).split("|").elementAt(1),
+                          widget.estate.periodType!
+                              .getName(isArabic)
+                              .split("|")
+                              .elementAt(1),
                         ),
                       ],
                     ),
@@ -506,7 +574,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 if (isFarmsOrVacations) ...[
                   if (widget.estate.hasSwimmingPool != null)
                     RowInformation(
-                      title: AppLocalizations.of(context)!.has_swimming_pool + " :",
+                      title: AppLocalizations.of(context)!.has_swimming_pool +
+                          " :",
                       content: widget.estate.hasSwimmingPool!
                           ? AppLocalizations.of(context)!.yes
                           : AppLocalizations.of(context)!.no,
@@ -516,18 +585,18 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       ),
                       onTap: () {},
                     ),
-                  if (widget.estate.isOnBeach != null)
-                    RowInformation(
-                      title: AppLocalizations.of(context)!.on_beach + " :",
-                      content: widget.estate.hasSwimmingPool!
-                          ? AppLocalizations.of(context)!.yes
-                          : AppLocalizations.of(context)!.no,
-                      icon: Icon(
-                        Icons.beach_access_outlined,
-                        size: 32.w,
-                      ),
-                      onTap: () {},
-                    ),
+                  // if (widget.estate.isOnBeach != null)
+                  //   RowInformation(
+                  //     title: AppLocalizations.of(context)!.on_beach + " :",
+                  //     content: widget.estate.isOnBeach!
+                  //         ? AppLocalizations.of(context)!.yes
+                  //         : AppLocalizations.of(context)!.no,
+                  //     icon: Icon(
+                  //       Icons.beach_access_outlined,
+                  //       size: 32.w,
+                  //     ),
+                  //     onTap: () {},
+                  //   ),
                 ],
                 // Estate ownership type :
                 if (isSell)
@@ -568,14 +637,17 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => ImagesViewerScreen(
-                              streetImages, AppLocalizations.of(context)!.estate_street_images),
+                              streetImages,
+                              AppLocalizations.of(context)!
+                                  .estate_street_images),
                         ),
                       );
                     },
                   ),
                 if (floorPlanImages.isNotEmpty)
                   RowInformation(
-                    title: AppLocalizations.of(context)!.floor_plan_property_images,
+                    title: AppLocalizations.of(context)!
+                        .floor_plan_property_images,
                     icon: Icon(
                       Icons.account_tree_outlined,
                       size: 32.w,
@@ -584,14 +656,17 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ImagesViewerScreen(floorPlanImages,
-                              AppLocalizations.of(context)!.estate_floor_plan_images),
+                          builder: (_) => ImagesViewerScreen(
+                              floorPlanImages,
+                              AppLocalizations.of(context)!
+                                  .estate_floor_plan_images),
                         ),
                       );
                     },
                   ),
                 // Estate Position :
-                if (widget.estate.longitude != null && widget.estate.latitude != null)
+                if (widget.estate.longitude != null &&
+                    widget.estate.latitude != null)
                   RowInformation(
                     title: AppLocalizations.of(context)!.estate_position,
                     icon: const Icon(
@@ -621,11 +696,12 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 24.verticalSpace,
                 kHe24,
                 InkWell(
-                  onTap: (){
+                  onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => EstateOfficeScreen(widget.estate.estateOffice!),
+                        builder: (_) =>
+                            EstateOfficeScreen(widget.estate.estateOffice!.id),
                       ),
                     );
                   },
@@ -635,7 +711,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         width: 120.w,
                         height: 120.h,
                         child: CachedNetworkImage(
-                            imageUrl: imagesBaseUrl + widget.estate.estateOffice!.logo!),
+                            imageUrl: imagesBaseUrl +
+                                widget.estate.estateOffice!.logo!),
                       ),
                       kHe8,
                       Text(
@@ -648,25 +725,32 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         style: Theme.of(context).textTheme.headline6,
                       ),
                       kHe8,
-                      InkWell(
-                        onTap: () {
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(155.w, 50.h)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!.office_page,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => EstateOfficeScreen(widget.estate.estateOffice!),
+                              builder: (_) => EstateOfficeScreen(
+                                  widget.estate.estateOffice!.id),
                             ),
                           );
                         },
-                        child: Text(
-                          AppLocalizations.of(context)!.office_page,
-                          style: textStyling(S.s14, W.w6, C.bl, fontFamily: F.cairo).copyWith(
-                              decoration: TextDecoration.underline,
-                              color: Theme.of(context).colorScheme.onBackground),
-                        ),
                       ),
                       kHe24,
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(fixedSize: Size(220.w, 64.h)),
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(220.w, 64.h)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -687,7 +771,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                 token: userToken,
                                 visitType: VisitType.estateCall),
                           );
-                          launch("tel://" + widget.estate.estateOffice!.mobile.toString());
+                          launch("tel://" +
+                              widget.estate.estateOffice!.mobile.toString());
                         },
                       ),
                       kHe24,

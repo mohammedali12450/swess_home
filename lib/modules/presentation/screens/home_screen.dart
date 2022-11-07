@@ -57,7 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
       sendFcmToken(attempt + 1);
     }
     BlocProvider.of<FcmBloc>(context).add(
-      SendFcmTokenProcessStarted(userToken: _userAuthenticationBloc.user!.token!),
+      SendFcmTokenProcessStarted(
+          userToken: _userAuthenticationBloc.user!.token!),
     );
   }
 
@@ -89,7 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           actions: [
-            BlocBuilder<NotificationsCubit, int>(builder: (_, notificationsCount) {
+            BlocBuilder<NotificationsCubit, int>(
+                builder: (_, notificationsCount) {
               return IconBadge(
                 icon: const Icon(
                   Icons.notifications_outlined,
@@ -97,7 +99,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: notificationsCount,
                 right: 0,
                 top: 5.h,
-                onTap: () {
+                onTap: () async {
+                  if (BlocProvider.of<UserLoginBloc>(context).user == null) {
+                    await showWonderfulAlertDialog(
+                        context,
+                        AppLocalizations.of(context)!.confirmation,
+                        AppLocalizations.of(context)!
+                            .this_features_require_login,
+                        removeDefaultButton: true,
+                        dialogButtons: [
+                          ElevatedButton(
+                            child: Text(
+                              AppLocalizations.of(context)!.sign_in,
+                            ),
+                            onPressed: () async {
+                              await Navigator.pushNamed(
+                                  context, AuthenticationScreen.id);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ElevatedButton(
+                            child: Text(
+                              AppLocalizations.of(context)!.cancel,
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                        width: 400.w);
+                    return;
+                  }
                   Navigator.pushNamed(context, NotificationScreen.id);
                 },
                 hideZero: true,
@@ -119,8 +151,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 buildSearchCard(),
                 kHe16,
                 if (BlocProvider.of<SystemVariablesBloc>(context)
-                        .systemVariables!
-                        .isVacationsAvailable) ...[
+                    .systemVariables!
+                    .isVacationsAvailable) ...[
                   buildVacationCard(),
                   kHe20,
                 ],
@@ -144,7 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: const BorderRadius.all(
           Radius.circular(4),
         ),
-        border: Border.all(color: Theme.of(context).colorScheme.onBackground, width: 0.5),
+        border: Border.all(
+            color: Theme.of(context).colorScheme.onBackground, width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -162,7 +195,10 @@ class _HomeScreenState extends State<HomeScreen> {
           kHe16,
           InkWell(
             onTap: () {
-              Navigator.pushNamed(context, OfficeSearchScreen.id);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const OfficeSearchScreen()),
+              );
             },
             child: Container(
               width: inf,
@@ -172,7 +208,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   Radius.circular(8),
                 ),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.onBackground.withOpacity(0.56),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onBackground
+                      .withOpacity(0.56),
                 ),
               ),
               child: Row(
@@ -209,7 +248,8 @@ class _HomeScreenState extends State<HomeScreen> {
         InkWell(
           onTap: () {
             Fluttertoast.showToast(
-                msg: AppLocalizations.of(context)!.this_feature_will_be_activated_soon);
+                msg: AppLocalizations.of(context)!
+                    .this_feature_will_be_activated_soon);
           },
           child: Container(
             width: 1.sw,
@@ -220,14 +260,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 end: Alignment.centerLeft,
                 colors: [
                   (!isDarkMode) ? AppColors.lastColor : Colors.white,
-                  (!isDarkMode) ? AppColors.lastColor.withOpacity(0.75) : const Color(0xff90B8F8),
+                  (!isDarkMode)
+                      ? AppColors.lastColor.withOpacity(0.75)
+                      : const Color(0xff90B8F8),
                 ],
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(15),
               ),
               image: const DecorationImage(
-                  image: AssetImage(beachImagePath), fit: BoxFit.cover, opacity: 0.1),
+                  image: AssetImage(beachImagePath),
+                  fit: BoxFit.cover,
+                  opacity: 0.1),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,10 +288,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 kHe12,
                 Text(
                   AppLocalizations.of(context)!.vacations_and_farms,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline5!
-                      .copyWith(color: Theme.of(context).colorScheme.background),
+                  style: Theme.of(context).textTheme.headline5!.copyWith(
+                      color: Theme.of(context).colorScheme.background),
                 ),
                 kHe12,
                 Padding(
@@ -257,10 +299,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.vacations_card_body,
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle2!
-                        .copyWith(color: Theme.of(context).colorScheme.background),
+                    style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                        color: Theme.of(context).colorScheme.background),
                   ),
                 ),
               ],
@@ -271,7 +311,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Align(
             alignment: isArabic ? Alignment.centerLeft : Alignment.centerRight,
             child: Container(
-              margin: EdgeInsets.only(left: isArabic ? 16.w : 0, right: !isArabic ? 16.w : 0),
+              margin: EdgeInsets.only(
+                  left: isArabic ? 16.w : 0, right: !isArabic ? 16.w : 0),
               child: Icon(
                 (isArabic) ? Icons.arrow_back_ios : Icons.arrow_forward_ios,
                 color: Theme.of(context).colorScheme.background,
@@ -315,7 +356,9 @@ class _HomeScreenState extends State<HomeScreen> {
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
           colors: [
-            (isDarkMode) ? Color(0xff90B8F8) : Theme.of(context).colorScheme.primary,
+            (isDarkMode)
+                ? const Color(0xff90B8F8)
+                : Theme.of(context).colorScheme.primary,
             (isDarkMode)
                 ? AppColors.white.withOpacity(0.75)
                 : Theme.of(context).colorScheme.primary.withOpacity(0.75)
@@ -380,7 +423,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => SearchScreen(
-                        searchData: SearchData(estateOfferTypeId: sellOfferTypeNumber),
+                        searchData:
+                            SearchData(estateOfferTypeId: sellOfferTypeNumber),
                       ),
                     ),
                   );
@@ -403,7 +447,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => SearchScreen(
-                        searchData: SearchData(estateOfferTypeId: rentOfferTypeNumber),
+                        searchData:
+                            SearchData(estateOfferTypeId: rentOfferTypeNumber),
                       ),
                     ),
                   );
@@ -424,7 +469,8 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: const BorderRadius.all(
           Radius.circular(4),
         ),
-        border: Border.all(color: Theme.of(context).colorScheme.onBackground, width: 0.5),
+        border: Border.all(
+            color: Theme.of(context).colorScheme.onBackground, width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -446,8 +492,8 @@ class _HomeScreenState extends State<HomeScreen> {
             width: inf,
             alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
             child: ElevatedButton(
-              style:
-                  ElevatedButton.styleFrom(fixedSize: Size(220.w, 56.h), padding: EdgeInsets.zero),
+              style: ElevatedButton.styleFrom(
+                  fixedSize: Size(220.w, 56.h), padding: EdgeInsets.zero),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -475,7 +521,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             AppLocalizations.of(context)!.sign_in,
                           ),
                           onPressed: () async {
-                            await Navigator.pushNamed(context, AuthenticationScreen.id);
+                            await Navigator.pushNamed(
+                                context, AuthenticationScreen.id);
                             Navigator.pop(context);
                           },
                         ),

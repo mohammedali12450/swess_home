@@ -8,7 +8,8 @@ class EstateOrderProvider {
     NetworkHelper helper = NetworkHelper();
     Response response;
     try {
-      response = await helper.post(sendEstateOrderUrl, order.toJson(), token: token);
+      response =
+          await helper.post(sendEstateOrderUrl, order.toJson(), token: token);
     } catch (e) {
       rethrow;
     }
@@ -17,7 +18,15 @@ class EstateOrderProvider {
 
   Future<Response> getRecentEstateOrders(String? token) async {
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(getRecentEstatesOrdersUrl, token: token);
+    Response response =
+        await helper.get(getRecentEstatesOrdersUrl, token: token);
+    return response;
+  }
+
+  Future<Response> deleteRecentEstateOrders(String? token, int? orderId) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response = await helper.delete(deleteEstateOrderUrl,
+        queryParameters: {"estate_order_id": orderId}, token: token);
     return response;
   }
 }

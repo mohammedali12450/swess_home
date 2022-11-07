@@ -40,6 +40,7 @@ class EstateCard extends StatefulWidget {
   final Widget? bottomWidget;
   final Function? onClosePressed;
   final bool removeCloseButton;
+  final Color color;
 
   const EstateCard(
       {Key? key,
@@ -47,7 +48,7 @@ class EstateCard extends StatefulWidget {
       this.removeBottomBar = false,
       this.bottomWidget,
       required this.removeCloseButton,
-      this.onClosePressed})
+      this.onClosePressed, required this.color})
       : super(key: key);
 
   @override
@@ -155,14 +156,15 @@ class _EstateCardState extends State<EstateCard> {
     }
 
 
-    print(imagesBaseUrl + widget.estate.estateOffice!.logo!);
-
-
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
       width: 1.sw,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
+        border: Border.all(
+          width: 1,
+          color: AppColors.white,
+        ),
+        color: widget.color,
         borderRadius: const BorderRadius.all(
           Radius.circular(8),
         ),
@@ -298,7 +300,7 @@ class _EstateCardState extends State<EstateCard> {
                               padding: EdgeInsets.zero,
                               icon: const Icon(
                                 Icons.close,
-                                size: 16,
+                                size: 22,
                                 color: AppColors.white,
                               ),
                               onPressed: () {

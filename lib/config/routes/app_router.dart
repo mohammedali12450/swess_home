@@ -7,8 +7,6 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:swesshome/constants/colors.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/core/walk_through/introduction_screen1.dart';
@@ -39,6 +37,8 @@ import 'package:swesshome/modules/business_logic_components/bloc/period_types_bl
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_state.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_state.dart';
@@ -61,20 +61,23 @@ import 'package:swesshome/modules/presentation/screens/notifications_screen.dart
 import 'package:swesshome/modules/presentation/screens/office_search_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
+import 'package:swesshome/modules/presentation/screens/reset_password_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
 import 'package:swesshome/modules/presentation/screens/select_language_screen.dart';
 import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
-import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_internet_connection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/utils/services/network_helper.dart';
 
 import '../../constants/api_paths.dart';
+import '../../modules/presentation/screens/update_new_version_screen.dart';
+import '../../modules/presentation/widgets/get_location_gps.dart';
 
 class AppRouter {
   late LocationsBloc locationsBloc;
+  late RegionsBloc regionsBloc;
   late OwnershipTypeBloc ownershipTypeBloc;
   late EstateTypesBloc estateTypesBloc;
   late InteriorStatusesBloc interiorStatusesBloc;
@@ -90,6 +93,7 @@ class AppRouter {
   String? userAccessToken;
   bool isThereStoredUser = false;
   bool isIntroductionScreenPassed = false;
+  bool needUpdate = false;
 
   AppRouter() {
     userDataFetchBloc = UserDataFetchBloc(
@@ -97,7 +101,8 @@ class AppRouter {
     );
     userAccessToken = UserSharedPreferences.getAccessToken();
     isThereStoredUser = (userAccessToken != null);
-    isIntroductionScreenPassed = ApplicationSharedPreferences.getWalkThroughPassState();
+    isIntroductionScreenPassed =
+        ApplicationSharedPreferences.getWalkThroughPassState();
   }
 
   Route? onGenerateRoute(RouteSettings routerSettings) {
@@ -117,6 +122,13 @@ class AppRouter {
                 screenFunction: () async {
                   // Check internet connection :
                   await checkInternetConnection(context);
+                  // Check if there is new version
+                  await isUpdateApp(
+                      ApplicationSharedPreferences.getVersionAppState(),
+                      context);
+                  if (needUpdate) {
+                    return const UpdateVersionScreen();
+                  }
                   // Fetch BaseUrl :
                   await fetchBaseUrl();
                   // Fetch application data :
@@ -135,7 +147,8 @@ class AppRouter {
                   }
 
                   // Language has not selected yet:
-                  bool isLanguageSelected = ApplicationSharedPreferences.getIsLanguageSelected();
+                  bool isLanguageSelected =
+                      ApplicationSharedPreferences.getIsLanguageSelected();
                   if (!isLanguageSelected) {
                     return const SelectLanguageScreen();
                   }
@@ -190,6 +203,12 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const AuthenticationScreen(),
         );
+      case ResetPasswordScreen.id:
+        return MaterialPageRoute(
+          builder: (_) => const ResetPasswordScreen(
+            phoneNumber: '',
+          ),
+        );
       case SearchLocationScreen.id:
         return MaterialPageRoute(
           builder: (_) => const SearchLocationScreen(),
@@ -204,11 +223,11 @@ class AppRouter {
         );
       case RecentEstateOrdersScreen.id:
         return MaterialPageRoute(
-          builder: (_) => const RecentEstateOrdersScreen(),
+          builder: (_) => RecentEstateOrdersScreen(),
         );
       case CreatedEstatesScreen.id:
         return MaterialPageRoute(
-          builder: (_) => const CreatedEstatesScreen(),
+          builder: (_) => CreatedEstatesScreen(),
         );
       case SavedEstatesScreen.id:
         return MaterialPageRoute(
@@ -230,6 +249,10 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const LanguagesScreen(),
         );
+        case LocationPage.id:
+        return MaterialPageRoute(
+          builder: (_) => const LocationPage(),
+        );
       default:
         return null;
     }
@@ -238,6 +261,7 @@ class AppRouter {
   void fetchApplicationData(BuildContext context) {
     userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
     locationsBloc = BlocProvider.of<LocationsBloc>(context);
+    regionsBloc = BlocProvider.of<RegionsBloc>(context);
     ownershipTypeBloc = BlocProvider.of<OwnershipTypeBloc>(context);
     estateTypesBloc = BlocProvider.of<EstateTypesBloc>(context);
     interiorStatusesBloc = BlocProvider.of<InteriorStatusesBloc>(context);
@@ -248,6 +272,7 @@ class AppRouter {
     systemVariablesBloc = BlocProvider.of<SystemVariablesBloc>(context);
     reportBloc = BlocProvider.of<ReportBloc>(context);
     locationsBloc.add(LocationsFetchStarted());
+    regionsBloc.add(RegionsFetchStarted());
     ownershipTypeBloc.add(OwnershipTypeFetchStarted());
     estateTypesBloc.add(EstateTypesFetchStarted());
     interiorStatusesBloc.add(InteriorStatusesFetchStarted());
@@ -306,8 +331,11 @@ class AppRouter {
         context,
         AppLocalizations.of(context)!.error,
         AppLocalizations.of(context)!.check_your_internet_connection,
+        barrierDismissible: false,
         onDefaultButtonPressed: () {
+          exit(0);
           Phoenix.rebirth(context);
+          //RestartWidget.restartApp(context);
         },
         defaultButtonContent: AppLocalizations.of(context)!.restart_application,
         defaultButtonWidth: 200.w,
@@ -321,12 +349,34 @@ class AppRouter {
     try {
       response = await helper.get(fetchBaseUrlUrl);
     } catch (e) {
-      throw e;
+      rethrow;
     }
+    //0 if you want to connect to pronet
+    //1 if you want to connect to hostinger
     if (response.data == "0") {
       print("PPPRRRROOOOO");
       baseUrl = proNetBaseUrl;
       imagesBaseUrl = proNetImagesUrl;
     }
+  }
+
+  Future isUpdateApp(String version, context) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+    bool isAndroid = true;
+    try {
+      response = await helper.post(
+        isAndroid ? isUpdatedForAndroidUrl : isUpdatedForIosUrl,
+        {"version1": version},
+      );
+    } catch (_) {
+      rethrow;
+    }
+    //0 if do not need an update
+    //1 if need an update
+    if (response.data == "1") {
+      needUpdate = true;
+    }
+    return response;
   }
 }

@@ -19,7 +19,7 @@ class RecentEstatesOrdersBloc extends Bloc<RecentEstatesOrdersEvent, RecentEstat
         emit(RecentEstatesOrdersFetchError(error: e.errorMessage, isConnectionError: true));
       } catch (e, stack) {
         if (e is GeneralException) {
-          emit(RecentEstatesOrdersFetchError(error: e.errorMessage));
+          emit(RecentEstatesOrdersFetchError(error: e.errorMessage!));
         }
         print(e);
         print(stack);

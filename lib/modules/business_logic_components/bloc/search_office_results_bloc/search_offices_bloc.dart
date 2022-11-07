@@ -23,7 +23,7 @@ class SearchOfficesBloc extends Bloc<SearchOfficesEvents, SearchOfficesStates> {
         emit(SearchOfficesFetchError(errorMessage: e.errorMessage));
       } catch (e) {
         if (e is GeneralException) {
-          emit(SearchOfficesFetchError(errorMessage: e.errorMessage));
+          emit(SearchOfficesFetchError(errorMessage: e.errorMessage!));
         }
       }
     });
@@ -33,13 +33,13 @@ class SearchOfficesBloc extends Bloc<SearchOfficesEvents, SearchOfficesStates> {
 
       try {
         List<EstateOffice> results = await estateOfficesRepository.searchEstateOfficesByLocationId(
-            event.locationId, event.token);
+            event.locationId);
         emit(
           SearchOfficesFetchComplete(results: results),
         );
       } on ConnectionException catch (e) {
         emit(SearchOfficesFetchError(errorMessage: e.errorMessage));
-      } catch (e, stack) {
+      } catch (e) {
         if (e is GeneralException) {}
       }
     });

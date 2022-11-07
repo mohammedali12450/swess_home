@@ -12,8 +12,13 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/reset_password_bloc/reset_password_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/verification_bloc/verification_bloc.dart';
 import 'package:swesshome/modules/data/repositories/estate_order_repository.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/data/repositories/reports_repository.dart';
@@ -27,6 +32,7 @@ import 'core/notifications/local_notifications.dart';
 import 'core/storage/shared_preferences/notifications_shared_preferences.dart';
 import 'core/storage/shared_preferences/shared_preferences_controllers.dart';
 import 'modules/business_logic_components/bloc/area_units_bloc/area_units_bloc.dart';
+import 'modules/business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
 import 'modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_bloc.dart';
 import 'modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import 'modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
@@ -52,8 +58,11 @@ import 'modules/data/repositories/period_types_repository.dart';
 import 'modules/data/repositories/price_domains_repository.dart';
 import 'modules/data/repositories/system_variables_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-const bool _clearSharedPreferences = false ;
+const bool _clearSharedPreferences = false;
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   // Widget binding:
@@ -73,7 +82,7 @@ void main() async {
   // Run application:
   if (!_clearSharedPreferences) {
     runApp(
-      Phoenix(
+       Phoenix(
         child: const MyApp(),
       ),
     );
@@ -93,17 +102,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late NotificationsCubit notificationsCubit;
   late ThemeMode initialThemeMode;
   Locale? initialLocale;
+  PackageInfo packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+  );
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     // Bind observer :
     WidgetsBinding.instance!.addObserver(this);
 
     // initialize notifications count :
-    notificationsCubit = NotificationsCubit(NotificationsSharedPreferences.getNotificationsCount());
+    notificationsCubit = NotificationsCubit(
+        NotificationsSharedPreferences.getNotificationsCount());
 
     // Firebase messages initializing :
     initializeFirebaseMessaging();
@@ -123,6 +138,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     } else {
       initialThemeMode = ThemeMode.system;
     }
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      packageInfo = info;
+    });
+    ApplicationSharedPreferences.setVersionAppState(packageInfo.version);
   }
 
   @override
@@ -137,6 +161,25 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         BlocProvider(
           create: (_) => LocationsBloc(),
+        ),
+        BlocProvider(
+          create: (_) => RegionsBloc(),
+        ),
+        BlocProvider(
+          create: (_) => ForgetPasswordBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
+        ),
+        BlocProvider(
+          create: (_) => VerificationCodeBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
+        ),
+        BlocProvider(
+          create: (_) => ResendVerificationCodeBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
+        ),
+        BlocProvider(
+          create: (_) => ResetPasswordBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
           create: (_) => OwnershipTypeBloc(
@@ -207,6 +250,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider(
           create: (_) => ReportBloc(ReportsRepository()),
         ),
+        BlocProvider(
+          create: (_) => DeleteEstatesBloc(EstateOrderRepository()),
+        ),
       ],
       child: MultiProvider(
           providers: [
@@ -226,13 +272,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               minTextAdapt: true,
               splitScreenMode: false,
               builder: () => MaterialApp(
+                navigatorKey: navigatorKey,
                 debugShowCheckedModeBanner: false,
                 onGenerateRoute: appRouter.onGenerateRoute,
                 initialRoute: '/',
                 builder: (context, widget) {
                   ScreenUtil.setContext(context);
                   return MediaQuery(
-                      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: widget!);
+                      data:
+                          MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                      child: widget!);
                 },
                 supportedLocales: L10n.all,
                 locale: localeProvider.locale,
@@ -275,7 +324,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             notification.body,
             NotificationDetails(
               android: AndroidNotificationDetails(
-                  androidNotificationsChannel.id, androidNotificationsChannel.name,
+                  androidNotificationsChannel.id,
+                  androidNotificationsChannel.name,
                   channelDescription: androidNotificationsChannel.description,
                   color: Colors.blue,
                   playSound: true),
@@ -297,14 +347,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     WidgetsBinding.instance!.removeObserver(this);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       checkNewNotifications();
@@ -315,5 +363,36 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     await NotificationsSharedPreferences.init();
     await NotificationsSharedPreferences.reload();
     notificationsCubit.checkNewNotifications();
+  }
+}
+
+class RestartWidget extends StatefulWidget {
+  const RestartWidget({Key? key, required this.child}) : super(key: key);
+
+  final Widget child;
+
+  static void restartApp(BuildContext context) {
+    context.findAncestorStateOfType<_RestartWidgetState>()!.restartApp();
+  }
+
+  @override
+  _RestartWidgetState createState() => _RestartWidgetState();
+}
+
+class _RestartWidgetState extends State<RestartWidget> {
+  Key key = UniqueKey();
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyedSubtree(
+      key: key,
+      child: widget.child,
+    );
   }
 }

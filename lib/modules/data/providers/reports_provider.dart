@@ -12,7 +12,9 @@ class ReportProviders {
   Future sendReport(String? token, int reportId, int estateId) async {
     NetworkHelper helper = NetworkHelper();
     Response response = await helper
-        .post(sendReportUrl, {"report_type_id": reportId, "estate_id": estateId}, token: token);
+        .post(
+        sendReportUrl, {"report_type_id": reportId, "estate_id": estateId},
+        token: token);
     return response;
   }
 }

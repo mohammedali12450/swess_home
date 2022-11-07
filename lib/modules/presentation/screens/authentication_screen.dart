@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -23,10 +24,17 @@ import 'package:swesshome/modules/business_logic_components/bloc/user_register_b
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
-import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+import 'package:swesshome/modules/presentation/screens/forget_password_screen.dart';
+import 'package:swesshome/modules/presentation/screens/verification_login_code.dart';
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
+import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+import '../../../constants/validators.dart';
+import '../../../utils/helpers/my_snack_bar.dart';
+import '../../data/providers/theme_provider.dart';
+import '../pages/terms_condition_page.dart';
+import '../widgets/get_location_gps.dart';
 import 'home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -35,7 +43,8 @@ class AuthenticationScreen extends StatefulWidget {
 
   final bool? popAfterFinish;
 
-  const AuthenticationScreen({Key? key, this.popAfterFinish = true}) : super(key: key);
+  const AuthenticationScreen({Key? key, this.popAfterFinish = true})
+      : super(key: key);
 
   @override
   _AuthenticationScreenState createState() => _AuthenticationScreenState();
@@ -44,39 +53,51 @@ class AuthenticationScreen extends StatefulWidget {
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
   // Cubits and Blocs
   final ChannelCubit _passwordVisibilityCubit = ChannelCubit(false);
-  final ChannelCubit _checkBoxStateCubit = ChannelCubit(false);
+  final ChannelCubit _repeatPasswordVisibleCubit = ChannelCubit(false);
   final ChannelCubit _isLoginSelected = ChannelCubit(true);
+  final ChannelCubit _termsIsCheckedCubit = ChannelCubit(false);
   ChannelCubit authenticationError = ChannelCubit(null);
   ChannelCubit authenticationErrorLogin = ChannelCubit(null);
   ChannelCubit passwordError = ChannelCubit(null);
   ChannelCubit passwordErrorLogin = ChannelCubit(null);
+  ChannelCubit repeatPasswordError = ChannelCubit(null);
   ChannelCubit firstNameError = ChannelCubit(null);
   ChannelCubit lastNameError = ChannelCubit(null);
+  ChannelCubit emailError = ChannelCubit(null);
+  ChannelCubit countryError = ChannelCubit(null);
+  ChannelCubit birthdateError = ChannelCubit(null);
   late UserRegisterBloc userRegisterBloc;
   late UserLoginBloc userLoginBloc;
   late String phoneDialCode;
+  String userCountry = "Syrian Arab Republic";
+  DateTime? birthDate;
   late String phoneDialCodeLogin;
   String phoneNumber = "";
+  bool isCheck = false;
 
   // controllers:
   TextEditingController authenticationController = TextEditingController();
   TextEditingController authenticationControllerLogin = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController repeatPasswordController = TextEditingController();
   TextEditingController passwordControllerLogin = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController birthdateController = TextEditingController();
 
   // Others :
   bool isForStore = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     userRegisterBloc = UserRegisterBloc(UserAuthenticationRepository());
     userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
     // Dial code initializing:
-    isForStore = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore;
+    isForStore = BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore;
     if (isForStore) {
       phoneDialCode = "+961";
       phoneDialCodeLogin = "+961";
@@ -99,11 +120,18 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     if (errorResponseMap.containsKey("password")) {
       passwordError.setState(errorResponseMap["password"].first);
     }
+    if (errorResponseMap.containsKey("email")) {
+      passwordError.setState(errorResponseMap["email"].first);
+    }
+    if (errorResponseMap.containsKey("birthOfDate")) {
+      passwordError.setState(errorResponseMap["birthOfDate"].first);
+    }
   }
 
   void loginErrorHandling(errorResponseMap) {
     if (errorResponseMap.containsKey("authentication")) {
-      authenticationErrorLogin.setState(errorResponseMap["authentication"].first);
+      authenticationErrorLogin
+          .setState(errorResponseMap["authentication"].first);
     }
     if (errorResponseMap.containsKey("password")) {
       passwordErrorLogin.setState(errorResponseMap["password"].first);
@@ -136,7 +164,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   signUpErrorHandling(registerState.errorResponse);
                 } else if (registerState.errorMessage != null) {
                   showWonderfulAlertDialog(
-                      context, AppLocalizations.of(context)!.error, registerState.errorMessage!);
+                      context,
+                      AppLocalizations.of(context)!.error,
+                      registerState.errorMessage!);
                 }
               }
               if (registerState is UserRegisterComplete) {
@@ -167,15 +197,17 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   await showWonderfulAlertDialog(
                       context,
                       AppLocalizations.of(context)!.confirmation,
-                      AppLocalizations.of(context)!.account_not_confirmed_dialog,
+                      AppLocalizations.of(context)!
+                          .account_not_confirmed_dialog,
                       removeDefaultButton: true,
                       dialogButtons: [
                         BlocProvider<ResendConfirmationCodeBloc>(
                           create: (context) => ResendConfirmationCodeBloc(),
-                          child:
-                              BlocConsumer<ResendConfirmationCodeBloc, ResendConfirmationCodeState>(
+                          child: BlocConsumer<ResendConfirmationCodeBloc,
+                              ResendConfirmationCodeState>(
                             listener: (_, resendCodeState) async {
-                              if (resendCodeState is ResendConfirmationCodeComplete) {
+                              if (resendCodeState
+                                  is ResendConfirmationCodeComplete) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -185,9 +217,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                   ),
                                 );
                               }
-                              if (resendCodeState is ResendConfirmationCodeError) {
-                                await showWonderfulAlertDialog(context,
-                                    AppLocalizations.of(context)!.error, resendCodeState.message);
+                              if (resendCodeState
+                                  is ResendConfirmationCodeError) {
+                                await showWonderfulAlertDialog(
+                                    context,
+                                    AppLocalizations.of(context)!.error,
+                                    resendCodeState.message);
                               }
                             },
                             builder: (context, resendCodeState) {
@@ -195,16 +230,21 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                 style: ElevatedButton.styleFrom(
                                   fixedSize: Size(180.w, 56.h),
                                 ),
-                                child: (resendCodeState is ResendConfirmationCodeProgress)
+                                child: (resendCodeState
+                                        is ResendConfirmationCodeProgress)
                                     ? SpinKitWave(
                                         color: AppColors.white,
                                         size: 20.w,
                                       )
-                                    : Text(AppLocalizations.of(context)!.resend),
+                                    : Text(
+                                        AppLocalizations.of(context)!.resend),
                                 onPressed: () {
                                   // Confirmation Code Resend:
-                                  BlocProvider.of<ResendConfirmationCodeBloc>(context).add(
-                                    ResendConfirmationCodeStarted(phoneNumber: phoneNumber),
+                                  BlocProvider.of<ResendConfirmationCodeBloc>(
+                                          context)
+                                      .add(
+                                    ResendConfirmationCodeStarted(
+                                        phoneNumber: phoneNumber),
                                   );
                                 },
                               );
@@ -227,25 +267,48 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
                 if (loginState.errorResponse != null) {
                   loginErrorHandling(loginState.errorResponse);
-                } else if (loginState.errorMessage != null) {
+                }
+                if (loginState.errorMessage != null) {
+                  if (loginState.errorMessage!.contains("تم")) {
+                    // if (loginState.errorMessage!.contains("تم")) {
+                    //   Navigator.pushReplacement(context,
+                    //       MaterialPageRoute(builder: (_) => const HomeScreen()));
+                    // }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => VerificationLoginCodeScreen(
+                          phoneNumber: phoneNumber,
+                          message: loginState.errorMessage!,
+                        ),
+                      ),
+                    );
+                    return;
+                  }
                   showWonderfulAlertDialog(
-                      context, AppLocalizations.of(context)!.error, loginState.errorMessage!);
+                      context,
+                      AppLocalizations.of(context)!.error,
+                      loginState.errorMessage!);
                 }
               }
               if (loginState is UserLoginComplete) {
                 if (userLoginBloc.user!.token != null) {
                   // save user token in shared preferences ;
-                  UserSharedPreferences.setAccessToken(userLoginBloc.user!.token!);
+                  UserSharedPreferences.setAccessToken(
+                      userLoginBloc.user!.token!);
                   // Send user fcm token to server :
                   BlocProvider.of<FcmBloc>(context).add(
-                    SendFcmTokenProcessStarted(userToken: userLoginBloc.user!.token!),
+                    SendFcmTokenProcessStarted(
+                        userToken: userLoginBloc.user!.token!),
                   );
                 }
                 if (widget.popAfterFinish!) {
                   Navigator.pop(context);
                 } else {
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                      (route) => false);
                 }
               }
             },
@@ -268,13 +331,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         children: [
                           Container(
                             width: 1.sw,
-                            alignment: Provider.of<LocaleProvider>(context).isArabic()
-                                ? Alignment.centerRight
-                                : Alignment.centerLeft,
+                            alignment:
+                                Provider.of<LocaleProvider>(context).isArabic()
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
                             child: IconButton(
                               icon: Icon(
                                 Icons.close,
-                                color: Theme.of(context).colorScheme.onBackground,
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
                               ),
                               onPressed: () {
                                 if (widget.popAfterFinish!) {
@@ -355,7 +420,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 bloc: _passwordVisibilityCubit,
                 builder: (context, isVisible) {
                   return TextField(
-                    style: Theme.of(context).textTheme.subtitle1!.copyWith(height: 2),
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1!
+                        .copyWith(height: 2),
                     onChanged: (_) {
                       passwordErrorLogin.setState(null);
                     },
@@ -367,7 +435,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       hintText: AppLocalizations.of(context)!.enter_password,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          (!isVisible) ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          (!isVisible)
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           color: Theme.of(context).colorScheme.onBackground,
                         ),
                         onPressed: () {
@@ -382,21 +452,33 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           ),
           Row(
             children: [
-              BlocBuilder<ChannelCubit, dynamic>(
-                bloc: _checkBoxStateCubit,
-                builder: (_, isChecked) {
-                  return Checkbox(
-                    value: isChecked,
-                    onChanged: (_) {
-                      _checkBoxStateCubit.setState(!isChecked);
-                    },
-                  );
-                },
-              ),
-              Text(
-                AppLocalizations.of(context)!.remember_me,
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
+              InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const ForgetPasswordScreen()));
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!.forget_password,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  )),
+              const Spacer(),
+              // BlocBuilder<ChannelCubit, dynamic>(
+              //   bloc: _checkBoxStateCubit,
+              //   builder: (_, isChecked) {
+              //     return Checkbox(
+              //       value: isChecked,
+              //       onChanged: (_) {
+              //         _checkBoxStateCubit.setState(!isChecked);
+              //       },
+              //     );
+              //   },
+              // ),
+              // Text(
+              //   AppLocalizations.of(context)!.remember_me,
+              //   style: Theme.of(context).textTheme.bodyText2,
+              // ),
             ],
           ),
           kHe24,
@@ -429,7 +511,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 },
               ),
               onPressed: () async {
-                if (BlocProvider.of<UserLoginBloc>(context).state is UserLoginProgress) {
+                if (BlocProvider.of<UserLoginBloc>(context).state
+                    is UserLoginProgress) {
                   return;
                 }
 
@@ -438,40 +521,46 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   return;
                 }
                 userLoginBloc.add(UserLoginStarted(
-                    authentication: phoneNumber, password: passwordControllerLogin.text));
+                    authentication: phoneNumber,
+                    password: passwordControllerLogin.text));
                 FocusScope.of(context).unfocus();
               },
             ),
           ),
           kHe16,
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  fixedSize: Size(240.w, 64.h),
-                  primary: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Theme.of(context).colorScheme.primary),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(8),
-                    ),
-                  )),
-              child: Text(AppLocalizations.of(context)!.create_account,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2!
-                      .copyWith(color: Theme.of(context).colorScheme.onBackground)),
-              onPressed: () {
-                _isLoginSelected.setState(false);
-              },
+          TextButton(
+            onPressed: () {
+              _isLoginSelected.setState(false);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.dont_have_an_account,
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.create_account,
+                  style:
+                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ),
+          TextButton(
+              onPressed: () {
+                // LocationPage.getCurrentPosition();
+                Navigator.pushNamed(context, LocationPage.id);
+              },
+              child: Text("ghina")),
         ],
       ),
     );
   }
 
   SingleChildScrollView buildSignupScreen() {
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -493,8 +582,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             bloc: authenticationError,
             builder: (_, errorMessage) {
               return IntlPhoneField(
+                onCountryChanged: (country) {
+                  userCountry = country.name;
+                },
                 controller: authenticationController,
-                decoration: InputDecoration(errorText: errorMessage, errorMaxLines: 2),
+                decoration:
+                    InputDecoration(errorText: errorMessage, errorMaxLines: 2),
                 initialCountryCode: isForStore ? 'LB' : 'SY',
                 onChanged: (phone) {
                   phoneDialCode = phone.countryCode;
@@ -518,6 +611,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 bloc: _passwordVisibilityCubit,
                 builder: (context, isVisible) {
                   return TextField(
+                    onChanged: (value) {
+                      passwordError.setState(null);
+                    },
                     controller: passwordController,
                     keyboardType: TextInputType.text,
                     obscureText: !isVisible,
@@ -526,7 +622,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       hintText: AppLocalizations.of(context)!.enter_password,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          (isVisible) ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          (!isVisible)
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           color: Theme.of(context).colorScheme.onBackground,
                         ),
                         onPressed: () {
@@ -534,6 +632,50 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         },
                       ),
                       isCollapsed: false,
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+          kHe24,
+          Text(
+            AppLocalizations.of(context)!.repeat_password + " :",
+          ),
+          8.verticalSpace,
+          BlocBuilder<ChannelCubit, dynamic>(
+            bloc: repeatPasswordError,
+            builder: (_, errorMessage) {
+              return BlocBuilder<ChannelCubit, dynamic>(
+                bloc: _repeatPasswordVisibleCubit,
+                builder: (context, isVisible) {
+                  return TextField(
+                    onChanged: (_) {
+                      repeatPasswordError.setState(null);
+                    },
+                    cursorColor: Theme.of(context).colorScheme.onBackground,
+                    controller: repeatPasswordController,
+                    keyboardType: TextInputType.text,
+                    obscureText: !isVisible,
+                    decoration: InputDecoration(
+                      errorText: errorMessage,
+                      hintText:
+                          AppLocalizations.of(context)!.repeat_password_hint,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          (!isVisible)
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                        onPressed: () {
+                          _repeatPasswordVisibleCubit.setState(!isVisible);
+                        },
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.onBackground),
+                      ),
                     ),
                   );
                 },
@@ -586,7 +728,139 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               );
             },
           ),
-          64.verticalSpace,
+          kHe24,
+          Text(
+            AppLocalizations.of(context)!.email + " :",
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          kHe8,
+          BlocBuilder<ChannelCubit, dynamic>(
+            bloc: emailError,
+            builder: (_, errorMessage) {
+              return TextField(
+                onChanged: (_) {
+                  emailError.setState(null);
+                },
+                controller: emailController,
+                decoration: InputDecoration(
+                  errorText: errorMessage,
+                  hintText: AppLocalizations.of(context)!.enter_your_email,
+                  isCollapsed: false,
+                ),
+              );
+            },
+          ),
+          if (userCountry == "Syrian Arab Republic") ...[
+            kHe24,
+            Text(
+              AppLocalizations.of(context)!.country + " :",
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            kHe8,
+            BlocBuilder<ChannelCubit, dynamic>(
+              bloc: countryError,
+              builder: (_, errorMessage) {
+                return MyDropdownList(
+                  elementsList: const ["ghina", "ghina", "ghina"],
+                  onSelect: (index) {},
+                  // validator: (value) => value == null
+                  //     ? AppLocalizations.of(context)!.this_field_is_required
+                  //     : null,
+                  selectedItem: AppLocalizations.of(context)!.please_select,
+                );
+              },
+            ),
+          ],
+
+          kHe24,
+          Text(
+            AppLocalizations.of(context)!.date_of_birth + " :",
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          kHe8,
+          BlocBuilder<ChannelCubit, dynamic>(
+            bloc: birthdateError,
+            builder: (_, errorMessage) {
+              return TextField(
+                onTap: () {
+                  DatePicker.showDatePicker(
+                    context,
+                    showTitleActions: true,
+                    minTime: DateTime(1900, 1, 1),
+                    maxTime: DateTime.now(),
+                    theme: const DatePickerTheme(
+                        headerColor: AppColors.primaryColor,
+                        backgroundColor: AppColors.secondaryColor,
+                        itemStyle: TextStyle(
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
+                        cancelStyle:
+                            TextStyle(color: Colors.white, fontSize: 16),
+                        doneStyle:
+                            TextStyle(color: Colors.white, fontSize: 16)),
+                    onConfirm: (date) {
+                      birthDate = date;
+                      // var inputDate = DateFormat('dd/MM/yyyy').format(date);
+                      // birthdateController.text = inputDate;
+                    },
+                    currentTime: DateTime.now(),
+                    locale: isArabic ? LocaleType.ar : LocaleType.en,
+                  );
+                },
+                readOnly: true,
+                controller: birthdateController,
+                decoration: InputDecoration(
+                  errorText: errorMessage,
+                  hintText: AppLocalizations.of(context)!.enter_your_birth_date,
+                  isCollapsed: false,
+                ),
+              );
+            },
+          ),
+
+          kHe24,
+          BlocBuilder<ChannelCubit, dynamic>(
+              bloc: _termsIsCheckedCubit,
+              builder: (_, isChecked) {
+                return Row(
+                  children: [
+                    Checkbox(
+                      activeColor:
+                          isDark ? AppColors.white : AppColors.primaryColor,
+                      value: isChecked,
+                      onChanged: (value) {
+                        isCheck = value!;
+                        _termsIsCheckedCubit.setState(!isChecked);
+                      },
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const TermsAndConditionsPage()));
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!
+                                .accept_terms_condition,
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                          Text(
+                            AppLocalizations.of(context)!.terms_condition,
+                            style: TextStyle(
+                                fontSize: 16.sp, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }),
+          //64.verticalSpace,
           Center(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -628,7 +902,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         authentication: phoneNumber,
                         password: passwordController.text,
                         firstName: firstNameController.text,
-                        lastName: lastNameController.text),
+                        lastName: lastNameController.text,
+                        birthdate: birthDate!,
+                        email: emailController.text,
+                        country: userCountry == null ? null : userCountry),
                   ),
                 );
                 FocusScope.of(context).unfocus();
@@ -636,26 +913,23 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             ),
           ),
           kHe16,
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  fixedSize: Size(240.w, 64.h),
-                  primary: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Theme.of(context).colorScheme.primary),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(8),
-                    ),
-                  )),
-              child: Text(AppLocalizations.of(context)!.sign_in,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2!
-                      .copyWith(color: Theme.of(context).colorScheme.onBackground)),
-              onPressed: () {
-                _isLoginSelected.setState(true);
-              },
+          TextButton(
+            onPressed: () {
+              _isLoginSelected.setState(true);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.already_have_an_account,
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.sign_in,
+                  style:
+                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ),
         ],
@@ -663,18 +937,48 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
+  ScrollController scrollController = ScrollController();
+
   Future<bool> getFieldsValidation() async {
     bool isValidationSuccess = true;
     // phone number validate :
     try {
-      final parsedPhoneNumber =
-          await PhoneNumberUtil().parse(phoneDialCode + authenticationController.text);
+      final parsedPhoneNumber = await PhoneNumberUtil()
+          .parse(phoneDialCode + authenticationController.text);
       phoneNumber = parsedPhoneNumber.international.replaceAll(" ", "");
     } catch (e) {
-      print(e);
-      authenticationError.setState(AppLocalizations.of(context)!.invalid_mobile_number);
+      authenticationError
+          .setState(AppLocalizations.of(context)!.invalid_mobile_number);
       return false;
     }
+
+    // passwords verification :
+    if (passwordValidator1(passwordController.text, context) != null) {
+      passwordError
+          .setState(passwordValidator1(passwordController.text, context));
+      scrollController.animateTo(100.h,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      return false;
+    } else if (confirmPasswordValidator1(
+            passwordController.text, context, repeatPasswordController.text) !=
+        null) {
+      repeatPasswordError.setState(confirmPasswordValidator1(
+          passwordController.text, context, repeatPasswordController.text));
+      scrollController.animateTo(100.h,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      return false;
+    }
+    passwordError.setState(null);
+    repeatPasswordError.setState(null);
+
+    if (!isCheck) {
+      MySnackBar.show(
+          context, AppLocalizations.of(context)!.accept_terms_conditions);
+      return false;
+    }
+
+
+
     return isValidationSuccess;
   }
 
@@ -682,12 +986,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     bool isValidationSuccess = true;
     // phone number validate :
     try {
-      final parsedPhoneNumber =
-          await PhoneNumberUtil().parse(phoneDialCodeLogin + authenticationControllerLogin.text);
+      final parsedPhoneNumber = await PhoneNumberUtil()
+          .parse(phoneDialCodeLogin + authenticationControllerLogin.text);
       phoneNumber = parsedPhoneNumber.international.replaceAll(" ", "");
     } catch (e) {
-      print(e);
-      authenticationErrorLogin.setState(AppLocalizations.of(context)!.invalid_mobile_number);
+      authenticationErrorLogin
+          .setState(AppLocalizations.of(context)!.invalid_mobile_number);
       return false;
     }
     return isValidationSuccess;

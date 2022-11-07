@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/app_theme_information.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 

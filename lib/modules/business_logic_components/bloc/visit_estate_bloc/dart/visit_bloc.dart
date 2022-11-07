@@ -15,7 +15,7 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
         emit(VisitComplete());
       } catch (e, stack) {
         if (e is GeneralException) {
-          emit(VisitError(error: e.errorMessage));
+          emit(VisitError(error: e.errorMessage!));
         }
         print(e);
         print(stack);

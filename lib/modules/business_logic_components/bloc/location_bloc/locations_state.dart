@@ -22,7 +22,7 @@ class LocationsFetchComplete extends LocationsState {
     for (Location parentLocation in locations) {
       if (parentLocation.locations == null) continue;
       for (Location childLocation in parentLocation.locations!) {
-        if (childLocation.name.contains(pattern)) {
+        if (childLocation.name.contains(pattern) || parentLocation.name.contains(pattern) || (pattern == "")) {
           result.add(LocationViewer(
               childLocation.name, parentLocation.name, childLocation.id));
         }

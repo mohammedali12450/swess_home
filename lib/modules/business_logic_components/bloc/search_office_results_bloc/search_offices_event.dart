@@ -3,7 +3,7 @@
 abstract class SearchOfficesEvents {}
 
 class SearchOfficesByNameStarted extends SearchOfficesEvents {
-  String name;
+  String? name;
   String? token ;
 
   SearchOfficesByNameStarted({required this.name , required this.token});
@@ -11,9 +11,8 @@ class SearchOfficesByNameStarted extends SearchOfficesEvents {
 
 class SearchOfficesByLocationStarted extends SearchOfficesEvents {
   int locationId;
-  String? token ;
 
-  SearchOfficesByLocationStarted({required this.locationId , required this.token});
+  SearchOfficesByLocationStarted({required this.locationId});
 }
 
 class SearchOfficesCleared extends SearchOfficesEvents {}

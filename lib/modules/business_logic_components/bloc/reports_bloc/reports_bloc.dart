@@ -18,7 +18,7 @@ class ReportBloc extends Bloc<ReportsEvent, ReportState> {
         emit(ReportFetchComplete());
       } catch (e, stack) {
         if (e is GeneralException) {
-          emit(ReportFetchError(error: e.errorMessage));
+          emit(ReportFetchError(error: e.errorMessage!));
         }
         print(e);
         print(stack);

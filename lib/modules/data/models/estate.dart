@@ -8,7 +8,7 @@ import 'package:swesshome/modules/data/models/location.dart';
 import 'package:swesshome/modules/data/models/ownership_type.dart';
 import 'package:swesshome/modules/data/models/period_type.dart';
 import 'estate_office.dart';
-import 'myImage.dart';
+import 'my_image.dart';
 
 class Estate {
   int id;
@@ -108,7 +108,7 @@ class Estate {
     // Offer type :
     EstateOfferType estateOfferType = EstateOfferType.fromJson(json["estate_offer_type"]);
     // estate location :
-    Location location = Location.fromJson(json["location"]);
+    Location? location = Location.fromJson(json["location"]);
     // area unit :
     AreaUnit areaUnit = AreaUnit.fromJson(json["area_unit"]);
     // estate images :

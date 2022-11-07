@@ -19,7 +19,7 @@ class RatingBloc extends Bloc<RatingEvent, RatingState> {
           emit(RatingError(error: e.errorMessage , isConnectionError: true));
         } catch (e) {
           if (e is GeneralException) {
-            emit(RatingError(error: e.errorMessage));
+            emit(RatingError(error: e.errorMessage!));
           }
         }
       },

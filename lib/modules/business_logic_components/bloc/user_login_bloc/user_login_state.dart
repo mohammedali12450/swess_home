@@ -8,7 +8,6 @@ class UserLoginProgress extends UserLoginState {}
 
 class UserLoginError extends UserLoginState {
   final String? errorMessage;
-
   Map<String, dynamic>? errorResponse;
   final bool isConnectionError;
 

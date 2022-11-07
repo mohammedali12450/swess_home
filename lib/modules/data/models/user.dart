@@ -11,6 +11,7 @@ class User {
 
   String? token;
 
+
   User({
     required this.userName,
     required this.lastName,

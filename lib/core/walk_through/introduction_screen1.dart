@@ -50,19 +50,18 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                                 popAfterFinish: false,
                               ),
                             ),
-                                (route) => false);
+                            (route) => false);
                       },
                       child: Container(
                         width: 80.w,
                         height: 32.h,
                         decoration: BoxDecoration(
-                          color: Colors.transparent ,
+                          color: Colors.transparent,
                           border: Border.all(
-                            color: Theme.of(context).colorScheme.onBackground ,
-                            width: 0.5
-                          ),
-                          borderRadius: const BorderRadius.all(Radius.circular(6)) ,
-
+                              color: Theme.of(context).colorScheme.onBackground,
+                              width: 0.5),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(6)),
                         ),
                         child: Center(
                           child: Text(
@@ -70,7 +69,6 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                             style: Theme.of(context).textTheme.caption,
                           ),
                         ),
-
                       ),
                     ),
                   ),
@@ -79,13 +77,14 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                       style: Theme.of(context).textTheme.headline3,
                       maxLines: 10,
                       textAlign: TextAlign.center),
-                  kHe24,
+                  // kHe16,
                   SizedBox(
                     width: 0.5.sw,
                     child: Stack(
                       children: [
                         Opacity(
-                            child: Image.asset(swessHomeIconPath, color: Colors.black),
+                            child: Image.asset(swessHomeIconPath,
+                                color: Colors.black),
                             opacity: 0.64),
                         ClipRect(
                           child: BackdropFilter(
@@ -96,7 +95,7 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                       ],
                     ),
                   ),
-                  64.verticalSpace,
+                  // 24.verticalSpace,
                   Text(
                     AppLocalizations.of(context)!.application_name,
                     style: Theme.of(context).textTheme.headline4,
@@ -104,14 +103,17 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                   kHe24,
                   Text(
                     AppLocalizations.of(context)!.introductionBody1,
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(height: 1.6),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1!
+                        .copyWith(height: 1.6),
                     maxLines: 10,
                     textAlign: TextAlign.center,
                   ),
                   kHe40,
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      fixedSize: Size(180.w , 64.h)  ,
+                      fixedSize: Size(180.w, 64.h),
                     ),
                     child: Text(
                       AppLocalizations.of(context)!.next,
