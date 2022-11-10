@@ -7,20 +7,24 @@ class Register {
 
   String password;
 
-  String email;
+  String? email;
 
   DateTime birthdate;
 
   String? country;
+
+  double? latitude, longitude;
 
   Register(
       {required this.firstName,
       required this.lastName,
       required this.authentication,
       required this.password,
-      required this.email,
+      this.email,
       required this.birthdate,
-      this.country});
+      this.country,
+      this.latitude,
+      this.longitude});
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {};

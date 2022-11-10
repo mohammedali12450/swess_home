@@ -6,7 +6,7 @@ import 'package:phone_number/phone_number.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/constants/validators.dart';
+import 'package:swesshome/core/functions/validators.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reset_password_bloc/reset_password_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reset_password_bloc/reset_password_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reset_password_bloc/reset_password_state.dart';

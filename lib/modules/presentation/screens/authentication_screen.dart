@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
@@ -30,11 +30,11 @@ import 'package:swesshome/modules/presentation/screens/verification_login_code.d
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import '../../../constants/validators.dart';
+import '../../../core/functions/validators.dart';
 import '../../../utils/helpers/my_snack_bar.dart';
 import '../../data/providers/theme_provider.dart';
 import '../pages/terms_condition_page.dart';
-import '../widgets/get_location_gps.dart';
+import '../widgets/date_picker.dart';
 import 'home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -70,6 +70,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   late UserLoginBloc userLoginBloc;
   late String phoneDialCode;
   String userCountry = "Syrian Arab Republic";
+  late int selectedGovernorateId;
   DateTime? birthDate;
   late String phoneDialCodeLogin;
   String phoneNumber = "";
@@ -105,6 +106,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       phoneDialCode = "+963";
       phoneDialCodeLogin = "+963";
     }
+    getCurrentPosition();
   }
 
   void signUpErrorHandling(errorResponseMap) {
@@ -121,10 +123,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       passwordError.setState(errorResponseMap["password"].first);
     }
     if (errorResponseMap.containsKey("email")) {
-      passwordError.setState(errorResponseMap["email"].first);
+      emailError.setState(errorResponseMap["email"].first);
     }
     if (errorResponseMap.containsKey("birthOfDate")) {
-      passwordError.setState(errorResponseMap["birthOfDate"].first);
+      birthdateError.setState(errorResponseMap["birthOfDate"].first);
     }
   }
 
@@ -547,19 +549,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               ],
             ),
           ),
-          TextButton(
-              onPressed: () {
-                // LocationPage.getCurrentPosition();
-                Navigator.pushNamed(context, LocationPage.id);
-              },
-              child: Text("ghina")),
         ],
       ),
     );
   }
 
   SingleChildScrollView buildSignupScreen() {
-    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    //bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SingleChildScrollView(
       child: Column(
@@ -753,7 +749,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           if (userCountry == "Syrian Arab Republic") ...[
             kHe24,
             Text(
-              AppLocalizations.of(context)!.country + " :",
+              AppLocalizations.of(context)!.governorate + " :",
               style: Theme.of(context).textTheme.headline6,
             ),
             kHe8,
@@ -762,7 +758,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               builder: (_, errorMessage) {
                 return MyDropdownList(
                   elementsList: const ["ghina", "ghina", "ghina"],
-                  onSelect: (index) {},
+                  onSelect: (index) {
+                    selectedGovernorateId = index;
+                  },
                   // validator: (value) => value == null
                   //     ? AppLocalizations.of(context)!.this_field_is_required
                   //     : null,
@@ -782,30 +780,18 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             bloc: birthdateError,
             builder: (_, errorMessage) {
               return TextField(
-                onTap: () {
-                  DatePicker.showDatePicker(
+                onTap: () async {
+                  await myDatePicker(
                     context,
                     showTitleActions: true,
                     minTime: DateTime(1900, 1, 1),
                     maxTime: DateTime.now(),
-                    theme: const DatePickerTheme(
-                        headerColor: AppColors.primaryColor,
-                        backgroundColor: AppColors.secondaryColor,
-                        itemStyle: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18),
-                        cancelStyle:
-                            TextStyle(color: Colors.white, fontSize: 16),
-                        doneStyle:
-                            TextStyle(color: Colors.white, fontSize: 16)),
-                    onConfirm: (date) {
-                      birthDate = date;
-                      // var inputDate = DateFormat('dd/MM/yyyy').format(date);
-                      // birthdateController.text = inputDate;
+                    onConfirm: (birthdate) {
+                      birthDate = birthdate;
+                      //print(birthDate);
                     },
                     currentTime: DateTime.now(),
-                    locale: isArabic ? LocaleType.ar : LocaleType.en,
+                    editingController: birthdateController,
                   );
                 },
                 readOnly: true,
@@ -904,8 +890,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         firstName: firstNameController.text,
                         lastName: lastNameController.text,
                         birthdate: birthDate!,
-                        email: emailController.text,
-                        country: userCountry == null ? null : userCountry),
+                        email: emailController.text == ""
+                            ? null
+                            : emailController.text,
+                        country: userCountry == null ? null : userCountry,
+                        latitude: latitude == null ? null : latitude,
+                        longitude: longitude == null ? null : longitude),
                   ),
                 );
                 FocusScope.of(context).unfocus();
@@ -971,13 +961,26 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     passwordError.setState(null);
     repeatPasswordError.setState(null);
 
+    // email verification
+    if (emailValidator(emailController.text, context) != null) {
+      emailError.setState(emailValidator(emailController.text, context));
+      return false;
+    }
+    emailError.setState(null);
+
+    // terms_conditions verification
     if (!isCheck) {
       MySnackBar.show(
           context, AppLocalizations.of(context)!.accept_terms_conditions);
       return false;
     }
 
-
+    // birthdate verification
+    if (birthdateController.text == "") {
+      birthdateError.setState(AppLocalizations.of(context)!.invalid_birth_date);
+      return false;
+    }
+    birthdateError.setState(null);
 
     return isValidationSuccess;
   }
@@ -996,6 +999,48 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     }
     return isValidationSuccess;
   }
-}
 
-// edited
+  double? latitude, longitude;
+
+  Future<bool> handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> getCurrentPosition() async {
+    final hasPermission = await handleLocationPermission();
+
+    if (!hasPermission) return;
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) {
+      latitude = position.latitude;
+      longitude = position.longitude;
+    }).catchError((e) {
+      debugPrint(e);
+    });
+  }
+}

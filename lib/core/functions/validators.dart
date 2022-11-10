@@ -42,3 +42,12 @@ String? confirmPasswordValidator1(
   }
   return null;
 }
+
+String? emailValidator(String? email, BuildContext context) {
+  if (email == "") {
+    return null;
+  } else if (!email!.contains("@") && !email.contains(".com")) {
+    return AppLocalizations.of(context)!.enter_your_email;
+  }
+  return null;
+}

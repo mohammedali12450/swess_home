@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:icon_badge/icon_badge.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/colors.dart';
@@ -24,6 +23,7 @@ import 'package:swesshome/modules/presentation/screens/search_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../widgets/icone_badge.dart';
 import 'office_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -89,53 +89,53 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          actions: [
-            BlocBuilder<NotificationsCubit, int>(
-                builder: (_, notificationsCount) {
-              return IconBadge(
-                icon: const Icon(
-                  Icons.notifications_outlined,
-                ),
-                itemCount: notificationsCount,
-                right: 0,
-                top: 5.h,
-                onTap: () async {
-                  if (BlocProvider.of<UserLoginBloc>(context).user == null) {
-                    await showWonderfulAlertDialog(
-                        context,
-                        AppLocalizations.of(context)!.confirmation,
-                        AppLocalizations.of(context)!
-                            .this_features_require_login,
-                        removeDefaultButton: true,
-                        dialogButtons: [
-                          ElevatedButton(
-                            child: Text(
-                              AppLocalizations.of(context)!.sign_in,
-                            ),
-                            onPressed: () async {
-                              await Navigator.pushNamed(
-                                  context, AuthenticationScreen.id);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ElevatedButton(
-                            child: Text(
-                              AppLocalizations.of(context)!.cancel,
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                        width: 400.w);
-                    return;
-                  }
-                  Navigator.pushNamed(context, NotificationScreen.id);
-                },
-                hideZero: true,
-              );
-            })
-          ],
+          // actions: [
+          //   BlocBuilder<NotificationsCubit, int>(
+          //       builder: (_, notificationsCount) {
+          //     return IconBadge(
+          //       icon: const Icon(
+          //         Icons.notifications_outlined,
+          //       ),
+          //       itemCount: notificationsCount,
+          //       right: 0,
+          //       top: 5.h,
+          //       onTap: () async {
+          //         if (BlocProvider.of<UserLoginBloc>(context).user == null) {
+          //           await showWonderfulAlertDialog(
+          //               context,
+          //               AppLocalizations.of(context)!.confirmation,
+          //               AppLocalizations.of(context)!
+          //                   .this_features_require_login,
+          //               removeDefaultButton: true,
+          //               dialogButtons: [
+          //                 ElevatedButton(
+          //                   child: Text(
+          //                     AppLocalizations.of(context)!.sign_in,
+          //                   ),
+          //                   onPressed: () async {
+          //                     await Navigator.pushNamed(
+          //                         context, AuthenticationScreen.id);
+          //                     Navigator.pop(context);
+          //                   },
+          //                 ),
+          //                 ElevatedButton(
+          //                   child: Text(
+          //                     AppLocalizations.of(context)!.cancel,
+          //                   ),
+          //                   onPressed: () {
+          //                     Navigator.pop(context);
+          //                   },
+          //                 ),
+          //               ],
+          //               width: 400.w);
+          //           return;
+          //         }
+          //         Navigator.pushNamed(context, NotificationScreen.id);
+          //       },
+          //       hideZero: true,
+          //     );
+          //   })
+          // ],
         ),
         drawer: const Drawer(
           child: MyDrawer(),

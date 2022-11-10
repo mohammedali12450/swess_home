@@ -54,6 +54,7 @@ import 'package:swesshome/modules/presentation/screens/after_estate_order_screen
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/created_estates_screen.dart';
+import 'package:swesshome/modules/presentation/screens/edit_profile_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/languages_screen.dart';
@@ -249,9 +250,9 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const LanguagesScreen(),
         );
-        case LocationPage.id:
+        case EditProfileScreen.id:
         return MaterialPageRoute(
-          builder: (_) => const LocationPage(),
+          builder: (_) => EditProfileScreen(),
         );
       default:
         return null;

@@ -10,16 +10,19 @@ import 'package:swesshome/modules/data/repositories/user_authentication_reposito
 class UserRegisterBloc extends Bloc<UserRegisterEvent, UserRegisterState> {
   UserAuthenticationRepository userAuthenticationRepository;
 
-  UserRegisterBloc(this.userAuthenticationRepository) : super(UserRegisterNone()) {
+  UserRegisterBloc(this.userAuthenticationRepository)
+      : super(UserRegisterNone()) {
     on<UserRegisterStarted>((event, emit) async {
       emit(UserRegisterProgress());
 
       try {
-        User registeredUser = await userAuthenticationRepository.register(event.register);
+        User registeredUser =
+            await userAuthenticationRepository.register(event.register);
         emit(UserRegisterComplete(user: registeredUser));
       } on ConnectionException catch (e) {
         emit(
-          UserRegisterError(errorMessage: e.errorMessage , isConnectionError: true),
+          UserRegisterError(
+              errorMessage: e.errorMessage, isConnectionError: true),
         );
       } catch (e) {
         if (e is FieldsException) {

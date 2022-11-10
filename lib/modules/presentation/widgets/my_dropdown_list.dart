@@ -22,7 +22,9 @@ class MyDropdownList extends StatefulWidget {
     required this.onSelect,
     this.initElementIndex = -1,
     this.onTap,
-    this.isOnChangeNull = false, this.selectedItem, this.validator,
+    this.isOnChangeNull = false,
+    this.selectedItem,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -38,7 +40,8 @@ class _MyDropdownListState extends State<MyDropdownList> {
     super.initState();
     // initializing:
     _elementSelectCubit = ChannelCubit(
-      widget.elementsList.elementAt((widget.initElementIndex == -1) ? 0 : widget.initElementIndex),
+      widget.elementsList.elementAt(
+          (widget.initElementIndex == -1) ? 0 : widget.initElementIndex),
     );
   }
 
@@ -52,10 +55,10 @@ class _MyDropdownListState extends State<MyDropdownList> {
         selectedItem ??= widget.elementsList.first;
         return DropdownButtonFormField(
           validator: widget.validator,
-          decoration:  InputDecoration(
+          decoration: InputDecoration(
               hintText: widget.selectedItem,
               hintStyle: TextStyle(
-                color: isDark ? Colors.white :Colors.black,
+                color: isDark ? Colors.white : Colors.black,
                 fontSize: 12,
               )),
           isExpanded: true,
@@ -66,8 +69,12 @@ class _MyDropdownListState extends State<MyDropdownList> {
                 child: Container(
                   width: 1.sw,
                   margin: EdgeInsets.only(
-                    right: Provider.of<LocaleProvider>(context).isArabic() ? 16.w : 0,
-                    left: Provider.of<LocaleProvider>(context).isArabic() ? 0 : 16.w,
+                    right: Provider.of<LocaleProvider>(context).isArabic()
+                        ? 16.w
+                        : 0,
+                    left: Provider.of<LocaleProvider>(context).isArabic()
+                        ? 0
+                        : 16.w,
                   ),
                   child: Text(
                     element.toString(),
@@ -80,7 +87,8 @@ class _MyDropdownListState extends State<MyDropdownList> {
               ? null
               : (selectedElement) {
                   _elementSelectCubit.setState(selectedElement);
-                  widget.onSelect(widget.elementsList.indexOf(selectedElement!));
+                  widget
+                      .onSelect(widget.elementsList.indexOf(selectedElement!));
                 },
           onTap: widget.onTap,
         );
