@@ -65,7 +65,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // buildLanguageSetting,
                   buildListTile(
                     isEnglish,
-                    icon: Icons.language_outlined,
+                    icon: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Icon(Icons.language_outlined),
+                    ),
                     title: Row(
                       children: [
                         Text(AppLocalizations.of(context)!.language_word),
@@ -88,6 +91,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (_userLoginBloc.user != null) ...[
                   buildUserProfile(isDark, isEnglish),
                 ],
+                //Spacer(),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(
+                   "version ${ApplicationSharedPreferences.getVersionAppState()}",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6!
+                        .copyWith(color: Colors.grey),
+                  ),
+                ),
               ],
             ),
           ),
@@ -230,7 +244,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => EditProfileScreen()),
+                        MaterialPageRoute(
+                            builder: (_) => const EditProfileScreen()),
                       );
                     },
                   ),

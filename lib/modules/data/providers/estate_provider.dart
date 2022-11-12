@@ -175,8 +175,8 @@ class EstateProvider {
         url = visitOfficeUrl;
 
         break;
-      case VisitType.estateCall:
-        data = {"estate_id": visitId};
+      case VisitType.officeCall:
+        data = {"office_id": visitId};
         url = callEstateUrl;
         break;
     }

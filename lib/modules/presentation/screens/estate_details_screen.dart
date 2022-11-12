@@ -26,6 +26,7 @@ import 'package:swesshome/modules/presentation/widgets/small_elevated_card.dart'
 import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../widgets/cupertino_action_sheet.dart';
 import '../widgets/report_estate.dart';
 import 'images_viewer_screen.dart';
 import 'map_screen.dart';
@@ -764,15 +765,32 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             ),
                           ],
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           visitBloc.add(
                             VisitStarted(
                                 visitId: widget.estate.id,
                                 token: userToken,
-                                visitType: VisitType.estateCall),
+                                visitType: VisitType.officeCall),
                           );
-                          launch("tel://" +
-                              widget.estate.estateOffice!.mobile.toString());
+                          await myCupertinoActionSheet(
+                            context,
+                            elementsList: [
+                              "ghina",
+                              "sharaf",
+                            ],
+                            onPressed: [
+                              () {
+                                launch("tel://" +
+                                    widget.estate.estateOffice!.mobile
+                                        .toString());
+                              },
+                              () {
+                                launch("tel://" +
+                                    widget.estate.estateOffice!.mobile
+                                        .toString());
+                              },
+                            ],
+                          );
                         },
                       ),
                       kHe24,

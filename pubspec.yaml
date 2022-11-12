@@ -71,7 +71,10 @@ dependency_overrides:
       ref: master
 
 
-
+flutter_datetime_picker:
+  git:
+    url: https://github.com/AlexHartford/flutter_datetime_picker.git
+    ref: master
 
 dev_dependencies:
   flutter_test:

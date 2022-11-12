@@ -33,6 +33,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/enums.dart';
 import '../screens/authentication_screen.dart';
+import 'cupertino_action_sheet.dart';
 
 class EstateCard extends StatefulWidget {
   final Estate estate;
@@ -48,7 +49,8 @@ class EstateCard extends StatefulWidget {
       this.removeBottomBar = false,
       this.bottomWidget,
       required this.removeCloseButton,
-      this.onClosePressed, required this.color})
+      this.onClosePressed,
+      required this.color})
       : super(key: key);
 
   @override
@@ -93,18 +95,23 @@ class _EstateCardState extends State<EstateCard> {
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode(context);
 
     currency = AppLocalizations.of(context)!.syrian_currency;
-    if (BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore) {
+    if (BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore) {
       currency = AppLocalizations.of(context)!.lebanon_currency;
     }
 
     int intPrice = int.parse(widget.estate.price);
     String estatePrice = NumbersHelper.getMoneyFormat(intPrice);
 
-    String estateType = widget.estate.estateType.getName(isArabic).split('|').elementAt(1);
-    String addingDate =
-        DateHelper.getDateByFormat(DateTime.parse(widget.estate.createdAt!), "yyyy/MM/dd");
-    List<String> estateImages =
-        widget.estate.images.where((e) => e.type == "estate_image").map((e) => e.url).toList();
+    String estateType =
+        widget.estate.estateType.getName(isArabic).split('|').elementAt(1);
+    String addingDate = DateHelper.getDateByFormat(
+        DateTime.parse(widget.estate.createdAt!), "yyyy/MM/dd");
+    List<String> estateImages = widget.estate.images
+        .where((e) => e.type == "estate_image")
+        .map((e) => e.url)
+        .toList();
 
     Color estateTypeBackgroundColor = Colors.white;
     Color estatePriceBackgroundColor = Colors.white;
@@ -137,8 +144,10 @@ class _EstateCardState extends State<EstateCard> {
         case 1:
         case 2:
           {
-            estateTypeBackgroundColor = Theme.of(context).colorScheme.primary.withAlpha(180);
-            estatePriceBackgroundColor = Theme.of(context).colorScheme.secondary;
+            estateTypeBackgroundColor =
+                Theme.of(context).colorScheme.primary.withAlpha(180);
+            estatePriceBackgroundColor =
+                Theme.of(context).colorScheme.secondary;
             estateTypeColor = AppColors.white;
             estatePriceColor = AppColors.black;
             break;
@@ -147,14 +156,14 @@ class _EstateCardState extends State<EstateCard> {
         case 4:
           {
             estateTypeBackgroundColor = Theme.of(context).colorScheme.primary;
-            estatePriceBackgroundColor = Theme.of(context).colorScheme.secondary;
+            estatePriceBackgroundColor =
+                Theme.of(context).colorScheme.secondary;
             estateTypeColor = AppColors.white;
             estatePriceColor = AppColors.black;
             break;
           }
       }
     }
-
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
@@ -199,22 +208,28 @@ class _EstateCardState extends State<EstateCard> {
                         builder: (BuildContext context, int index) {
                           return PhotoViewGalleryPageOptions.customChild(
                             child: CachedNetworkImage(
-                              imageUrl: imagesBaseUrl  + estateImages.elementAt(index),
+                              imageUrl:
+                                  imagesBaseUrl + estateImages.elementAt(index),
                               fit: BoxFit.cover,
                               progressIndicatorBuilder: (_, __, ___) {
                                 return Icon(
                                   Icons.camera_alt_outlined,
                                   size: 120.w,
-                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.64),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.64),
                                 );
                               },
-                              imageBuilder: (context, imageProvider) => Container(
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
                                 decoration: BoxDecoration(
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(8),
                                     topRight: Radius.circular(8),
                                   ),
-                                  image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                                  image: DecorationImage(
+                                      image: imageProvider, fit: BoxFit.cover),
                                 ),
                               ),
                             ),
@@ -260,14 +275,20 @@ class _EstateCardState extends State<EstateCard> {
                                 children: [
                                   Text(
                                     (currentImageIndex + 1).toString() + '/',
-                                    style: Theme.of(context).textTheme.caption!.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption!
+                                        .copyWith(
                                           fontFamily: "Hind",
                                           color: AppColors.black,
                                         ),
                                   ),
                                   Text(
                                     estateImages.length.toString(),
-                                    style: Theme.of(context).textTheme.caption!.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption!
+                                        .copyWith(
                                           fontFamily: "Hind",
                                           color: AppColors.black,
                                         ),
@@ -343,7 +364,8 @@ class _EstateCardState extends State<EstateCard> {
                                       height: 1.5),
                                 ),
                               ),
-                              if (widget.estate.estateOfferType.id != rentOfferTypeNumber)
+                              if (widget.estate.estateOfferType.id !=
+                                  rentOfferTypeNumber)
                                 Padding(
                                   padding: EdgeInsets.only(
                                     right: (isArabic) ? 8.w : 0,
@@ -351,29 +373,40 @@ class _EstateCardState extends State<EstateCard> {
                                   ),
                                   child: Text(
                                     currency,
-                                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                                        height: 1.8,
-                                        fontSize: 22.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: estatePriceColor),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(
+                                            height: 1.8,
+                                            fontSize: 22.sp,
+                                            fontWeight: FontWeight.w400,
+                                            color: estatePriceColor),
                                   ),
                                 ),
-                              if (widget.estate.estateOfferType.id == rentOfferTypeNumber)
+                              if (widget.estate.estateOfferType.id ==
+                                  rentOfferTypeNumber)
                                 Padding(
                                   padding: EdgeInsets.only(
                                     right: (isArabic) ? 8.w : 0,
                                     left: (!isArabic) ? 8.w : 0,
                                   ),
                                   child: Text(
-                                    AppLocalizations.of(context)!.currency_over_period(
+                                    AppLocalizations.of(context)!
+                                        .currency_over_period(
                                       currency,
-                                      widget.estate.periodType!.getName(isArabic)!.split("|").first,
+                                      widget.estate.periodType!
+                                          .getName(isArabic)!
+                                          .split("|")
+                                          .first,
                                     ),
-                                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                                        height: 1.8,
-                                        fontSize: 22.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: estatePriceColor),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(
+                                            height: 1.8,
+                                            fontSize: 22.sp,
+                                            fontWeight: FontWeight.w400,
+                                            color: estatePriceColor),
                                   ),
                                 ),
                             ],
@@ -427,7 +460,9 @@ class _EstateCardState extends State<EstateCard> {
                               ),
                               12.verticalSpace,
                               Text(
-                                AppLocalizations.of(context)!.adding_date + " : " + addingDate,
+                                AppLocalizations.of(context)!.adding_date +
+                                    " : " +
+                                    addingDate,
                                 style: Theme.of(context).textTheme.subtitle2,
                               ),
                             ],
@@ -443,7 +478,8 @@ class _EstateCardState extends State<EstateCard> {
                             color: Colors.transparent,
                             image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                imagesBaseUrl + widget.estate.estateOffice!.logo!,
+                                imagesBaseUrl +
+                                    widget.estate.estateOffice!.logo!,
                               ),
                             ),
                           ),
@@ -464,13 +500,14 @@ class _EstateCardState extends State<EstateCard> {
               children: [
                 BlocConsumer<SaveAndUnSaveEstateBloc, SaveAndUnSaveEstateState>(
                   bloc: _saveAndUnSaveEstateBloc,
-                  listener: (_, saveAndUnSaveState) async{
+                  listener: (_, saveAndUnSaveState) async {
                     if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
                       var error = saveAndUnSaveState.isConnectionError
                           ? AppLocalizations.of(context)!.no_internet_connection
                           : saveAndUnSaveState.error;
-                      await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
-                    _saveAndUnSaveEstateBloc.add(
+                      await showWonderfulAlertDialog(
+                          context, AppLocalizations.of(context)!.error, error);
+                      _saveAndUnSaveEstateBloc.add(
                         ReInitializeSaveState(isSaved: widget.estate.isSaved!),
                       );
                     }
@@ -487,8 +524,9 @@ class _EstateCardState extends State<EstateCard> {
                         if (userToken == null) {
                           showWonderfulAlertDialog(
                             context,
-                            AppLocalizations.of(context)!.confirmation  ,
-                            AppLocalizations.of(context)!.this_features_require_login,
+                            AppLocalizations.of(context)!.confirmation,
+                            AppLocalizations.of(context)!
+                                .this_features_require_login,
                             removeDefaultButton: true,
                             width: 400.w,
                             dialogButtons: [
@@ -508,13 +546,16 @@ class _EstateCardState extends State<EstateCard> {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => const AuthenticationScreen(
+                                      builder: (_) =>
+                                          const AuthenticationScreen(
                                         popAfterFinish: true,
                                       ),
                                     ),
                                   );
                                   Navigator.pop(context);
-                                  User? user = BlocProvider.of<UserLoginBloc>(context).user;
+                                  User? user =
+                                      BlocProvider.of<UserLoginBloc>(context)
+                                          .user;
                                   if (user != null && user.token != null) {
                                     userToken = user.token;
                                   }
@@ -527,12 +568,12 @@ class _EstateCardState extends State<EstateCard> {
                         }
 
                         if (saveAndUnSaveState is EstateSaved) {
-                          _saveAndUnSaveEstateBloc.add(
-                              UnSaveEventStarted(token: userToken, estateId: widget.estate.id));
+                          _saveAndUnSaveEstateBloc.add(UnSaveEventStarted(
+                              token: userToken, estateId: widget.estate.id));
                         }
                         if (saveAndUnSaveState is EstateUnSaved) {
-                          _saveAndUnSaveEstateBloc
-                              .add(EstateSaveStarted(token: userToken, estateId: widget.estate.id));
+                          _saveAndUnSaveEstateBloc.add(EstateSaveStarted(
+                              token: userToken, estateId: widget.estate.id));
                         }
                       },
                       icon: (saveAndUnSaveState is EstateSaveAndUnSaveProgress)
@@ -548,28 +589,47 @@ class _EstateCardState extends State<EstateCard> {
                   },
                 ),
                 IconButton(
-                  onPressed: () {
+                  onPressed: () async {
                     visitBloc.add(
                       VisitStarted(
                           visitId: widget.estate.id,
                           token: userToken,
-                          visitType: VisitType.estateCall),
+                          visitType: VisitType.officeCall),
                     );
-                    launch(
-                      "tel://" + widget.estate.estateOffice!.mobile.toString(),
+                    await myCupertinoActionSheet(
+                      context,
+                      elementsList: [
+                        "ghina",
+                        "sharaf",
+                      ],
+                      onPressed: [
+                        () {
+                          launch(
+                            "tel://" +
+                                widget.estate.estateOffice!.mobile.toString(),
+                          );
+                        },
+                        () {
+                          launch(
+                            "tel://" +
+                                widget.estate.estateOffice!.mobile.toString(),
+                          );
+                        },
+                      ],
                     );
                   },
                   icon: const Icon(Icons.call),
                 ),
                 BlocConsumer<LikeAndUnlikeBloc, LikeAndUnlikeState>(
                   bloc: _likeAndUnlikeBloc,
-                  listener: (_, likeAndUnlikeState)async {
+                  listener: (_, likeAndUnlikeState) async {
                     if (likeAndUnlikeState is LikeAndUnlikeError) {
                       var error = likeAndUnlikeState.isConnectionError
                           ? AppLocalizations.of(context)!.no_internet_connection
                           : likeAndUnlikeState.error;
-                      await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
-                    _likeAndUnlikeBloc.add(
+                      await showWonderfulAlertDialog(
+                          context, AppLocalizations.of(context)!.error, error);
+                      _likeAndUnlikeBloc.add(
                         ReInitializeLikeState(isLike: widget.estate.isLiked!),
                       );
                     }
@@ -587,7 +647,8 @@ class _EstateCardState extends State<EstateCard> {
                           showWonderfulAlertDialog(
                             context,
                             AppLocalizations.of(context)!.confirmation,
-                            AppLocalizations.of(context)!.this_features_require_login,
+                            AppLocalizations.of(context)!
+                                .this_features_require_login,
                             removeDefaultButton: true,
                             width: 400.w,
                             dialogButtons: [
@@ -607,13 +668,16 @@ class _EstateCardState extends State<EstateCard> {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => const AuthenticationScreen(
+                                      builder: (_) =>
+                                          const AuthenticationScreen(
                                         popAfterFinish: true,
                                       ),
                                     ),
                                   );
                                   Navigator.pop(context);
-                                  User? user = BlocProvider.of<UserLoginBloc>(context).user;
+                                  User? user =
+                                      BlocProvider.of<UserLoginBloc>(context)
+                                          .user;
                                   if (user != null && user.token != null) {
                                     userToken = user.token;
                                   }
