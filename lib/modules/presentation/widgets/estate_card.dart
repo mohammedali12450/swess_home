@@ -331,7 +331,7 @@ class _EstateCardState extends State<EstateCard> {
                               },
                             ),
                           ),
-                        )
+                        ),
                     ],
                   ),
                 ),

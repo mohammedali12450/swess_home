@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,7 +25,6 @@ import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_introduction_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
-import 'package:swesshome/modules/presentation/widgets/rate_container.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -138,134 +136,161 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              SizedBox(
-                                height: 230.h,
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: InkWell(
-                                    onTap: () async {
-                                      await showDialog(
-                                          context: context,
-                                          builder: (_) => ImageDialog(
-                                              path: estateState.results.logo!));
-                                    },
-                                    child: Hero(
-                                      tag: estateState.results.id.toString(),
-                                      child: CircleAvatar(
-                                        radius: 90.w,
-                                        backgroundColor: Colors.grey,
-                                        backgroundImage:
-                                            CachedNetworkImageProvider(
-                                                imagesBaseUrl +
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: SizedBox(
+                                    height: 230.h,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: InkWell(
+                                        onTap: () async {
+                                          await showDialog(
+                                              context: context,
+                                              builder: (_) => ImageDialog(
+                                                  path: estateState
+                                                      .results.logo!));
+                                        },
+                                        child: Hero(
+                                          tag:
+                                              estateState.results.id.toString(),
+                                          child: Container(
+                                            clipBehavior: Clip.antiAlias,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(90.w),
+                                            ),
+                                            child: CachedNetworkImage(
+                                                imageUrl: imagesBaseUrl +
                                                     estateState.results.logo!),
+                                          ),
+                                          // child: CircleAvatar(
+                                          //   radius: 90.w,
+                                          //   backgroundColor: Colors.grey,
+                                          //   backgroundImage:
+                                          //       CachedNetworkImageProvider(
+                                          //           imagesBaseUrl +
+                                          //               estateState.results.logo!),
+                                          // ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    estateState.results.name!,
-                                    style:
-                                        Theme.of(context).textTheme.headline5,
-                                  ),
-                                  12.verticalSpace,
-                                  Text(
-                                    estateState.results.location!
-                                        .getLocationName(),
-                                    style:
-                                        Theme.of(context).textTheme.headline6,
-                                  ),
-                                  12.verticalSpace,
-                                  SizedBox(
-                                    width: 200.w,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        InkWell(
-                                          onTap: () async {
-                                            // _visitBloc.add(
-                                            //   VisitStarted(
-                                            //       visitId: estateState.results.id,
-                                            //       token: userToken,
-                                            //       visitType: VisitType.officeCall),
-                                            // );
-                                            await myCupertinoActionSheet(
-                                              context,
-                                              elementsList: [
-                                                "ghina",
-                                                "sharaf",
-                                              ],
-                                              onPressed: [
-                                                () {},
-                                                () {},
-                                              ],
-                                            );
-                                            // launch(
-                                            //   "tel://" + estateState.results.mobile!,
-                                            // );
-                                          },
-                                          child:
-                                              const Icon(Icons.phone_outlined),
-                                        ),
-                                        InkWell(
-                                          onTap: () async {
-                                            // _visitBloc.add(
-                                            //   VisitStarted(
-                                            //       visitId: estateState.results.id,
-                                            //       token: userToken,
-                                            //       visitType: VisitType.officeCall),
-                                            // );
-                                            // launch(
-                                            //   "tel://" + estateState.results.mobile!,
-                                            // );
-                                          },
-                                          child: const Icon(
-                                              Icons.facebook_rounded),
-                                        ),
-                                        InkWell(
-                                          onTap: () async {
-                                            // _visitBloc.add(
-                                            //   VisitStarted(
-                                            //       visitId: estateState.results.id,
-                                            //       token: userToken,
-                                            //       visitType: VisitType.officeCall),
-                                            // );
-                                            await myCupertinoActionSheet(
-                                              context,
-                                              elementsList: [
-                                                "ghina",
-                                                "sharaf",
-                                              ],
-                                              onPressed: [
-                                                () {
-                                                  launch(
-                                                    "tel://" +
-                                                        estateState
-                                                            .results.mobile!,
-                                                  );
-                                                },
-                                                () {
-                                                  launch(
-                                                    "tel://" +
-                                                        estateState
-                                                            .results.mobile!,
-                                                  );
-                                                },
-                                              ],
-                                            );
-                                          },
-                                          child: const Icon(
-                                              Icons.whatsapp_outlined),
-                                        ),
-                                      ],
+                              Expanded(
+                                flex: 2,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      estateState.results.name!,
+                                      style:
+                                          Theme.of(context).textTheme.headline5,
+                                      textAlign: TextAlign.center,
                                     ),
-                                  ),
-                                ],
+                                    12.verticalSpace,
+                                    Text(
+                                      estateState.results.location!
+                                          .getLocationName(),
+                                      style:
+                                          Theme.of(context).textTheme.headline6,
+                                    ),
+                                    12.verticalSpace,
+                                    SizedBox(
+                                      width: 200.w,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          InkWell(
+                                            onTap: () async {
+                                              // _visitBloc.add(
+                                              //   VisitStarted(
+                                              //       visitId: estateState.results.id,
+                                              //       token: userToken,
+                                              //       visitType: VisitType.officeCall),
+                                              // );
+                                              await myCupertinoActionSheet(
+                                                context,
+                                                elementsList: [
+                                                  "ghina",
+                                                  "sharaf",
+                                                  "ghina",
+                                                  "sharaf",
+                                                  "ghina",
+                                                  "sharaf",
+                                                ],
+                                                onPressed: [
+                                                  () {},
+                                                  () {},
+                                                ],
+                                              );
+                                              // launch(
+                                              //   "tel://" + estateState.results.mobile!,
+                                              // );
+                                            },
+                                            child: const Icon(
+                                                Icons.phone_outlined),
+                                          ),
+                                          InkWell(
+                                            onTap: () async {
+                                              // _visitBloc.add(
+                                              //   VisitStarted(
+                                              //       visitId: estateState.results.id,
+                                              //       token: userToken,
+                                              //       visitType: VisitType.officeCall),
+                                              // );
+                                              // launch(
+                                              //   "tel://" + estateState.results.mobile!,
+                                              // );
+                                            },
+                                            child: const Icon(
+                                                Icons.facebook_rounded),
+                                          ),
+                                          InkWell(
+                                            onTap: () async {
+                                              // _visitBloc.add(
+                                              //   VisitStarted(
+                                              //       visitId: estateState.results.id,
+                                              //       token: userToken,
+                                              //       visitType: VisitType.officeCall),
+                                              // );
+                                              await myCupertinoActionSheet(
+                                                context,
+                                                elementsList: [
+                                                  "ghina",
+                                                  "sharaf",
+                                                ],
+                                                onPressed: [
+                                                  () {
+                                                    launch(
+                                                      "tel://" +
+                                                          estateState
+                                                              .results.mobile!,
+                                                    );
+                                                  },
+                                                  () {
+                                                    launch(
+                                                      "tel://" +
+                                                          estateState
+                                                              .results.mobile!,
+                                                    );
+                                                  },
+                                                ],
+                                              );
+                                            },
+                                            child: const Icon(
+                                                Icons.whatsapp_outlined),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -442,12 +467,27 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                             right: isArabic ? 8.w : 0,
                             left: !isArabic ? 8.w : 0,
                           ),
-                          child: Text(
-                            AppLocalizations.of(context)!.estate_offers + " :",
-                            style:
-                                Theme.of(context).textTheme.subtitle2!.copyWith(
+                          child: Row(
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.estate_offers,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2!
+                                    .copyWith(
                                       color: AppColors.black,
                                     ),
+                              ),
+                              Text(
+                                " 15" + " :",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2!
+                                    .copyWith(
+                                      color: AppColors.black,
+                                    ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

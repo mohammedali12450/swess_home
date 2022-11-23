@@ -95,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Text(
-                   "version ${ApplicationSharedPreferences.getVersionAppState()}",
+                    "version ${ApplicationSharedPreferences.getVersionAppState()}",
                     style: Theme.of(context)
                         .textTheme
                         .headline6!
@@ -113,7 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget buildUserProfile(isDark, isEnglish) {
     return Column(
       children: [
-        buildProfileImage(),
+        buildProfileImage(isDark),
 
         // buildNotification
         buildListTile(
@@ -223,9 +223,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  SizedBox buildProfileImage() {
+  SizedBox buildProfileImage(isDark) {
     return SizedBox(
-      height: 315.h,
+      height: 320.h,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -237,9 +237,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.edit_outlined,
-                      color: AppColors.primaryColor,
+                      color: !isDark ? AppColors.primaryColor : AppColors.white,
                     ),
                     onPressed: () {
                       Navigator.push(
@@ -261,20 +261,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           SizedBox(
-            height: 110.h,
+            height: 115.h,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "ghina sharaf",
-                  style: Theme.of(context).textTheme.headline3,
+                  style: Theme.of(context).textTheme.headline3!.copyWith(
+                      color: !isDark ? AppColors.black : AppColors.white),
                 ),
                 Text(
                   "ghina.swesshome@gmail.com",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline6!
-                      .copyWith(color: AppColors.hintColor),
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                      color: !isDark
+                          ? AppColors.hintColor
+                          : AppColors.white.withOpacity(0.48)),
                 ),
                 Directionality(
                   textDirection: TextDirection.ltr,
@@ -283,17 +284,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       Text(
                         "+963946156989",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(color: AppColors.primaryColor),
+                        style: Theme.of(context).textTheme.headline6!.copyWith(
+                            color: !isDark
+                                ? AppColors.primaryColor
+                                : AppColors.primaryDark),
                       ),
                       Text(
                         "Syria,Damascus",
                         style: Theme.of(context)
                             .textTheme
                             .headline6!
-                            .copyWith(color: AppColors.primaryColor),
+                            .copyWith(color: !isDark
+                            ? AppColors.primaryColor
+                            : AppColors.primaryDark),
                       ),
                     ],
                   ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 
@@ -23,6 +24,22 @@ class ImagesViewerScreen extends StatefulWidget {
 
 class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
   ChannelCubit currentImageCubit = ChannelCubit(0);
+
+  Future<void> secureScreen() async {
+    await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+  }
+
+  @override
+  void initState() {
+    secureScreen();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+     FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
+  }
 
   @override
   Widget build(BuildContext context) {

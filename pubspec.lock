@@ -50,6 +50,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  bottom_picker:
+    dependency: "direct main"
+    description:
+      path: "download_lib/bottom_picker"
+      relative: true
+    source: path
+    version: "2.0.1"
   cached_network_image:
     dependency: "direct main"
     description:
@@ -420,6 +427,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_windowmanager:
+    dependency: "direct main"
+    description:
+      name: flutter_windowmanager
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   fluttertoast:
     dependency: "direct main"
     description:
@@ -1050,6 +1064,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "19.4.56"
+  syncfusion_flutter_sliders:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_sliders
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "19.4.56"
   synchronized:
     dependency: transitive
     description:
@@ -1071,6 +1099,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.8"
+  timelines:
+    dependency: "direct main"
+    description:
+      name: timelines
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   timezone:
     dependency: transitive
     description:

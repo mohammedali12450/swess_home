@@ -18,6 +18,7 @@ import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../widgets/report_estate.dart';
 
 class EstatesScreen extends StatefulWidget {
@@ -33,6 +34,9 @@ class EstatesScreen extends StatefulWidget {
 
 class _EstatesScreenState extends State<EstatesScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final ChannelCubit _priceSelected = ChannelCubit(false);
+  final ChannelCubit _dateSelected = ChannelCubit(true);
 
   final List<Estate> estates = [];
   final ScrollController _scrollController = ScrollController();
@@ -65,10 +69,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
           ),
           actions: [
             IconButton(
-              icon: const Icon(
-                Icons.search,
-                color: AppColors.white,
-              ),
+              icon: const Icon(Icons.search),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -102,7 +103,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                 return const PropertyShimmer();
               } else if (estatesFetchState is EstateFetchComplete) {
                 estates.addAll(estatesFetchState.estates);
-               // sortEstateByDate();
+                // sortEstateByDate();
                 BlocProvider.of<EstateBloc>(context).isFetching = false;
               } else if (estatesFetchState is EstateFetchError &&
                   estates.isEmpty) {
@@ -182,6 +183,124 @@ class _EstatesScreenState extends State<EstatesScreen> {
                   ),
                 child: Column(
                   children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(8.w, 12.w, 8.w, 7.w),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: BlocBuilder<ChannelCubit, dynamic>(
+                                bloc: _priceSelected,
+                                builder: (_, isPriceSelected) {
+                                  return InkWell(
+                                    onTap: () {
+                                      _priceSelected.setState(!isPriceSelected);
+                                      if (_dateSelected.state) {
+                                        _dateSelected.setState(false);
+                                      }
+                                    },
+                                    child: Container(
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: isPriceSelected
+                                            ? AppColors.primaryColor
+                                            : AppColors.white,
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(12)),
+                                        border: Border.all(
+                                            color: AppColors.primaryColor),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Text(
+                                            AppLocalizations.of(context)!
+                                                .by_price,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline6!
+                                                .copyWith(
+                                                    color: isPriceSelected
+                                                        ? AppColors.white
+                                                        : AppColors
+                                                            .primaryColor),
+                                          ),
+                                          !isPriceSelected
+                                              ? const Icon(
+                                                  Icons.arrow_downward,
+                                                  color: AppColors.primaryColor,
+                                                  size: 16,
+                                                )
+                                              : const Icon(
+                                                  Icons.arrow_upward,
+                                                  color: AppColors.white,
+                                                  size: 16,
+                                                )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }),
+                          ),
+                          kWi12,
+                          Expanded(
+                            child: BlocBuilder<ChannelCubit, dynamic>(
+                                bloc: _dateSelected,
+                                builder: (_, isDateSelected) {
+                                  return InkWell(
+                                    onTap: () {
+                                      _dateSelected.setState(!isDateSelected);
+                                      if (_priceSelected.state) {
+                                        _priceSelected.setState(false);
+                                      }
+                                    },
+                                    child: Container(
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: isDateSelected
+                                            ? AppColors.primaryColor
+                                            : AppColors.white,
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(12)),
+                                        border: Border.all(
+                                            color: AppColors.primaryColor),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Text(
+                                            AppLocalizations.of(context)!
+                                                .by_date,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline6!
+                                                .copyWith(
+                                                    color: isDateSelected
+                                                        ? AppColors.white
+                                                        : AppColors
+                                                            .primaryColor),
+                                          ),
+                                          !isDateSelected
+                                              ? const Icon(
+                                                  Icons.arrow_downward,
+                                                  color: AppColors.primaryColor,
+                                                  size: 16,
+                                                )
+                                              : const Icon(
+                                                  Icons.arrow_upward,
+                                                  color: AppColors.white,
+                                                  size: 16,
+                                                )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }),
+                          ),
+                        ],
+                      ),
+                    ),
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,

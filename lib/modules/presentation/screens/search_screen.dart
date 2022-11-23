@@ -1,5 +1,7 @@
+import 'package:bottom_picker/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,6 +11,7 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/enums.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/recent_searches_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
@@ -35,7 +38,9 @@ import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/row_informations_choices.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../../data/providers/locale_provider.dart';
+import 'package:bottom_picker/bottom_picker.dart';
 
 class SearchScreen extends StatefulWidget {
   static const String id = "SearchScreen1";
@@ -53,12 +58,16 @@ class _SearchScreenState extends State<SearchScreen> {
   ChannelCubit patternCubit = ChannelCubit(null);
   ChannelCubit locationDetectedCubit = ChannelCubit(false);
   ChannelCubit advancedSearchOpenedCubit = ChannelCubit(false);
+  ChannelCubit startPriceCubit = ChannelCubit("No Min");
+  ChannelCubit endPriceCubit = ChannelCubit("No Max");
   ChannelCubit searchTypeCubit = ChannelCubit(NewSearchType.neighborhood);
   RegionsBloc regionsBloc = RegionsBloc();
 
   // controllers:
   TextEditingController locationController = TextEditingController();
   TextEditingController textFieldController = TextEditingController();
+  TextEditingController startPriceController = TextEditingController();
+  TextEditingController endPriceController = TextEditingController();
 
   // others:
   late List<Location> region;
@@ -79,6 +88,8 @@ class _SearchScreenState extends State<SearchScreen> {
   RegionViewer? selectedRegion;
   String? token;
   final _formKey = GlobalKey<FormState>();
+  String startPrice = "No Min", endPrice = "No Max";
+  SfRangeValues? values;
 
   initializeEstateBooleanVariables() {
     isSell = (widget.searchData.estateOfferTypeId == sellOfferTypeNumber);
@@ -101,7 +112,14 @@ class _SearchScreenState extends State<SearchScreen> {
     widget.searchData.isOnBeach = null;
     // widget.searchData.interiorStatusId = null;
     // widget.searchData.ownershipId = null;
+
     initializeEstateBooleanVariables();
+
+    // startPrice = !isSell ? 100000 : 1000000;
+    // endPrice = !isSell ? 100000000 : 10000000000;
+    // values = SfRangeValues(startPrice, endPrice);
+    // startPriceController.text = startPrice.toString();
+    // endPriceController.text = endPrice.toString();
   }
 
   String? userToken;
@@ -131,14 +149,16 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    startPriceCubit.setState(AppLocalizations.of(context)!.no_min_price);
+    endPriceCubit.setState(AppLocalizations.of(context)!.no_max_price);
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           titleSpacing: 0,
-          backgroundColor: isDarkMode ? const Color(0xff26282B) : null,
+          backgroundColor: isDark ? const Color(0xff26282B) : null,
           title: Row(children: [
             Text(
               isSell
@@ -150,8 +170,6 @@ class _SearchScreenState extends State<SearchScreen> {
             BlocBuilder<ChannelCubit, dynamic>(
               bloc: searchTypeCubit,
               builder: (_, searchType) {
-                bool isDark =
-                    Provider.of<ThemeProvider>(context).isDarkMode(context);
                 return Padding(
                   padding: EdgeInsets.only(left: 18.w, top: 8.w, right: 18.w),
                   child: Container(
@@ -265,7 +283,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           bloc: locationDetectedCubit,
                           builder: (_, isLocationDetected) {
                             return (isLocationDetected)
-                                ? buildSearchWidgets()
+                                ? buildSearchWidgets(isDark)
                                 : buildRegionsDetector();
                           },
                         ),
@@ -277,7 +295,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         bloc: locationDetectedCubit,
                         builder: (_, isLocationDetected) {
                           return (isLocationDetected)
-                              ? buildSearchWidgets()
+                              ? buildSearchWidgets(isDark)
                               : buildLocationDetector();
                         },
                       ),
@@ -354,9 +372,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               flex: 1,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  primary: isDarkMode
-                                      ? const Color(0xff90B8F8)
-                                      : null,
+                                  primary:
+                                      isDark ? const Color(0xff90B8F8) : null,
                                   padding: EdgeInsets.zero,
                                   minimumSize: Size(20.w, 60.h),
                                 ),
@@ -775,7 +792,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  SingleChildScrollView buildSearchWidgets() {
+  SingleChildScrollView buildSearchWidgets(isDark) {
     List<String> priceDomainsNames =
         priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
     priceDomainsNames.insert(0, AppLocalizations.of(context)!.undefined);
@@ -819,67 +836,159 @@ class _SearchScreenState extends State<SearchScreen> {
             style: Theme.of(context).textTheme.headline6,
           ),
           kHe12,
-          MyDropdownList(
-            elementsList: priceDomainsNames,
-            onSelect: (index) {
-              // set search data price domain:
-              bool isNoneSelected = (index == 0);
-              widget.searchData.priceDomainId = (isNoneSelected)
-                  ? null
-                  : priceDomains.elementAt(index - 1).id;
-            },
-            // validator: (value) =>
-            // value == null ? AppLocalizations.of(context)!.this_field_is_required: null,
-            selectedItem: AppLocalizations.of(context)!.undefined,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(AppLocalizations.of(context)!.min_price),
+                        ],
+                      ),
+                      Align(
+                        alignment: isArabic
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: GestureDetector(
+                          onTap: () async {
+                            await openPricePicker(
+                              context,
+                              isDark,
+                              title:
+                                  AppLocalizations.of(context)!.title_min_price,
+                              items: [Text("ghina"), Text("sharaf")],
+                              onSubmit: (data) {
+                                startPriceCubit.setState(data);
+                                print(data);
+                              },
+                            );
+                          },
+                          child: Container(
+                            alignment: isArabic
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            height: 55.h,
+                            width: 150.w,
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8)),
+                                border: Border.all(
+                                  color: AppColors.primaryColor,
+                                  width: 1,
+                                )),
+                            child: Text(startPriceCubit.state.toString()),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                kWi24,
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(AppLocalizations.of(context)!.max_price),
+                        ],
+                      ),
+                      Align(
+                        alignment: isArabic
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: GestureDetector(
+                          onTap: () async {
+                            await openPricePicker(
+                              context,
+                              isDark,
+                              title:
+                                  AppLocalizations.of(context)!.title_max_price,
+                              items: [Text("ghina"), Text("sharaf")],
+                              onSubmit: (data) {
+                                endPriceCubit.setState(data);
+                                print(data);
+                              },
+                            );
+                          },
+                          child: Container(
+                            alignment: isArabic
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            height: 55.h,
+                            width: 150.w,
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8)),
+                                border: Border.all(
+                                  color: AppColors.primaryColor,
+                                  width: 1,
+                                )),
+                            child: Text(endPriceCubit.state.toString()),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
           kHe24,
-          // BlocBuilder<ChannelCubit, dynamic>(
-          //   bloc: advancedSearchOpenedCubit,
-          //   builder: (_, isAdvancedSearchOpened) {
-          //     // initialize advanced search data every time this section open:
-          //     if (isAdvancedSearchOpened) {
-          //       initializeOfferData(justInitAdvanced: true);
-          //     }
-          //     return Column(
-          //       children: [
-          //         InkWell(
-          //           onTap: () {
-          //             // change advanced search section open state :
-          //             advancedSearchOpenedCubit.setState(!isAdvancedSearchOpened);
-          //           },
-          //           child: Container(
-          //             height: 40.h,
-          //             color:
-          //                 isDark ? Theme.of(context).colorScheme.primary : AppColors.secondaryColor,
-          //             padding: EdgeInsets.symmetric(
-          //               horizontal: 8.w,
-          //             ),
-          //             child: Row(
-          //               mainAxisAlignment: MainAxisAlignment.start,
-          //               children: [
-          //                 Text(
-          //                   AppLocalizations.of(context)!.advanced_search,
-          //                   style: Theme.of(context)
-          //                       .textTheme
-          //                       .subtitle1!
-          //                       .copyWith(color: AppColors.black),
-          //                 ),
-          //                 kWi8,
-          //                 Icon(
-          //                     (isAdvancedSearchOpened)
-          //                         ? Icons.arrow_drop_down
-          //                         : ((!isArabic) ? Icons.arrow_right : Icons.arrow_left),
-          //                     color: AppColors.black),
-          //               ],
-          //             ),
-          //           ),
-          //         ),
-          //         if (isAdvancedSearchOpened) buildAdvancedSearchWidgets(),
-          //       ],
-          //     );
-          //   },
-          // ),
-          72.verticalSpace,
+
+          //  BlocBuilder<ChannelCubit, dynamic>(
+          //    bloc: advancedSearchOpenedCubit,
+          //    builder: (_, isAdvancedSearchOpened) {
+          //      // initialize advanced search data every time this section open:
+          //      if (isAdvancedSearchOpened) {
+          //        initializeOfferData(justInitAdvanced: true);
+          //      }
+          //      return Column(
+          //        children: [
+          //          InkWell(
+          //            onTap: () {
+          //              // change advanced search section open state :
+          //              advancedSearchOpenedCubit.setState(!isAdvancedSearchOpened);
+          //            },
+          //            child: Container(
+          //              height: 40.h,
+          //              color:
+          //                  isDark ? Theme.of(context).colorScheme.primary : AppColors.secondaryColor,
+          //              padding: EdgeInsets.symmetric(
+          //                horizontal: 8.w,
+          //              ),
+          //              child: Row(
+          //                mainAxisAlignment: MainAxisAlignment.start,
+          //                children: [
+          //                  Text(
+          //                    AppLocalizations.of(context)!.advanced_search,
+          //                    style: Theme.of(context)
+          //                        .textTheme
+          //                        .subtitle1!
+          //                        .copyWith(color: AppColors.black),
+          //                  ),
+          //                  kWi8,
+          //                  Icon(
+          //                      (isAdvancedSearchOpened)
+          //                          ? Icons.arrow_drop_down
+          //                          : ((!isArabic) ? Icons.arrow_right : Icons.arrow_left),
+          //                      color: AppColors.black),
+          //                ],
+          //              ),
+          //            ),
+          //          ),
+          //          if (isAdvancedSearchOpened) buildAdvancedSearchWidgets(),
+          //        ],
+          //      );
+          //    },
+          //  ),
+          // 72.verticalSpace,
         ],
       ),
     );
@@ -1009,5 +1118,33 @@ class _SearchScreenState extends State<SearchScreen> {
     }
     recentSearches.insert(0, locationId.toString());
     await RecentSearchesSharedPreferences.setRecentSearches(recentSearches);
+  }
+
+  openPricePicker(context, isDark,
+      {required List<Text> items,
+      required String title,
+      required Function(dynamic) onSubmit}) {
+    BottomPicker(
+      height: getScreenHeight(context) / 3,
+      items: items,
+      title: title,
+      pickerTextStyle: TextStyle(
+        color: !isDark ? Colors.black : Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      dismissable: true,
+      iconClose: "Done",
+      closeIconColor: AppColors.primaryColor,
+      buttonAlignement: MainAxisAlignment.center,
+      buttonSingleColor: AppColors.primaryColor,
+      displaySubmitButton: false,
+      titleStyle: TextStyle(
+        color: !isDark ? Colors.black : Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      onClose: (data) {
+         onSubmit(data);
+      },
+    ).show(context);
   }
 }

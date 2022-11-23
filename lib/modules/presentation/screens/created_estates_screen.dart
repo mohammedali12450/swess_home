@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_state.dart';
@@ -18,11 +19,13 @@ import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:timelines/timelines.dart';
 
 import '../../../constants/colors.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_bloc.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_event.dart';
 import '../../data/providers/theme_provider.dart';
+import '../widgets/time_line.dart';
 
 class CreatedEstatesScreen extends StatefulWidget {
   static const String id = "CreatedEstatesScreen";
@@ -93,6 +96,24 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
         }
       });
       break;
+    }
+  }
+
+  final _processes = [
+    'قيد الانتظار',
+    'من قبل الشركة',
+    'من قبل المكتب',
+  ];
+
+  int _processIndex = 0;
+
+  Color getColor(int index) {
+    if (index == _processIndex) {
+      return inProgressColor;
+    } else if (index < _processIndex) {
+      return completeColor;
+    } else {
+      return todoColor;
     }
   }
 
@@ -214,27 +235,50 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                       return (widget.estateId != null && find)
                           ? AnimatedBuilder(
                               animation: _colorTween,
-                              builder: (context, child) => EstateCard(
-                                color: (int.parse(widget.estateId!) ==
-                                        estates.elementAt(index).id)
-                                    ? _colorTween.value
-                                    : Theme.of(context).colorScheme.background,
-                                estate: estates.elementAt(index),
-                                onClosePressed: () async {
-                                  await onClosePressed(index);
-                                },
-                                removeCloseButton: false,
-                                removeBottomBar: true,
+                              builder: (context, child) => Stack(
+                                children: [
+                                  EstateCard(
+                                    color: (int.parse(widget.estateId!) ==
+                                            estates.elementAt(index).id)
+                                        ? _colorTween.value
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .background,
+                                    estate: estates.elementAt(index),
+                                    onClosePressed: () async {
+                                      await onClosePressed(index);
+                                    },
+                                    removeCloseButton: false,
+                                    removeBottomBar: true,
+                                  ),
+                                ],
                               ),
                             )
-                          : EstateCard(
-                              color: Theme.of(context).colorScheme.background,
-                              estate: estates.elementAt(index),
-                              onClosePressed: () async {
-                                await onClosePressed(index);
-                              },
-                              removeCloseButton: false,
-                              removeBottomBar: true,
+                          : Card(
+                              elevation: 5,
+                              child: Column(
+                                children: [
+                                  EstateCard(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
+                                    estate: estates.elementAt(index),
+                                    onClosePressed: () async {
+                                      await onClosePressed(index);
+                                    },
+                                    removeCloseButton: false,
+                                    removeBottomBar: true,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        bottom: 8.0, left: 8, right: 8),
+                                    child: SizedBox(
+                                        height: 63,
+                                        width: getScreenWidth(context),
+                                        child: buildTimeLine()),
+                                  ),
+                                ],
+                              ),
                             );
                     },
                   ),
@@ -243,6 +287,126 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildTimeLine() {
+    return Timeline.tileBuilder(
+      theme: TimelineThemeData(
+        direction: Axis.horizontal,
+        connectorTheme: const ConnectorThemeData(
+          space: 30.0,
+          thickness: 5.0,
+        ),
+      ),
+      builder: TimelineTileBuilder.connected(
+        connectionDirection: ConnectionDirection.before,
+        contentsBuilder: (context, index) {
+          return Row(
+            children: [
+              Text(
+                _processes[index],
+                style: TextStyle(
+                  //fontWeight: FontWeight.bold,
+                  color: getColor(index),
+                  fontSize: 12,
+                ),
+              ),
+              kWi8,
+            ],
+          );
+        },
+        indicatorBuilder: (_, index) {
+          Color color;
+          Widget? child;
+          if (index == _processIndex) {
+            color = inProgressColor;
+            child = const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(
+                strokeWidth: 3.0,
+                valueColor: AlwaysStoppedAnimation(Colors.white),
+              ),
+            );
+          } else if (index < _processIndex) {
+            color = completeColor;
+            child = const Icon(
+              Icons.check,
+              color: Colors.white,
+              size: 15.0,
+            );
+          } else {
+            color = todoColor;
+          }
+
+          if (index <= _processIndex) {
+            return Stack(
+              children: [
+                CustomPaint(
+                  size: const Size(30.0, 30.0),
+                  painter: BezierPainter(
+                    color: color,
+                    drawStart: index > 0,
+                    drawEnd: index < _processIndex,
+                  ),
+                ),
+                DotIndicator(
+                  size: 30.0,
+                  color: color,
+                  child: child,
+                ),
+              ],
+            );
+          } else {
+            return Stack(
+              children: [
+                CustomPaint(
+                  size: const Size(15.0, 15.0),
+                  painter: BezierPainter(
+                    color: color,
+                    drawEnd: index < _processes.length - 1,
+                  ),
+                ),
+                OutlinedDotIndicator(
+                  borderWidth: 4.0,
+                  color: color,
+                ),
+              ],
+            );
+          }
+        },
+        connectorBuilder: (_, index, type) {
+          if (index > 0) {
+            if (index == _processIndex) {
+              final prevColor = getColor(index - 1);
+              final color = getColor(index);
+              List<Color> gradientColors;
+              if (type == ConnectorType.start) {
+                gradientColors = [Color.lerp(prevColor, color, 0.5)!, color];
+              } else {
+                gradientColors = [
+                  prevColor,
+                  Color.lerp(prevColor, color, 0.5)!
+                ];
+              }
+              return DecoratedLineConnector(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: gradientColors,
+                  ),
+                ),
+              );
+            } else {
+              return SolidLineConnector(
+                color: getColor(index),
+              );
+            }
+          } else {
+            return null;
+          }
+        },
+        itemCount: _processes.length,
       ),
     );
   }
@@ -281,8 +445,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     if (index != -1) {
       if (scrollController.isAttached) {
         scrollController.scrollTo(
-            index: index,
-            duration: const Duration(milliseconds: 1000));
+            index: index, duration: const Duration(milliseconds: 1000));
       }
     }
   }

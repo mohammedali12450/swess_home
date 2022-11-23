@@ -17,15 +17,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../screens/authentication_screen.dart';
 
-void showReportModalBottomSheet(context ,int estateId) {
+void showReportModalBottomSheet(context, int estateId) {
   List<Report> reports = BlocProvider.of<ReportBloc>(context).reports!;
   bool isArabic =
-  Provider.of<LocaleProvider>(context, listen: false).isArabic();
+      Provider.of<LocaleProvider>(context, listen: false).isArabic();
   String? userToken;
   if (BlocProvider.of<UserLoginBloc>(context).user != null) {
     userToken = BlocProvider.of<UserLoginBloc>(context).user!.token;
   }
-
+  TextEditingController reportController = TextEditingController();
 
   showModalBottomSheet(
     context: context,
@@ -57,47 +57,231 @@ void showReportModalBottomSheet(context ,int estateId) {
                 itemBuilder: (_, index) => InkWell(
                   onTap: () async {
                     Navigator.pop(context);
-                    if (userToken != null) {
-                      ReportsRepository reportRepository =
-                      ReportsRepository();
-                      if (await reportRepository.sendReport(
-                          userToken, reports.elementAt(index).id, estateId)) {
-                        Fluttertoast.showToast(
-                            msg: AppLocalizations.of(context)!.send_report);
-                      } else {
-                        Fluttertoast.showToast(
-                            msg: AppLocalizations.of(context)!
-                                .error_send_report);
-                      }
-                    } else {
-                      await showWonderfulAlertDialog(
-                          context,
-                          AppLocalizations.of(context)!.confirmation,
-                          AppLocalizations.of(context)!
-                              .this_features_require_login,
-                          removeDefaultButton: true,
-                          dialogButtons: [
-                            ElevatedButton(
-                              child: Text(
-                                AppLocalizations.of(context)!.sign_in,
-                              ),
-                              onPressed: () async {
-                                await Navigator.pushNamed(
-                                    context, AuthenticationScreen.id);
-                                Navigator.pop(context);
-                              },
-                            ),
-                            ElevatedButton(
-                              child: Text(
-                                AppLocalizations.of(context)!.cancel,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                          width: 400.w);
-                    }
+                    index != 4
+                        ? showWonderfulAlertDialog(
+                            context,
+                            AppLocalizations.of(context)!.caution,
+                            AppLocalizations.of(context)!.question_reporting,
+                            titleTextStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 20),
+                            removeDefaultButton: true,
+                            dialogButtons: [
+                                ElevatedButton(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.yes,
+                                  ),
+                                  onPressed: () async {
+                                    if (userToken != null) {
+                                      ReportsRepository reportRepository =
+                                          ReportsRepository();
+                                      if (await reportRepository.sendReport(
+                                          userToken,
+                                          reports.elementAt(index).id,
+                                          estateId)) {
+                                        Fluttertoast.showToast(
+                                            msg: AppLocalizations.of(context)!
+                                                .send_report);
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg: AppLocalizations.of(context)!
+                                                .error_send_report);
+                                      }
+                                    } else {
+                                      await showWonderfulAlertDialog(
+                                          context,
+                                          AppLocalizations.of(context)!
+                                              .confirmation,
+                                          AppLocalizations.of(context)!
+                                              .this_features_require_login,
+                                          removeDefaultButton: true,
+                                          dialogButtons: [
+                                            ElevatedButton(
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .sign_in,
+                                              ),
+                                              onPressed: () async {
+                                                await Navigator.pushNamed(
+                                                    context,
+                                                    AuthenticationScreen.id);
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            ElevatedButton(
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .cancel,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                          width: 400.w);
+                                    }
+                                  },
+                                ),
+                                ElevatedButton(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.cancel,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ])
+                        : showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                                  elevation: 2,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 16.h, horizontal: 12.w),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(8),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          AppLocalizations.of(context)!.caution,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.red,
+                                              fontSize: 20),
+                                        ),
+                                        24.verticalSpace,
+                                        Wrap(
+                                            alignment: WrapAlignment.center,
+                                            direction: Axis.horizontal,
+                                            spacing: 12.h,
+                                            runSpacing: 12.w,
+                                            children: [
+                                              Container(
+                                                width: inf,
+                                                padding: kSmallSymWidth,
+                                                height: 150.h,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(12)),
+                                                  border: Border.all(
+                                                      color: Colors.black),
+                                                ),
+                                                child: TextField(
+                                                  maxLength: 200,
+                                                  controller: reportController,
+                                                  textDirection:
+                                                      TextDirection.rtl,
+                                                  decoration: InputDecoration(
+                                                    border: InputBorder.none,
+                                                    focusedBorder:
+                                                        InputBorder.none,
+                                                    enabledBorder:
+                                                        InputBorder.none,
+                                                    hintText: AppLocalizations
+                                                            .of(context)!
+                                                        .report_create_notes_descriptions,
+                                                  ),
+                                                  maxLines: 3,
+                                                ),
+                                              ),
+                                              ElevatedButton(
+                                                child: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .send,
+                                                ),
+                                                onPressed: () async {
+                                                  if (userToken != null) {
+                                                    ReportsRepository
+                                                        reportRepository =
+                                                        ReportsRepository();
+                                                    if (await reportRepository
+                                                        .sendReport(
+                                                            userToken,
+                                                            reports
+                                                                .elementAt(
+                                                                    index)
+                                                                .id,
+                                                            estateId)) {
+                                                      Fluttertoast.showToast(
+                                                          msg: AppLocalizations
+                                                                  .of(context)!
+                                                              .send_report);
+                                                    } else {
+                                                      Fluttertoast.showToast(
+                                                          msg: AppLocalizations
+                                                                  .of(context)!
+                                                              .error_send_report);
+                                                    }
+                                                  } else {
+                                                    await showWonderfulAlertDialog(
+                                                        context,
+                                                        AppLocalizations.of(
+                                                                context)!
+                                                            .confirmation,
+                                                        AppLocalizations.of(
+                                                                context)!
+                                                            .this_features_require_login,
+                                                        removeDefaultButton:
+                                                            true,
+                                                        dialogButtons: [
+                                                          ElevatedButton(
+                                                            child: Text(
+                                                              AppLocalizations.of(
+                                                                      context)!
+                                                                  .sign_in,
+                                                            ),
+                                                            onPressed:
+                                                                () async {
+                                                              await Navigator
+                                                                  .pushNamed(
+                                                                      context,
+                                                                      AuthenticationScreen
+                                                                          .id);
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                          ),
+                                                          ElevatedButton(
+                                                            child: Text(
+                                                              AppLocalizations.of(
+                                                                      context)!
+                                                                  .cancel,
+                                                            ),
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                          ),
+                                                        ],
+                                                        width: 400.w);
+                                                  }
+                                                },
+                                              ),
+                                              ElevatedButton(
+                                                child: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .cancel,
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ]),
+                                      ],
+                                    ),
+                                  ),
+                                ));
                   },
                   child: Container(
                     alignment: Alignment.centerRight,
