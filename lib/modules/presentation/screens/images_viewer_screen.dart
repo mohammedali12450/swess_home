@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 
@@ -25,88 +24,108 @@ class ImagesViewerScreen extends StatefulWidget {
 class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
   ChannelCubit currentImageCubit = ChannelCubit(0);
 
-  Future<void> secureScreen() async {
-    await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-  }
-
-  @override
-  void initState() {
-    secureScreen();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-     FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
-  }
+  // Future<void> secureScreen() async {
+  //   await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+  // }
+  //
+  // @override
+  // void initState() {
+  //   secureScreen();
+  //   super.initState();
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //    FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
+  // }
 
   @override
   Widget build(BuildContext context) {
+   
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            widget.screenTitle,
+          ),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: AppLocalizations.of(context)!.image),
+              Tab(text: AppLocalizations.of(context)!.video),
+            ],
+          ),
+        ),
+        body:TabBarView(
+          children: [
+            buildImageScreen(),
+            Icon(Icons.directions_car, size: 350),
+          ],
+        ),
+
+      ),
+    );
+  }
+
+  Widget buildImageScreen(){
     List<Image> image = [];
     for (int i = 0; i < widget.images.length; i++) {
       image.add(Image.network(imagesBaseUrl + widget.images.elementAt(i)));
     }
     Completer<ui.Image> completer = Completer<ui.Image>();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.screenTitle,
-        ),
-      ),
-      body: ListView(
-        children: [
-          SizedBox(
-            height: getScreenHeight(context) - 100,
-            width: getScreenWidth(context),
-            child: PageView.builder(
-              onPageChanged: (newIndex) {
-                currentImageCubit.setState(newIndex);
-              },
-              itemCount: image.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (BuildContext context, int index) {
-                image
-                    .elementAt(index)
-                    .image
-                    .resolve(const ImageConfiguration())
-                    .addListener(ImageStreamListener(
-                        (ImageInfo info, bool synchronousCall) {
-                  if (!completer.isCompleted) {
-                    completer.complete(info.image);
-                  }
-                }));
-                return InteractiveViewer(
-                  panEnabled: false, // Set it to false to prevent panning.
-                  //boundaryMargin: const EdgeInsets.all(80),
-                  minScale: 0.5,
-                  maxScale: 4,
-                  child: image.elementAt(index),
-                );
-              },
-            ),
+    return ListView(
+      children: [
+        SizedBox(
+          height: getScreenHeight(context) - 100,
+          width: getScreenWidth(context),
+          child: PageView.builder(
+            onPageChanged: (newIndex) {
+              currentImageCubit.setState(newIndex);
+            },
+            itemCount: image.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (BuildContext context, int index) {
+              image
+                  .elementAt(index)
+                  .image
+                  .resolve(const ImageConfiguration())
+                  .addListener(ImageStreamListener(
+                      (ImageInfo info, bool synchronousCall) {
+                    if (!completer.isCompleted) {
+                      completer.complete(info.image);
+                    }
+                  }));
+              return InteractiveViewer(
+                panEnabled: false, // Set it to false to prevent panning.
+                //boundaryMargin: const EdgeInsets.all(80),
+                minScale: 0.5,
+                maxScale: 4,
+                child: image.elementAt(index),
+              );
+            },
           ),
-          12.verticalSpace,
-          BlocBuilder<ChannelCubit, dynamic>(
-            bloc: currentImageCubit,
-            builder: (_, currentImage) {
-              return Center(
-                child: Text(
+        ),
+        12.verticalSpace,
+        BlocBuilder<ChannelCubit, dynamic>(
+          bloc: currentImageCubit,
+          builder: (_, currentImage) {
+            return Center(
+              child: Text(
                   AppLocalizations.of(context)!.image_counting(
                       (currentImageCubit.state + 1).toString(),
                       widget.images.length.toString()),
                   style: Theme.of(context)
                       .textTheme
                       .subtitle2
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
-
+  
 /*@override
   Widget build(BuildContext context) {
     CachedNetworkImage image = CachedNetworkImage(

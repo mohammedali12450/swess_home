@@ -8,7 +8,7 @@
 .buildlog/
 .history
 .svn/
- lib/modules/presentation/screens/images_viewer_screen.dart
+./lib/modules/presentation/screens/images_viewer_screen.dart
 
 
 # IntelliJ related

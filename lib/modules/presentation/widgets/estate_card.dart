@@ -32,6 +32,8 @@ import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/enums.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../../data/models/estate_new.dart';
 import '../screens/authentication_screen.dart';
 import 'cupertino_action_sheet.dart';
 
@@ -84,8 +86,8 @@ class _EstateCardState extends State<EstateCard> {
     );
 
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null && user.token != null) {
-      userToken = user.token;
+    if (user != null ) {
+      userToken = UserSharedPreferences.getAccessToken()!;
     }
   }
 
@@ -101,14 +103,14 @@ class _EstateCardState extends State<EstateCard> {
       currency = AppLocalizations.of(context)!.lebanon_currency;
     }
 
-    int intPrice = int.parse(widget.estate.price);
+    int intPrice = int.parse(widget.estate.price!);
     String estatePrice = NumbersHelper.getMoneyFormat(intPrice);
 
     String estateType =
-        widget.estate.estateType.getName(isArabic).split('|').elementAt(1);
+        widget.estate.estateType!.getName(isArabic).split('|').elementAt(1);
     String addingDate = DateHelper.getDateByFormat(
         DateTime.parse(widget.estate.createdAt!), "yyyy/MM/dd");
-    List<String> estateImages = widget.estate.images
+    List<String> estateImages = widget.estate.images!
         .where((e) => e.type == "estate_image")
         .map((e) => e.url)
         .toList();
@@ -236,7 +238,7 @@ class _EstateCardState extends State<EstateCard> {
                             disableGestures: true,
                           );
                         },
-                        itemCount: widget.estate.images
+                        itemCount: widget.estate.images!
                             .where((element) => element.type == "estate_image")
                             .length,
                         loadingBuilder: (context, event) => Center(
@@ -364,7 +366,7 @@ class _EstateCardState extends State<EstateCard> {
                                       height: 1.5),
                                 ),
                               ),
-                              if (widget.estate.estateOfferType.id !=
+                              if (widget.estate.estateOfferType!.id !=
                                   rentOfferTypeNumber)
                                 Padding(
                                   padding: EdgeInsets.only(
@@ -383,7 +385,7 @@ class _EstateCardState extends State<EstateCard> {
                                             color: estatePriceColor),
                                   ),
                                 ),
-                              if (widget.estate.estateOfferType.id ==
+                              if (widget.estate.estateOfferType!.id ==
                                   rentOfferTypeNumber)
                                 Padding(
                                   padding: EdgeInsets.only(
@@ -455,7 +457,7 @@ class _EstateCardState extends State<EstateCard> {
                               Container(
                                 color: Colors.transparent,
                                 child: Text(
-                                  widget.estate.location.getLocationName(),
+                                  widget.estate.locationS!,
                                 ),
                               ),
                               12.verticalSpace,
@@ -556,8 +558,8 @@ class _EstateCardState extends State<EstateCard> {
                                   User? user =
                                       BlocProvider.of<UserLoginBloc>(context)
                                           .user;
-                                  if (user != null && user.token != null) {
-                                    userToken = user.token;
+                                  if (user != null) {
+                                    userToken = UserSharedPreferences.getAccessToken();
                                   }
                                   return;
                                 },
@@ -569,11 +571,11 @@ class _EstateCardState extends State<EstateCard> {
 
                         if (saveAndUnSaveState is EstateSaved) {
                           _saveAndUnSaveEstateBloc.add(UnSaveEventStarted(
-                              token: userToken, estateId: widget.estate.id));
+                              token: userToken, estateId: widget.estate.id!));
                         }
                         if (saveAndUnSaveState is EstateUnSaved) {
                           _saveAndUnSaveEstateBloc.add(EstateSaveStarted(
-                              token: userToken, estateId: widget.estate.id));
+                              token: userToken, estateId: widget.estate.id!));
                         }
                       },
                       icon: (saveAndUnSaveState is EstateSaveAndUnSaveProgress)
@@ -592,7 +594,7 @@ class _EstateCardState extends State<EstateCard> {
                   onPressed: () async {
                     visitBloc.add(
                       VisitStarted(
-                          visitId: widget.estate.id,
+                          visitId: widget.estate.id!,
                           token: userToken,
                           visitType: VisitType.officeCall),
                     );
@@ -678,8 +680,8 @@ class _EstateCardState extends State<EstateCard> {
                                   User? user =
                                       BlocProvider.of<UserLoginBloc>(context)
                                           .user;
-                                  if (user != null && user.token != null) {
-                                    userToken = user.token;
+                                  if (user != null ) {
+                                    userToken = UserSharedPreferences.getAccessToken();
                                   }
                                   return;
                                 },
@@ -692,7 +694,7 @@ class _EstateCardState extends State<EstateCard> {
                           _likeAndUnlikeBloc.add(
                             UnlikeStarted(
                               token: userToken,
-                              unlikedObjectId: widget.estate.id,
+                              unlikedObjectId: widget.estate.id!,
                               likeType: LikeType.estate,
                             ),
                           );
@@ -701,7 +703,7 @@ class _EstateCardState extends State<EstateCard> {
                           _likeAndUnlikeBloc.add(
                             LikeStarted(
                                 token: userToken,
-                                likedObjectId: widget.estate.id,
+                                likedObjectId: widget.estate.id!,
                                 likeType: LikeType.estate),
                           );
                         }

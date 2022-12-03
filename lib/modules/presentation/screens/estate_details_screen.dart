@@ -26,6 +26,7 @@ import 'package:swesshome/modules/presentation/widgets/small_elevated_card.dart'
 import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../widgets/cupertino_action_sheet.dart';
 import '../widgets/report_estate.dart';
 import 'images_viewer_screen.dart';
@@ -68,20 +69,20 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
     // Register estate visit :
 
     if (BlocProvider.of<UserLoginBloc>(context).user != null) {
-      userToken = BlocProvider.of<UserLoginBloc>(context).user!.token;
+      userToken = UserSharedPreferences.getAccessToken();
     }
     _visitBloc.add(VisitStarted(
-        visitId: widget.estate.id,
+        visitId: widget.estate.id!,
         token: userToken,
         visitType: VisitType.estate));
     // switchers initializing:
-    isLands = widget.estate.estateType.id == landsPropertyTypeNumber;
-    isShops = widget.estate.estateType.id == shopsPropertyTypeNumber;
-    isSell = widget.estate.estateOfferType.id == sellOfferTypeNumber;
-    isHouse = widget.estate.estateType.id == housePropertyTypeNumber;
+    isLands = widget.estate.estateType!.id == landsPropertyTypeNumber;
+    isShops = widget.estate.estateType!.id == shopsPropertyTypeNumber;
+    isSell = widget.estate.estateOfferType!.id == sellOfferTypeNumber;
+    isHouse = widget.estate.estateType!.id == housePropertyTypeNumber;
     isFarmsOrVacations =
-        (widget.estate.estateType.id == farmsPropertyTypeNumber) ||
-            (widget.estate.estateType.id == vacationsPropertyTypeNumber);
+        (widget.estate.estateType!.id == farmsPropertyTypeNumber) ||
+            (widget.estate.estateType!.id == vacationsPropertyTypeNumber);
   }
 
   @override
@@ -89,18 +90,18 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     currency = AppLocalizations.of(context)!.syrian_currency;
 
-    int intPrice = int.parse(widget.estate.price);
+    int intPrice = int.parse(widget.estate.price!);
     String estatePrice = NumbersHelper.getMoneyFormat(intPrice);
 
-    List<String> estateImages = widget.estate.images
+    List<String> estateImages = widget.estate.images!
         .where((element) => element.type == "estate_image")
         .map((e) => e.url)
         .toList();
-    List<String> streetImages = widget.estate.images
+    List<String> streetImages = widget.estate.images!
         .where((element) => element.type == "street_image")
         .map((e) => e.url)
         .toList();
-    List<String> floorPlanImages = widget.estate.images
+    List<String> floorPlanImages = widget.estate.images!
         .where((element) => element.type == "floor_plan")
         .map((e) => e.url)
         .toList();
@@ -262,7 +263,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                               ),
                               onPressed: () {
                                 showReportModalBottomSheet(
-                                    context, widget.estate.id);
+                                    context, widget.estate.id!);
                               },
                             ),
                           ),
@@ -294,7 +295,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                   height: 1.5),
                             ),
                           ),
-                          if (widget.estate.estateOfferType.id !=
+                          if (widget.estate.estateOfferType!.id !=
                               rentOfferTypeNumber)
                             Padding(
                               padding: EdgeInsets.only(
@@ -313,7 +314,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                     ),
                               ),
                             ),
-                          if (widget.estate.estateOfferType.id ==
+                          if (widget.estate.estateOfferType!.id ==
                               rentOfferTypeNumber)
                             Padding(
                               padding: EdgeInsets.only(
@@ -377,12 +378,12 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           child: Text(
                             AppLocalizations.of(context)!
                                 .estate_offer_place_sentence(
-                              widget.estate.estateType
+                              widget.estate.estateType!
                                   .getName(isArabic)
                                   .split('|')
                                   .last,
-                              widget.estate.estateOfferType.getName(isArabic),
-                              widget.estate.location.getLocationName(),
+                              widget.estate.estateOfferType!.getName(isArabic),
+                              widget.estate.locationS!,
                             ),
                             style: Theme.of(context).textTheme.bodyText1,
                             maxLines: 3,
@@ -489,7 +490,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   onTap: () {},
                 ),
                 // Rent period :
-                if (widget.estate.estateOfferType.id == rentOfferTypeNumber)
+                if (widget.estate.estateOfferType!.id == rentOfferTypeNumber)
                   RowInformation(
                     title:
                         AppLocalizations.of(context)!.estate_rent_period + " :",
@@ -519,11 +520,11 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   widgetContent: Row(
                     children: [
                       Text(
-                        widget.estate.area,
+                        widget.estate.area!,
                       ),
                       8.horizontalSpace,
                       Text(
-                        widget.estate.areaUnit.getName(isArabic),
+                        widget.estate.areaUnit!.getName(isArabic),
                       ),
                     ],
                   ),
@@ -768,7 +769,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         onPressed: () async {
                           visitBloc.add(
                             VisitStarted(
-                                visitId: widget.estate.id,
+                                visitId: widget.estate.id!,
                                 token: userToken,
                                 visitType: VisitType.officeCall),
                           );

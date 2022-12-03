@@ -141,8 +141,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
             Text(
                 AppLocalizations.of(context)!.price_domain +
                     " : " +
-                    widget.estateOrder.priceDomain!
-                        .getTextPriceDomain(isArabic),
+                    widget.estateOrder.priceDomain!.estateOfferType,
                 style: Theme.of(context).textTheme.subtitle1),
           ],
           if (widget.estateOrder.description != null) ...[

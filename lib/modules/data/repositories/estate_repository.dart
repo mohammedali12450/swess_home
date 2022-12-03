@@ -56,8 +56,7 @@ class EstateRepository {
         showWonderfulAlertDialog(
           navigatorKey.currentContext!,
           AppLocalizations.of(navigatorKey.currentContext!)!.warning,
-          AppLocalizations.of(navigatorKey.currentContext!)!
-              .empty,
+          AppLocalizations.of(navigatorKey.currentContext!)!.empty,
         );
       } else {
         showWonderfulAlertDialog(
@@ -106,10 +105,10 @@ class EstateRepository {
     return estates;
   }
 
-  Future getOfficeDetails(int officeId) async {
+  Future getOfficeDetails(int officeId, int page, String? token) async {
     Response response;
     try {
-      response = await _estateProvider.getOfficeDetails(officeId);
+      response = await _estateProvider.getOfficeDetails(officeId, page, token);
     } catch (e) {
       rethrow;
     }
@@ -118,10 +117,38 @@ class EstateRepository {
       throw GeneralException(errorMessage: "! لا يمكن الاتصال بالسيرفر");
     }
 
-    dynamic jsonEstates = jsonDecode(response.toString())["data"];
+    print("ghina0 : $response");
 
-    EstateOffice estate = EstateOffice.fromJson(jsonEstates);
-    return estate;
+    // dynamic jsonEstates = jsonDecode(response.toString())["data"];
+    // print("ghina1 : $jsonEstates");
+    dynamic jsonOffice =
+        jsonDecode(response.toString())["data"]["estate_office"];
+    dynamic jsonCommunication =
+        jsonDecode(response.toString())["data"]["communication_medias"];
+    dynamic jsonEstates = jsonDecode(response.toString())["data"]["estates"];
+
+    print("ghina1: $jsonEstates");
+    EstateOffice office = EstateOffice.fromJson(jsonOffice);
+    print("gaga1");
+    CommunicationMedias? communicationMedias;
+    if(jsonCommunication == []){
+      communicationMedias = null;
+    }else{
+      communicationMedias =
+          CommunicationMedias.fromJson(jsonCommunication);
+    }
+    print("gaga2");
+
+    List<Estate> estates =
+        jsonEstates.map<Estate>((e) => Estate.fromJson(e)).toList();
+    print("gaga3");
+
+    OfficeDetails officeDetails = OfficeDetails(
+        estateOffice: office,
+        communicationMedias: communicationMedias,
+        estates: estates);
+
+    return officeDetails;
   }
 
   Future getCreatedEstates(String token) async {

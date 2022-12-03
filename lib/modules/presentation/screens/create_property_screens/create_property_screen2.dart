@@ -70,8 +70,8 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
     ownershipTypes =
         BlocProvider.of<OwnershipTypeBloc>(context).ownershipTypes!;
-    isSell = widget.currentOffer.estateOfferType.id == sellOfferTypeNumber;
-    isHouse = widget.currentOffer.estateType.id == housePropertyTypeNumber;
+    isSell = widget.currentOffer.estateOfferType!.id == sellOfferTypeNumber;
+    isHouse = widget.currentOffer.estateType!.id == housePropertyTypeNumber;
     widget.currentOffer.areaUnit = areaTypes.first;
     if (!isHouse && isSell) {
       widget.currentOffer.ownershipType = ownershipTypes.first;

@@ -2,9 +2,26 @@ const String proNetBaseUrl = "https://backend.swesshome.com/";
 const String proNetImagesUrl = "https://backend.swesshome.com/storage/";
 const String hostingerBaseUrl = "http://swesshomerealestate.com/";
 const String hostingerImagesBaseUrl = "http://swesshomerealestate.com/";
-String baseUrl = hostingerBaseUrl;
+const String hostingerTestUrl = "http://swessoffice.com/public/";
+String baseUrl = hostingerTestUrl;
 String imagesBaseUrl = hostingerImagesBaseUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl";
+//new api
+const userRegisterURL = "api/v2/customer/register";
+const userLoginURL = "api/v2/customer/login";
+const userDataURL = "api/v2/customer/details";
+const userEditDataURL = "api/v2/customer/update";
+const governoratesURL = "api/v2/customer/governorates";
+const getAllOfficesURL = "api/v2/estate-offices";
+const getOfficeDetailsURL = "api/v2/estate-offices/";
+const getOfficeDetailsWithAuthURL = "api/v2/estate-offices/auth-customers/";
+const visitOfficeURL = "api/v2/office/visit";
+const visitEstateURL = "api/v2/estate/visit";
+const priceDomainURL = "api/v2/price-domains/";
+const getReportsTypesURL = "api/v2/report-types";
+const sendReportURL = "api/v2/report";
+
+//old api
 const userRegisterUrl = "api/user/register";
 const userLoginByTokenUrl = "api/getUserByToken";
 const userLoginUrl = "api/login1"; //login1 can't access with multi login   //login can access with multi login

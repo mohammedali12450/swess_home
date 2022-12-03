@@ -9,7 +9,7 @@ class UserAuthenticationProvider {
     Response response;
 
     try {
-      response = await helper.post(userRegisterUrl, register.toJson());
+      response = await helper.post(userRegisterURL, register.toJson());
     } catch (_) {
       rethrow;
     }
@@ -27,7 +27,7 @@ class UserAuthenticationProvider {
     Response response;
 
     try {
-      response = await helper.post(userLoginUrl,
+      response = await helper.post(userLoginURL,
           {"authentication": authentication, "password": password});
     } catch (_) {
       rethrow;
@@ -99,7 +99,6 @@ class UserAuthenticationProvider {
     NetworkHelper helper = NetworkHelper();
     Response response = await helper
         .post(multiLoginUrl, {"authentication": phone, "code": code});
-    print(response);
     return response;
   }
 
@@ -107,6 +106,32 @@ class UserAuthenticationProvider {
     NetworkHelper helper = NetworkHelper();
     Response response =
         await helper.post(resendConfirmationCode, {"authentication": phone});
+    return response;
+  }
+
+  Future getUser(String? token) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+
+    try {
+      response = await helper.get(userDataURL, token: token);
+    } catch (_) {
+      rethrow;
+    }
+    return response;
+  }
+
+  Future editUserData(String? token, Register user) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+
+    print(user.toJsonEdit());
+    try {
+      response =
+          await helper.post(userEditDataURL, user.toJsonEdit(), token: token);
+    } catch (_) {
+      rethrow;
+    }
     return response;
   }
 

@@ -20,6 +20,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
 import '../../../constants/colors.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_event.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_state.dart';
@@ -58,8 +59,8 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
     _recentEstatesOrdersBloc = RecentEstatesOrdersBloc(EstateOrderRepository());
 
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null && user.token != null) {
-      userToken = user.token;
+    if (user != null) {
+      userToken = UserSharedPreferences.getAccessToken();
     }
     _onRefresh();
 
@@ -92,7 +93,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
     if (userToken != null) {
       _recentEstatesOrdersBloc.add(
         RecentEstatesOrdersFetchStarted(
-            token: BlocProvider.of<UserLoginBloc>(context).user!.token!),
+            token: UserSharedPreferences.getAccessToken()!),
       );
     }
   }
@@ -258,7 +259,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
     DeleteEstatesBloc deleteEstatesBloc =
         DeleteEstatesBloc(EstateOrderRepository());
     deleteEstatesBloc.add(DeleteEstatesFetchStarted(
-        token: BlocProvider.of<UserLoginBloc>(context).user!.token!,
+        token: UserSharedPreferences.getAccessToken(),
         orderId: orders.elementAt(index).id!));
     await _onRefresh();
   }

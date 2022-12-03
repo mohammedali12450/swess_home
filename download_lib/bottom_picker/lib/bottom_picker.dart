@@ -629,6 +629,6 @@ class _BottomPickerState extends State<BottomPicker> {
 
   void _closeBottomPicker() {
     Navigator.pop(context);
-    widget.onClose?.call(widget.selectedItemIndex);
+    widget.onClose?.call(selectedItemIndex);
   }
 }

@@ -211,4 +211,37 @@ class NetworkHelper {
     }
     return response;
   }
+
+  Future<Response> put(String url, dynamic fromData,
+      {Map<String, dynamic>? queryParameters, Map<String, String>? headers, String? token}) async {
+    /* Check if there are missed data !!*/
+
+    assert(_dioInstance.options.baseUrl != "", "Base url can not has blank value!");
+    assert(url != "", "url can not has blank value!");
+    assert(headers == null || token == null,
+    "you can not pass header and token together, put the token inside your passed header!!");
+    /* Complete informations */
+
+    if (headers != null) {
+      _dioInstance.options.headers = headers;
+    }
+    if (token != null) {
+      _dioInstance.options.headers["authorization"] = 'Bearer $token';
+    }
+    /* Execute post method */
+    Response response;
+    try {
+      response = await _dioInstance.put(url, data: fromData, queryParameters: queryParameters);
+    } on DioError catch (e) {
+      if (kDebugMode) {
+        print(e.message);
+      }
+      if (e.type == DioErrorType.other) {
+        throw ConnectionException(errorMessage: "! تحقق من اتصالك بشبكة الإنترنت");
+      }
+      throw Exception(e.message);
+    }
+    return response;
+  }
+
 }

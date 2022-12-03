@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +33,10 @@ import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import '../../../core/functions/validators.dart';
 import '../../../utils/helpers/my_snack_bar.dart';
+import '../../business_logic_components/bloc/governorates_bloc/governorates_bloc.dart';
+import '../../business_logic_components/bloc/governorates_bloc/governorates_event.dart';
+import '../../business_logic_components/bloc/governorates_bloc/governorates_state.dart';
+import '../../data/models/governorates.dart';
 import '../../data/providers/theme_provider.dart';
 import '../pages/terms_condition_page.dart';
 import '../widgets/date_picker.dart';
@@ -66,11 +71,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   ChannelCubit emailError = ChannelCubit(null);
   ChannelCubit countryError = ChannelCubit(null);
   ChannelCubit birthdateError = ChannelCubit(null);
+  ChannelCubit userCountry = ChannelCubit(null);
   late UserRegisterBloc userRegisterBloc;
   late UserLoginBloc userLoginBloc;
+  late GovernoratesBloc governoratesBloc;
   late String phoneDialCode;
-  String userCountry = "Syrian Arab Republic";
-  late int selectedGovernorateId;
+  int selectedGovernorateId = 0;
   DateTime? birthDate;
   late String phoneDialCodeLogin;
   String phoneNumber = "";
@@ -95,6 +101,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     super.initState();
     userRegisterBloc = UserRegisterBloc(UserAuthenticationRepository());
     userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
+    governoratesBloc = BlocProvider.of<GovernoratesBloc>(context);
+    governoratesBloc.add(GovernoratesFetchStarted());
     // Dial code initializing:
     isForStore = BlocProvider.of<SystemVariablesBloc>(context)
         .systemVariables!
@@ -106,6 +114,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       phoneDialCode = "+963";
       phoneDialCodeLogin = "+963";
     }
+    userCountry.setState("Syrian Arab Republic");
     getCurrentPosition();
   }
 
@@ -172,7 +181,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 }
               }
               if (registerState is UserRegisterComplete) {
-                String phone = registerState.user.authentication;
+                String phone = registerState.user.authentication!;
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -294,14 +303,14 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 }
               }
               if (loginState is UserLoginComplete) {
-                if (userLoginBloc.user!.token != null) {
-                  // save user token in shared preferences ;
-                  UserSharedPreferences.setAccessToken(
-                      userLoginBloc.user!.token!);
+                if (UserSharedPreferences.getAccessToken() != null) {
+                  // // save user token in shared preferences ;
+                  // UserSharedPreferences.setAccessToken(
+                  //     userLoginBloc.user!.token!);
                   // Send user fcm token to server :
                   BlocProvider.of<FcmBloc>(context).add(
                     SendFcmTokenProcessStarted(
-                        userToken: userLoginBloc.user!.token!),
+                        userToken: UserSharedPreferences.getAccessToken()!),
                   );
                 }
                 if (widget.popAfterFinish!) {
@@ -579,7 +588,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             builder: (_, errorMessage) {
               return IntlPhoneField(
                 onCountryChanged: (country) {
-                  userCountry = country.name;
+                  userCountry.setState(country.name);
                 },
                 controller: authenticationController,
                 decoration:
@@ -746,30 +755,54 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               );
             },
           ),
-          if (userCountry == "Syrian Arab Republic") ...[
-            kHe24,
-            Text(
-              AppLocalizations.of(context)!.governorate + " :",
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            kHe8,
-            BlocBuilder<ChannelCubit, dynamic>(
-              bloc: countryError,
-              builder: (_, errorMessage) {
-                return MyDropdownList(
-                  elementsList: const ["ghina", "ghina", "ghina"],
-                  onSelect: (index) {
-                    selectedGovernorateId = index;
-                  },
-                  // validator: (value) => value == null
-                  //     ? AppLocalizations.of(context)!.this_field_is_required
-                  //     : null,
-                  selectedItem: AppLocalizations.of(context)!.please_select,
-                );
-              },
-            ),
-          ],
-
+          BlocBuilder<ChannelCubit, dynamic>(
+            bloc: userCountry,
+            builder: (_, state) {
+              List<Governorate>? governorates;
+              return state == "Syrian Arab Republic"
+                  ? BlocBuilder<GovernoratesBloc, dynamic>(
+                      bloc: governoratesBloc,
+                      builder: (_, state) {
+                        if (state is GovernoratesFetchComplete) {
+                          governorates = state.governorates;
+                        }
+                        return Column(
+                          children: [
+                            kHe24,
+                            Row(
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.governorate +
+                                      " :",
+                                  style: Theme.of(context).textTheme.headline6,
+                                ),
+                              ],
+                            ),
+                            kHe8,
+                            BlocBuilder<ChannelCubit, dynamic>(
+                              bloc: countryError,
+                              builder: (_, errorMessage) {
+                                return MyDropdownList(
+                                  elementsList:
+                                      governorates!.map((e) => e.name).toList(),
+                                  onSelect: (index) {
+                                    selectedGovernorateId = index;
+                                  },
+                                  // validator: (value) => value == null
+                                  //     ? AppLocalizations.of(context)!.this_field_is_required
+                                  //     : null,
+                                  selectedItem: AppLocalizations.of(context)!
+                                      .please_select,
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    )
+                  : const SizedBox.shrink();
+            },
+          ),
           kHe24,
           Text(
             AppLocalizations.of(context)!.date_of_birth + " :",
@@ -788,7 +821,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     maxTime: DateTime.now(),
                     onConfirm: (birthdate) {
                       birthDate = birthdate;
-                      //print(birthDate);
+                      birthdateController.text =
+                          DateFormat('yyyy/MM/dd').format(birthdate);
+                      print(birthDate);
+                      print(birthdateController.text);
+                      // birthDate = DateTime.parse(birthdateController.text);
+                      // print(birthDate);
                     },
                     currentTime: DateTime.now(),
                     editingController: birthdateController,
@@ -889,11 +927,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         password: passwordController.text,
                         firstName: firstNameController.text,
                         lastName: lastNameController.text,
-                        birthdate: birthDate!,
+                        birthdate: birthdateController.text,
+                        //birthDate!,
                         email: emailController.text == ""
                             ? null
                             : emailController.text,
-                        country: userCountry == null ? null : userCountry,
+                        country: userCountry.state.toString(),
+                        governorate: selectedGovernorateId,
                         latitude: latitude == null ? null : latitude,
                         longitude: longitude == null ? null : longitude),
                   ),

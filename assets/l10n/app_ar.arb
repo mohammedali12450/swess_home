@@ -354,6 +354,8 @@
   "no_min_price": "لايوجد",
   "title_min_price": "اختر اقل سعر",
   "title_max_price": "اختر اعلى سعر",
+  "image": "الصور",
+  "video": "الفيديو",
   "search_results": "نتائج البحث",
   "delete_request": "طلبك العقاري محذوف",
   "delete_estate_order": "طلبك العقاري محذوف",

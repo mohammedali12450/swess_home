@@ -11,56 +11,55 @@ import 'estate_office.dart';
 import 'my_image.dart';
 
 class Estate {
-  int id;
-  EstateType estateType;
-  EstateOfferType estateOfferType;
-  Location location;
-  String price;
-  List<File> estateImages;
-  String area;
-  AreaUnit areaUnit;
-  List<MyImage> images;
-
-  int? officeId;
-
-  List<File>? streetImages;
-  String? floor;
-  List<File>? floorPlanImages;
-
+  int? id;
   OwnershipType? ownershipType;
+  EstateType? estateType;
   InteriorStatus? interiorStatus;
-  PeriodType? periodType;
-  String? period;
-  int locationId;
+  EstateOfferType? estateOfferType;
+  String? price;
+  EstateOffice? estateOffice;
+  String? locationS;
+  Location? location;
+  AreaUnit? areaUnit;
+  List<MyImage>? images;
   String? longitude;
   String? latitude;
   String? roomsCount;
+  String? area;
   String? nearbyPlaces;
   String? description;
-  bool? isFurnished;
   bool? hasSwimmingPool;
+  bool? isFurnished;
   bool? isOnBeach;
-  EstateOffice? estateOffice;
-  int? contractId;
+  String? period;
+  String? floor;
+  int? likesCount;
+  int? visitCount;
   String? createdAt;
   String? publishedAt;
+
   bool? isLiked;
-
   bool? isSaved;
+  int? contractId;
 
-  int? likesCount;
+  List<File>? estateImages;
+  int? officeId;
+  List<File>? streetImages;
+  List<File>? floorPlanImages;
+  PeriodType? periodType;
+  int? locationId;
 
   Estate({
-    required this.price,
-    required this.estateImages,
+    this.price,
+    this.estateImages,
     required this.estateOfferType,
     required this.estateType,
-    required this.location,
-    required this.area,
-    required this.areaUnit,
-    required this.images,
-    required this.locationId,
-    required this.officeId,
+    this.location,
+    this.area,
+    this.areaUnit,
+    this.images,
+    this.locationId,
+    this.officeId,
     this.id = -1,
     this.streetImages,
     this.floorPlanImages,
@@ -84,6 +83,8 @@ class Estate {
     this.isLiked,
     this.isSaved,
     this.likesCount,
+    this.visitCount,
+    this.locationS,
   });
 
   factory Estate.init() {
@@ -92,7 +93,7 @@ class Estate {
       estateOfferType: EstateOfferType.init(),
       estateType: EstateType.init(),
       areaUnit: AreaUnit.init(),
-      location: Location.init(),
+      //location: Location.init(),
       officeId: -1,
       locationId: -1,
       price: "default",
@@ -106,11 +107,22 @@ class Estate {
     // estate type :
     EstateType estateType = EstateType.fromJson(json["estate_type"]);
     // Offer type :
-    EstateOfferType estateOfferType = EstateOfferType.fromJson(json["estate_offer_type"]);
+    EstateOfferType estateOfferType =
+        EstateOfferType.fromJson(json["estate_offer_type"]);
     // estate location :
-    Location? location = Location.fromJson(json["location"]);
+    Location? location;
+    if (json.containsKey("location") && json["location"] != null) {
+      location = Location.fromJson(json["location"]);
+    }
+    String? locationS;
+    if (json.containsKey("locationS") && json["locationS"] != null) {
+      locationS = json["locationS"];
+    }
     // area unit :
-    AreaUnit areaUnit = AreaUnit.fromJson(json["area_unit"]);
+    AreaUnit? areaUnit;
+    if (json.containsKey("area_unit") && json["area_unit"] != null) {
+      areaUnit = json["area_unit"];
+    }
     // estate images :
     List<MyImage> images = [];
     dynamic jsonImages = json["images"]["data"];
@@ -126,7 +138,8 @@ class Estate {
     }
     // interior status :
     InteriorStatus? interiorStatus;
-    if (json.containsKey("interior_status") && json["interior_status"] != null) {
+    if (json.containsKey("interior_status") &&
+        json["interior_status"] != null) {
       interiorStatus = InteriorStatus.fromJson(json["interior_status"]);
     }
     // period type :
@@ -136,7 +149,7 @@ class Estate {
     }
     // Estate Office :
     EstateOffice? estateOffice;
-    if(json.containsKey("office") && json["office"] != null){
+    if (json.containsKey("office") && json["office"] != null) {
       estateOffice = EstateOffice.fromJson(json["office"]);
     }
 
@@ -157,39 +170,42 @@ class Estate {
     }
 
     return Estate(
-      id: json["id"],
-      price: json["price"],
-      area: json["area"],
+      id: json["id"] == null ? null : json["id"],
+      price: json["price"] == null ? null : json["price"],
+      area: json["area"] == null ? null : json["area"],
       estateType: estateType,
       estateOfferType: estateOfferType,
-      location: location,
+      location: location == null ? null : location,
+      locationS: locationS == null ? null : locationS,
       officeId: (estateOffice != null) ? estateOffice.id : null,
-      estateOffice: estateOffice,
-      areaUnit: areaUnit,
+      estateOffice: estateOffice == null ? null : estateOffice,
+      areaUnit: areaUnit == null ? null : areaUnit,
       estateImages: [],
       streetImages: [],
-      images: images,
-      longitude: json["longitude"],
-      latitude: json["latitude"],
-      locationId: json["location_id"],
-      contractId: json["contract_id"],
-      floor: json['floor'],
-      roomsCount: json["rooms_count"],
-      createdAt: json["created_at"],
-      publishedAt: json["published_at"],
-      nearbyPlaces: json["nearby_places"],
-      description: json["description"],
-      period: json["period_number"],
-      floorPlanImages: json["floor_plan"],
-      isLiked: json["is_liked"],
-      isSaved: json['is_saved'],
-      likesCount: json["likes_count"],
-      ownershipType: ownershipTypes,
-      interiorStatus: interiorStatus,
-      periodType: periodType,
-      hasSwimmingPool: hasSwimmingPool,
-      isFurnished: isFurnished,
-      isOnBeach: isOnBeach,
+      images: images == null ? null : images,
+      longitude: json["longitude"] == null ? null : json["longitude"],
+      latitude: json["latitude"] == null ? null : json["latitude"],
+      locationId: json["location_id"] == null ? null : json["location_id"],
+      contractId: json["contract_id"] == null ? null : json["contract_id"],
+      floor: json['floor'] == null ? null : json['floor'],
+      roomsCount: json["rooms_count"] == null ? null : json["rooms_count"],
+      createdAt: json["created_at"] == null ? null : json["created_at"],
+      publishedAt: json["published_at"] == null ? null : json["published_at"],
+      nearbyPlaces:
+          json["nearby_places"] == null ? null : json["nearby_places"],
+      description: json["description"] == null ? null : json["description"],
+      period: json["period_number"] == null ? null : json["period_number"],
+      floorPlanImages: json["floor_plan"] == null ? null : json["floor_plan"],
+      isLiked: json["is_liked"] == null ? null : json["is_liked"],
+      isSaved: json['is_saved'] == null ? null : json['is_saved'],
+      likesCount: json["likes_count"] == null ? null : json["likes_count"],
+      visitCount: json["visits_count"] == null ? null : json["visits_count"],
+      ownershipType: ownershipTypes == null ? null : ownershipTypes,
+      interiorStatus: interiorStatus == null ? null : interiorStatus,
+      periodType: periodType == null ? null : periodType,
+      hasSwimmingPool: hasSwimmingPool == null ? null : hasSwimmingPool,
+      isFurnished: isFurnished == null ? null : isFurnished,
+      isOnBeach: isOnBeach == null ? null : isOnBeach,
     );
   }
 
@@ -199,26 +215,33 @@ class Estate {
     // ownership type id :
     int? ownershipTypeId = (ownershipType == null) ? null : ownershipType!.id;
     // interior status id :
-    int? interiorStatusId = (interiorStatus == null) ? null : interiorStatus!.id;
+    int? interiorStatusId =
+        (interiorStatus == null) ? null : interiorStatus!.id;
     // period type id :
     int? periodTypeId = (periodType == null) ? null : periodType!.id;
     // is furnished:
-    int? isFurnished = (this.isFurnished == null) ? null : ((this.isFurnished!) ? 1 : 0);
+    int? isFurnished =
+        (this.isFurnished == null) ? null : ((this.isFurnished!) ? 1 : 0);
     // is on beach:
-    int? isOnBeach = (this.isOnBeach == null) ? null : ((this.isOnBeach!) ? 1 : 0);
+    int? isOnBeach =
+        (this.isOnBeach == null) ? null : ((this.isOnBeach!) ? 1 : 0);
     // has swimming pool :
-    int? hasSwimmingPool =
-        (this.hasSwimmingPool == null) ? null : ((this.hasSwimmingPool!) ? 1 : 0);
+    int? hasSwimmingPool = (this.hasSwimmingPool == null)
+        ? null
+        : ((this.hasSwimmingPool!) ? 1 : 0);
     // floor plan image :
-    List<MultipartFile>? floorPlanImages = await createImagesList(this.floorPlanImages);
+    List<MultipartFile>? floorPlanImages =
+        await createImagesList(this.floorPlanImages);
     // estate images:
-    List<MultipartFile>? estateImages = await createImagesList(this.estateImages);
+    List<MultipartFile>? estateImages =
+        await createImagesList(this.estateImages);
     // street images:
-    List<MultipartFile>? streetImages = await createImagesList(this.streetImages);
+    List<MultipartFile>? streetImages =
+        await createImagesList(this.streetImages);
 
-    map["estate_offer_type_id"] = estateOfferType.id;
-    map["estate_type_id"] = estateType.id;
-    map["area_unit_id"] = areaUnit.id;
+    map["estate_offer_type_id"] = estateOfferType!.id;
+    map["estate_type_id"] = estateType!.id;
+    map["area_unit_id"] = areaUnit!.id;
     map["price"] = price;
     map["area"] = area;
     map["id"] = id;
@@ -247,16 +270,16 @@ class Estate {
     if (files == null) return [];
     List<MultipartFile> results = [];
     for (var file in files) {
-      MultipartFile multipartFile =
-          await MultipartFile.fromFile(file.path, filename: file.path.split('/').last);
+      MultipartFile multipartFile = await MultipartFile.fromFile(file.path,
+          filename: file.path.split('/').last);
       results.add(multipartFile);
     }
     return results;
   }
 
-  String getEstateShareInformations() {
-    String shareInformations = "";
+  String getEstateShareInformation() {
+    String shareInformation = "";
 
-    return shareInformations;
+    return shareInformation;
   }
 }

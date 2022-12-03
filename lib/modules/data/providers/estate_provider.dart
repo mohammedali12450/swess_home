@@ -55,13 +55,20 @@ class EstateProvider {
     return response;
   }
 
-  Future getOfficeDetails(int officeId) async {
+  Future getOfficeDetails(int officeId, int page, String? token) async {
     NetworkHelper helper = NetworkHelper();
 
     Response response;
     try {
-      response = await helper
-          .get(getOfficeDetailsUrl, queryParameters: {"office_id": officeId});
+      print("baba $token");
+      response = await helper.get(
+        token == null
+            ? "$getOfficeDetailsURL$officeId"
+            : "$getOfficeDetailsWithAuthURL$officeId",
+        //, queryParameters: {"office_id": officeId}
+        queryParameters: {"page": page},
+        token: token
+      );
     } catch (e) {
       rethrow;
     }
@@ -172,7 +179,7 @@ class EstateProvider {
         break;
       case VisitType.estateOffice:
         data = {"office_id": visitId};
-        url = visitOfficeUrl;
+        url = visitOfficeURL;
 
         break;
       case VisitType.officeCall:

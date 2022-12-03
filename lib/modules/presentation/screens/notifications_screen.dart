@@ -18,6 +18,7 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import 'created_estates_screen.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -40,7 +41,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
     if (BlocProvider.of<UserLoginBloc>(context).user != null) {
       notificationsBloc = BlocProvider.of<NotificationsBloc>(context);
-      token = BlocProvider.of<UserLoginBloc>(context).user!.token!;
+      token = UserSharedPreferences.getAccessToken()!;
       notificationsBloc.add(
         NotificationsFetchStarted(token: token),
       );

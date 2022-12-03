@@ -21,9 +21,6 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
       try {
         user = await userAuthenticationRepository.login(
             event.authentication, event.password);
-        if (user!.token != null) {
-          UserSharedPreferences.setAccessToken(user!.token!);
-        }
 
         emit(UserLoginComplete());
       } on ConnectionException catch (e) {

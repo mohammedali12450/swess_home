@@ -17,6 +17,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/re
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reset_password_bloc/reset_password_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/verification_bloc/verification_bloc.dart';
 import 'package:swesshome/modules/data/repositories/estate_order_repository.dart';
@@ -36,6 +37,7 @@ import 'modules/business_logic_components/bloc/delete_recent_estate_order_bloc/d
 import 'modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_bloc.dart';
 import 'modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import 'modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
+import 'modules/business_logic_components/bloc/governorates_bloc/governorates_bloc.dart';
 import 'modules/business_logic_components/bloc/interior_statuses_bloc/interior_statuses_bloc.dart';
 import 'modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';
 import 'modules/business_logic_components/bloc/notifications_bloc/notifications_bloc.dart';
@@ -44,6 +46,7 @@ import 'modules/business_logic_components/bloc/period_types_bloc/period_types_bl
 import 'modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import 'modules/business_logic_components/bloc/send_estate_bloc/send_estate_bloc.dart';
 import 'modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
+import 'modules/business_logic_components/bloc/user_data_bloc/user_data_bloc.dart';
 import 'modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'modules/data/providers/locale_provider.dart';
 import 'modules/data/providers/theme_provider.dart';
@@ -252,6 +255,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         BlocProvider(
           create: (_) => DeleteEstatesBloc(EstateOrderRepository()),
+        ),
+        BlocProvider(
+          create: (_) => UserDataBloc(UserAuthenticationRepository()),
+        ),
+        BlocProvider(
+          create: (_) => UserEditDataBloc(UserAuthenticationRepository()),
+        ),
+        BlocProvider(
+          create: (_) => GovernoratesBloc(),
         ),
       ],
       child: MultiProvider(

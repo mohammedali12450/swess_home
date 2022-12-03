@@ -398,6 +398,8 @@
   "no_min_price": "No Min",
   "title_min_price": "Select Min price",
   "title_max_price": "Select MAx price",
+  "image": "images",
+  "video": "video",
   "after_order_body": "Your request has been sent successfully. Your request will be presented to the offices, and you learn about their nominations and offers in the notifications",
   "estate_order_sent": "Your order has been sent successfully",
   "have_not_recent_orders": "You have not created real estate requests yet",

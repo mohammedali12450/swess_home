@@ -24,6 +24,7 @@ import 'package:swesshome/modules/presentation/screens/authentication_screen.dar
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import 'search_location_screen.dart';
 
 class CreateOrderScreen extends StatefulWidget {
@@ -48,7 +49,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   // Others :
   late List<EstateType> estatesTypes;
   late List<EstateOfferType> offerTypes;
-  late List<PriceDomain> priceDomains;
+  late PriceDomain priceDomains;
   late int selectedEstateTypeId;
 
   late int selectedEstateOfferTypeId;
@@ -73,10 +74,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   @override
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
-    List<String> priceDomainsNames =
-    priceDomains.map((e) => e.getTextPriceDomain(isArabic)).toList();
-    priceDomainsNames.insert(0, AppLocalizations.of(context)!.undefined);
-    priceDomainsNames = priceDomainsNames.toSet().toList();
 
     return BlocListener<EstateOrderBloc, EstateOrderState>(
       listener: (_, estateOrderState) async {
@@ -242,16 +239,17 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       AppLocalizations.of(context)!.price_domain + " :",
                     ),
                     kHe24,
-                    MyDropdownList(
-                      elementsList: priceDomainsNames,
-                      onSelect: (index) {
-                        bool isNoneSelected = index == 0;
-                        selectedPriceDomainId = (isNoneSelected)
-                            ? null
-                            : priceDomains.elementAt(index - 1).id;
-                      },
-                      selectedItem: AppLocalizations.of(context)!.undefined,
-                    ),
+                    //TODO : ghina edit here
+                    // MyDropdownList(
+                    //   elementsList: priceDomainsNames,
+                    //   onSelect: (index) {
+                    //     bool isNoneSelected = index == 0;
+                    //     selectedPriceDomainId = (isNoneSelected)
+                    //         ? null
+                    //         : priceDomains.elementAt(index - 1).id;
+                    //   },
+                    //   selectedItem: AppLocalizations.of(context)!.undefined,
+                    // ),
                     kHe24,
                     Text(
                       AppLocalizations.of(context)!.notes + " :",
@@ -324,7 +322,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
                             User? user =
                                 BlocProvider.of<UserLoginBloc>(context).user;
-                            String? token = (user == null) ? null : user.token;
+                            String? token = (user == null)
+                                ? null
+                                : UserSharedPreferences.getAccessToken()!;
                             BlocProvider.of<EstateOrderBloc>(context).add(
                               SendEstateOrderStarted(
                                   order: estateOrder, token: token),

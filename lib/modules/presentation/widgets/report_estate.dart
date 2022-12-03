@@ -8,6 +8,7 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 
 import '../../../constants/design_constants.dart';
 import '../../../core/functions/app_theme_information.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/reports_bloc/reports_bloc.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../data/models/report.dart';
@@ -23,7 +24,7 @@ void showReportModalBottomSheet(context, int estateId) {
       Provider.of<LocaleProvider>(context, listen: false).isArabic();
   String? userToken;
   if (BlocProvider.of<UserLoginBloc>(context).user != null) {
-    userToken = BlocProvider.of<UserLoginBloc>(context).user!.token;
+    userToken = UserSharedPreferences.getAccessToken();
   }
   TextEditingController reportController = TextEditingController();
 
@@ -79,7 +80,8 @@ void showReportModalBottomSheet(context, int estateId) {
                                       if (await reportRepository.sendReport(
                                           userToken,
                                           reports.elementAt(index).id,
-                                          estateId)) {
+                                          estateId,
+                                          null)) {
                                         Fluttertoast.showToast(
                                             msg: AppLocalizations.of(context)!
                                                 .send_report);
@@ -212,7 +214,9 @@ void showReportModalBottomSheet(context, int estateId) {
                                                                 .elementAt(
                                                                     index)
                                                                 .id,
-                                                            estateId)) {
+                                                            estateId,
+                                                            reportController
+                                                                .text)) {
                                                       Fluttertoast.showToast(
                                                           msg: AppLocalizations
                                                                   .of(context)!

@@ -18,6 +18,7 @@ import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../widgets/report_estate.dart';
 
@@ -48,7 +49,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
     super.initState();
     isEstatesFinished = false;
     if (BlocProvider.of<UserLoginBloc>(context).user != null) {
-      userToken = BlocProvider.of<UserLoginBloc>(context).user!.token;
+      userToken = UserSharedPreferences.getAccessToken();
     }
   }
 
@@ -96,7 +97,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                     context, AppLocalizations.of(context)!.error, error);
               }
             },
-            builder: (context, estatesFetchState) {
+            builder: (context, EstateState estatesFetchState) {
               if (estatesFetchState is EstateFetchNone ||
                   (estatesFetchState is EstateFetchProgress &&
                       estates.isEmpty)) {
@@ -311,7 +312,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                           estate: estates.elementAt(index),
                           onClosePressed: () {
                             showReportModalBottomSheet(
-                                context, estates.elementAt(index).id);
+                                context, estates.elementAt(index).id!);
                           },
                           removeCloseButton: false,
                         );

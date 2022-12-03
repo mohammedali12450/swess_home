@@ -16,6 +16,8 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+
 class RatingScreen extends StatefulWidget {
   static const String id = "RatingScreen";
 
@@ -192,7 +194,7 @@ class _RatingScreenState extends State<RatingScreen> {
                     String? token;
                     if (BlocProvider.of<UserLoginBloc>(context).user != null) {
                       token =
-                          BlocProvider.of<UserLoginBloc>(context).user!.token!;
+                          UserSharedPreferences.getAccessToken();
                     }
                     _ratingBloc.add(
                       RatingStarted(

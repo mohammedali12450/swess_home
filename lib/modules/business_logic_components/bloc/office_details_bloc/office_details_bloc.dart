@@ -8,17 +8,17 @@ import 'office_details_state.dart';
 
 class GetOfficesBloc extends Bloc<GetOfficesEvents, GetOfficesStates> {
   EstateRepository estateRepository;
+  int page = 1;
+  bool isFetching = false;
 
   GetOfficesBloc(this.estateRepository) : super(GetOfficesFetchNone()) {
     on<GetOfficesDetailsStarted>((event, emit) async {
       emit(GetOfficesFetchProgress());
       try {
-        print("ghina12");
-        EstateOffice results =
-            await estateRepository.getOfficeDetails(event.officeId!);
-        print("ghina13");
+        OfficeDetails results = await estateRepository.getOfficeDetails(
+            event.officeId!, page, event.token);
         emit(GetOfficesFetchComplete(results: results));
-
+        page++;
       } on ConnectionException catch (e) {
         emit(GetOfficesFetchError(errorMessage: e.errorMessage));
       } catch (e) {

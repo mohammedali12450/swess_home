@@ -18,8 +18,8 @@ class ReportsRepository {
     return reports;
   }
 
-  Future<bool> sendReport(String? token, reportId, estateId) async {
-    Response response = await _reportProviders.sendReport(token, reportId, estateId);
+  Future<bool> sendReport(String? token, reportId, estateId, note) async {
+    Response response = await _reportProviders.sendReport(token, reportId, estateId, note);
 
     if (response.statusCode != 200) {
       return false;

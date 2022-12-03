@@ -7,16 +7,15 @@ import 'package:swesshome/modules/data/providers/price_domains_provider.dart';
 class PriceDomainsRepository {
   PriceDomainProvider priceDomainProvider = PriceDomainProvider();
 
-  Future<List<PriceDomain>> fetchData() async {
-    Response response = await priceDomainProvider.fetchData();
+  Future<PriceDomain> fetchData(String type) async {
+    Response response = await priceDomainProvider.fetchData(type);
 
     if (response.statusCode != 200) {
       throw UnknownException();
     }
 
-    var priceDomainsJson = jsonDecode(response.toString())['data'] as List;
-    List<PriceDomain> priceDomains =
-    priceDomainsJson.map<PriceDomain>((e) => PriceDomain.fromJson(e)).toList();
+    var priceDomainsJson = jsonDecode(response.toString())['data'];
+    PriceDomain priceDomains = PriceDomain.fromJson(priceDomainsJson);
     return priceDomains;
   }
 }

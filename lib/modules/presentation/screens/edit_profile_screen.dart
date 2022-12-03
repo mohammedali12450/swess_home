@@ -2,34 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_state.dart';
+import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/presentation/widgets/date_picker.dart';
 
 import '../../../constants/design_constants.dart';
-import '../../business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../../business_logic_components/bloc/governorates_bloc/governorates_bloc.dart';
+import '../../business_logic_components/bloc/governorates_bloc/governorates_event.dart';
+import '../../business_logic_components/bloc/governorates_bloc/governorates_state.dart';
+import '../../business_logic_components/bloc/user_edit_data_bloc/edit_user_data_event.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
+import '../../data/models/governorates.dart';
+import '../../data/models/user.dart';
 import '../widgets/my_dropdown_list.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen(
-      {Key? key,
-      this.firstNameController,
-      this.lastNameController,
-      this.emailController,
-      this.birthdateController}) : super(key: key);
+  EditProfileScreen({Key? key, this.user}) : super(key: key);
 
   static const String id = "EditProfileScreen";
 
-  // controllers:
-  final TextEditingController? firstNameController;
-  final TextEditingController? lastNameController;
-  final TextEditingController? emailController;
-  final TextEditingController? birthdateController;
+  User? user;
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  late UserEditDataBloc _userEditDataBloc;
+  late GovernoratesBloc governoratesBloc;
   ChannelCubit authenticationError = ChannelCubit(null);
   ChannelCubit firstNameError = ChannelCubit(null);
   ChannelCubit lastNameError = ChannelCubit(null);
@@ -37,30 +41,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   ChannelCubit countryError = ChannelCubit(null);
   ChannelCubit birthdateError = ChannelCubit(null);
 
-  late String phoneDialCode;
-  String userCountry = "Syrian Arab Republic";
+  // controllers:
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController birthdateController = TextEditingController();
+
   late int selectedGovernorateId;
   DateTime? birthDate;
   late String phoneDialCodeLogin;
   String phoneNumber = "";
-
-  // Others :
-  bool isForStore = false;
+  String? token;
+  List<Governorate>? governorates;
 
   @override
   void initState() {
+    _userEditDataBloc = BlocProvider.of<UserEditDataBloc>(context);
+    governoratesBloc = BlocProvider.of<GovernoratesBloc>(context);
+    governoratesBloc.add(GovernoratesFetchStarted());
+    token = UserSharedPreferences.getAccessToken()!;
     super.initState();
-    // Dial code initializing:
-    isForStore = BlocProvider.of<SystemVariablesBloc>(context)
-        .systemVariables!
-        .isForStore;
-    if (isForStore) {
-      phoneDialCode = "+961";
-      phoneDialCodeLogin = "+961";
-    } else {
-      phoneDialCode = "+963";
-      phoneDialCodeLogin = "+963";
-    }
   }
 
   @override
@@ -85,11 +85,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return TextField(
                     onChanged: (_) {
                       firstNameError.setState(null);
+                      widget.user!.firstName = firstNameController.text;
                     },
-                    controller: widget.firstNameController,
+                    controller: firstNameController,
                     decoration: InputDecoration(
                       errorText: errorMessage,
-                      hintText: AppLocalizations.of(context)!.enter_first_name,
+                      hintText: widget.user!.firstName,
                       suffix: null,
                       suffixIcon: null,
                       isCollapsed: false,
@@ -109,11 +110,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return TextField(
                     onChanged: (_) {
                       lastNameError.setState(null);
+                      widget.user!.lastName = lastNameController.text;
                     },
-                    controller: widget.lastNameController,
+                    controller: lastNameController,
                     decoration: InputDecoration(
                       errorText: errorMessage,
-                      hintText: AppLocalizations.of(context)!.enter_last_name,
+                      hintText: widget.user!.lastName,
                       isCollapsed: false,
                     ),
                   );
@@ -131,39 +133,58 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return TextField(
                     onChanged: (_) {
                       emailError.setState(null);
+                      widget.user!.email = emailController.text;
                     },
-                    controller: widget.emailController,
+                    controller: emailController,
                     decoration: InputDecoration(
                       errorText: errorMessage,
-                      hintText: AppLocalizations.of(context)!.enter_your_email,
+                      hintText: widget.user!.email,
                       isCollapsed: false,
                     ),
                   );
                 },
               ),
-              if (userCountry == "Syrian Arab Republic") ...[
-                kHe24,
-                Text(
-                  AppLocalizations.of(context)!.governorate + " :",
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                kHe8,
-                BlocBuilder<ChannelCubit, dynamic>(
-                  bloc: countryError,
-                  builder: (_, errorMessage) {
-                    return MyDropdownList(
-                      elementsList: const ["ghina", "ghina", "ghina"],
-                      onSelect: (index) {
-                        selectedGovernorateId = index;
-                      },
-                      // validator: (value) => value == null
-                      //     ? AppLocalizations.of(context)!.this_field_is_required
-                      //     : null,
-                      selectedItem: AppLocalizations.of(context)!.please_select,
-                    );
-                  },
-                ),
-              ],
+              if (widget.user!.country == "Syrian Arab Republic")
+                BlocBuilder<GovernoratesBloc, dynamic>(
+                    bloc: governoratesBloc,
+                    builder: (_, state) {
+                      if (state is GovernoratesFetchComplete) {
+                        governorates = state.governorates;
+                      }
+                      return Column(
+                        children: [
+                          kHe24,
+                          Row(
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.governorate +
+                                    " :",
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            ],
+                          ),
+                          kHe8,
+                          BlocBuilder<ChannelCubit, dynamic>(
+                            bloc: countryError,
+                            builder: (_, errorMessage) {
+                              return MyDropdownList(
+                                elementsList:
+                                    governorates!.map((e) => e.name).toList(),
+                                onSelect: (index) {
+                                  selectedGovernorateId = index;
+                                  widget.user!.governorate =
+                                      governorates!.elementAt(index).name;
+                                },
+                                // validator: (value) => value == null
+                                //     ? AppLocalizations.of(context)!.this_field_is_required
+                                //     : null,
+                                selectedItem: widget.user!.governorate,
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    }),
               kHe24,
               Text(
                 AppLocalizations.of(context)!.date_of_birth + " :",
@@ -174,22 +195,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 bloc: birthdateError,
                 builder: (_, errorMessage) {
                   return TextField(
-                    onTap: () async{
-                      await myDatePicker(context,
+                    onTap: () async {
+                      await myDatePicker(
+                        context,
                         showTitleActions: true,
                         minTime: DateTime(1900, 1, 1),
                         maxTime: DateTime.now(),
-                        onConfirm: (date) {},
+                        onConfirm: (date) {
+                          birthDate = date;
+                          birthdateController.text =
+                              DateFormat('yyyy/MM/dd').format(date);
+                          widget.user!.birthdate = birthdateController.text;
+                          print(birthDate);
+                          print(birthdateController.text);
+                        },
                         currentTime: DateTime.now(),
-                        editingController: widget.birthdateController,
+                        editingController: birthdateController,
                       );
                     },
                     readOnly: true,
-                    controller: widget.birthdateController,
+                    controller: birthdateController,
                     decoration: InputDecoration(
                       errorText: errorMessage,
-                      hintText:
-                          AppLocalizations.of(context)!.enter_your_birth_date,
+                      hintText: widget.user!.birthdate!,
                       isCollapsed: false,
                     ),
                   );
@@ -197,11 +225,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               kHe32,
               Center(
-                  child: ElevatedButton(
-                      onPressed: () {
-
-                      },
-                      child: Text(AppLocalizations.of(context)!.save))),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(240.w, 64.h),
+                    maximumSize: Size(300.w, 64.h),
+                  ),
+                  child: BlocBuilder<UserEditDataBloc, UserEditDataState>(
+                    builder: (_, loginState) {
+                      (loginState is UserEditDataProgress)
+                          ? SpinKitWave(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              size: 20.w,
+                            )
+                          : Text(AppLocalizations.of(context)!.resend);
+                      return Text(
+                        AppLocalizations.of(context)!.save,
+                      );
+                    },
+                  ),
+                  onPressed: () async {
+                    if (UserEditDataProgress is UserEditDataProgress) {
+                      return;
+                    }
+                    _userEditDataBloc.add(UserEditDataStarted(
+                        user: Register(
+                            firstName: widget.user!.firstName!,
+                            lastName: widget.user!.lastName!,
+                            email: widget.user!.email!,
+                            governorate: 5,
+                            birthdate: widget.user!.birthdate!,
+                            authentication: widget.user!.authentication!),
+                        token: token));
+                    FocusScope.of(context).unfocus();
+                  },
+                ),
+              ),
             ],
           ),
         ),

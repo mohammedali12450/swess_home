@@ -15,7 +15,7 @@ class GetOfficesFetchError extends GetOfficesStates {
 class GetOfficesFetchProgress extends GetOfficesStates {}
 
 class GetOfficesFetchComplete extends GetOfficesStates {
-  EstateOffice results ;
+  OfficeDetails results ;
 
   GetOfficesFetchComplete({required this.results});
 }

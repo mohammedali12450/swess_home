@@ -7,14 +7,14 @@ import 'package:swesshome/modules/data/repositories/price_domains_repository.dar
 
 class PriceDomainsBloc extends Bloc<PriceDomainsEvent, PriceDomainsState> {
   PriceDomainsRepository priceDomainsRepository;
-  List<PriceDomain>? priceDomains;
+  PriceDomain? priceDomains;
 
   PriceDomainsBloc(this.priceDomainsRepository) : super(PriceDomainsFetchNone()) {
     on<PriceDomainsFetchStarted>((event, emit) async {
       emit(PriceDomainsFetchProgress());
       try {
-        priceDomains = await priceDomainsRepository.fetchData();
-        emit(PriceDomainsFetchComplete());
+        priceDomains = await priceDomainsRepository.fetchData(event.type);
+        emit(PriceDomainsFetchComplete(priceDomains));
       } catch (e, stack) {
         debugPrint(e.toString());
         debugPrint(stack.toString());

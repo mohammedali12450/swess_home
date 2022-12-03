@@ -9,7 +9,7 @@ class EstateOfficeProvider {
 
     try {
       response = await helper.get(
-           searchEstateOfficeByNameUrl,
+          getAllOfficesURL,
           queryParameters: {"name": name},
           token: token);
     } catch (e) {

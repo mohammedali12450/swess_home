@@ -179,15 +179,15 @@ class _VerificationLoginCodeScreenState
                                   listener: (context, sendCodeState) async {
                                     if (sendCodeState
                                         is SendVerificationCodeLoginComplete) {
-                                      if (sendCodeState.user.token != null) {
+                                      if (UserSharedPreferences.getAccessToken() != null) {
                                         // save user token in shared preferences :
                                         UserSharedPreferences.setAccessToken(
-                                            sendCodeState.user.token!);
+                                            UserSharedPreferences.getAccessToken()!);
                                         // Send user fcm token to server :
                                         BlocProvider.of<FcmBloc>(context).add(
                                           SendFcmTokenProcessStarted(
                                               userToken:
-                                                  sendCodeState.user.token!),
+                                              UserSharedPreferences.getAccessToken()!),
                                         );
                                         BlocProvider.of<UserLoginBloc>(context)
                                             .user = sendCodeState.user;
@@ -282,14 +282,12 @@ class _VerificationLoginCodeScreenState
                                                   if (widget.user != null) {
                                                     // save user token in shared preferences :
                                                     UserSharedPreferences
-                                                        .setAccessToken(widget
-                                                            .user!.token!);
+                                                        .setAccessToken(UserSharedPreferences.getAccessToken()!);
                                                     // Send user fcm token to server :
                                                     BlocProvider.of<FcmBloc>(
                                                             context)
                                                         .add(SendFcmTokenProcessStarted(
-                                                            userToken: widget
-                                                                .user!.token!));
+                                                            userToken: UserSharedPreferences.getAccessToken()!));
                                                     BlocProvider.of<
                                                                 UserLoginBloc>(
                                                             context)

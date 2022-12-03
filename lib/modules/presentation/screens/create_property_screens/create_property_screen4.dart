@@ -68,13 +68,13 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
     // TODO: implement initState
     super.initState();
     // initializing :
-    int estateTypeId = widget.currentOffer.estateType.id;
+    int estateTypeId = widget.currentOffer.estateType!.id;
     isLands = (estateTypeId == landsPropertyTypeNumber);
     isShops = (estateTypeId == shopsPropertyTypeNumber);
     isHouse = (estateTypeId == housePropertyTypeNumber);
     isFarmsOrVacations = (estateTypeId == farmsPropertyTypeNumber) ||
         (estateTypeId == vacationsPropertyTypeNumber);
-    isSell = widget.currentOffer.estateOfferType.id == sellOfferTypeNumber;
+    isSell = widget.currentOffer.estateOfferType!.id == sellOfferTypeNumber;
     ownershipTypes =
         BlocProvider.of<OwnershipTypeBloc>(context).ownershipTypes!;
     interiorStatuses =

@@ -2,11 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/utils/services/network_helper.dart';
 
-class PriceDomainProvider{
+class GovernoratesProvider{
 
-  Future fetchData(String type)async{
+  Future getGovernorates()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get("$priceDomainURL$type");
+    Response response = await helper.get(governoratesURL) ;
     return response ;
   }
 }

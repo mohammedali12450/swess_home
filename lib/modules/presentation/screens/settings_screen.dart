@@ -17,10 +17,16 @@ import 'package:swesshome/modules/presentation/screens/authentication_screen.dar
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_snack_bar.dart';
 import '../../../constants/assets_paths.dart';
+import '../../business_logic_components/bloc/estate_bloc/estate_bloc.dart';
+import '../../business_logic_components/bloc/user_data_bloc/user_data_bloc.dart';
+import '../../business_logic_components/bloc/user_data_bloc/user_data_event.dart';
+import '../../business_logic_components/bloc/user_data_bloc/user_data_state.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import '../../business_logic_components/cubits/notifications_cubit.dart';
 import '../../data/models/user.dart';
+import '../widgets/fetch_result.dart';
 import '../widgets/icone_badge.dart';
+import '../widgets/shimmers/estates_shimmer.dart';
 import 'edit_profile_screen.dart';
 import 'home_screen.dart';
 import 'languages_screen.dart';
@@ -37,13 +43,23 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   late ChannelCubit isDarkModeSelectedCubit;
-  late UserLoginBloc _userLoginBloc;
+
+  //late UserLoginBloc _userLoginBloc;
+  late UserDataBloc _userDataBloc;
   final ChannelCubit isLogoutLoadingCubit = ChannelCubit(false);
+
+  User? user;
 
   @override
   void initState() {
     super.initState();
-    _userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
+    //_userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
+    _userDataBloc = BlocProvider.of<UserDataBloc>(context);
+    if (UserSharedPreferences.getAccessToken() != null) {
+      _userDataBloc.add(
+        UserDataStarted(token: UserSharedPreferences.getAccessToken()),
+      );
+    }
   }
 
   @override
@@ -61,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                if (_userLoginBloc.user == null) ...[
+                if (UserSharedPreferences.getAccessToken() == null) ...[
                   // buildLanguageSetting,
                   buildListTile(
                     isEnglish,
@@ -88,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   6.verticalSpace,
                   buildThemeModeSetting(),
                 ],
-                if (_userLoginBloc.user != null) ...[
+                if (UserSharedPreferences.getAccessToken() != null) ...[
                   buildUserProfile(isDark, isEnglish),
                 ],
                 //Spacer(),
@@ -111,119 +127,150 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget buildUserProfile(isDark, isEnglish) {
-    return Column(
-      children: [
-        buildProfileImage(isDark),
-
-        // buildNotification
-        buildListTile(
-          isEnglish,
-          icon: BlocBuilder<NotificationsCubit, int>(
-              builder: (_, notificationsCount) {
-            return IconBadge(
-              icon: const Icon(
-                Icons.notifications_outlined,
+    return BlocBuilder<UserDataBloc, UserDataState>(
+        bloc: _userDataBloc,
+        builder: (_, UserDataState userEditState) {
+          if (userEditState is UserDataError) {
+            BlocProvider.of<EstateBloc>(context).isFetching = false;
+            return RefreshIndicator(
+              color: Theme.of(context).colorScheme.primary,
+              onRefresh: () async {
+                _userDataBloc.add(UserDataStarted(
+                    token: UserSharedPreferences.getAccessToken()));
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                    width: 1.sw,
+                    height: 1.sh - 75.h,
+                    child: FetchResult(
+                        content: AppLocalizations.of(context)!
+                            .error_happened_when_executing_operation)),
               ),
-              itemCount: notificationsCount,
-              right: 0,
-              top: 5.h,
-              hideZero: true,
             );
-          }),
-          title: Text(AppLocalizations.of(context)!.notifications),
-          onTap: () async {
-            if (BlocProvider.of<UserLoginBloc>(context).user == null) {
-              await showWonderfulAlertDialog(
-                  context,
-                  AppLocalizations.of(context)!.confirmation,
-                  AppLocalizations.of(context)!.this_features_require_login,
-                  removeDefaultButton: true,
-                  dialogButtons: [
-                    ElevatedButton(
-                      child: Text(
-                        AppLocalizations.of(context)!.sign_in,
-                      ),
-                      onPressed: () async {
-                        await Navigator.pushNamed(
-                            context, AuthenticationScreen.id);
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ElevatedButton(
-                      child: Text(
-                        AppLocalizations.of(context)!.cancel,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                  width: 400.w);
-              return;
-            }
-            Navigator.pushNamed(context, NotificationScreen.id);
-          },
-          trailing: Icon((isEnglish)
-              ? Icons.keyboard_arrow_right
-              : Icons.keyboard_arrow_left),
-        ),
+          }
+          if (userEditState is UserDataProgress) {
+            return const PropertyShimmer();
+          }
+          if (userEditState is UserDataComplete) {
+            user = userEditState.user;
+          }
 
-        // buildLanguageSetting,
-        buildListTile(
-          isEnglish,
-          icon: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.language_outlined),
-          ),
-          title: Row(
+          return Column(
             children: [
-              Text(AppLocalizations.of(context)!.language_word),
-              const Spacer(),
-              Text(AppLocalizations.of(context)!.language),
+              buildProfileImage(isDark, userEditState),
+
+              // buildNotification
+              buildListTile(
+                isEnglish,
+                icon: BlocBuilder<NotificationsCubit, int>(
+                    builder: (_, notificationsCount) {
+                  return IconBadge(
+                    icon: const Icon(
+                      Icons.notifications_outlined,
+                    ),
+                    itemCount: notificationsCount,
+                    right: 0,
+                    top: 5.h,
+                    hideZero: true,
+                  );
+                }),
+                title: Text(AppLocalizations.of(context)!.notifications),
+                onTap: () async {
+                  if (BlocProvider.of<UserLoginBloc>(context).user == null) {
+                    await showWonderfulAlertDialog(
+                        context,
+                        AppLocalizations.of(context)!.confirmation,
+                        AppLocalizations.of(context)!
+                            .this_features_require_login,
+                        removeDefaultButton: true,
+                        dialogButtons: [
+                          ElevatedButton(
+                            child: Text(
+                              AppLocalizations.of(context)!.sign_in,
+                            ),
+                            onPressed: () async {
+                              await Navigator.pushNamed(
+                                  context, AuthenticationScreen.id);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ElevatedButton(
+                            child: Text(
+                              AppLocalizations.of(context)!.cancel,
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                        width: 400.w);
+                    return;
+                  }
+                  Navigator.pushNamed(context, NotificationScreen.id);
+                },
+                trailing: Icon((isEnglish)
+                    ? Icons.keyboard_arrow_right
+                    : Icons.keyboard_arrow_left),
+              ),
+
+              // buildLanguageSetting,
+              buildListTile(
+                isEnglish,
+                icon: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Icon(Icons.language_outlined),
+                ),
+                title: Row(
+                  children: [
+                    Text(AppLocalizations.of(context)!.language_word),
+                    const Spacer(),
+                    Text(AppLocalizations.of(context)!.language),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, LanguagesScreen.id);
+                },
+                trailing: Icon((isEnglish)
+                    ? Icons.keyboard_arrow_right
+                    : Icons.keyboard_arrow_left),
+              ),
+
+              buildThemeModeSetting(),
+
+              //buildInviteFriends,
+              buildListTile(
+                isEnglish,
+                icon: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Icon(Icons.people_alt_outlined),
+                ),
+                title: Text(AppLocalizations.of(context)!.invite_friends),
+                onTap: () {},
+              ),
+
+              6.verticalSpace,
+              const Divider(thickness: 0.2),
+              6.verticalSpace,
+              //buildChangePassword,
+              buildListTile(
+                isEnglish,
+                icon: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Icon(Icons.key_outlined),
+                ),
+                title: Text(AppLocalizations.of(context)!.change_password),
+                onTap: () {},
+              ),
+
+              buildDeleteMyAccount(isDark, isEnglish),
+              buildLogout(isEnglish),
             ],
-          ),
-          onTap: () {
-            Navigator.pushNamed(context, LanguagesScreen.id);
-          },
-          trailing: Icon((isEnglish)
-              ? Icons.keyboard_arrow_right
-              : Icons.keyboard_arrow_left),
-        ),
-
-        buildThemeModeSetting(),
-
-        //buildInviteFriends,
-        buildListTile(
-          isEnglish,
-          icon: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.people_alt_outlined),
-          ),
-          title: Text(AppLocalizations.of(context)!.invite_friends),
-          onTap: () {},
-        ),
-
-        6.verticalSpace,
-        const Divider(thickness: 0.2),
-        6.verticalSpace,
-        //buildChangePassword,
-        buildListTile(
-          isEnglish,
-          icon: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.key_outlined),
-          ),
-          title: Text(AppLocalizations.of(context)!.change_password),
-          onTap: () {},
-        ),
-
-        buildDeleteMyAccount(isDark, isEnglish),
-        buildLogout(isEnglish),
-      ],
-    );
+          );
+        });
   }
 
-  SizedBox buildProfileImage(isDark) {
+  SizedBox buildProfileImage(isDark, userEditState) {
     return SizedBox(
       height: 320.h,
       child: Column(
@@ -245,7 +292,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const EditProfileScreen()),
+                            builder: (_) => EditProfileScreen(user: user!)),
                       );
                     },
                   ),
@@ -266,12 +313,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "ghina sharaf",
+                  "${user!.firstName} ${user!.lastName}",
                   style: Theme.of(context).textTheme.headline3!.copyWith(
                       color: !isDark ? AppColors.black : AppColors.white),
                 ),
                 Text(
-                  "ghina.swesshome@gmail.com",
+                  user?.email ?? "",
                   style: Theme.of(context).textTheme.headline6!.copyWith(
                       color: !isDark
                           ? AppColors.hintColor
@@ -283,20 +330,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        "+963946156989",
+                        "${user!.authentication}",
                         style: Theme.of(context).textTheme.headline6!.copyWith(
                             color: !isDark
                                 ? AppColors.primaryColor
                                 : AppColors.primaryDark),
                       ),
                       Text(
-                        "Syria,Damascus",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(color: !isDark
-                            ? AppColors.primaryColor
-                            : AppColors.primaryDark),
+                        "${user!.country}"
+                        " , ${user!.governorate ?? ""}",
+                        style: Theme.of(context).textTheme.headline6!.copyWith(
+                            color: !isDark
+                                ? AppColors.primaryColor
+                                : AppColors.primaryDark),
                       ),
                     ],
                   ),
@@ -465,9 +511,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future _logoutAfterDelete() async {
     UserAuthenticationRepository userRep = UserAuthenticationRepository();
-    if (_userLoginBloc.user != null && _userLoginBloc.user!.token != null) {
+    if (UserSharedPreferences.getAccessToken() != null) {
       try {
-        await userRep.deleteUser(_userLoginBloc.user!.token!);
+        await userRep.deleteUser(UserSharedPreferences.getAccessToken()!);
       } on ConnectionException {
         Navigator.pop(context);
         showWonderfulAlertDialog(
@@ -479,7 +525,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
     }
     UserSharedPreferences.removeAccessToken();
-    _userLoginBloc.user = null;
+    //_userLoginBloc.user = null;
     MySnackBar.show(context, "User deleted");
     Navigator.pushAndRemoveUntil(
         context,
@@ -578,10 +624,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       );
       return;
-    } else if (_userLoginBloc.user != null &&
-        _userLoginBloc.user!.token != null) {
+    } else if (UserSharedPreferences.getAccessToken() != null) {
       try {
-        await userRep.logout(_userLoginBloc.user!.token!);
+        await userRep.logout(UserSharedPreferences.getAccessToken()!);
       } on ConnectionException {
         Navigator.pop(context);
         showWonderfulAlertDialog(
@@ -593,7 +638,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
     }
     UserSharedPreferences.removeAccessToken();
-    _userLoginBloc.user = null;
+    //_userLoginBloc.user = null;
     Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
     return;
   }

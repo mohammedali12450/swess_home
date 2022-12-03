@@ -22,6 +22,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:timelines/timelines.dart';
 
 import '../../../constants/colors.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_bloc.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_event.dart';
 import '../../data/providers/theme_provider.dart';
@@ -56,8 +57,8 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     _createdEstatesBloc = CreatedEstatesBloc(EstateRepository());
     _onRefresh();
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null && user.token != null) {
-      userToken = user.token;
+    if (user != null ) {
+      userToken = UserSharedPreferences.getAccessToken();
     }
     scrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
@@ -119,10 +120,10 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
   _onRefresh() {
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null && user.token != null) {
+    if (user != null && UserSharedPreferences.getAccessToken() != null) {
       _createdEstatesBloc.add(
         CreatedEstatesFetchStarted(
-            token: BlocProvider.of<UserLoginBloc>(context).user!.token!),
+            token: UserSharedPreferences.getAccessToken()!),
       );
     }
   }

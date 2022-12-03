@@ -21,6 +21,7 @@ import 'package:swesshome/modules/presentation/screens/search_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import 'office_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     BlocProvider.of<FcmBloc>(context).add(
       SendFcmTokenProcessStarted(
-          userToken: _userAuthenticationBloc.user!.token!),
+          userToken: UserSharedPreferences.getAccessToken()!),
     );
   }
 

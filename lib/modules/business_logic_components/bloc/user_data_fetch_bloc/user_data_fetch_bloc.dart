@@ -14,12 +14,9 @@ class UserDataFetchBloc extends Bloc<UserDataFetchEvent, UserDataFetchState> {
       try {
         User user =
             await userAuthenticationRepository.loginByToken(event.token);
-        user.token = event.token ;
         emit(UserDataFetchComplete(user: user));
-      } catch (e, stack) {
+      } catch (e) {
         emit(UserDataFetchError());
-        print(e);
-        print(stack);
       }
     });
   }

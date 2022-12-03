@@ -15,6 +15,8 @@ import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+
 class SavedEstatesScreen extends StatefulWidget {
   static const String id = "SavedEstatesScreen";
 
@@ -33,10 +35,10 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
     super.initState();
     _savedEstatesBloc = SavedEstatesBloc(EstateRepository());
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null && user.token != null) {
+    if (user != null) {
       _savedEstatesBloc.add(
         SavedEstatesFetchStarted(
-            token: BlocProvider.of<UserLoginBloc>(context).user!.token!),
+            token: UserSharedPreferences.getAccessToken()!),
       );
     }
   }
@@ -53,11 +55,11 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
         body: RefreshIndicator(
           color: Theme.of(context).colorScheme.primary,
           onRefresh: () async {
-            if (BlocProvider.of<UserLoginBloc>(context).user!.token != null) {
+            if (UserSharedPreferences.getAccessToken() != null) {
               _savedEstatesBloc.add(
                 SavedEstatesFetchStarted(
                     token:
-                        BlocProvider.of<UserLoginBloc>(context).user!.token!),
+                    UserSharedPreferences.getAccessToken()!),
               );
             }
           },

@@ -74,7 +74,6 @@ import 'package:swesshome/utils/services/network_helper.dart';
 
 import '../../constants/api_paths.dart';
 import '../../modules/presentation/screens/update_new_version_screen.dart';
-import '../../modules/presentation/widgets/get_location_gps.dart';
 
 class AppRouter {
   late LocationsBloc locationsBloc;
@@ -85,7 +84,7 @@ class AppRouter {
   late EstateOfferTypesBloc estateOfferTypesBloc;
   late AreaUnitsBloc areaUnitsBloc;
   late PeriodTypesBloc periodTypesBloc;
-  late PriceDomainsBloc priceDomainsBloc;
+  //late PriceDomainsBloc priceDomainsBloc;
   late UserDataFetchBloc userDataFetchBloc;
   late UserLoginBloc userLoginBloc;
   late SystemVariablesBloc systemVariablesBloc;
@@ -133,7 +132,9 @@ class AppRouter {
                   // Fetch BaseUrl :
                   await fetchBaseUrl();
                   // Fetch application data :
+                  print("ghina1");
                   fetchApplicationData(context);
+                  print("ghina2");
                   int seconds = 0;
                   while (true) {
                     await Future.delayed(const Duration(seconds: 1));
@@ -146,7 +147,7 @@ class AppRouter {
                     }
                     seconds++;
                   }
-
+                  print("ghina3");
                   // Language has not selected yet:
                   bool isLanguageSelected =
                       ApplicationSharedPreferences.getIsLanguageSelected();
@@ -269,7 +270,7 @@ class AppRouter {
     estateOfferTypesBloc = BlocProvider.of<EstateOfferTypesBloc>(context);
     periodTypesBloc = BlocProvider.of<PeriodTypesBloc>(context);
     areaUnitsBloc = BlocProvider.of<AreaUnitsBloc>(context);
-    priceDomainsBloc = BlocProvider.of<PriceDomainsBloc>(context);
+    //priceDomainsBloc = BlocProvider.of<PriceDomainsBloc>(context);
     systemVariablesBloc = BlocProvider.of<SystemVariablesBloc>(context);
     reportBloc = BlocProvider.of<ReportBloc>(context);
     locationsBloc.add(LocationsFetchStarted());
@@ -280,7 +281,7 @@ class AppRouter {
     estateOfferTypesBloc.add(EstateOfferTypesFetchStarted());
     periodTypesBloc.add(PeriodTypesFetchStarted());
     areaUnitsBloc.add(AreaUnitsFetchStarted());
-    priceDomainsBloc.add(PriceDomainsFetchStarted());
+    //priceDomainsBloc.add(PriceDomainsFetchStarted("sale"));
     systemVariablesBloc.add(SystemVariablesFetchStarted());
     reportBloc.add(ReportsFetchStarted());
 
@@ -312,7 +313,7 @@ class AppRouter {
         (estateOfferTypesBloc.state is EstateOfferTypesFetchComplete) &&
         (periodTypesBloc.state is PeriodTypesFetchComplete) &&
         (areaUnitsBloc.state is AreaUnitsFetchComplete) &&
-        (priceDomainsBloc.state is PriceDomainsFetchComplete) &&
+        //(priceDomainsBloc.state is PriceDomainsFetchComplete) &&
         (systemVariablesBloc.state is SystemVariablesFetchComplete) &&
         (reportBloc.state is ReportFetchComplete) &&
         isUserDataFetched;
@@ -354,7 +355,7 @@ class AppRouter {
     }
     //0 if you want to connect to pronet
     //1 if you want to connect to hostinger
-    if (response.data == "0") {
+    if (response.data == "1") {
       print("PPPRRRROOOOO");
       baseUrl = proNetBaseUrl;
       imagesBaseUrl = proNetImagesUrl;

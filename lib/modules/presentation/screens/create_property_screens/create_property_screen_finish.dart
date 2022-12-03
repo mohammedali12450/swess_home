@@ -16,6 +16,8 @@ import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/refresh_button.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
+import '../../../../core/storage/shared_preferences/user_shared_preferences.dart';
+
 class CreatePropertyScreenFinish extends StatefulWidget {
   static const String id = "CreatePropertyScreenFinish";
 
@@ -44,7 +46,7 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
     _sendEstateBloc.add(
       SendEstateStarted(
         estate: widget.currentOffer,
-        token: BlocProvider.of<UserLoginBloc>(context).user!.token!,
+        token: UserSharedPreferences.getAccessToken()!,
         onSendProgress: (int progress) async {
           if (applyProgress % 5 == 0 || progress == 100) {
             sendProgress.setState(progress);
