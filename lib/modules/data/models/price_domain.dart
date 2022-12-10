@@ -1,4 +1,3 @@
-
 class PriceDomain {
   String estateOfferType;
   List<dynamic> min;
@@ -9,7 +8,8 @@ class PriceDomain {
 
   factory PriceDomain.fromJson(json) {
     return PriceDomain(
-      estateOfferType: json['estate_offer_type'],
+      estateOfferType:
+          json['estate_offer_type'] == null ? "" : json['estate_offer_type'],
       min: json['min'],
       max: json['max'],
     );

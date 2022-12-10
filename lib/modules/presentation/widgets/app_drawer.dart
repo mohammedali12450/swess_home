@@ -161,11 +161,11 @@ class _MyDrawerState extends State<MyDrawer> {
             content: AppLocalizations.of(context)!.settings,
             iconData: Icons.settings_outlined,
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const SettingsScreen()),
-              );
-              //Navigator.pushNamed(context, SettingsScreen.id);
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              // );
+              Navigator.pushNamed(context, SettingsScreen.id);
             },
           ),
           RowInformation(

@@ -45,7 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late ChannelCubit isDarkModeSelectedCubit;
 
   //late UserLoginBloc _userLoginBloc;
-  late UserDataBloc _userDataBloc;
+  UserDataBloc? _userDataBloc;
   final ChannelCubit isLogoutLoadingCubit = ChannelCubit(false);
 
   User? user;
@@ -53,10 +53,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    //_userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
-    _userDataBloc = BlocProvider.of<UserDataBloc>(context);
     if (UserSharedPreferences.getAccessToken() != null) {
-      _userDataBloc.add(
+      _userDataBloc = UserDataBloc(UserAuthenticationRepository());
+    }
+    _onRefresh();
+  }
+
+  _onRefresh() {
+    if (UserSharedPreferences.getAccessToken() != null) {
+      _userDataBloc!.add(
         UserDataStarted(token: UserSharedPreferences.getAccessToken()),
       );
     }
@@ -64,62 +69,84 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = Localizations.localeOf(context);
-    bool isEnglish = locale.languageCode == "en";
+    bool isEnglish = ApplicationSharedPreferences.getLanguageCode() == "en";
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.settings),
-        ),
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                if (UserSharedPreferences.getAccessToken() == null) ...[
-                  // buildLanguageSetting,
-                  buildListTile(
-                    isEnglish,
-                    icon: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Icon(Icons.language_outlined),
-                    ),
-                    title: Row(
-                      children: [
-                        Text(AppLocalizations.of(context)!.language_word),
-                        const Spacer(),
-                        Text(AppLocalizations.of(context)!.language),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.pushNamed(context, LanguagesScreen.id);
-                    },
-                    trailing: Icon((isEnglish)
-                        ? Icons.keyboard_arrow_right
-                        : Icons.keyboard_arrow_left),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.settings),
+      ),
+      body: RefreshIndicator(
+        color: Theme.of(context).colorScheme.primary,
+        onRefresh: () async {
+          _onRefresh();
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              if (UserSharedPreferences.getAccessToken() == null) ...[
+                // buildLanguageSetting,
+                buildListTile(
+                  isEnglish,
+                  icon: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Icon(Icons.language_outlined),
                   ),
-                  6.verticalSpace,
-                  const Divider(),
-                  6.verticalSpace,
-                  buildThemeModeSetting(),
-                ],
-                if (UserSharedPreferences.getAccessToken() != null) ...[
-                  buildUserProfile(isDark, isEnglish),
-                ],
-                //Spacer(),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Text(
-                    "version ${ApplicationSharedPreferences.getVersionAppState()}",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6!
-                        .copyWith(color: Colors.grey),
+                  title: Row(
+                    children: [
+                      Text(AppLocalizations.of(context)!.language_word),
+                      const Spacer(),
+                      Text(AppLocalizations.of(context)!.language),
+                    ],
                   ),
+                  onTap: () {
+                    Navigator.pushNamed(context, LanguagesScreen.id);
+                  },
+                  trailing: Icon((isEnglish)
+                      ? Icons.keyboard_arrow_right
+                      : Icons.keyboard_arrow_left),
                 ),
+                6.verticalSpace,
+                const Divider(),
+                6.verticalSpace,
+                buildThemeModeSetting(),
               ],
-            ),
+              if (UserSharedPreferences.getAccessToken() != null) ...[
+                BlocBuilder<UserDataBloc, UserDataState>(
+                    bloc: _userDataBloc,
+                    builder: (_, UserDataState userEditState) {
+                      if (userEditState is UserDataError) {
+                        BlocProvider.of<EstateBloc>(context).isFetching =
+                            false;
+                        return SizedBox(
+                            width: 1.sw,
+                            height: 1.sh - 75.h,
+                            child: FetchResult(
+                                content: AppLocalizations.of(context)!
+                                    .error_happened_when_executing_operation));
+                      }
+                      if (userEditState is UserDataProgress) {
+                        return const PropertyShimmer();
+                      }
+                      if (userEditState is UserDataComplete) {
+                        user = userEditState.user;
+                        return buildUserProfile(isDark, isEnglish);
+                      }
+                     return Container();
+                    })
+              ],
+              //Spacer(),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  "version ${ApplicationSharedPreferences.getVersionAppState()}",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6!
+                      .copyWith(color: Colors.grey),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -127,150 +154,119 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget buildUserProfile(isDark, isEnglish) {
-    return BlocBuilder<UserDataBloc, UserDataState>(
-        bloc: _userDataBloc,
-        builder: (_, UserDataState userEditState) {
-          if (userEditState is UserDataError) {
-            BlocProvider.of<EstateBloc>(context).isFetching = false;
-            return RefreshIndicator(
-              color: Theme.of(context).colorScheme.primary,
-              onRefresh: () async {
-                _userDataBloc.add(UserDataStarted(
-                    token: UserSharedPreferences.getAccessToken()));
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: SizedBox(
-                    width: 1.sw,
-                    height: 1.sh - 75.h,
-                    child: FetchResult(
-                        content: AppLocalizations.of(context)!
-                            .error_happened_when_executing_operation)),
+    return Column(
+      children: [
+        buildProfileImage(isDark),
+
+        // buildNotification
+        buildListTile(
+          isEnglish,
+          icon: BlocBuilder<NotificationsCubit, int>(
+              builder: (_, notificationsCount) {
+            return IconBadge(
+              icon: const Icon(
+                Icons.notifications_outlined,
               ),
+              itemCount: notificationsCount,
+              right: 0,
+              top: 5.h,
+              hideZero: true,
             );
-          }
-          if (userEditState is UserDataProgress) {
-            return const PropertyShimmer();
-          }
-          if (userEditState is UserDataComplete) {
-            user = userEditState.user;
-          }
-
-          return Column(
-            children: [
-              buildProfileImage(isDark, userEditState),
-
-              // buildNotification
-              buildListTile(
-                isEnglish,
-                icon: BlocBuilder<NotificationsCubit, int>(
-                    builder: (_, notificationsCount) {
-                  return IconBadge(
-                    icon: const Icon(
-                      Icons.notifications_outlined,
+          }),
+          title: Text(AppLocalizations.of(context)!.notifications),
+          onTap: () async {
+            if (BlocProvider.of<UserLoginBloc>(context).user == null) {
+              await showWonderfulAlertDialog(
+                  context,
+                  AppLocalizations.of(context)!.confirmation,
+                  AppLocalizations.of(context)!.this_features_require_login,
+                  removeDefaultButton: true,
+                  dialogButtons: [
+                    ElevatedButton(
+                      child: Text(
+                        AppLocalizations.of(context)!.sign_in,
+                      ),
+                      onPressed: () async {
+                        await Navigator.pushNamed(
+                            context, AuthenticationScreen.id);
+                        Navigator.pop(context);
+                      },
                     ),
-                    itemCount: notificationsCount,
-                    right: 0,
-                    top: 5.h,
-                    hideZero: true,
-                  );
-                }),
-                title: Text(AppLocalizations.of(context)!.notifications),
-                onTap: () async {
-                  if (BlocProvider.of<UserLoginBloc>(context).user == null) {
-                    await showWonderfulAlertDialog(
-                        context,
-                        AppLocalizations.of(context)!.confirmation,
-                        AppLocalizations.of(context)!
-                            .this_features_require_login,
-                        removeDefaultButton: true,
-                        dialogButtons: [
-                          ElevatedButton(
-                            child: Text(
-                              AppLocalizations.of(context)!.sign_in,
-                            ),
-                            onPressed: () async {
-                              await Navigator.pushNamed(
-                                  context, AuthenticationScreen.id);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ElevatedButton(
-                            child: Text(
-                              AppLocalizations.of(context)!.cancel,
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                        width: 400.w);
-                    return;
-                  }
-                  Navigator.pushNamed(context, NotificationScreen.id);
-                },
-                trailing: Icon((isEnglish)
-                    ? Icons.keyboard_arrow_right
-                    : Icons.keyboard_arrow_left),
-              ),
-
-              // buildLanguageSetting,
-              buildListTile(
-                isEnglish,
-                icon: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Icon(Icons.language_outlined),
-                ),
-                title: Row(
-                  children: [
-                    Text(AppLocalizations.of(context)!.language_word),
-                    const Spacer(),
-                    Text(AppLocalizations.of(context)!.language),
+                    ElevatedButton(
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ],
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, LanguagesScreen.id);
-                },
-                trailing: Icon((isEnglish)
-                    ? Icons.keyboard_arrow_right
-                    : Icons.keyboard_arrow_left),
-              ),
+                  width: 400.w);
+              return;
+            }
+            Navigator.pushNamed(context, NotificationScreen.id);
+          },
+          trailing: Icon((isEnglish)
+              ? Icons.keyboard_arrow_right
+              : Icons.keyboard_arrow_left),
+        ),
 
-              buildThemeModeSetting(),
-
-              //buildInviteFriends,
-              buildListTile(
-                isEnglish,
-                icon: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Icon(Icons.people_alt_outlined),
-                ),
-                title: Text(AppLocalizations.of(context)!.invite_friends),
-                onTap: () {},
-              ),
-
-              6.verticalSpace,
-              const Divider(thickness: 0.2),
-              6.verticalSpace,
-              //buildChangePassword,
-              buildListTile(
-                isEnglish,
-                icon: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Icon(Icons.key_outlined),
-                ),
-                title: Text(AppLocalizations.of(context)!.change_password),
-                onTap: () {},
-              ),
-
-              buildDeleteMyAccount(isDark, isEnglish),
-              buildLogout(isEnglish),
+        // buildLanguageSetting,
+        buildListTile(
+          isEnglish,
+          icon: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Icon(Icons.language_outlined),
+          ),
+          title: Row(
+            children: [
+              Text(AppLocalizations.of(context)!.language_word),
+              const Spacer(),
+              Text(AppLocalizations.of(context)!.language),
             ],
-          );
-        });
+          ),
+          onTap: () {
+            Navigator.pushNamed(context, LanguagesScreen.id);
+          },
+          trailing: Icon((isEnglish)
+              ? Icons.keyboard_arrow_right
+              : Icons.keyboard_arrow_left),
+        ),
+
+        buildThemeModeSetting(),
+
+        //buildInviteFriends,
+        buildListTile(
+          isEnglish,
+          icon: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Icon(Icons.people_alt_outlined),
+          ),
+          title: Text(AppLocalizations.of(context)!.invite_friends),
+          onTap: () {},
+        ),
+
+        6.verticalSpace,
+        const Divider(thickness: 0.2),
+        6.verticalSpace,
+        //buildChangePassword,
+        buildListTile(
+          isEnglish,
+          icon: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Icon(Icons.key_outlined),
+          ),
+          title: Text(AppLocalizations.of(context)!.change_password),
+          onTap: () {},
+        ),
+
+        buildDeleteMyAccount(isDark, isEnglish),
+        buildLogout(isEnglish),
+      ],
+    );
   }
 
-  SizedBox buildProfileImage(isDark, userEditState) {
+  SizedBox buildProfileImage(isDark) {
     return SizedBox(
       height: 320.h,
       child: Column(
@@ -338,7 +334,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       Text(
                         "${user!.country}"
-                        " , ${user!.governorate ?? ""}",
+                        " , ${user?.governorate ?? ""}",
                         style: Theme.of(context).textTheme.headline6!.copyWith(
                             color: !isDark
                                 ? AppColors.primaryColor

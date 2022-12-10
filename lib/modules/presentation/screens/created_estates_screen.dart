@@ -10,9 +10,7 @@ import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_state.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
-import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
@@ -44,7 +42,6 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
   late CreatedEstatesBloc _createdEstatesBloc;
   DeleteUserNewEstateBloc deleteUserNewEstateBloc =
       DeleteUserNewEstateBloc(EstateRepository());
-  String? userToken;
   late ItemScrollController scrollController;
   late ItemPositionsListener itemPositionsListener;
   late AnimationController _animationController;
@@ -56,10 +53,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     super.initState();
     _createdEstatesBloc = CreatedEstatesBloc(EstateRepository());
     _onRefresh();
-    User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null ) {
-      userToken = UserSharedPreferences.getAccessToken();
-    }
+
     scrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
   }
@@ -106,7 +100,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     'من قبل المكتب',
   ];
 
-  int _processIndex = 0;
+  final int _processIndex = 0;
 
   Color getColor(int index) {
     if (index == _processIndex) {
@@ -119,8 +113,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
   }
 
   _onRefresh() {
-    User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null && UserSharedPreferences.getAccessToken() != null) {
+    if (UserSharedPreferences.getAccessToken() != null) {
       _createdEstatesBloc.add(
         CreatedEstatesFetchStarted(
             token: UserSharedPreferences.getAccessToken()!),
@@ -426,7 +419,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
             onPressed: () async {
               Navigator.pop(context);
               deleteUserNewEstateBloc.add(DeleteUserNewEstateFetchStarted(
-                  token: userToken, orderId: estates.elementAt(index).id));
+                  token: UserSharedPreferences.getAccessToken(), orderId: estates.elementAt(index).id));
               await _onRefresh();
             },
           ),

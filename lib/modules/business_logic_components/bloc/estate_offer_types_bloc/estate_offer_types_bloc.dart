@@ -17,7 +17,7 @@ class EstateOfferTypesBloc
       emit(EstateOfferTypesFetchProgress());
       try {
         estateOfferTypes = await estateOfferTypesRepository.fetchData();
-        emit(EstateOfferTypesFetchComplete());
+        emit(EstateOfferTypesFetchComplete(estateOfferTypes));
       } catch (e, stack) {
         debugPrint(e.toString());
         debugPrint(stack.toString());

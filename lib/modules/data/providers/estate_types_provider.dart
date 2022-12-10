@@ -6,7 +6,7 @@ class EstateTypesProvider{
 
   Future fetchData()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(estateTypesUrl);
+    Response response = await helper.get(estateTypesURL);
     return response ;
   }
 

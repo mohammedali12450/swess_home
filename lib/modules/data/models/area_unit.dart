@@ -1,28 +1,21 @@
 class AreaUnit {
   int id;
+  String name;
 
-  String nameArabic;
-  String nameEnglish;
-
-  getName(bool isArabic){
-    return isArabic ? nameArabic : nameEnglish ;
-  }
-
-  AreaUnit({required this.id, required this.nameArabic , required this.nameEnglish});
+  AreaUnit({required this.id, required this.name});
 
   factory AreaUnit.copy(AreaUnit areaUnit) {
-    return AreaUnit(id: areaUnit.id, nameArabic: areaUnit.nameArabic , nameEnglish: areaUnit.nameEnglish);
+    return AreaUnit(id: areaUnit.id, name: areaUnit.name);
   }
 
   factory AreaUnit.init() {
-    return AreaUnit(id: -1, nameArabic: "default" , nameEnglish: "default");
+    return AreaUnit(id: -1, name: "default" );
   }
 
   factory AreaUnit.fromJson(json) {
     return AreaUnit(
       id: json['id'],
-      nameArabic: json['name_ar'],
-      nameEnglish: json["name_en"]
+      name: json['name']
     );
   }
 }

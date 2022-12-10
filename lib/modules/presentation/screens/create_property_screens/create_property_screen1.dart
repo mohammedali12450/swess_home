@@ -69,7 +69,7 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
             16.verticalSpace,
             MyDropdownList(
               elementsList: estateTypes
-                  .map((e) => e.getName(isArabic).split('|').first)
+                  .map((e) => e.name.split('|').first)
                   .toList(),
               onSelect: (index) {
                 _currentOffer.estateType = estateTypes.elementAt(index);
@@ -88,7 +88,7 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
             ),
             16.verticalSpace,
             MyDropdownList(
-              elementsList: offerTypes.map((e) => e.getName(isArabic)).toList(),
+              elementsList: offerTypes.map((e) => e.name).toList(),
               onSelect: (index) {
                 _currentOffer.estateOfferType = offerTypes.elementAt(index);
               },

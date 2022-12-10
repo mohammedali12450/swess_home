@@ -6,7 +6,7 @@ class OwnershipTypeProvider{
 
   Future fetchData()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(ownershipTypesUrl);
+    Response response = await helper.get(ownershipTypesURL);
     return response ;
   }
 

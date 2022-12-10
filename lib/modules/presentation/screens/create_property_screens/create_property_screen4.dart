@@ -193,7 +193,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                     16.verticalSpace,
                     MyDropdownList(
                       elementsList: ownershipTypes
-                          .map((e) => e.getName(isArabic))
+                          .map((e) => e.name)
                           .toList(),
                       onSelect: (index) {
                         widget.currentOffer.ownershipType =
@@ -216,7 +216,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
                     16.verticalSpace,
                     MyDropdownList(
                       elementsList: interiorStatuses
-                          .map((e) => e.getName(isArabic))
+                          .map((e) => e.name)
                           .toList(),
                       onSelect: (index) {
                         widget.currentOffer.interiorStatus =

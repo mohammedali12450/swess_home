@@ -1,24 +1,18 @@
 class InteriorStatus {
   final int id;
 
-  final String nameArabic;
-  final String nameEnglish;
+  final String name;
 
-
-  String getName(bool isArabic){
-    return isArabic ? nameArabic : nameEnglish ;
-  }
-  InteriorStatus({required this.id, required this.nameArabic, required this.nameEnglish});
+  InteriorStatus({required this.id, required this.name});
 
   factory InteriorStatus.copy(InteriorStatus interiorStatus) {
     return InteriorStatus(
       id: interiorStatus.id,
-      nameArabic: interiorStatus.nameArabic,
-      nameEnglish: interiorStatus.nameEnglish,
+      name: interiorStatus.name
     );
   }
 
   factory InteriorStatus.fromJson(json) {
-    return InteriorStatus(id: json['id'], nameArabic: json['name_ar'] , nameEnglish: json["name_en"]);
+    return InteriorStatus(id: json['id'], name: json['name']);
   }
 }

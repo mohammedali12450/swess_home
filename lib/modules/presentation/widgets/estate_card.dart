@@ -33,7 +33,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/enums.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
-import '../../data/models/estate_new.dart';
 import '../screens/authentication_screen.dart';
 import 'cupertino_action_sheet.dart';
 
@@ -107,7 +106,7 @@ class _EstateCardState extends State<EstateCard> {
     String estatePrice = NumbersHelper.getMoneyFormat(intPrice);
 
     String estateType =
-        widget.estate.estateType!.getName(isArabic).split('|').elementAt(1);
+        widget.estate.estateType!.name.split('|').elementAt(1);
     String addingDate = DateHelper.getDateByFormat(
         DateTime.parse(widget.estate.createdAt!), "yyyy/MM/dd");
     List<String> estateImages = widget.estate.images!

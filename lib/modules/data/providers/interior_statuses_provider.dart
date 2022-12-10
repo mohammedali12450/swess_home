@@ -6,7 +6,7 @@ class InteriorStatusesProvider{
 
   Future fetchData()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(interiorStatusesUrl);
+    Response response = await helper.get(interiorStatusesURL);
     return response ;
   }
 

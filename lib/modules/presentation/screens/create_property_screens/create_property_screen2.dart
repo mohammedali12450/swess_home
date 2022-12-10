@@ -136,7 +136,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
             padding: const EdgeInsets.only(bottom: 12.5),
             child: MyDropdownList(
               isOnChangeNull: isKeyboardOpened,
-              elementsList: areaTypes.map((e) => e.getName(isArabic)).toList(),
+              elementsList: areaTypes.map((e) => e.name).toList(),
               onSelect: (index) {
                 widget.currentOffer.areaUnit = areaTypes.elementAt(index);
               },
@@ -361,7 +361,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                 16.verticalSpace,
                 MyDropdownList(
                   elementsList:
-                      ownershipTypes.map((e) => e.getName(isArabic)).toList(),
+                      ownershipTypes.map((e) => e.name).toList(),
                   onSelect: (index) {
                     widget.currentOffer.ownershipType =
                         ownershipTypes.elementAt(index);

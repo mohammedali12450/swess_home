@@ -35,11 +35,11 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     String estateType = widget.estateOrder.estateType!
-        .getName(isArabic)
+        .name
         .split("|")
         .elementAt(1);
     String estateOfferType =
-        widget.estateOrder.estateOfferType!.getName(isArabic);
+        widget.estateOrder.estateOfferType!.name;
     String estateHeader = AppLocalizations.of(context)!
         .estate_offer_sentence(estateType, estateOfferType);
 

@@ -293,7 +293,7 @@ void showReportModalBottomSheet(context, int estateId) {
                     width: 1.sw,
                     height: 52.h,
                     child: ResText(
-                      reports.elementAt(index).getName(isArabic),
+                      reports.elementAt(index).name,
                       textAlign: TextAlign.right,
                       textStyle: textStyling(S.s15, W.w5, C.bl),
                     ),

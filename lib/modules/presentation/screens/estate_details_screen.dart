@@ -379,10 +379,10 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             AppLocalizations.of(context)!
                                 .estate_offer_place_sentence(
                               widget.estate.estateType!
-                                  .getName(isArabic)
+                                  .name
                                   .split('|')
                                   .last,
-                              widget.estate.estateOfferType!.getName(isArabic),
+                              widget.estate.estateOfferType!.name,
                               widget.estate.locationS!,
                             ),
                             style: Theme.of(context).textTheme.bodyText1,
@@ -524,7 +524,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       ),
                       8.horizontalSpace,
                       Text(
-                        widget.estate.areaUnit!.getName(isArabic),
+                        widget.estate.areaUnit!.name,
                       ),
                     ],
                   ),
@@ -604,7 +604,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 if (isSell)
                   RowInformation(
                     title: AppLocalizations.of(context)!.ownership_type + " :",
-                    content: widget.estate.ownershipType!.getName(isArabic),
+                    content: widget.estate.ownershipType!.name,
                     icon: SvgPicture.asset(
                       documentOutlineIconPath,
                       width: 32.w,
@@ -617,7 +617,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 if (!isLands)
                   RowInformation(
                     title: AppLocalizations.of(context)!.interior_status + " :",
-                    content: widget.estate.interiorStatus!.getName(isArabic),
+                    content: widget.estate.interiorStatus!.name,
                     icon: Icon(
                       Icons.foundation,
                       size: 32.w,

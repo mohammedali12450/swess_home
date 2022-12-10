@@ -14,7 +14,7 @@ class EstateTypesBloc extends Bloc<EstateTypesEvent, EstateTypesState> {
       emit(EstateTypesFetchProgress());
       try {
         estateTypes = await estateTypesRepository.fetchData();
-        emit(EstateTypesFetchComplete());
+        emit(EstateTypesFetchComplete(estateTypes));
       } catch (e, stack) {
         debugPrint(e.toString());
         debugPrint(stack.toString());

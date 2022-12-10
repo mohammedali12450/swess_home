@@ -19,9 +19,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/area_units_bloc
 import 'package:swesshome/modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_state.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_event.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/interior_statuses_bloc/interior_statuses_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/interior_statuses_bloc/interior_statuses_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/interior_statuses_bloc/interior_statuses_state.dart';
@@ -34,9 +31,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/ownership_type_
 import 'package:swesshome/modules/business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/period_types_bloc/period_types_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/period_types_bloc/period_types_state.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_event.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
@@ -73,6 +67,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/utils/services/network_helper.dart';
 
 import '../../constants/api_paths.dart';
+import '../../modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
+import '../../modules/business_logic_components/bloc/estate_types_bloc/estate_types_event.dart';
+import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
+import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_event.dart';
 import '../../modules/presentation/screens/update_new_version_screen.dart';
 
 class AppRouter {
@@ -84,7 +82,7 @@ class AppRouter {
   late EstateOfferTypesBloc estateOfferTypesBloc;
   late AreaUnitsBloc areaUnitsBloc;
   late PeriodTypesBloc periodTypesBloc;
-  //late PriceDomainsBloc priceDomainsBloc;
+  late PriceDomainsBloc priceDomainsBloc;
   late UserDataFetchBloc userDataFetchBloc;
   late UserLoginBloc userLoginBloc;
   late SystemVariablesBloc systemVariablesBloc;
@@ -132,9 +130,7 @@ class AppRouter {
                   // Fetch BaseUrl :
                   await fetchBaseUrl();
                   // Fetch application data :
-                  print("ghina1");
                   fetchApplicationData(context);
-                  print("ghina2");
                   int seconds = 0;
                   while (true) {
                     await Future.delayed(const Duration(seconds: 1));
@@ -147,7 +143,6 @@ class AppRouter {
                     }
                     seconds++;
                   }
-                  print("ghina3");
                   // Language has not selected yet:
                   bool isLanguageSelected =
                       ApplicationSharedPreferences.getIsLanguageSelected();
@@ -265,7 +260,7 @@ class AppRouter {
     locationsBloc = BlocProvider.of<LocationsBloc>(context);
     regionsBloc = BlocProvider.of<RegionsBloc>(context);
     ownershipTypeBloc = BlocProvider.of<OwnershipTypeBloc>(context);
-    estateTypesBloc = BlocProvider.of<EstateTypesBloc>(context);
+    //estateTypesBloc = BlocProvider.of<EstateTypesBloc>(context);
     interiorStatusesBloc = BlocProvider.of<InteriorStatusesBloc>(context);
     estateOfferTypesBloc = BlocProvider.of<EstateOfferTypesBloc>(context);
     periodTypesBloc = BlocProvider.of<PeriodTypesBloc>(context);
@@ -276,7 +271,7 @@ class AppRouter {
     locationsBloc.add(LocationsFetchStarted());
     regionsBloc.add(RegionsFetchStarted());
     ownershipTypeBloc.add(OwnershipTypeFetchStarted());
-    estateTypesBloc.add(EstateTypesFetchStarted());
+    //estateTypesBloc.add(EstateTypesFetchStarted());
     interiorStatusesBloc.add(InteriorStatusesFetchStarted());
     estateOfferTypesBloc.add(EstateOfferTypesFetchStarted());
     periodTypesBloc.add(PeriodTypesFetchStarted());
@@ -308,7 +303,7 @@ class AppRouter {
     }
     return (locationsBloc.state is LocationsFetchComplete) &&
         (ownershipTypeBloc.state is OwnershipTypeFetchComplete) &&
-        (estateTypesBloc.state is EstateTypesFetchComplete) &&
+       // (estateTypesBloc.state is EstateTypesFetchComplete) &&
         (interiorStatusesBloc.state is InteriorStatusesFetchComplete) &&
         (estateOfferTypesBloc.state is EstateOfferTypesFetchComplete) &&
         (periodTypesBloc.state is PeriodTypesFetchComplete) &&
