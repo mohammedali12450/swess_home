@@ -10,8 +10,8 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_event.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/search_data.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
@@ -22,6 +22,7 @@ import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../../business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'office_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,6 +36,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late UserLoginBloc _userAuthenticationBloc;
+  final ChannelCubit pageCubit = ChannelCubit(0);
   late bool isArabic;
 
   @override

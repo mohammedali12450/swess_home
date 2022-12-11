@@ -24,12 +24,14 @@ import '../../business_logic_components/bloc/user_data_bloc/user_data_state.dart
 import '../../business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import '../../business_logic_components/cubits/notifications_cubit.dart';
 import '../../data/models/user.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/icone_badge.dart';
 import '../widgets/shimmers/estates_shimmer.dart';
 import 'edit_profile_screen.dart';
 import 'home_screen.dart';
 import 'languages_screen.dart';
+import 'navigation_bar_screen.dart';
 import 'notifications_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -73,7 +75,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.settings),
+        centerTitle: true,
+        title: Text(
+          AppLocalizations.of(context)!.settings,
+        ),
+        leading: Builder(
+          builder: (context) {
+            return Container(
+              margin: EdgeInsets.only(
+                right: !isEnglish ? 8.w : 0,
+                left: isEnglish ? 8.w : 0,
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              ),
+            );
+          },
+        ),
       ),
       body: RefreshIndicator(
         color: Theme.of(context).colorScheme.primary,
@@ -116,8 +137,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     bloc: _userDataBloc,
                     builder: (_, UserDataState userEditState) {
                       if (userEditState is UserDataError) {
-                        BlocProvider.of<EstateBloc>(context).isFetching =
-                            false;
+                        BlocProvider.of<EstateBloc>(context).isFetching = false;
                         return SizedBox(
                             width: 1.sw,
                             height: 1.sh - 75.h,
@@ -132,7 +152,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         user = userEditState.user;
                         return buildUserProfile(isDark, isEnglish);
                       }
-                     return Container();
+                      return Container();
                     })
               ],
               //Spacer(),
@@ -149,6 +169,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
+      ),
+      drawer: const Drawer(
+        child: MyDrawer(),
       ),
     );
   }
@@ -635,7 +658,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     UserSharedPreferences.removeAccessToken();
     //_userLoginBloc.user = null;
-    Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
+    Navigator.pushNamedAndRemoveUntil(context, NavigationBarScreen.id, (route) => false);
     return;
   }
 

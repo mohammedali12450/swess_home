@@ -43,6 +43,8 @@ import '../widgets/date_picker.dart';
 import 'home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'navigation_bar_screen.dart';
+
 class AuthenticationScreen extends StatefulWidget {
   static const String id = "AuthenticationScreen";
 
@@ -318,7 +320,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 } else {
                   Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                      MaterialPageRoute(builder: (_) => const NavigationBarScreen()),
                       (route) => false);
                 }
               }
@@ -357,7 +359,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                   Navigator.pop(context);
                                 } else {
                                   Navigator.pushNamedAndRemoveUntil(
-                                      context, HomeScreen.id, (route) => false);
+                                      context, NavigationBarScreen.id, (route) => false);
                                 }
                               },
                             ),

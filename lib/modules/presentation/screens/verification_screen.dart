@@ -28,6 +28,8 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
 
+import 'navigation_bar_screen.dart';
+
 class VerificationCodeScreen extends StatefulWidget {
   final String phoneNumber;
   final User? user;
@@ -191,7 +193,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) => const HomeScreen(),
+                                            builder: (_) => const NavigationBarScreen(),
                                           ),
                                         );
                                       }
@@ -304,7 +306,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                                         context,
                                                         MaterialPageRoute(
                                                             builder: (_) =>
-                                                                const HomeScreen()),
+                                                                const NavigationBarScreen()),
                                                         (route) => false);
                                                   }
                                                 } on ConnectionException catch (_) {

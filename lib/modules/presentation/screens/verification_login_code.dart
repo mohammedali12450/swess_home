@@ -28,6 +28,7 @@ import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import '../../business_logic_components/bloc/send_veification_login_code/send_veification_login_code_bloc.dart';
 import '../../business_logic_components/bloc/send_veification_login_code/send_veification_login_code_event.dart';
 import '../../business_logic_components/bloc/send_veification_login_code/send_veification_login_code_state.dart';
+import 'navigation_bar_screen.dart';
 
 class VerificationLoginCodeScreen extends StatefulWidget {
   final String phoneNumber;
@@ -195,7 +196,7 @@ class _VerificationLoginCodeScreenState
                                             context,
                                             MaterialPageRoute(
                                                 builder: (_) =>
-                                                    const HomeScreen()));
+                                                    const NavigationBarScreen()));
                                       }
                                     }
                                     if (sendCodeState
@@ -296,7 +297,7 @@ class _VerificationLoginCodeScreenState
                                                         context,
                                                         MaterialPageRoute(
                                                             builder: (_) =>
-                                                                const HomeScreen()),
+                                                                const NavigationBarScreen()),
                                                         (route) => false);
                                                   }
                                                 } on ConnectionException catch (_) {

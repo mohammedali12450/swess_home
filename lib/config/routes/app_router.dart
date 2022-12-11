@@ -69,8 +69,11 @@ import 'package:swesshome/utils/services/network_helper.dart';
 import '../../constants/api_paths.dart';
 import '../../modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import '../../modules/business_logic_components/bloc/estate_types_bloc/estate_types_event.dart';
+import '../../modules/business_logic_components/bloc/estate_types_bloc/estate_types_state.dart';
 import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_event.dart';
+import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_state.dart';
+import '../../modules/presentation/screens/navigation_bar_screen.dart';
 import '../../modules/presentation/screens/update_new_version_screen.dart';
 
 class AppRouter {
@@ -151,7 +154,7 @@ class AppRouter {
                   }
                   // Language has selected before:
                   return (isIntroductionScreenPassed)
-                      ? const HomeScreen()
+                      ? const NavigationBarScreen()
                       : const IntroductionScreen1();
                 },
               );
@@ -260,23 +263,23 @@ class AppRouter {
     locationsBloc = BlocProvider.of<LocationsBloc>(context);
     regionsBloc = BlocProvider.of<RegionsBloc>(context);
     ownershipTypeBloc = BlocProvider.of<OwnershipTypeBloc>(context);
-    //estateTypesBloc = BlocProvider.of<EstateTypesBloc>(context);
+    estateTypesBloc = BlocProvider.of<EstateTypesBloc>(context);
     interiorStatusesBloc = BlocProvider.of<InteriorStatusesBloc>(context);
     estateOfferTypesBloc = BlocProvider.of<EstateOfferTypesBloc>(context);
     periodTypesBloc = BlocProvider.of<PeriodTypesBloc>(context);
     areaUnitsBloc = BlocProvider.of<AreaUnitsBloc>(context);
-    //priceDomainsBloc = BlocProvider.of<PriceDomainsBloc>(context);
+    priceDomainsBloc = BlocProvider.of<PriceDomainsBloc>(context);
     systemVariablesBloc = BlocProvider.of<SystemVariablesBloc>(context);
     reportBloc = BlocProvider.of<ReportBloc>(context);
     locationsBloc.add(LocationsFetchStarted());
     regionsBloc.add(RegionsFetchStarted());
     ownershipTypeBloc.add(OwnershipTypeFetchStarted());
-    //estateTypesBloc.add(EstateTypesFetchStarted());
+    estateTypesBloc.add(EstateTypesFetchStarted());
     interiorStatusesBloc.add(InteriorStatusesFetchStarted());
     estateOfferTypesBloc.add(EstateOfferTypesFetchStarted());
     periodTypesBloc.add(PeriodTypesFetchStarted());
     areaUnitsBloc.add(AreaUnitsFetchStarted());
-    //priceDomainsBloc.add(PriceDomainsFetchStarted("sale"));
+    priceDomainsBloc.add(PriceDomainsFetchStarted("rent"));
     systemVariablesBloc.add(SystemVariablesFetchStarted());
     reportBloc.add(ReportsFetchStarted());
 
@@ -303,12 +306,12 @@ class AppRouter {
     }
     return (locationsBloc.state is LocationsFetchComplete) &&
         (ownershipTypeBloc.state is OwnershipTypeFetchComplete) &&
-       // (estateTypesBloc.state is EstateTypesFetchComplete) &&
+        (estateTypesBloc.state is EstateTypesFetchComplete) &&
         (interiorStatusesBloc.state is InteriorStatusesFetchComplete) &&
         (estateOfferTypesBloc.state is EstateOfferTypesFetchComplete) &&
         (periodTypesBloc.state is PeriodTypesFetchComplete) &&
         (areaUnitsBloc.state is AreaUnitsFetchComplete) &&
-        //(priceDomainsBloc.state is PriceDomainsFetchComplete) &&
+        (priceDomainsBloc.state is PriceDomainsFetchComplete) &&
         (systemVariablesBloc.state is SystemVariablesFetchComplete) &&
         (reportBloc.state is ReportFetchComplete) &&
         isUserDataFetched;

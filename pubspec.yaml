@@ -65,6 +65,9 @@ dependencies:
   bottom_picker:
     path: ./download_lib/bottom_picker
   timelines: ^0.1.0
+  spincircle_bottom_bar:
+    path: ./download_lib/spincircle_bottom_bar-2.0.0
+  floating_bottom_bar: ^0.0.1
   #flutter_windowmanager: ^0.2.0
 #-------------------------------
 

@@ -295,6 +295,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.7"
+  floating_bottom_bar:
+    dependency: "direct main"
+    description:
+      name: floating_bottom_bar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -1015,6 +1022,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.1"
+  spincircle_bottom_bar:
+    dependency: "direct main"
+    description:
+      path: "download_lib/spincircle_bottom_bar-2.0.0"
+      relative: true
+    source: path
+    version: "2.0.0"
   sqflite:
     dependency: transitive
     description:

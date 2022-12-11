@@ -9,6 +9,7 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'navigation_bar_screen.dart';
 import 'recent_estates_orders_screen.dart';
 
 class AfterEstateOrderScreen extends StatefulWidget {
@@ -89,7 +90,7 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
                 onPressed: () {
                   Navigator.pushNamedAndRemoveUntil(
                     context,
-                    HomeScreen.id,
+                    NavigationBarScreen.id,
                     ModalRoute.withName('/'),
                   );
                 },

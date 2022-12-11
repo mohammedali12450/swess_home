@@ -403,6 +403,8 @@
   "after_order_body": "Your request has been sent successfully. Your request will be presented to the offices, and you learn about their nominations and offers in the notifications",
   "estate_order_sent": "Your order has been sent successfully",
   "have_not_recent_orders": "You have not created real estate requests yet",
+  "have_not_recent_search": "You have not Recent Search yet",
+  "new_search":"new search",
   "view_candidates": "View candidates",
   "candidate_estates": "Candidate real estate",
   "no_candidates_for_this_order": "There are no candidates for this request",

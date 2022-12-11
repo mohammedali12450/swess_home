@@ -402,6 +402,8 @@
   "after_order_body": "لقد تم إرسال طلبك بنجاح, سيتم عرض الطلب على المكاتب العقارية ومن ثم إرسال ترشيحات المكاتب لكم عن طريق الإشعارات.",
   "estate_order_sent": "تم إرسال الطلب بنجاح",
   "have_not_recent_orders": "ليس لديك طلبات عقارية سابقة",
+  "have_not_recent_search":"ليس لديك عمليات بحث سابقة",
+  "new_search":"بحث جديد",
   "view_candidates": "عرض الترشيحات",
   "candidate_estates": "العقارات المرشحة",
   "no_candidates_for_this_order": "لا يوجد ترشيحات لهذا الطلب",

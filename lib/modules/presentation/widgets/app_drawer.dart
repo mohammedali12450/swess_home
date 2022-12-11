@@ -29,6 +29,8 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../screens/navigation_bar_screen.dart';
+
 class MyDrawer extends StatefulWidget {
   const MyDrawer({Key? key}) : super(key: key);
 
@@ -429,7 +431,7 @@ class _MyDrawerState extends State<MyDrawer> {
     }
     UserSharedPreferences.removeAccessToken();
     _userLoginBloc.user = null;
-    Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
+    Navigator.pushNamedAndRemoveUntil(context, NavigationBarScreen.id, (route) => false);
     return;
   }
 }
