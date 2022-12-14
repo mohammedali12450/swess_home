@@ -6,7 +6,6 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
-import 'package:swesshome/modules/presentation/screens/home_screen01.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'navigation_bar_screen.dart';

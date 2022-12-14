@@ -40,7 +40,6 @@ import '../../data/models/governorates.dart';
 import '../../data/providers/theme_provider.dart';
 import '../pages/terms_condition_page.dart';
 import '../widgets/date_picker.dart';
-import 'home_screen01.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'navigation_bar_screen.dart';

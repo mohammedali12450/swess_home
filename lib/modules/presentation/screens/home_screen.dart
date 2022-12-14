@@ -1,15 +1,23 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
+import '../../../constants/application_constants.dart';
+import '../../../core/storage/shared_preferences/application_shared_preferences.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../../business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
+import '../../business_logic_components/bloc/fcm_bloc/fcm_event.dart';
+import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../data/providers/locale_provider.dart';
 import '../widgets/app_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = "HomeScreen";
+
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -17,7 +25,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late UserLoginBloc _userAuthenticationBloc;
   late bool isArabic;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    ApplicationSharedPreferences.setWalkThroughPassState(true);
+    _userAuthenticationBloc = BlocProvider.of<UserLoginBloc>(context);
+    if (_userAuthenticationBloc.user != null) {
+      sendFcmToken(0);
+    }
+  }
+
+  Future sendFcmToken(int attempt) async {
+    if (attempt == 5) return;
+    if (firebaseToken == null) {
+      await Future.delayed(const Duration(seconds: 3));
+      sendFcmToken(attempt + 1);
+    }
+    BlocProvider.of<FcmBloc>(context).add(
+      SendFcmTokenProcessStarted(
+          userToken: UserSharedPreferences.getAccessToken()!),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +87,10 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 AppLocalizations.of(context)!.new_estate + " :",
-                style: Theme.of(context).textTheme.headline5!.copyWith(
-                  fontWeight: FontWeight.w600
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5!
+                    .copyWith(fontWeight: FontWeight.w600),
               ),
             ),
             buildNewEstate(),
@@ -66,9 +99,10 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 AppLocalizations.of(context)!.most_common + " :",
-                style: Theme.of(context).textTheme.headline5!.copyWith(
-                    fontWeight: FontWeight.w600
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5!
+                    .copyWith(fontWeight: FontWeight.w600),
               ),
             ),
             buildNewEstate(),
