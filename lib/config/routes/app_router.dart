@@ -50,7 +50,7 @@ import 'package:swesshome/modules/presentation/screens/create_order_screen.dart'
 import 'package:swesshome/modules/presentation/screens/created_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/edit_profile_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
-import 'package:swesshome/modules/presentation/screens/home_screen.dart';
+import 'package:swesshome/modules/presentation/screens/home_screen01.dart';
 import 'package:swesshome/modules/presentation/screens/languages_screen.dart';
 import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
 import 'package:swesshome/modules/presentation/screens/office_search_screen.dart';
@@ -73,6 +73,7 @@ import '../../modules/business_logic_components/bloc/estate_types_bloc/estate_ty
 import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_event.dart';
 import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_state.dart';
+import '../../modules/presentation/screens/home_screen.dart';
 import '../../modules/presentation/screens/navigation_bar_screen.dart';
 import '../../modules/presentation/screens/update_new_version_screen.dart';
 

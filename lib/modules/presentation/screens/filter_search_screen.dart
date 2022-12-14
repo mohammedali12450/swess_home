@@ -177,7 +177,8 @@ class _SearchScreenState extends State<FilterSearchScreen> {
             padding: EdgeInsets.symmetric(horizontal: 5.w),
             child: Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
               child: Container(
                 padding: kSmallSymWidth,
                 width: 1.sw,
@@ -197,9 +198,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           children: [
                             Text(
                               AppLocalizations.of(context)!.search,
-                              style: Theme.of(context).textTheme.headline5!.copyWith(
-                                  color: Theme.of(context).colorScheme.background,
-                                  height: 1.4),
                             ),
                             kWi16,
                             Icon(
@@ -219,7 +217,8 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                               builder: (_) => EstatesScreen(
                                 searchData: EstateFetchStarted(
                                   searchData: SearchData(
-                                      estateOfferTypeId: isSellCubit.state ? 1 : 0,
+                                      estateOfferTypeId:
+                                          isSellCubit.state ? 1 : 0,
                                       locationId: searchData.locationId,
                                       estateTypeId: searchData.estateTypeId,
                                       priceDomainId: 1,
@@ -255,7 +254,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                   ],
                 ),
               ),
-
             ),
           ),
         ),
@@ -272,7 +270,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
         buildLocation(isDark),
         buildEstateType(),
         buildPriceDomain(isDark),
-
       ],
     );
   }
@@ -693,7 +690,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       // set location name in location text field:
                       locationController.text =
                           locations.elementAt(index).getRegionName();
-                     // print(locations.elementAt(index).locationName);
+                      // print(locations.elementAt(index).locationName);
                       // initialize search data again :
                       //initializeOfferData();
                       // set search data location id:

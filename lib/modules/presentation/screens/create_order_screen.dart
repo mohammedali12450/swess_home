@@ -22,18 +22,13 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/after_estate_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
-import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
-import 'package:swesshome/modules/presentation/widgets/shimmers/locations_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/notifications_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
-import '../../business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_event.dart';
 import '../../business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_state.dart';
-import '../../business_logic_components/bloc/estate_types_bloc/estate_types_event.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_state.dart';
-import '../../business_logic_components/bloc/price_domains_bloc/price_domains_event.dart';
 import '../../business_logic_components/bloc/price_domains_bloc/price_domains_state.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_offer_types_repository.dart';
@@ -86,13 +81,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   void initState() {
     super.initState();
 
-    estateTypesBloc.add(EstateTypesFetchStarted());
-    offerTypesBloc.add(EstateOfferTypesFetchStarted());
-    priceDomainsBloc.add(PriceDomainsFetchStarted("rent"));
+    //estateTypesBloc.add(EstateTypesFetchStarted());
+    //offerTypesBloc.add(EstateOfferTypesFetchStarted());
+    //priceDomainsBloc.add(PriceDomainsFetchStarted("rent"));
 
-    // estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
-    //offerTypes = BlocProvider.of<EstateOfferTypesBloc>(context).estateOfferTypes!;
-    //priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
+    estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
+    offerTypes = BlocProvider.of<EstateOfferTypesBloc>(context).estateOfferTypes!;
+    priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
 
     //selectedEstateTypeId = estatesTypes.first.id;
     //selectedEstateOfferTypeId = offerTypes.first.id;
@@ -149,23 +144,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             title: Text(
               AppLocalizations.of(context)!.create_estate_order,
             ),
-            // actions: [
-            //   // Container(
-            //   //   margin: EdgeInsets.only(
-            //   //     left: (isArabic) ? 16.w : 0,
-            //   //     right: (!isArabic) ? 16.w : 0,
-            //   //   ),
-            //   //   child: IconButton(
-            //   //     icon: const Icon(
-            //   //       Icons.history,
-            //   //       color: AppColors.white,
-            //   //     ),
-            //   //     onPressed: () {
-            //   //       Navigator.pushNamed(context, RecentEstateOrdersScreen.id);
-            //   //     },
-            //   //   ),
-            //   // )
-            // ],
           ),
           body: BlocBuilder<PriceDomainsBloc, PriceDomainsState>(
             bloc: priceDomainsBloc,

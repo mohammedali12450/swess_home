@@ -71,6 +71,8 @@
   "invalid_birth_date": "invalid birth of date",
   "clients_orders": "Clients orders",
   "estate_offer_creating": "Create real estate offers",
+  "new_estate":"Newly added",
+  "most_common":"Most common",
   "start_now": "Start Now",
   "create_estate_introduction": "You can create a special real estate offer which you'd like to publish on the app. in few easy and simple steps.",
   "estate_type": "Real estate type",

@@ -70,6 +70,8 @@
   "offer_type": "نوع العرض",
   "order_type": "نوع الطلب",
   "next": "التالي",
+  "new_estate":"مضاف حديثا",
+  "most_common":"أكثر شيوعا",
   "estate_area": "مساحة العقار",
   "estate_price": "سعر العقار",
   "estate_rent_price": "سعر إيجار العقار",

@@ -6,6 +6,7 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/presentation/screens/filter_search_screen.dart';
+import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import '../../../constants/assets_paths.dart';
 import '../../data/providers/locale_provider.dart';
 
@@ -50,6 +51,9 @@ class _SearchScreen1State extends State<SearchScreen1> {
           Center(
               child: estateSearch.isEmpty ? buildEmptyScreen() : Container()),
         ],
+      ),
+      drawer: const Drawer(
+        child: MyDrawer(),
       ),
     );
   }
