@@ -325,8 +325,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                 AppLocalizations.of(context)!
                                     .currency_over_period(
                                   currency,
-                                  widget.estate.periodType!
-                                      .getName(isArabic)!
+                                  widget.estate.periodType!.name
                                       .split("|")
                                       .first,
                                 ),
@@ -378,10 +377,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           child: Text(
                             AppLocalizations.of(context)!
                                 .estate_offer_place_sentence(
-                              widget.estate.estateType!
-                                  .name
-                                  .split('|')
-                                  .last,
+                              widget.estate.estateType!.name.split('|').last,
                               widget.estate.estateOfferType!.name,
                               widget.estate.locationS!,
                             ),
@@ -502,7 +498,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         6.horizontalSpace,
                         Text(
                           widget.estate.periodType!
-                              .getName(isArabic)
+                              .name
                               .split("|")
                               .elementAt(1),
                         ),

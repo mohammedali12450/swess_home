@@ -80,7 +80,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
     if (!isSell) {
       widget.currentOffer.periodType = periodTypes.first;
       selectedPeriodCubit =
-          ChannelCubit(periodTypes.first.getName(true).split("|").elementAt(1));
+          ChannelCubit(periodTypes.first.name.split("|").elementAt(1));
     }
   }
 
@@ -249,7 +249,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                                 isOnChangeNull: isKeyboardOpened,
                                 elementsList: periodTypes
                                     .map((e) =>
-                                        e.getName(isArabic).split("|").first)
+                                        e.name.split("|").first)
                                     .toList(),
                                 onSelect: (index) {
                                   widget.currentOffer.periodType =
@@ -257,7 +257,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                                   selectedPeriodCubit!.setState(
                                     periodTypes
                                         .elementAt(index)
-                                        .getName(isArabic)
+                                        .name
                                         .split("|")
                                         .elementAt(1),
                                   );

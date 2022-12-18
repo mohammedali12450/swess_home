@@ -1,27 +1,19 @@
 class PeriodType {
   int id;
-
-  String nameArabic;
-  String nameEnglish;
-
-  getName(bool isArabic) {
-    return isArabic ? nameArabic : nameEnglish;
-  }
+  String name;
 
   PeriodType(
-      {required this.id, required this.nameArabic, required this.nameEnglish});
+      {required this.id, required this.name});
 
   factory PeriodType.copy(PeriodType periodType) {
     return PeriodType(
         id: periodType.id,
-        nameArabic: periodType.nameArabic,
-        nameEnglish: periodType.nameEnglish);
+        name: periodType.name,);
   }
 
   factory PeriodType.fromJson(json) {
     return PeriodType(
         id: json['id'],
-        nameArabic: json['name_ar'],
-        nameEnglish: json["name_en"]);
+        name: json['name'] == null ? "" : json['name']);
   }
 }

@@ -6,10 +6,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 
 import '../../../constants/colors.dart';
-import 'create_order_screen.dart';
-import 'create_property_screens/create_property_introduction_screen.dart';
+import '../screens/create_order_screen.dart';
+import '../screens/create_property_screens/create_property_introduction_screen.dart';
 
-void showBlurScree({context}) {
+void showBlurScreen({context}) {
   showDialog(
       context: context,
       barrierColor: Colors.black38,
@@ -31,7 +31,6 @@ void showBlurScree({context}) {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  24.verticalSpace,
                   InkWell(
                     child: Column(
                       children: [
@@ -114,6 +113,7 @@ void showBlurScree({context}) {
                       );
                     },
                   ),
+                  24.verticalSpace,
                 ],
               ),
             ),

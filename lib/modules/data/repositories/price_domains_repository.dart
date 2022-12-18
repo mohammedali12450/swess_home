@@ -7,8 +7,8 @@ import 'package:swesshome/modules/data/providers/price_domains_provider.dart';
 class PriceDomainsRepository {
   PriceDomainProvider priceDomainProvider = PriceDomainProvider();
 
-  Future<PriceDomain> fetchData(String type) async {
-    Response response = await priceDomainProvider.fetchData(type);
+  Future<PriceDomain> fetchData() async {
+    Response response = await priceDomainProvider.fetchData();
 
     if (response.statusCode != 200) {
       throw UnknownException();

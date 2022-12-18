@@ -201,8 +201,7 @@ class _AdvertisementsEstateState extends State<AdvertisementsEstate> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Container(
-        //height: 300,
+      SizedBox(
         width: getScreenWidth(context),
         child: CarouselSlider(
           items: imageSliders,

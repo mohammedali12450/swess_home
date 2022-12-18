@@ -17,7 +17,7 @@ const getOfficeDetailsURL = "api/v2/estate-offices/";
 const getOfficeDetailsWithAuthURL = "api/v2/estate-offices/auth-customers/";
 const visitOfficeURL = "api/v2/office/visit";
 const visitEstateURL = "api/v2/estate/visit";
-const priceDomainURL = "api/v2/price-domains/";
+const priceDomainURL = "api/v2/price-domains";
 const getReportsTypesURL = "api/v2/report-types";
 const sendReportURL = "api/v2/report";
 const areaUnitsURL = "api/v2/area-units";
@@ -25,6 +25,7 @@ const estateOfferTypesURL = "api/v2/offer-types";
 const estateTypesURL = "api/v2/estate-types";
 const interiorStatusesURL = "api/v2/interior-statuses";
 const ownershipTypesURL = "api/v2/ownership-types";
+const searchResultEstateURL = "api/v2/estate/search";
 
 //old api
 const userRegisterUrl = "api/user/register";

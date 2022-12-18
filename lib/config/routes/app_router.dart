@@ -279,7 +279,7 @@ class AppRouter {
     estateOfferTypesBloc.add(EstateOfferTypesFetchStarted());
     periodTypesBloc.add(PeriodTypesFetchStarted());
     areaUnitsBloc.add(AreaUnitsFetchStarted());
-    priceDomainsBloc.add(PriceDomainsFetchStarted("rent"));
+    priceDomainsBloc.add(PriceDomainsFetchStarted());
     systemVariablesBloc.add(SystemVariablesFetchStarted());
     reportBloc.add(ReportsFetchStarted());
 

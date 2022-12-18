@@ -7,13 +7,15 @@ import 'package:swesshome/constants/colors.dart' as colors;
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
+import 'package:swesshome/modules/presentation/screens/chat_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_screen1.dart';
 import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 
-import 'create_estate_screen.dart';
+import '../widgets/blur_create_estate.dart';
+import 'create_message_screen.dart';
 
 class NavigationBarScreen extends StatefulWidget {
   static const String id = "NavigationBarScreen";
@@ -53,7 +55,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
       //   searchData: SearchData(estateOfferTypeId: sellOfferTypeNumber),
       // );
       case 2:
-        return const CreateOrderScreen();
+        return const CreateMessageScreen();
       case 3:
         return const SettingsScreen();
       default:
@@ -65,7 +67,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
     bool isArabic = ApplicationSharedPreferences.getLanguageCode() == "ar";
     return SpinCircleBottomBarHolder(
       onPressedCenterButton: () {
-        showBlurScree(context: context);
+        showBlurScreen(context: context);
         // Navigator.push(
         //   context,
         //   MaterialPageRoute(

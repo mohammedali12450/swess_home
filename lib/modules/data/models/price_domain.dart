@@ -1,15 +1,15 @@
 class PriceDomain {
-  String estateOfferType;
+  // String estateOfferType;
   List<dynamic> min;
   List<dynamic> max;
 
-  PriceDomain(
-      {required this.estateOfferType, required this.min, required this.max});
+  // Rent rent;
+  // Sell sell;
+
+  PriceDomain({required this.min, required this.max});
 
   factory PriceDomain.fromJson(json) {
     return PriceDomain(
-      estateOfferType:
-          json['estate_offer_type'] == null ? "" : json['estate_offer_type'],
       min: json['min'],
       max: json['max'],
     );
@@ -43,4 +43,18 @@ class PriceDomain {
 //           NumberFormat('###,###,###').format(int.parse(max)));
 // }
 
+}
+
+class Rent {
+  List<dynamic> min;
+  List<dynamic> max;
+
+  Rent({required this.min, required this.max});
+}
+
+class Sell {
+  List<dynamic> min;
+  List<dynamic> max;
+
+  Sell({required this.min, required this.max});
 }

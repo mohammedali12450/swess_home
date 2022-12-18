@@ -4,9 +4,9 @@ import 'package:swesshome/utils/services/network_helper.dart';
 
 class PriceDomainProvider{
 
-  Future fetchData(String type)async{
+  Future fetchData()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get("$priceDomainURL$type");
+    Response response = await helper.get(priceDomainURL);
     return response ;
   }
 }

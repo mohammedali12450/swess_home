@@ -140,7 +140,8 @@ class _EstateCardState extends State<EstateCard> {
             break;
           }
       }
-    } else {
+    }
+    else {
       switch (widget.estate.contractId!) {
         case 1:
         case 2:
@@ -396,7 +397,7 @@ class _EstateCardState extends State<EstateCard> {
                                         .currency_over_period(
                                       currency,
                                       widget.estate.periodType!
-                                          .getName(isArabic)!
+                                          .name
                                           .split("|")
                                           .first,
                                     ),

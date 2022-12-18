@@ -8,7 +8,9 @@ import 'estate_event.dart';
 
 class EstateBloc extends Bloc<EstateEvent, EstateState> {
   EstateRepository estateRepository;
-  List<Estate>? estates;
+  EstateSearch? estateSearch;
+
+  //List<Estate>? estates;
   int page = 1;
   bool isFetching = false;
 
@@ -17,9 +19,9 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
       (event, emit) async {
         emit(EstateFetchProgress());
         try {
-          estates = await estateRepository.search(
+          estateSearch = await estateRepository.search(
               event.searchData, event.isAdvanced, page, event.token);
-          emit(EstateFetchComplete(estates: estates ?? []));
+          emit(EstateFetchComplete(estateSearch: estateSearch!));
           page++;
         } on ConnectionException catch (e) {
           emit(
@@ -40,7 +42,7 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
         try {
           List<Estate> estates =
               await estateRepository.getOfficeEstates(event.officeId);
-          emit(EstateFetchComplete(
+          emit(EstateOfficeFetchComplete(
             estates: estates,
           ));
         } on ConnectionException catch (e) {

@@ -17,7 +17,6 @@ import 'package:swesshome/modules/presentation/screens/authentication_screen.dar
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_snack_bar.dart';
 import '../../../constants/assets_paths.dart';
-import '../../business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_bloc.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_event.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_state.dart';
@@ -27,7 +26,7 @@ import '../../data/models/user.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/icone_badge.dart';
-import '../widgets/shimmers/estates_shimmer.dart';
+import '../widgets/shimmers/profile_shimmer.dart';
 import 'edit_profile_screen.dart';
 import 'languages_screen.dart';
 import 'navigation_bar_screen.dart';
@@ -136,7 +135,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     bloc: _userDataBloc,
                     builder: (_, UserDataState userEditState) {
                       if (userEditState is UserDataError) {
-                        BlocProvider.of<EstateBloc>(context).isFetching = false;
                         return SizedBox(
                             width: 1.sw,
                             height: 1.sh - 75.h,
@@ -145,7 +143,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     .error_happened_when_executing_operation));
                       }
                       if (userEditState is UserDataProgress) {
-                        return const PropertyShimmer();
+                        return const ProfileShimmer();
                       }
                       if (userEditState is UserDataComplete) {
                         user = userEditState.user;

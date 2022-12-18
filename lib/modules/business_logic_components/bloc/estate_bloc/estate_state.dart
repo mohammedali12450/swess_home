@@ -9,9 +9,17 @@ class EstateFetchError extends EstateState {
 }
 
 class EstateFetchComplete extends EstateState {
-  List<Estate> estates;
+  //List<Estate> estates;
+  EstateSearch estateSearch;
 
-  EstateFetchComplete({required this.estates});
+  EstateFetchComplete({required this.estateSearch});
+}
+
+class EstateOfficeFetchComplete extends EstateState {
+  List<Estate> estates;
+  //EstateSearch estateSearch;
+
+  EstateOfficeFetchComplete({required this.estates});
 }
 
 class EstateFetchProgress extends EstateState {}

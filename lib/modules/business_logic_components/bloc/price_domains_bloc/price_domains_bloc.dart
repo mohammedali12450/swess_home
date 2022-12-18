@@ -13,7 +13,7 @@ class PriceDomainsBloc extends Bloc<PriceDomainsEvent, PriceDomainsState> {
     on<PriceDomainsFetchStarted>((event, emit) async {
       emit(PriceDomainsFetchProgress());
       try {
-        priceDomains = await priceDomainsRepository.fetchData(event.type);
+        priceDomains = await priceDomainsRepository.fetchData();
         emit(PriceDomainsFetchComplete(priceDomains));
       } catch (e, stack) {
         debugPrint(e.toString());

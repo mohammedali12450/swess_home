@@ -147,7 +147,7 @@ class _SearchScreenState extends State<SearchScreen> {
       userToken = UserSharedPreferences.getAccessToken();
       print(userToken);
     }
-    priceDomainsBloc.add(PriceDomainsFetchStarted(isSell ? "sale" : "rent"));
+    priceDomainsBloc.add(PriceDomainsFetchStarted());
     estateTypesBloc.add(EstateTypesFetchStarted());
   }
 

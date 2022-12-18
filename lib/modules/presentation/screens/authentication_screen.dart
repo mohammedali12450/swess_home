@@ -357,8 +357,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                 if (widget.popAfterFinish!) {
                                   Navigator.pop(context);
                                 } else {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context, NavigationBarScreen.id, (route) => false);
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const NavigationBarScreen()),
+                                          (route) => false);
                                 }
                               },
                             ),

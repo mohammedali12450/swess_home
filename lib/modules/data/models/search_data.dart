@@ -17,20 +17,27 @@ class SearchData {
 
   bool? isOnBeach;
 
+  int? priceMin;
+  int? priceMax;
+
   SearchData(
       {this.estateOfferTypeId,
       this.locationId,
       this.estateTypeId,
       this.priceDomainId,
       this.ownershipId,
-      this.interiorStatusId});
+      this.interiorStatusId,
+      this.priceMin,
+      this.priceMax});
 
   Map<String, dynamic> toJson(bool isAdvanced) {
     return {
       "location_id": locationId,
       "estate_offer_type_id": estateOfferTypeId,
       "estate_type_id": estateTypeId,
-      "price_domain_id": priceDomainId,
+      "min_price": priceMin,
+      "max_price": priceMax,
+      //"price_domain_id": priceDomainId,
       if (isAdvanced) "ownership_type_id": ownershipId,
       if (isAdvanced) "interior_status_id": interiorStatusId,
       if (isAdvanced)

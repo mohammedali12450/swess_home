@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants/design_constants.dart';
@@ -16,12 +15,9 @@ class UpdateVersionScreen extends StatefulWidget {
 }
 
 class _UpdateVersionScreenState extends State<UpdateVersionScreen> {
-  bool isIntroductionScreenPassed = false;
 
   @override
   void initState() {
-    isIntroductionScreenPassed =
-        ApplicationSharedPreferences.getWalkThroughPassState();
     super.initState();
   }
 

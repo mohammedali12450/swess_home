@@ -19,7 +19,10 @@ class EstateOrderCard extends StatefulWidget {
   final Function onTap;
 
   const EstateOrderCard(
-      {Key? key, required this.estateOrder, required this.color, required this.onTap})
+      {Key? key,
+      required this.estateOrder,
+      required this.color,
+      required this.onTap})
       : super(key: key);
 
   @override
@@ -34,12 +37,9 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    String estateType = widget.estateOrder.estateType!
-        .name
-        .split("|")
-        .elementAt(1);
-    String estateOfferType =
-        widget.estateOrder.estateOfferType!.name;
+    String estateType =
+        widget.estateOrder.estateType!.name.split("|").elementAt(1);
+    String estateOfferType = widget.estateOrder.estateOfferType!.name;
     String estateHeader = AppLocalizations.of(context)!
         .estate_offer_sentence(estateType, estateOfferType);
 
@@ -138,10 +138,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
               style: Theme.of(context).textTheme.subtitle1),
           if (widget.estateOrder.priceDomain != null) ...[
             12.verticalSpace,
-            Text(
-                AppLocalizations.of(context)!.price_domain +
-                    " : " +
-                    widget.estateOrder.priceDomain!.estateOfferType,
+            Text(AppLocalizations.of(context)!.price_domain + " : ",
                 style: Theme.of(context).textTheme.subtitle1),
           ],
           if (widget.estateOrder.description != null) ...[

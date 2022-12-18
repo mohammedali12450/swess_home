@@ -39,7 +39,9 @@ class _EstatesScreenState extends State<EstatesScreen> {
   final ChannelCubit _priceSelected = ChannelCubit(false);
   final ChannelCubit _dateSelected = ChannelCubit(true);
 
-  final List<Estate> estates = [];
+  EstateSearch estateSearch = EstateSearch.init();
+  final List<Estate> identicalEstates = [];
+  final List<Estate> similarEstates = [];
   final ScrollController _scrollController = ScrollController();
   bool isEstatesFinished = false;
   String? userToken;
@@ -85,7 +87,8 @@ class _EstatesScreenState extends State<EstatesScreen> {
           child: BlocConsumer<EstateBloc, EstateState>(
             listener: (_, estateFetchState) async {
               if (estateFetchState is EstateFetchComplete) {
-                if (estateFetchState.estates.isEmpty && estates.isNotEmpty) {
+                if (estateFetchState.estateSearch.identicalEstates.isEmpty &&
+                    estateSearch.identicalEstates.isNotEmpty) {
                   isEstatesFinished = true;
                 }
               }
@@ -100,14 +103,21 @@ class _EstatesScreenState extends State<EstatesScreen> {
             builder: (context, EstateState estatesFetchState) {
               if (estatesFetchState is EstateFetchNone ||
                   (estatesFetchState is EstateFetchProgress &&
-                      estates.isEmpty)) {
+                      estateSearch.identicalEstates.isEmpty)) {
                 return const PropertyShimmer();
               } else if (estatesFetchState is EstateFetchComplete) {
-                estates.addAll(estatesFetchState.estates);
-                // sortEstateByDate();
+                if (estatesFetchState
+                    .estateSearch.identicalEstates.isNotEmpty) {
+                  estateSearch.identicalEstates
+                      .addAll(estatesFetchState.estateSearch.identicalEstates);
+                }
+                if (estatesFetchState.estateSearch.similarEstates.isNotEmpty) {
+                  estateSearch.similarEstates
+                      .addAll(estatesFetchState.estateSearch.similarEstates);
+                }
                 BlocProvider.of<EstateBloc>(context).isFetching = false;
               } else if (estatesFetchState is EstateFetchError &&
-                  estates.isEmpty) {
+                  estateSearch.identicalEstates.isEmpty) {
                 BlocProvider.of<EstateBloc>(context).isFetching = false;
                 return RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
@@ -126,7 +136,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                 );
               }
 
-              if (estates.isEmpty) {
+              if (estateSearch.identicalEstates.isEmpty) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -302,22 +312,65 @@ class _EstatesScreenState extends State<EstatesScreen> {
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Text(AppLocalizations.of(context)!.identical_estates),
+                        ],
+                      ),
+                    ),
+                    if(estateSearch.identicalEstates.isNotEmpty)
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: estates.length,
+                      itemCount: estateSearch.identicalEstates.length,
                       itemBuilder: (_, index) {
                         return EstateCard(
                           color: Theme.of(context).colorScheme.background,
-                          estate: estates.elementAt(index),
+                          estate:
+                              estateSearch.identicalEstates.elementAt(index),
                           onClosePressed: () {
                             showReportModalBottomSheet(
-                                context, estates.elementAt(index).id!);
+                                context,
+                                estateSearch.identicalEstates
+                                    .elementAt(index)
+                                    .id!);
                           },
                           removeCloseButton: false,
                         );
                       },
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Text(AppLocalizations.of(context)!.similar_estates),
+                        ],
+                      ),
+                    ),
+                    if(estateSearch.similarEstates.isNotEmpty)
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: estateSearch.similarEstates.length,
+                      itemBuilder: (_, index) {
+                        return EstateCard(
+                          color: Theme.of(context).colorScheme.background,
+                          estate:
+                              estateSearch.similarEstates.elementAt(index),
+                          onClosePressed: () {
+                            showReportModalBottomSheet(
+                                context,
+                                estateSearch.similarEstates
+                                    .elementAt(index)
+                                    .id!);
+                          },
+                          removeCloseButton: false,
+                        );
+                      },
+                    ),
+
                     if (BlocProvider.of<EstateBloc>(context).isFetching)
                       Container(
                         margin: EdgeInsets.only(
@@ -376,7 +429,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
   }
 
   sortEstateByDate() {
-    estates.sort((a, b) {
+    estateSearch.identicalEstates.sort((a, b) {
       //sorting in descending order
       return DateTime.parse(b.createdAt!)
           .compareTo(DateTime.parse(a.createdAt!));

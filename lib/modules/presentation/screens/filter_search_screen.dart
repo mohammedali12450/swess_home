@@ -5,7 +5,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_state.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/colors.dart';
@@ -32,6 +31,7 @@ import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_types_repository.dart';
 import '../../data/repositories/price_domains_repository.dart';
+import '../widgets/choice_container.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/my_dropdown_list.dart';
 import '../widgets/price_picker.dart';
@@ -211,21 +211,25 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                             Fluttertoast.showToast(
                                 msg: AppLocalizations.of(context)!.search);
                           }
+                          print("ghina : ${searchData.estateOfferTypeId}"
+                              "${searchData.estateTypeId}"
+                              "${searchData.locationId}"
+                              "${searchData.priceDomainId}");
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => EstatesScreen(
                                 searchData: EstateFetchStarted(
                                   searchData: SearchData(
-                                      estateOfferTypeId:
-                                          isSellCubit.state ? 1 : 0,
-                                      locationId: searchData.locationId,
-                                      estateTypeId: searchData.estateTypeId,
-                                      priceDomainId: 1,
-                                      ownershipId: null,
-                                      interiorStatusId: null),
+                                    estateOfferTypeId: 1,
+                                    estateTypeId: 1,
+                                    locationId: 185,
+                                    //priceDomainId: 1,
+                                    priceMin: 1000000,
+                                    priceMax: 100000000,
+                                  ),
                                   isAdvanced: false,
-                                  token: '',
+                                  token: UserSharedPreferences.getAccessToken(),
                                 ),
                               ),
                             ),
@@ -247,6 +251,8 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                         ),
                         onPressed: () {
                           locationController.clear();
+                          isSellCubit.setState(true);
+                          isAreaSearchCubit.setState(true);
                           locationDetectedCubit.setState(false);
                         },
                       ),
@@ -265,8 +271,17 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   Widget buildSearchWidgets(isDark) {
     return Column(
       children: [
-        buildChoiceContainer(isSellCubit, AppLocalizations.of(context)!.sell,
-            AppLocalizations.of(context)!.rent),
+        buildChoiceContainer(
+            context: context,
+            cubit: isSellCubit,
+            textRight: AppLocalizations.of(context)!.sell,
+            textLeft: AppLocalizations.of(context)!.rent,
+            onTapRight: () {
+              searchData.estateOfferTypeId = 1;
+            },
+            onTapLeft: () {
+              searchData.estateOfferTypeId = 2;
+            }),
         buildLocation(isDark),
         buildEstateType(),
         buildPriceDomain(isDark),
@@ -360,147 +375,132 @@ class _SearchScreenState extends State<FilterSearchScreen> {
           ),
         ),
         kHe12,
-        BlocBuilder<PriceDomainsBloc, PriceDomainsState>(
-          bloc: priceDomainsBloc,
-          builder: (_, priceDomainState) {
-            if (priceDomainState is PriceDomainsFetchProgress) {
-              return SpinKitWave(
-                color: Theme.of(context).colorScheme.background,
-                size: 24.w,
-              );
-            } else if (priceDomainState is PriceDomainsFetchComplete) {
-              priceDomains = priceDomainState.priceDomains;
-            }
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Column(
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Text(AppLocalizations.of(context)!.min_price),
-                          ],
-                        ),
-                        Align(
-                          alignment: isArabic
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: GestureDetector(
-                            onTap: () async {
-                              await openPricePicker(
-                                context,
-                                isDark,
-                                title: AppLocalizations.of(context)!
-                                    .title_min_price,
-                                items: priceDomains!.min
-                                    .map(
-                                      (names) => Text(
-                                        names,
-                                        // textScaleFactor: 1.2,
-                                        // textAlign: TextAlign.center,
-                                      ),
-                                    )
-                                    .toList(),
-                                onSubmit: (data) {
-                                  startPriceCubit.setState(data);
-                                },
-                              );
-                            },
-                            child: BlocBuilder<ChannelCubit, dynamic>(
-                              bloc: startPriceCubit,
-                              builder: (_, state) {
-                                return Container(
-                                  alignment: isArabic
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                                  height: 55.h,
-                                  width: 150.w,
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 8.w),
-                                  decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(8)),
-                                      border: Border.all(
-                                        color: AppColors.primaryColor,
-                                        width: 1,
-                                      )),
-                                  child: Text(priceDomains!.min[state]),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
+                        Text(AppLocalizations.of(context)!.min_price),
                       ],
                     ),
-                  ),
-                  kWi24,
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(AppLocalizations.of(context)!.max_price),
-                          ],
-                        ),
-                        Align(
-                          alignment: isArabic
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: GestureDetector(
-                            onTap: () async {
-                              await openPricePicker(
-                                context,
-                                isDark,
-                                title: AppLocalizations.of(context)!
-                                    .title_max_price,
-                                items: priceDomains!.max
-                                    .map(
-                                      (names) => Text(
-                                        names,
-                                        // textScaleFactor: 1.2,
-                                        // textAlign: TextAlign.center,
-                                      ),
-                                    )
-                                    .toList(),
-                                onSubmit: (data) {
-                                  endPriceCubit.setState(data);
-                                },
-                              );
+                    Align(
+                      alignment: isArabic
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: GestureDetector(
+                        onTap: () async {
+                          await openPricePicker(
+                            context,
+                            isDark,
+                            title:
+                                AppLocalizations.of(context)!.title_min_price,
+                            items: priceDomains!.min
+                                .map(
+                                  (names) => Text(
+                                    names,
+                                    // textScaleFactor: 1.2,
+                                    // textAlign: TextAlign.center,
+                                  ),
+                                )
+                                .toList(),
+                            onSubmit: (data) {
+                              startPriceCubit.setState(data);
                             },
-                            child: BlocBuilder<ChannelCubit, dynamic>(
-                                bloc: endPriceCubit,
-                                builder: (_, state) {
-                                  return Container(
-                                    alignment: isArabic
-                                        ? Alignment.centerRight
-                                        : Alignment.centerLeft,
-                                    height: 55.h,
-                                    width: 150.w,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.w),
-                                    decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(8)),
-                                        border: Border.all(
-                                          color: AppColors.primaryColor,
-                                          width: 1,
-                                        )),
-                                    child: Text(priceDomains!.max[state]),
-                                  );
-                                }),
-                          ),
+                          );
+                        },
+                        child: BlocBuilder<ChannelCubit, dynamic>(
+                          bloc: startPriceCubit,
+                          builder: (_, state) {
+                            return Container(
+                              alignment: isArabic
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              height: 55.h,
+                              width: 150.w,
+                              padding: EdgeInsets.symmetric(horizontal: 8.w),
+                              decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8)),
+                                  border: Border.all(
+                                    color: AppColors.primaryColor,
+                                    width: 1,
+                                  )),
+                              child: Text(priceDomains!.min[state]),
+                            );
+                          },
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            );
-          },
+              kWi24,
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(AppLocalizations.of(context)!.max_price),
+                      ],
+                    ),
+                    Align(
+                      alignment: isArabic
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: GestureDetector(
+                        onTap: () async {
+                          await openPricePicker(
+                            context,
+                            isDark,
+                            title:
+                                AppLocalizations.of(context)!.title_max_price,
+                            items: priceDomains!.max
+                                .map(
+                                  (names) => Text(
+                                    names,
+                                    // textScaleFactor: 1.2,
+                                    // textAlign: TextAlign.center,
+                                  ),
+                                ) //TODO: See it
+                                .toList(/*growable: false*/),
+                            onSubmit: (data) {
+                              endPriceCubit.setState(data);
+                            },
+                          );
+                        },
+                        child: BlocBuilder<ChannelCubit, dynamic>(
+                            bloc: endPriceCubit,
+                            builder: (_, state) {
+                              return Container(
+                                alignment: isArabic
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
+                                height: 55.h,
+                                width: 150.w,
+                                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8)),
+                                    border: Border.all(
+                                      color: AppColors.primaryColor,
+                                      width: 1,
+                                    )),
+                                child: Text(priceDomains!.max[state]),
+                              );
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
         kHe24,
       ],
@@ -524,9 +524,12 @@ class _SearchScreenState extends State<FilterSearchScreen> {
           ),
         ),
         buildChoiceContainer(
-            isAreaSearchCubit,
-            AppLocalizations.of(context)!.search_by_area,
-            AppLocalizations.of(context)!.search_neighborhood),
+            context: context,
+            cubit: isAreaSearchCubit,
+            textRight: AppLocalizations.of(context)!.search_by_area,
+            textLeft: AppLocalizations.of(context)!.search_neighborhood,
+            onTapRight: () {},
+            onTapLeft: () {}),
         BlocBuilder<ChannelCubit, dynamic>(
           bloc: isAreaSearchCubit,
           builder: (_, isArea) {
@@ -732,83 +735,5 @@ class _SearchScreenState extends State<FilterSearchScreen> {
         return Container();
       },
     );
-  }
-
-  Widget buildChoiceContainer(ChannelCubit cubit, textRight, textLeft) {
-    return BlocBuilder<ChannelCubit, dynamic>(
-        bloc: cubit,
-        builder: (_, isChoice) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-            child: Container(
-              padding: const EdgeInsets.all(3),
-              height: 37,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black38, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: !isChoice
-                              ? AppColors.lastColor.withOpacity(0.5)
-                              : AppColors.white,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(4)),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          textLeft,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline5!
-                              .copyWith(
-                                  color: !isChoice
-                                      ? AppColors.primaryColor
-                                      : AppColors.secondaryDark,
-                                  fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      onTap: () {
-                        cubit.setState(false);
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isChoice
-                              ? AppColors.lastColor.withOpacity(0.5)
-                              : AppColors.white,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(4)),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          textRight,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline5!
-                              .copyWith(
-                                  color: isChoice
-                                      ? AppColors.primaryColor
-                                      : AppColors.secondaryDark,
-                                  fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      onTap: () {
-                        cubit.setState(true);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
   }
 }

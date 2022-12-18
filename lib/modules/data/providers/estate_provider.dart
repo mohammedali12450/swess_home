@@ -28,7 +28,7 @@ class EstateProvider {
 
     try {
       response = await helper.post(
-          (isAdvanced) ? advancedSearchUrl : newSearchUrl,
+          (isAdvanced) ? advancedSearchUrl : searchResultEstateURL,
           FormData.fromMap(
             searchData.toJson(isAdvanced),
           ),

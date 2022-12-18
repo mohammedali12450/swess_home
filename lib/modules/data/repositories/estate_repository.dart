@@ -33,7 +33,7 @@ class EstateRepository {
     return response;
   }
 
-  Future search(
+  Future<EstateSearch> search(
       SearchData searchData, bool isAdvanced, int page, String? token) async {
     Response response;
 
@@ -71,19 +71,41 @@ class EstateRepository {
         response.statusCode != 200) {
       throw GeneralException(errorMessage: "حدث خطأ");
     }
-    dynamic jsonEstates = jsonDecode(response.toString())["data"];
-    List<Estate> estates = [];
+    dynamic jsonIdenticalEstates =
+        jsonDecode(response.toString())["data"]["identical-estates"]["data"];
+    dynamic jsonSimilarEstates =
+        jsonDecode(response.toString())["data"]["similar-estates"]["data"];
+    List<Estate> identicalEstates = [];
+    List<Estate> similarEstates = [];
+    EstateSearch estateSearch = EstateSearch.init();
     // check if result estates is list :
-    if (jsonEstates is List) {
-      estates = jsonEstates.map<Estate>((e) => Estate.fromJson(e)).toList();
-      return estates;
+    if (jsonIdenticalEstates is List) {
+      identicalEstates =
+          jsonIdenticalEstates.map<Estate>((e) => Estate.fromJson(e)).toList();
+      //return identicalEstates;
     }
     // check if result estates is map :
-    else if (jsonEstates is Map) {
-      estates = jsonEstates.values.map((e) => Estate.fromJson(e)).toList();
-      return estates;
+    else if (jsonIdenticalEstates is Map) {
+      identicalEstates =
+          jsonIdenticalEstates.values.map((e) => Estate.fromJson(e)).toList();
+      //return identicalEstates;
     }
-    return estates;
+    // check if result estates is list :
+    if (jsonSimilarEstates is List) {
+      similarEstates =
+          jsonSimilarEstates.map<Estate>((e) => Estate.fromJson(e)).toList();
+      //return similarEstates;
+    }
+    // check if result estates is map :
+    else if (jsonSimilarEstates is Map) {
+      similarEstates =
+          jsonSimilarEstates.values.map((e) => Estate.fromJson(e)).toList();
+      //return similarEstates;
+    }
+    estateSearch.identicalEstates = identicalEstates;
+    estateSearch.similarEstates = similarEstates;
+
+    return estateSearch;
   }
 
   Future getOfficeEstates(int officeId) async {
@@ -131,11 +153,10 @@ class EstateRepository {
     EstateOffice office = EstateOffice.fromJson(jsonOffice);
     print("gaga1");
     CommunicationMedias? communicationMedias;
-    if(jsonCommunication == []){
+    if (jsonCommunication == []) {
       communicationMedias = null;
-    }else{
-      communicationMedias =
-          CommunicationMedias.fromJson(jsonCommunication);
+    } else {
+      communicationMedias = CommunicationMedias.fromJson(jsonCommunication);
     }
     print("gaga2");
 

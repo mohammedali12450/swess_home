@@ -121,7 +121,7 @@ class Estate {
     // area unit :
     AreaUnit? areaUnit;
     if (json.containsKey("area_unit") && json["area_unit"] != null) {
-      areaUnit = json["area_unit"];
+      areaUnit = AreaUnit.fromJson(json["area_unit"]);
     }
     // estate images :
     List<MyImage> images = [];
@@ -282,4 +282,19 @@ class Estate {
 
     return shareInformation;
   }
+}
+
+
+class EstateSearch{
+  List<Estate> identicalEstates;
+  List<Estate> similarEstates ;
+
+  factory EstateSearch.init(){
+    return EstateSearch(
+      identicalEstates : [],
+      similarEstates : []
+    );
+  }
+
+  EstateSearch({required this.identicalEstates, required this.similarEstates});
 }
