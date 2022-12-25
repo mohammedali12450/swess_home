@@ -276,4 +276,61 @@ class EstateRepository {
       throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر!");
     }
   }
+
+  Future getSpecialEstates() async {
+    Response response;
+
+    try {
+      response = await _estateProvider.getSpecialEstates();
+    } catch (e) {
+      rethrow;
+    }
+
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: "! لا يمكن الاتصال بالسيرفر");
+    }
+
+    dynamic jsonEstates = jsonDecode(response.toString())["data"];
+    List<Estate> estates = [];
+    estates = jsonEstates.map<Estate>((e) => Estate.fromJson(e)).toList();
+    return estates;
+  }
+
+  Future getMostViewEstates() async {
+    Response response;
+
+    try {
+      response = await _estateProvider.getMostViewEstates();
+    } catch (e) {
+      rethrow;
+    }
+
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: "! لا يمكن الاتصال بالسيرفر");
+    }
+
+    dynamic jsonEstates = jsonDecode(response.toString())["data"];
+    List<Estate> estates = [];
+    estates = jsonEstates.map<Estate>((e) => Estate.fromJson(e)).toList();
+    return estates;
+  }
+
+  Future getNewestEstates() async {
+    Response response;
+
+    try {
+      response = await _estateProvider.getNewestEstates();
+    } catch (e) {
+      rethrow;
+    }
+
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: "! لا يمكن الاتصال بالسيرفر");
+    }
+
+    dynamic jsonEstates = jsonDecode(response.toString())["data"];
+    List<Estate> estates = [];
+    estates = jsonEstates.map<Estate>((e) => Estate.fromJson(e)).toList();
+    return estates;
+  }
 }

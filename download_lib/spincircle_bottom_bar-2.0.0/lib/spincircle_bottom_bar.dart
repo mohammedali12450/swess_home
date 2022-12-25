@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spincircle_bottom_bar/modals.dart';
 
-class SpinCircleBottomBarHolder extends StatelessWidget {
+class SpinCircleBottomBarHolder extends StatefulWidget {
   final SCBottomBarDetails bottomNavigationBar;
   final Widget child;
   final Function() onPressedCenterButton;
@@ -14,15 +14,21 @@ class SpinCircleBottomBarHolder extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<SpinCircleBottomBarHolder> createState() =>
+      _SpinCircleBottomBarHolderState();
+}
+
+class _SpinCircleBottomBarHolderState extends State<SpinCircleBottomBarHolder> {
+  @override
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
         Column(
           children: <Widget>[
-            Expanded(child: child),
+            Expanded(child: widget.child),
             Container(
-              height: bottomNavigationBar.bnbHeight ?? 80,
+              height: widget.bottomNavigationBar.bnbHeight ?? 80,
             )
           ],
         ),
@@ -30,8 +36,8 @@ class SpinCircleBottomBarHolder extends StatelessWidget {
             bottom: 0,
             left: 0,
             child: SpinCircleBottomBar(
-              bottomNavigationBar: bottomNavigationBar,
-              onPressedCenterButton: onPressedCenterButton,
+              bottomNavigationBar: widget.bottomNavigationBar,
+              onPressedCenterButton: widget.onPressedCenterButton,
             ))
       ],
     );
@@ -170,11 +176,15 @@ class _SpinCircleBottomBarState extends State<SpinCircleBottomBar> {
                             child: child,
                           );
                         },
-                        child: PrimaryCircle(
-                          circleItems: expandableBottomBarDetails.circleItems,
-                          radius: bottomBarHeight * 2,
-                          color: expandableBottomBarDetails.circleColors![0],
-                        ),
+                        child: expandableBottomBarDetails.circleItems != null
+                            ? PrimaryCircle(
+                                circleItems:
+                                    expandableBottomBarDetails.circleItems!,
+                                radius: bottomBarHeight * 2,
+                                color:
+                                    expandableBottomBarDetails.circleColors![0],
+                              )
+                            : Container(),
                       ),
                     ],
                   ))
@@ -268,6 +278,9 @@ class _SpinCircleBottomBarState extends State<SpinCircleBottomBar> {
                   child: FloatingActionButton(
                       elevation: actionButtonDetails!.elevation,
                       backgroundColor: actionButtonDetails.color,
+                      shape: StadiumBorder(
+                          side: BorderSide(
+                              color: Colors.yellow.shade700, width: 1)),
                       onPressed: () {
                         widget.onPressedCenterButton.call();
                         //   if (expansionStatus == ExpansionStatus.idle) {

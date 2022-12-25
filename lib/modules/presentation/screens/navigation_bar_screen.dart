@@ -8,14 +8,13 @@ import 'package:swesshome/core/storage/shared_preferences/application_shared_pre
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/chat_screen.dart';
-import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_screen1.dart';
 import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../constants/assets_paths.dart';
 import '../widgets/blur_create_estate.dart';
-import 'create_message_screen.dart';
 
 class NavigationBarScreen extends StatefulWidget {
   static const String id = "NavigationBarScreen";
@@ -55,7 +54,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
       //   searchData: SearchData(estateOfferTypeId: sellOfferTypeNumber),
       // );
       case 2:
-        return const CreateMessageScreen();
+        return const ChatScreen();
       case 3:
         return const SettingsScreen();
       default:
@@ -63,84 +62,100 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
     }
   }
 
+  // late ChannelCubit selectedLanguageCubit;
+
   Widget buildNavigationBar() {
     bool isArabic = ApplicationSharedPreferences.getLanguageCode() == "ar";
-    return SpinCircleBottomBarHolder(
-      onPressedCenterButton: () {
-        showBlurScreen(context: context);
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (_) => const CreateEstateScreen(),
-        //   ),
-        // );
-      },
-      bottomNavigationBar: SCBottomBarDetails(
-        circleColors: [
-          colors.AppColors.primaryDark,
-          colors.AppColors.lastColor,
-          colors.AppColors.primaryColor,
-        ],
-        iconTheme: const IconThemeData(color: Colors.black45, size: 17),
-        activeIconTheme:
-            const IconThemeData(color: colors.AppColors.lastColor, size: 22),
-        backgroundColor: Colors.white,
-        titleStyle: const TextStyle(color: Colors.black45, fontSize: 13),
-        activeTitleStyle: Theme.of(context).textTheme.headline5!.copyWith(
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            color: colors.AppColors.lastColor),
-        actionButtonDetails: SCActionButtonDetails(
-          color: colors.AppColors.lastColor,
-          icon: const Icon(
-            Icons.add,
-            color: Colors.white,
+    // selectedLanguageCubit = ChannelCubit(
+    //     Provider.of<LocaleProvider>(context).getLocale().languageCode == "ar"
+    //         ? 0
+    //         : 1);
+
+    return BlocBuilder<ChannelCubit, dynamic>(
+      bloc: ChannelCubit(
+          Provider.of<LocaleProvider>(context).getLocale().languageCode == "ar"
+              ? false
+              : true),
+      builder: (_, lang) {
+        print("second");
+        return SpinCircleBottomBarHolder(
+          onPressedCenterButton: () {
+            showBlurScreen(context: context);
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (_) => const CreateEstateScreen(),
+            //   ),
+            // );
+          },
+          bottomNavigationBar: SCBottomBarDetails(
+            circleColors: [
+              colors.AppColors.primaryDark,
+              colors.AppColors.lastColor,
+              colors.AppColors.primaryColor,
+            ],
+            iconTheme: const IconThemeData(color: Colors.black45, size: 17),
+            activeIconTheme: const IconThemeData(
+                color: colors.AppColors.lastColor, size: 22),
+            backgroundColor: Colors.white,
+            titleStyle: const TextStyle(color: Colors.black45, fontSize: 13),
+            activeTitleStyle: Theme.of(context).textTheme.headline5!.copyWith(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: colors.AppColors.lastColor),
+            actionButtonDetails: SCActionButtonDetails(
+              color: colors.AppColors.white,
+              icon: Image.asset(
+                swessHomeIconPath,
+                //color: Colors.white,
+              ),
+              elevation: 2,
+            ),
+            bnbHeight: 62,
+            elevation: 2.0,
+            items: [
+              SCBottomBarItem(
+                  icon: Icons.home_outlined,
+                  title: lang ? "home" : "الرئيسية",
+                  onPressed: () {
+                    pageCubit.setState(0);
+                  }),
+              SCBottomBarItem(
+                  icon: Icons.search,
+                  title: AppLocalizations.of(context)!.search,
+                  onPressed: () {
+                    pageCubit.setState(1);
+                  }),
+              SCBottomBarItem(
+                  icon: Icons.chat_outlined,
+                  title: AppLocalizations.of(context)!.chat,
+                  onPressed: () {
+                    pageCubit.setState(2);
+                  }),
+              SCBottomBarItem(
+                  icon: Icons.person_outline,
+                  title: AppLocalizations.of(context)!.profile,
+                  onPressed: () {
+                    pageCubit.setState(3);
+                  }),
+            ],
+            // circleItems: [
+            //   SCItem(icon: const Icon(Icons.add), onPressed: () {}),
+            //   SCItem(icon: const Icon(Icons.print), onPressed: () {}),
+            //   SCItem(icon: const Icon(Icons.map), onPressed: () {}),
+            // ],
           ),
-          elevation: 2,
-        ),
-        bnbHeight: 62,
-        elevation: 2.0,
-        items: [
-          SCBottomBarItem(
-              icon: Icons.home_outlined,
-              title: "Home",
-              onPressed: () {
-                pageCubit.setState(0);
-              }),
-          SCBottomBarItem(
-              icon: Icons.search,
-              title: "Search",
-              onPressed: () {
-                pageCubit.setState(1);
-              }),
-          SCBottomBarItem(
-              icon: Icons.chat_outlined,
-              title: "Chat",
-              onPressed: () {
-                pageCubit.setState(2);
-              }),
-          SCBottomBarItem(
-              icon: Icons.person_outline,
-              title: "Profile",
-              onPressed: () {
-                pageCubit.setState(3);
-              }),
-        ],
-        circleItems: [],
-        // circleItems: [
-        //   SCItem(icon: const Icon(Icons.add), onPressed: () {}),
-        //   //SCItem(icon: const Icon(Icons.print), onPressed: () {}),
-        //   SCItem(icon: const Icon(Icons.map), onPressed: () {}),
-        // ],
-      ),
-      child: BlocBuilder<ChannelCubit, dynamic>(
-        bloc: pageCubit,
-        builder: (_, pageNum) {
-          return Directionality(
-              textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-              child: callPage(pageNum));
-        },
-      ),
+          child: BlocBuilder<ChannelCubit, dynamic>(
+            bloc: pageCubit,
+            builder: (_, pageNum) {
+              return Directionality(
+                  textDirection:
+                      isArabic ? TextDirection.rtl : TextDirection.ltr,
+                  child: callPage(pageNum));
+            },
+          ),
+        );
+      },
     );
   }
 }

@@ -23,8 +23,10 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    selectedLanguageCubit =
-        ChannelCubit(Provider.of<LocaleProvider>(context).getLocale().languageCode == "ar" ? 0 : 1);
+    selectedLanguageCubit = ChannelCubit(
+        Provider.of<LocaleProvider>(context).getLocale().languageCode == "ar"
+            ? 0
+            : 1);
     return BlocBuilder<ChannelCubit, dynamic>(
         bloc: isLanguageChangingCubit,
         builder: (_, isChanging) {

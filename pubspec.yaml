@@ -69,6 +69,7 @@ dependencies:
     path: ./download_lib/spincircle_bottom_bar-2.0.0
   floating_bottom_bar: ^0.0.1
   carousel_slider: ^4.2.1
+  lottie: ^1.2.1
   #flutter_windowmanager: ^0.2.0
 #-------------------------------
 

@@ -10,13 +10,13 @@ class SCBottomBarDetails {
   TextStyle? activeTitleStyle;
   TextStyle? titleStyle;
   List<SCBottomBarItem?> items;
-  List<SCItem> circleItems;
+  List<SCItem>? circleItems;
   SCActionButtonDetails? actionButtonDetails;
   double? bnbHeight;
 
   SCBottomBarDetails({
     required this.items,
-    required this.circleItems,
+    this.circleItems,
     this.bnbHeight,
     this.actionButtonDetails,
     this.activeIconTheme,
@@ -31,7 +31,7 @@ class SCBottomBarDetails {
 
 class SCActionButtonDetails{
   Color color;
-  Icon icon;
+  Widget icon;
   double elevation;
 
   SCActionButtonDetails({

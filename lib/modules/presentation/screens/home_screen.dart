@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,14 +7,21 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_state.dart';
+import 'package:swesshome/modules/data/models/estate.dart';
 import '../../../constants/application_constants.dart';
 import '../../../core/storage/shared_preferences/application_shared_preferences.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../../business_logic_components/bloc/estate_bloc/estate_bloc.dart';
+import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
 import '../../business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
 import '../../business_logic_components/bloc/fcm_bloc/fcm_event.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../data/providers/locale_provider.dart';
+import '../../data/repositories/estate_repository.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/estate_card.dart';
+import '../widgets/shimmers/estates_shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = "HomeScreen";
@@ -26,13 +34,23 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late UserLoginBloc _userAuthenticationBloc;
+  late EstateBloc _estateBloc;
   late bool isArabic;
+  List<Estate> estateNewest = [];
+  List<Estate> estateSpacial = [];
+  List<Estate> estateMostView = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     ApplicationSharedPreferences.setWalkThroughPassState(true);
+    _estateBloc = EstateBloc(EstateRepository());
+
+    _estateBloc.add(NewestEstatesFetchStarted());
+    _estateBloc.add(MostViewEstatesFetchStarted());
+    _estateBloc.add(SpacialEstatesFetchStarted());
+
     _userAuthenticationBloc = BlocProvider.of<UserLoginBloc>(context);
     if (_userAuthenticationBloc.user != null) {
       sendFcmToken(0);
@@ -84,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const AdvertisementsEstate(),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal:12 ,vertical: 8),
               child: Text(
                 AppLocalizations.of(context)!.new_estate + " :",
                 style: Theme.of(context)
@@ -94,9 +112,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             buildNewEstate(),
-            kHe8,
+            kHe28,
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12 ,vertical: 8),
               child: Text(
                 AppLocalizations.of(context)!.most_common + " :",
                 style: Theme.of(context)
@@ -105,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     .copyWith(fontWeight: FontWeight.w600),
               ),
             ),
-            buildNewEstate(),
+            buildMostViewEstate(),
           ],
         ),
       ),
@@ -116,21 +134,63 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildNewEstate() {
-    return SizedBox(
-      height: 300,
-      width: 400,
-      child: ListView(
-        children: [
-          Container(
-            height: 300,
-            width: 400,
-            color: Colors.black38,
-          ),
-          // EstateCard(
-          //     estate: Estate.init(),
-          //     removeCloseButton: true,
-          //     color: Theme.of(context).colorScheme.background),
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: BlocBuilder<EstateBloc, EstateState>(
+        bloc: _estateBloc,
+        builder: (_, estateState) {
+          if (estateState is EstateNewestFetchProgress) {
+            return const PropertyShimmer();
+          }
+          if (estateState is EstateNewestFetchComplete) {
+            estateNewest = estateState.estates;
+          }
+          return SizedBox(
+            height: 430,
+            child: ListView.builder(
+              itemCount: estateNewest.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                return EstateCard(
+                    removeBottomBar: true,
+                    estate: estateNewest.elementAt(index),
+                    removeCloseButton: true,
+                    color: Theme.of(context).colorScheme.background);
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildMostViewEstate() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: BlocBuilder<EstateBloc, EstateState>(
+        bloc: _estateBloc,
+        builder: (_, estateState) {
+          if (estateState is EstateMostViewFetchProgress) {
+            return const PropertyShimmer();
+          }
+          if (estateState is EstateMostViewFetchComplete) {
+            estateMostView = estateState.estates;
+          }
+          return SizedBox(
+            height: 430,
+            child: ListView.builder(
+              itemCount: estateMostView.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                return EstateCard(
+                    removeBottomBar: true,
+                    estate: estateMostView.elementAt(index),
+                    removeCloseButton: true,
+                    color: Theme.of(context).colorScheme.background);
+              },
+            ),
+          );
+        },
       ),
     );
   }
@@ -152,7 +212,8 @@ final List<Widget> imageSliders = imgList
               borderRadius: const BorderRadius.all(Radius.circular(12.0)),
               child: Stack(
                 children: <Widget>[
-                  Image.network(item, fit: BoxFit.cover, width: 1000.0),
+                  CachedNetworkImage(
+                      imageUrl: item, fit: BoxFit.cover, width: 1000.0),
                   Positioned(
                     bottom: 0.0,
                     left: 0.0,

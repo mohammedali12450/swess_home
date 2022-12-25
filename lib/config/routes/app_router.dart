@@ -311,7 +311,7 @@ class AppRouter {
         (estateOfferTypesBloc.state is EstateOfferTypesFetchComplete) &&
         (periodTypesBloc.state is PeriodTypesFetchComplete) &&
         (areaUnitsBloc.state is AreaUnitsFetchComplete) &&
-        (priceDomainsBloc.state is PriceDomainsFetchComplete) &&
+        //(priceDomainsBloc.state is PriceDomainsFetchComplete) &&
         (systemVariablesBloc.state is SystemVariablesFetchComplete) &&
         (reportBloc.state is ReportFetchComplete) &&
         isUserDataFetched;

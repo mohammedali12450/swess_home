@@ -198,4 +198,40 @@ class EstateProvider {
         queryParameters: {"id": id}, token: token);
     return response;
   }
+
+  Future getSpecialEstates() async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+
+    try {
+      response = await helper.get(specialEstateURL);
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+
+  Future getNewestEstates() async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+
+    try {
+      response = await helper.get(newestEstateURL);
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+
+  Future getMostViewEstates() async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+
+    try {
+      response = await helper.get(mostViewEstateURL);
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
 }

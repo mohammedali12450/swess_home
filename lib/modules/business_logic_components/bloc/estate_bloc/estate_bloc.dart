@@ -10,7 +10,7 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
   EstateRepository estateRepository;
   EstateSearch? estateSearch;
 
-  //List<Estate>? estates;
+  List<Estate>? estates;
   int page = 1;
   bool isFetching = false;
 
@@ -48,6 +48,66 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
         } on ConnectionException catch (e) {
           emit(
             EstateFetchError(errorMessage: e.errorMessage),
+          );
+        } on GeneralException catch (e) {
+          emit(
+            EstateFetchError(errorMessage: e.errorMessage!),
+          );
+        }
+      },
+    );
+
+    on<NewestEstatesFetchStarted>(
+      (event, emit) async {
+        emit(EstateNewestFetchProgress());
+        try {
+          estates = await estateRepository.getNewestEstates();
+          emit(EstateNewestFetchComplete(estates: estates!));
+          page++;
+        } on ConnectionException catch (e) {
+          emit(
+            EstateFetchError(
+                errorMessage: e.errorMessage, isConnectionError: true),
+          );
+        } on GeneralException catch (e) {
+          emit(
+            EstateFetchError(errorMessage: e.errorMessage!),
+          );
+        }
+      },
+    );
+
+    on<MostViewEstatesFetchStarted>(
+      (event, emit) async {
+        emit(EstateMostViewFetchProgress());
+        try {
+          estates = await estateRepository.getMostViewEstates();
+          emit(EstateMostViewFetchComplete(estates: estates!));
+          page++;
+        } on ConnectionException catch (e) {
+          emit(
+            EstateFetchError(
+                errorMessage: e.errorMessage, isConnectionError: true),
+          );
+        } on GeneralException catch (e) {
+          emit(
+            EstateFetchError(errorMessage: e.errorMessage!),
+          );
+        }
+      },
+    );
+
+    on<SpacialEstatesFetchStarted>(
+      (event, emit) async {
+        emit(EstateSpacialFetchProgress());
+        try {
+          estates = await estateRepository.getSpecialEstates();
+          emit(EstateSpacialFetchComplete(estates: estates!));
+          page++;
+        } on ConnectionException catch (e) {
+          emit(
+            EstateFetchError(
+                errorMessage: e.errorMessage, isConnectionError: true),
           );
         } on GeneralException catch (e) {
           emit(

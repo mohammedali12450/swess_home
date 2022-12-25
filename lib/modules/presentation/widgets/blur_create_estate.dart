@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
+import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
 
 import '../../../constants/colors.dart';
 import '../screens/create_order_screen.dart';
@@ -21,7 +23,7 @@ void showBlurScreen({context}) {
             backgroundColor: Colors.transparent,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              height: getScreenHeight(context),
+              height: getScreenHeight(context) / 1.5,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(
                   Radius.circular(8),
@@ -39,6 +41,7 @@ void showBlurScreen({context}) {
                           size: 50,
                           color: AppColors.yellowColor,
                         ),
+                        kHe12,
                         Text(
                           AppLocalizations.of(context)!.create_estate_order,
                           style: Theme.of(context)
@@ -65,6 +68,7 @@ void showBlurScreen({context}) {
                           size: 50,
                           color: AppColors.yellowColor,
                         ),
+                        kHe12,
                         Text(
                           AppLocalizations.of(context)!.estate_offer_creating,
                           style: Theme.of(context)
@@ -89,12 +93,13 @@ void showBlurScreen({context}) {
                     child: Column(
                       children: [
                         Icon(
-                          Icons.call_end_outlined,
+                          Icons.house_outlined,
                           size: 50,
                           color: AppColors.yellowColor,
                         ),
+                        kHe12,
                         Text(
-                          AppLocalizations.of(context)!.estate_offer_creating,
+                          AppLocalizations.of(context)!.estate_immediately,
                           style: Theme.of(context)
                               .textTheme
                               .headline5!
@@ -107,13 +112,11 @@ void showBlurScreen({context}) {
                         context,
                         MaterialPageRoute(
                           builder: (_) =>
-                              const CreatePropertyIntroductionScreen(
-                                  officeId: 1),
+                              const EstateImmediatelyScreen(),
                         ),
                       );
                     },
                   ),
-                  24.verticalSpace,
                 ],
               ),
             ),

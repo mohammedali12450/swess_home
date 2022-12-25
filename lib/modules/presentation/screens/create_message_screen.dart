@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/modules/presentation/widgets/shimmers/notifications_shimmer.dart';
 
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_bloc.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_event.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_state.dart';
+import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
+import '../../business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/user_authentication_repository.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/shimmers/details_shimmer.dart';
-import '../widgets/shimmers/profile_shimmer.dart';
 
 class CreateMessageScreen extends StatefulWidget {
   const CreateMessageScreen({Key? key}) : super(key: key);
@@ -47,17 +48,6 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.contact_us),
-        actions: [
-          TextButton(
-              onPressed: () {},
-              child: Text(
-                AppLocalizations.of(context)!.send,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline5!
-                    .copyWith(color: AppColors.white),
-              )),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -99,6 +89,42 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                   return Container();
                 }),
             buildMessageContainer(),
+            kHe24,
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(240.w, 64.h),
+                  maximumSize: Size(300.w, 64.h),
+                ),
+                child: BlocBuilder<UserLoginBloc, UserLoginState>(
+                  builder: (_, loginState) {
+                    if (loginState is UserLoginProgress) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SpinKitWave(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            size: 20.w,
+                          ),
+                          kWi16,
+                          Text(
+                            AppLocalizations.of(context)!.sending,
+                          )
+                        ],
+                      );
+                    }
+                    return Text(
+                      AppLocalizations.of(context)!.send,
+                    );
+                  },
+                ),
+                onPressed: () async {
+
+                  FocusScope.of(context).unfocus();
+                },
+              ),
+            ),
+            kHe24,
           ],
         ),
       ),
@@ -190,7 +216,7 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                 focusedBorder: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 hintText: AppLocalizations.of(context)!
-                    .order_create_notes_descriptions,
+                    .message_notes_descriptions,
               ),
               maxLines: 8,
             ),

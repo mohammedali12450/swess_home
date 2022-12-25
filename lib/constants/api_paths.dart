@@ -26,6 +26,9 @@ const estateTypesURL = "api/v2/estate-types";
 const interiorStatusesURL = "api/v2/interior-statuses";
 const ownershipTypesURL = "api/v2/ownership-types";
 const searchResultEstateURL = "api/v2/estate/search";
+const newestEstateURL = "api/v2/estate/newest";
+const mostViewEstateURL = "api/v2/estate/most-viewed";
+const specialEstateURL = "api/v2/estate/special";
 
 //old api
 const userRegisterUrl = "api/user/register";
