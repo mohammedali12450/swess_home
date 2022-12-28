@@ -1,17 +1,18 @@
 class PriceDomain {
   // String estateOfferType;
-  List<dynamic> min;
-  List<dynamic> max;
 
-  // Rent rent;
-  // Sell sell;
+  // List<dynamic> min;
+  // List<dynamic> max;
 
-  PriceDomain({required this.min, required this.max});
+  Rent rent;
+  Sale sale;
+
+  PriceDomain({required this.rent, required this.sale});
 
   factory PriceDomain.fromJson(json) {
     return PriceDomain(
-      min: json['min'],
-      max: json['max'],
+      rent: Rent.fromJson(json["rent"]),
+      sale: Sale.fromJson(json["sale"]),
     );
   }
 
@@ -50,11 +51,25 @@ class Rent {
   List<dynamic> max;
 
   Rent({required this.min, required this.max});
+
+  factory Rent.fromJson(json) {
+    return Rent(
+      min: json['min'],
+      max: json['max'],
+    );
+  }
 }
 
-class Sell {
+class Sale {
   List<dynamic> min;
   List<dynamic> max;
 
-  Sell({required this.min, required this.max});
+  Sale({required this.min, required this.max});
+
+  factory Sale.fromJson(json) {
+    return Sale(
+      min: json['min'],
+      max: json['max'],
+    );
+  }
 }

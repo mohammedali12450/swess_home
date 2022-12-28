@@ -375,133 +375,151 @@ class _SearchScreenState extends State<FilterSearchScreen> {
           ),
         ),
         kHe12,
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: Column(
+        BlocBuilder<ChannelCubit, dynamic>(
+            bloc: isSellCubit,
+            builder: (_, priceState) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Text(AppLocalizations.of(context)!.min_price),
-                      ],
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text(AppLocalizations.of(context)!.min_price),
+                            ],
+                          ),
+                          Align(
+                            alignment: isArabic
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: GestureDetector(
+                              onTap: () async {
+                                List<dynamic> min = priceState
+                                    ? priceDomains!.sale.min
+                                    : priceDomains!.rent.min;
+                                await openPricePicker(
+                                  context,
+                                  isDark,
+                                  title: AppLocalizations.of(context)!
+                                      .title_min_price,
+                                  items: min
+                                      .map(
+                                        (names) => Text(
+                                          names,
+                                          // textScaleFactor: 1.2,
+                                          // textAlign: TextAlign.center,
+                                        ),
+                                      )
+                                      .toList(),
+                                  onSubmit: (data) {
+                                    startPriceCubit.setState(data);
+                                  },
+                                );
+                              },
+                              child: BlocBuilder<ChannelCubit, dynamic>(
+                                bloc: startPriceCubit,
+                                builder: (_, state) {
+                                  String textMin = priceState
+                                      ? priceDomains!.sale.min[state]
+                                      : priceDomains!.rent.min[state];
+                                  return Container(
+                                    alignment: isArabic
+                                        ? Alignment.centerRight
+                                        : Alignment.centerLeft,
+                                    height: 55.h,
+                                    width: 150.w,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 8.w),
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(8)),
+                                        border: Border.all(
+                                          color: AppColors.primaryColor,
+                                          width: 1,
+                                        )),
+                                    child: Text(textMin),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Align(
-                      alignment: isArabic
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: GestureDetector(
-                        onTap: () async {
-                          await openPricePicker(
-                            context,
-                            isDark,
-                            title:
-                                AppLocalizations.of(context)!.title_min_price,
-                            items: priceDomains!.min
-                                .map(
-                                  (names) => Text(
-                                    names,
-                                    // textScaleFactor: 1.2,
-                                    // textAlign: TextAlign.center,
-                                  ),
-                                )
-                                .toList(),
-                            onSubmit: (data) {
-                              startPriceCubit.setState(data);
-                            },
-                          );
-                        },
-                        child: BlocBuilder<ChannelCubit, dynamic>(
-                          bloc: startPriceCubit,
-                          builder: (_, state) {
-                            return Container(
-                              alignment: isArabic
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                              height: 55.h,
-                              width: 150.w,
-                              padding: EdgeInsets.symmetric(horizontal: 8.w),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(8)),
-                                  border: Border.all(
-                                    color: AppColors.primaryColor,
-                                    width: 1,
-                                  )),
-                              child: Text(priceDomains!.min[state]),
-                            );
-                          },
-                        ),
+                    kWi24,
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text(AppLocalizations.of(context)!.max_price),
+                            ],
+                          ),
+                          Align(
+                            alignment: isArabic
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: GestureDetector(
+                              onTap: () async {
+                                List<dynamic> max = isSellCubit.state
+                                    ? priceDomains!.sale.max
+                                    : priceDomains!.rent.max;
+                                await openPricePicker(
+                                  context,
+                                  isDark,
+                                  title: AppLocalizations.of(context)!
+                                      .title_max_price,
+                                  items: max
+                                      .map(
+                                        (names) => Text(
+                                          names,
+                                          // textScaleFactor: 1.2,
+                                          // textAlign: TextAlign.center,
+                                        ),
+                                      ) //TODO: See it
+                                      .toList(/*growable: false*/),
+                                  onSubmit: (data) {
+                                    endPriceCubit.setState(data);
+                                  },
+                                );
+                              },
+                              child: BlocBuilder<ChannelCubit, dynamic>(
+                                  bloc: endPriceCubit,
+                                  builder: (_, state) {
+                                    String textMax = isSellCubit.state
+                                        ? priceDomains!.sale.max[state]
+                                        : priceDomains!.rent.max[state];
+                                    return Container(
+                                      alignment: isArabic
+                                          ? Alignment.centerRight
+                                          : Alignment.centerLeft,
+                                      height: 55.h,
+                                      width: 150.w,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 8.w),
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(8)),
+                                          border: Border.all(
+                                            color: AppColors.primaryColor,
+                                            width: 1,
+                                          )),
+                                      child: Text(textMax),
+                                    );
+                                  }),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-              kWi24,
-              Expanded(
-                flex: 2,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(AppLocalizations.of(context)!.max_price),
-                      ],
-                    ),
-                    Align(
-                      alignment: isArabic
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: GestureDetector(
-                        onTap: () async {
-                          await openPricePicker(
-                            context,
-                            isDark,
-                            title:
-                                AppLocalizations.of(context)!.title_max_price,
-                            items: priceDomains!.max
-                                .map(
-                                  (names) => Text(
-                                    names,
-                                    // textScaleFactor: 1.2,
-                                    // textAlign: TextAlign.center,
-                                  ),
-                                ) //TODO: See it
-                                .toList(/*growable: false*/),
-                            onSubmit: (data) {
-                              endPriceCubit.setState(data);
-                            },
-                          );
-                        },
-                        child: BlocBuilder<ChannelCubit, dynamic>(
-                            bloc: endPriceCubit,
-                            builder: (_, state) {
-                              return Container(
-                                alignment: isArabic
-                                    ? Alignment.centerRight
-                                    : Alignment.centerLeft,
-                                height: 55.h,
-                                width: 150.w,
-                                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(8)),
-                                    border: Border.all(
-                                      color: AppColors.primaryColor,
-                                      width: 1,
-                                    )),
-                                child: Text(priceDomains!.max[state]),
-                              );
-                            }),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+              );
+            }),
         kHe24,
       ],
     );
@@ -588,7 +606,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                         ),
                         border: kUnderlinedBorderWhite,
                         focusedBorder: kUnderlinedBorderWhite,
-                        enabledBorder: kUnderlinedBorderWhite,
+                        enabledBorder: kUnderlinedBorderBlack,
                         hintText: (isArea)
                             ? AppLocalizations.of(context)!.enter_area_name
                             : AppLocalizations.of(context)!

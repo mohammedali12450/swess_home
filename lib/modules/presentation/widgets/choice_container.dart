@@ -4,18 +4,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../constants/colors.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 
-Widget buildChoiceContainer(
-    {required context,
-      required ChannelCubit cubit,
-      required String textRight,
-      required String textLeft,
-      required Function() onTapRight,
-      required Function() onTapLeft}) {
+Widget buildChoiceContainer({
+  required context,
+  required ChannelCubit cubit,
+  required String textRight,
+  required String textLeft,
+  required Function() onTapRight,
+  required Function() onTapLeft,
+  double? paddingVertical,
+  double? paddingHorizontal,
+}) {
   return BlocBuilder<ChannelCubit, dynamic>(
       bloc: cubit,
       builder: (_, isChoice) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+          padding: EdgeInsets.symmetric(
+              vertical: paddingVertical ?? 12,
+              horizontal: paddingHorizontal ?? 12),
           child: Container(
             padding: const EdgeInsets.all(3),
             height: 37,
@@ -33,15 +38,12 @@ Widget buildChoiceContainer(
                             ? AppColors.lastColor.withOpacity(0.5)
                             : AppColors.white,
                         borderRadius:
-                        const BorderRadius.all(Radius.circular(4)),
+                            const BorderRadius.all(Radius.circular(4)),
                       ),
                       alignment: Alignment.center,
                       child: Text(
                         textLeft,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5!
-                            .copyWith(
+                        style: Theme.of(context).textTheme.headline5!.copyWith(
                             color: !isChoice
                                 ? AppColors.primaryColor
                                 : AppColors.secondaryDark,
@@ -62,15 +64,12 @@ Widget buildChoiceContainer(
                             ? AppColors.lastColor.withOpacity(0.5)
                             : AppColors.white,
                         borderRadius:
-                        const BorderRadius.all(Radius.circular(4)),
+                            const BorderRadius.all(Radius.circular(4)),
                       ),
                       alignment: Alignment.center,
                       child: Text(
                         textRight,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5!
-                            .copyWith(
+                        style: Theme.of(context).textTheme.headline5!.copyWith(
                             color: isChoice
                                 ? AppColors.primaryColor
                                 : AppColors.secondaryDark,

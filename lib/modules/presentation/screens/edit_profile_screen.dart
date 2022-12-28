@@ -247,12 +247,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     if (UserEditDataProgress is UserEditDataProgress) {
                       return;
                     }
+                    print(selectedGovernorateId);
                     _userEditDataBloc.add(UserEditDataStarted(
                         user: Register(
                             firstName: widget.user!.firstName!,
                             lastName: widget.user!.lastName!,
                             email: widget.user!.email!,
-                            governorate: 5,
+                            governorate: selectedGovernorateId,
                             birthdate: widget.user!.birthdate!,
                             authentication: widget.user!.authentication!),
                         token: token));

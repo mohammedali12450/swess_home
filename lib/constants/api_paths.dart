@@ -29,6 +29,9 @@ const searchResultEstateURL = "api/v2/estate/search";
 const newestEstateURL = "api/v2/estate/newest";
 const mostViewEstateURL = "api/v2/estate/most-viewed";
 const specialEstateURL = "api/v2/estate/special";
+const sendMessageURL = "api/v2/send-message";
+const getMessagesURL = "api/v2/view-messages";
+
 
 //old api
 const userRegisterUrl = "api/user/register";

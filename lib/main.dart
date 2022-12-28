@@ -63,9 +63,15 @@ import 'modules/data/repositories/system_variables_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'modules/presentation/screens/home_screen.dart';
+
 const bool _clearSharedPreferences = false;
 
 final navigatorKey = GlobalKey<NavigatorState>();
+
+HomeScreen? homeScreen;
+State<HomeScreen>? homeScreenState;
+//late EstateBloc estateBloc ;
 
 void main() async {
   // Widget binding:
@@ -232,7 +238,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           lazy: false,
           create: (_) => NotificationsBloc(NotificationRepository()),
         ),
-        BlocProvider(
+        BlocProvider<EstateBloc>(
           create: (_) => EstateBloc(
             EstateRepository(),
           ),

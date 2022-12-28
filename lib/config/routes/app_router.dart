@@ -59,7 +59,7 @@ import 'package:swesshome/modules/presentation/screens/reset_password_screen.dar
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
 import 'package:swesshome/modules/presentation/screens/select_language_screen.dart';
-import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
+import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_internet_connection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -241,9 +241,9 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const FAQScreen(),
         );
-      case SettingsScreen.id:
+      case ProfileScreen.id:
         return MaterialPageRoute(
-          builder: (_) => const SettingsScreen(),
+          builder: (_) => const ProfileScreen(),
         );
       case LanguagesScreen.id:
         return MaterialPageRoute(
@@ -298,7 +298,7 @@ class AppRouter {
           userLoginBloc.user = userDataFetchState.user;
         } else if (userDataFetchState is UserDataFetchError) {
           isUserDataFetched = true;
-          UserSharedPreferences.clear();
+          //UserSharedPreferences.clear();
         } else {
           isUserDataFetched = false;
         }
@@ -311,7 +311,7 @@ class AppRouter {
         (estateOfferTypesBloc.state is EstateOfferTypesFetchComplete) &&
         (periodTypesBloc.state is PeriodTypesFetchComplete) &&
         (areaUnitsBloc.state is AreaUnitsFetchComplete) &&
-        //(priceDomainsBloc.state is PriceDomainsFetchComplete) &&
+        (priceDomainsBloc.state is PriceDomainsFetchComplete) &&
         (systemVariablesBloc.state is SystemVariablesFetchComplete) &&
         (reportBloc.state is ReportFetchComplete) &&
         isUserDataFetched;

@@ -10,7 +10,9 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
   EstateRepository estateRepository;
   EstateSearch? estateSearch;
 
-  List<Estate>? estates;
+  List<Estate> newestEstates = [];
+  List<Estate> specialEstates = [];
+  List<Estate> mostViewEstates = [];
   int page = 1;
   bool isFetching = false;
 
@@ -61,8 +63,8 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
       (event, emit) async {
         emit(EstateNewestFetchProgress());
         try {
-          estates = await estateRepository.getNewestEstates();
-          emit(EstateNewestFetchComplete(estates: estates!));
+          newestEstates = await estateRepository.getNewestEstates();
+          emit(EstateNewestFetchComplete(estates: newestEstates));
           page++;
         } on ConnectionException catch (e) {
           emit(
@@ -81,8 +83,8 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
       (event, emit) async {
         emit(EstateMostViewFetchProgress());
         try {
-          estates = await estateRepository.getMostViewEstates();
-          emit(EstateMostViewFetchComplete(estates: estates!));
+          mostViewEstates = await estateRepository.getMostViewEstates();
+          emit(EstateMostViewFetchComplete(estates: mostViewEstates));
           page++;
         } on ConnectionException catch (e) {
           emit(
@@ -101,8 +103,8 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
       (event, emit) async {
         emit(EstateSpacialFetchProgress());
         try {
-          estates = await estateRepository.getSpecialEstates();
-          emit(EstateSpacialFetchComplete(estates: estates!));
+          specialEstates = await estateRepository.getSpecialEstates();
+          emit(EstateSpacialFetchComplete(estates: specialEstates));
           page++;
         } on ConnectionException catch (e) {
           emit(

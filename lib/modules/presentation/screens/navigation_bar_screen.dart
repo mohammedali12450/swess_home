@@ -10,10 +10,11 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/chat_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_screen1.dart';
-import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
+import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/assets_paths.dart';
+import '../../../main.dart';
 import '../widgets/blur_create_estate.dart';
 
 class NavigationBarScreen extends StatefulWidget {
@@ -39,24 +40,40 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
         ),
         body: Directionality(
             textDirection: TextDirection.ltr, child: buildNavigationBar()),
+        resizeToAvoidBottomInset: true,
       ),
     );
   }
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  // }
+
+  // @override
+  // void dispose(){
+  //   //pageCubit.close();
+  //   super.dispose();
+  // }
+
   Widget callPage(int _selectedBar) {
     switch (_selectedBar) {
       case 0:
-        return const HomeScreen();
+        if (homeScreen == null) {
+          print("ghina null");
+          homeScreen = const HomeScreen();
+          homeScreenState = homeScreen!.createState();
+          return homeScreen!;
+        } else {
+          print("ghina not null");
+          return homeScreenState!.build(context);
+        }
       case 1:
         return const SearchScreen1();
-      //return const FilterSearchScreen();
-      // return SearchScreen(
-      //   searchData: SearchData(estateOfferTypeId: sellOfferTypeNumber),
-      // );
       case 2:
         return const ChatScreen();
       case 3:
-        return const SettingsScreen();
+        return const ProfileScreen();
       default:
         return const HomeScreen();
     }

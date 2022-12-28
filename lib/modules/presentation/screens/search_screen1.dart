@@ -22,36 +22,10 @@ class _SearchScreen1State extends State<SearchScreen1> {
 
   @override
   Widget build(BuildContext context) {
-    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
-    var borderRadiusEnglish = const BorderRadius.only(
-        topRight: Radius.circular(32), bottomRight: Radius.circular(32));
-    var borderRadiusArabic = const BorderRadius.only(
-        topLeft: Radius.circular(32), bottomLeft: Radius.circular(32));
     return Scaffold(
       appBar: AppBar(),
-      body: Stack(
-        children: [
-          // ListTile(
-          //   leading: const Icon(Icons.saved_search),
-          //   title: Text(AppLocalizations.of(context)!.new_search),
-          //   selected: true,
-          //   shape: RoundedRectangleBorder(
-          //       borderRadius:
-          //           isArabic ? borderRadiusArabic : borderRadiusEnglish),
-          //   selectedTileColor: AppColors.lastColor.withOpacity(0.5),
-          //   onTap: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (_) => const FilterSearchScreen(),
-          //       ),
-          //     );
-          //   },
-          // ),
-          Center(
-              child: estateSearch.isEmpty ? buildEmptyScreen() : Container()),
-        ],
-      ),
+      body: Center(
+          child: estateSearch.isEmpty ? buildEmptyScreen() : Container()),
       floatingActionButton: Padding(
         padding: EdgeInsets.symmetric(vertical: 5.w),
         child: Directionality(
@@ -64,23 +38,20 @@ class _SearchScreen1State extends State<SearchScreen1> {
                 elevation: 4,
                 shape: StadiumBorder(
                   side: BorderSide(
-                    // border color
                     color: AppColors.yellowColor,
-                    // border thickness
                     width: 2,
                   ),
                 ),
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(15, 5, 9, 16),
                   width: 100,
-                  alignment: Alignment.bottomCenter,
+                  alignment: Alignment.center,
                   height: 72.h,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 2.0),
                     child: Text(
-                      AppLocalizations.of(context)!.new_search,
+                      AppLocalizations.of(context)!.search,
                       style:
-                      const TextStyle(color: AppColors.white, fontSize: 16),
+                          const TextStyle(color: AppColors.white, fontSize: 16),
                     ),
                   ),
                 ),

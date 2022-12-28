@@ -336,7 +336,7 @@
   "search_card_body": "Search in the various real estate offers of houses, shops, and lands.",
   "sell": "For Sale",
   "rent": "For Rent",
-  "buy":"buy",
+  "buy":"For Buy",
   "estate_offers": "Real Estate Offers",
   "vacations_and_farms": "Farms and vacations",
   "vacations_card_body": "Browse summer resorts and make reservations wherever you are",
@@ -535,5 +535,7 @@
   "salon":"Salon",
   "bathroom":"Bathroom",
   "home":"Home",
-  "profile":"Profile"
+  "profile":"Profile",
+  "read_more":"Read More...",
+  "read_less":"Read Less"
 }

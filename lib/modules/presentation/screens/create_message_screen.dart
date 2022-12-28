@@ -5,8 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/message_bloc/message_event.dart';
+import 'package:swesshome/modules/data/repositories/send_message_repository.dart';
 
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../../business_logic_components/bloc/message_bloc/message_bloc.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_bloc.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_event.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_state.dart';
@@ -27,20 +30,20 @@ class CreateMessageScreen extends StatefulWidget {
 class _CreateMessageScreenState extends State<CreateMessageScreen> {
   TextEditingController messageController = TextEditingController();
 
-  UserDataBloc? _userDataBloc;
+  late UserDataBloc _userDataBloc;
+  late MessageBloc _messageBloc;
   User? user;
 
   @override
   void initState() {
     super.initState();
-    if (UserSharedPreferences.getAccessToken() != null) {
-      _userDataBloc = UserDataBloc(UserAuthenticationRepository());
-    }
-    if (UserSharedPreferences.getAccessToken() != null) {
-      _userDataBloc!.add(
-        UserDataStarted(token: UserSharedPreferences.getAccessToken()),
-      );
-    }
+
+    _userDataBloc = UserDataBloc(UserAuthenticationRepository());
+    _userDataBloc.add(
+      UserDataStarted(token: UserSharedPreferences.getAccessToken()),
+    );
+
+    _messageBloc = MessageBloc(MessageRepository());
   }
 
   @override
@@ -119,7 +122,10 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                   },
                 ),
                 onPressed: () async {
-
+                  _messageBloc.add(SendMessagesFetchStarted(
+                    token: UserSharedPreferences.getAccessToken(),
+                    message: messageController.text,
+                  ));
                   FocusScope.of(context).unfocus();
                 },
               ),
@@ -136,7 +142,8 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
       children: [
         buildListTile(AppLocalizations.of(context)!.name, user!.firstName),
         buildListTile(AppLocalizations.of(context)!.email, user!.email),
-        buildListTile(AppLocalizations.of(context)!.telephone, user!.authentication),
+        buildListTile(
+            AppLocalizations.of(context)!.telephone, user!.authentication),
         buildListTile(AppLocalizations.of(context)!.country, user!.country),
       ],
     );
@@ -215,8 +222,8 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 enabledBorder: InputBorder.none,
-                hintText: AppLocalizations.of(context)!
-                    .message_notes_descriptions,
+                hintText:
+                    AppLocalizations.of(context)!.message_notes_descriptions,
               ),
               maxLines: 8,
             ),

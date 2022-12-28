@@ -32,16 +32,16 @@ import 'languages_screen.dart';
 import 'navigation_bar_screen.dart';
 import 'notifications_screen.dart';
 
-class SettingsScreen extends StatefulWidget {
+class ProfileScreen extends StatefulWidget {
   static const String id = "SettingsScreen";
 
-  const SettingsScreen({Key? key}) : super(key: key);
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   late ChannelCubit isDarkModeSelectedCubit;
 
   //late UserLoginBloc _userLoginBloc;
@@ -255,17 +255,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
         buildThemeModeSetting(),
 
-        //buildInviteFriends,
-        buildListTile(
-          isEnglish,
-          icon: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.people_alt_outlined),
-          ),
-          title: Text(AppLocalizations.of(context)!.invite_friends),
-          onTap: () {},
-        ),
-
         6.verticalSpace,
         const Divider(thickness: 0.2),
         6.verticalSpace,
@@ -471,6 +460,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     isLogoutLoadingCubit.setState(true);
                     await _logoutAfterDelete();
                     isLogoutLoadingCubit.setState(false);
+                    //UserSharedPreferences.clear();
                   },
                   child: Container(
                     alignment: Alignment.center,
@@ -557,8 +547,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget buildLogout(isEnglish) {
     return BlocBuilder<UserLoginBloc, UserLoginState>(
       builder: (context, userLoginState) {
-        User? user = BlocProvider.of<UserLoginBloc>(context).user;
-        if (user != null) {
+        if (UserSharedPreferences.getAccessToken() != null) {
           return SizedBox(
             width: 1.sw,
             height: 64.h,
@@ -597,6 +586,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         isLogoutLoadingCubit.setState(true);
                         await _logout();
                         isLogoutLoadingCubit.setState(false);
+                        //UserSharedPreferences.clear();
                       },
                     ),
                     ElevatedButton(
@@ -655,7 +645,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     UserSharedPreferences.removeAccessToken();
     //_userLoginBloc.user = null;
-    Navigator.pushNamedAndRemoveUntil(context, NavigationBarScreen.id, (route) => false);
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (_) => const NavigationBarScreen()));
+    //Navigator.pushNamedAndRemoveUntil(context, AuthenticationScreen.id, (route) => false);
     return;
   }
 

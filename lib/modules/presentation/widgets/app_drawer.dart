@@ -23,7 +23,7 @@ import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
-import 'package:swesshome/modules/presentation/screens/settings_screen.dart';
+import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -50,12 +50,14 @@ class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    User? user = BlocProvider.of<UserLoginBloc>(context).user;
+    //User? user = BlocProvider.of<UserLoginBloc>(context).user;
     return SingleChildScrollView(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        (user == null) ? buildNullUserDrawer(isDark) : buildUserDrawer(isDark),
+        (UserSharedPreferences.getAccessToken() == null)
+            ? buildNullUserDrawer(isDark)
+            : buildUserDrawer(isDark),
       ],
     ));
   }
@@ -118,6 +120,7 @@ class _MyDrawerState extends State<MyDrawer> {
               ],
             ),
           ),
+          kHe16,
           RowInformation(
             content: AppLocalizations.of(context)!.saved_estates,
             iconData: Icons.bookmark_border_outlined,
@@ -159,14 +162,14 @@ class _MyDrawerState extends State<MyDrawer> {
             },
           ),
           RowInformation(
-            content: AppLocalizations.of(context)!.settings,
-            iconData: Icons.settings_outlined,
+            content: AppLocalizations.of(context)!.invite_friends,
+            iconData: Icons.people_alt_outlined,
             onTap: () {
               // Navigator.push(
               //   context,
               //   MaterialPageRoute(builder: (_) => const SettingsScreen()),
               // );
-              Navigator.pushNamed(context, SettingsScreen.id);
+              //Navigator.pushNamed(context, SettingsScreen.id);
             },
           ),
           RowInformation(
@@ -178,8 +181,7 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           BlocBuilder<UserLoginBloc, UserLoginState>(
             builder: (context, userLoginState) {
-              User? user = BlocProvider.of<UserLoginBloc>(context).user;
-              if (user != null) {
+              if (UserSharedPreferences.getAccessToken() != null) {
                 return RowInformation(
                   content: AppLocalizations.of(context)!.log_out,
                   iconData: Icons.logout,
@@ -214,6 +216,7 @@ class _MyDrawerState extends State<MyDrawer> {
                             isLogoutLoadingCubit.setState(true);
                             await _logout();
                             isLogoutLoadingCubit.setState(false);
+                            UserSharedPreferences.clear();
                           },
                         ),
                         ElevatedButton(
@@ -329,7 +332,7 @@ class _MyDrawerState extends State<MyDrawer> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
             );
             //Navigator.pushNamed(context, SettingsScreen.id);
           },
@@ -415,7 +418,7 @@ class _MyDrawerState extends State<MyDrawer> {
         ),
       );
       return;
-    } else if (_userLoginBloc.user != null) {
+    } else if (UserSharedPreferences.getAccessToken() != null) {
       try {
         await userRep.logout(UserSharedPreferences.getAccessToken()!);
       } on ConnectionException {
@@ -430,7 +433,10 @@ class _MyDrawerState extends State<MyDrawer> {
     }
     UserSharedPreferences.removeAccessToken();
     _userLoginBloc.user = null;
-    Navigator.pushNamedAndRemoveUntil(context, NavigationBarScreen.id, (route) => false);
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (_) => const NavigationBarScreen()));
+    // Navigator.pushNamedAndRemoveUntil(
+    //     context, NavigationBarScreen.id, ModalRoute.withName('/'));
     return;
   }
 }

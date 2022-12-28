@@ -16,12 +16,13 @@ import '../../business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
 import '../../business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
 import '../../business_logic_components/bloc/fcm_bloc/fcm_event.dart';
-import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../data/providers/locale_provider.dart';
 import '../../data/repositories/estate_repository.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/estate_card.dart';
 import '../widgets/shimmers/estates_shimmer.dart';
+
+late EstateBloc estateBloc;
 
 class HomeScreen extends StatefulWidget {
   static const String id = "HomeScreen";
@@ -29,32 +30,35 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  late UserLoginBloc _userAuthenticationBloc;
-  late EstateBloc _estateBloc;
+class HomeScreenState extends State<HomeScreen>
+    with AutomaticKeepAliveClientMixin {
   late bool isArabic;
   List<Estate> estateNewest = [];
   List<Estate> estateSpacial = [];
   List<Estate> estateMostView = [];
 
+
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    estateBloc = EstateBloc(EstateRepository());
     ApplicationSharedPreferences.setWalkThroughPassState(true);
-    _estateBloc = EstateBloc(EstateRepository());
-
-    _estateBloc.add(NewestEstatesFetchStarted());
-    _estateBloc.add(MostViewEstatesFetchStarted());
-    _estateBloc.add(SpacialEstatesFetchStarted());
-
-    _userAuthenticationBloc = BlocProvider.of<UserLoginBloc>(context);
-    if (_userAuthenticationBloc.user != null) {
+    _onRefresh();
+    if (UserSharedPreferences.getAccessToken() != null) {
       sendFcmToken(0);
     }
+  }
+
+  _onRefresh() {
+    estateBloc.add(NewestEstatesFetchStarted());
+    estateBloc.add(MostViewEstatesFetchStarted());
+    estateBloc.add(SpacialEstatesFetchStarted());
   }
 
   Future sendFcmToken(int attempt) async {
@@ -71,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //super.build(context);
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return Scaffold(
       appBar: AppBar(
@@ -95,36 +100,45 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const AdvertisementsEstate(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal:12 ,vertical: 8),
-              child: Text(
-                AppLocalizations.of(context)!.new_estate + " :",
-                style: Theme.of(context)
-                    .textTheme
-                    .headline5!
-                    .copyWith(fontWeight: FontWeight.w600),
+      body: RefreshIndicator(
+        color: Theme.of(context).colorScheme.primary,
+        onRefresh: () {
+          return _onRefresh();
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const AdvertisementsEstate(),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Text(
+                  AppLocalizations.of(context)!.new_estate + " :",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
               ),
-            ),
-            buildNewEstate(),
-            kHe28,
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12 ,vertical: 8),
-              child: Text(
-                AppLocalizations.of(context)!.most_common + " :",
-                style: Theme.of(context)
-                    .textTheme
-                    .headline5!
-                    .copyWith(fontWeight: FontWeight.w600),
+              buildNewEstate(),
+              kHe28,
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Text(
+                  AppLocalizations.of(context)!.most_common + " :",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
               ),
-            ),
-            buildMostViewEstate(),
-          ],
+              buildMostViewEstate(),
+            ],
+          ),
         ),
       ),
       drawer: const Drawer(
@@ -137,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: BlocBuilder<EstateBloc, EstateState>(
-        bloc: _estateBloc,
+        bloc: estateBloc,
         builder: (_, estateState) {
           if (estateState is EstateNewestFetchProgress) {
             return const PropertyShimmer();
@@ -145,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (estateState is EstateNewestFetchComplete) {
             estateNewest = estateState.estates;
           }
+          print("estateNewest : $estateNewest");
           return SizedBox(
             height: 430,
             child: ListView.builder(
@@ -168,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: BlocBuilder<EstateBloc, EstateState>(
-        bloc: _estateBloc,
+        bloc: estateBloc,
         builder: (_, estateState) {
           if (estateState is EstateMostViewFetchProgress) {
             return const PropertyShimmer();
@@ -176,6 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (estateState is EstateMostViewFetchComplete) {
             estateMostView = estateState.estates;
           }
+          print("estateMostView : $estateMostView");
           return SizedBox(
             height: 430,
             child: ListView.builder(
