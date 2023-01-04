@@ -15,13 +15,15 @@ class UserEditDataBloc extends Bloc<UserEditDataEvent, UserEditDataState> {
       UserAuthenticationRepository();
   User? user;
 
-  UserEditDataBloc(this.userAuthenticationRepository) : super(UserEditDataNone()) {
+  UserEditDataBloc(this.userAuthenticationRepository)
+      : super(UserEditDataNone()) {
     on<UserEditDataStarted>((event, emit) async {
       emit(UserEditDataProgress());
       try {
+        print("baba");
         user = await userAuthenticationRepository.editUserData(
             event.token!, event.user!);
-
+        print("ghina: $user");
         emit(UserEditDataComplete(user: user));
       } on ConnectionException catch (e) {
         emit(
@@ -47,7 +49,8 @@ class UserEditDataBloc extends Bloc<UserEditDataEvent, UserEditDataState> {
 
         if (e is UnauthorizedException) {
           emit(
-            UserEditDataError(errorMessage: e.message, isUnauthorizedError: true),
+            UserEditDataError(
+                errorMessage: e.message, isUnauthorizedError: true),
           );
         }
         if (e is UnknownException) {

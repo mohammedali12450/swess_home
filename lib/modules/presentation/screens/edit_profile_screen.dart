@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_state.dart';
 import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/presentation/widgets/date_picker.dart';
 
+import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/governorates_bloc/governorates_bloc.dart';
@@ -18,6 +20,7 @@ import '../../business_logic_components/bloc/user_edit_data_bloc/edit_user_data_
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/governorates.dart';
 import '../../data/models/user.dart';
+import '../../data/repositories/user_authentication_repository.dart';
 import '../widgets/my_dropdown_list.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -47,7 +50,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController birthdateController = TextEditingController();
 
-  late int selectedGovernorateId;
+  int? selectedGovernorateId;
   DateTime? birthDate;
   late String phoneDialCodeLogin;
   String phoneNumber = "";
@@ -56,7 +59,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
-    _userEditDataBloc = BlocProvider.of<UserEditDataBloc>(context);
+    //_userEditDataBloc = BlocProvider.of<UserEditDataBloc>(context);
+    _userEditDataBloc = UserEditDataBloc(UserAuthenticationRepository());
     governoratesBloc = BlocProvider.of<GovernoratesBloc>(context);
     governoratesBloc.add(GovernoratesFetchStarted());
     token = UserSharedPreferences.getAccessToken()!;
@@ -67,7 +71,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Container(
+      body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
         child: SingleChildScrollView(
           child: Column(
@@ -150,6 +154,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     builder: (_, state) {
                       if (state is GovernoratesFetchComplete) {
                         governorates = state.governorates;
+                        if (widget.user!.country == "Syrian Arab Republic") {
+                          for (int i = 0;
+                              i < governoratesBloc.governorates!.length;
+                              i++) {
+                           // print(governorates!.elementAt(i).name);
+                            if (governorates!.elementAt(i).name ==
+                                widget.user!.governorate) {
+                              selectedGovernorateId = i + 1;
+                              print(governorates!.elementAt(i).name);
+                              print(selectedGovernorateId);
+                            }
+                          }
+                        }
                       }
                       return Column(
                         children: [
@@ -171,9 +188,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 elementsList:
                                     governorates!.map((e) => e.name).toList(),
                                 onSelect: (index) {
-                                  selectedGovernorateId = index;
+                                  selectedGovernorateId = index + 1;
                                   widget.user!.governorate =
                                       governorates!.elementAt(index).name;
+                                  print(selectedGovernorateId);
                                 },
                                 // validator: (value) => value == null
                                 //     ? AppLocalizations.of(context)!.this_field_is_required
@@ -206,8 +224,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           birthdateController.text =
                               DateFormat('yyyy/MM/dd').format(date);
                           widget.user!.birthdate = birthdateController.text;
-                          print(birthDate);
-                          print(birthdateController.text);
                         },
                         currentTime: DateTime.now(),
                         editingController: birthdateController,
@@ -225,39 +241,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               kHe32,
               Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(240.w, 64.h),
-                    maximumSize: Size(300.w, 64.h),
-                  ),
-                  child: BlocBuilder<UserEditDataBloc, UserEditDataState>(
-                    builder: (_, loginState) {
-                      (loginState is UserEditDataProgress)
+                child: BlocBuilder<UserEditDataBloc, UserEditDataState>(
+                  bloc: _userEditDataBloc,
+                  builder: (_, sendState) {
+                    if (sendState is UserEditDataComplete) {
+                      Fluttertoast.showToast(
+                          msg: AppLocalizations.of(context)!.complete_edit,
+                          toastLength: Toast.LENGTH_LONG);
+                    }
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(240.w, 64.h),
+                        maximumSize: Size(300.w, 64.h),
+                      ),
+                      child: (sendState is UserEditDataProgress)
                           ? SpinKitWave(
-                              color: Theme.of(context).colorScheme.onPrimary,
+                              color: AppColors.white,
                               size: 20.w,
                             )
-                          : Text(AppLocalizations.of(context)!.resend);
-                      return Text(
-                        AppLocalizations.of(context)!.save,
-                      );
-                    },
-                  ),
-                  onPressed: () async {
-                    if (UserEditDataProgress is UserEditDataProgress) {
-                      return;
-                    }
-                    print(selectedGovernorateId);
-                    _userEditDataBloc.add(UserEditDataStarted(
-                        user: Register(
-                            firstName: widget.user!.firstName!,
-                            lastName: widget.user!.lastName!,
-                            email: widget.user!.email!,
-                            governorate: selectedGovernorateId,
-                            birthdate: widget.user!.birthdate!,
-                            authentication: widget.user!.authentication!),
-                        token: token));
-                    FocusScope.of(context).unfocus();
+                          : Text(AppLocalizations.of(context)!.send),
+                      onPressed: () async {
+                        _userEditDataBloc.add(
+                          UserEditDataStarted(
+                              user: Register(
+                                  firstName: widget.user!.firstName!,
+                                  lastName: widget.user!.lastName!,
+                                  email: widget.user!.email!,
+                                  governorate: selectedGovernorateId,
+                                  birthdate: widget.user!.birthdate!,
+                                  authentication: widget.user!.authentication!),
+                              token: token),
+                        );
+                        FocusScope.of(context).unfocus();
+                      },
+                    );
                   },
                 ),
               ),

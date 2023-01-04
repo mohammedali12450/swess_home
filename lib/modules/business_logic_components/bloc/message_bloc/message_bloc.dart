@@ -6,7 +6,6 @@ import '../../../data/repositories/send_message_repository.dart';
 import 'message_event.dart';
 import 'message_state.dart';
 
-
 class MessageBloc extends Bloc<MessagesEvent, MessageState> {
   final MessageRepository _messageRepository;
 
@@ -17,7 +16,8 @@ class MessageBloc extends Bloc<MessagesEvent, MessageState> {
     on<SendMessagesFetchStarted>((event, emit) async {
       emit(SendMessageFetchProgress());
       try {
-        message = await _messageRepository.sendMessage(event.token, event.message);
+        message =
+            await _messageRepository.sendMessage(event.token, event.message);
         emit(SendMessageFetchComplete());
       } catch (e, stack) {
         if (e is GeneralException) {
@@ -26,7 +26,7 @@ class MessageBloc extends Bloc<MessagesEvent, MessageState> {
         print(e);
         print(stack);
       }
-    }  );
+    });
     on<GetMessagesFetchStarted>((event, emit) async {
       emit(GetMessageFetchProgress());
       try {
@@ -40,9 +40,5 @@ class MessageBloc extends Bloc<MessagesEvent, MessageState> {
         print(stack);
       }
     });
-
-
-
-
   }
 }

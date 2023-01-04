@@ -39,8 +39,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/re
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/area_units_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/area_units_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_data_fetch_bloc/user_data_fetch_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_data_fetch_bloc/user_data_fetch_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_data_fetch_bloc/user_data_fetch_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
@@ -72,6 +70,9 @@ import '../../modules/business_logic_components/bloc/estate_types_bloc/estate_ty
 import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_event.dart';
 import '../../modules/business_logic_components/bloc/price_domains_bloc/price_domains_state.dart';
+import '../../modules/business_logic_components/bloc/user_data_bloc/user_data_bloc.dart';
+import '../../modules/business_logic_components/bloc/user_data_bloc/user_data_event.dart';
+import '../../modules/business_logic_components/bloc/user_data_bloc/user_data_state.dart';
 import '../../modules/presentation/screens/home_screen.dart';
 import '../../modules/presentation/screens/navigation_bar_screen.dart';
 import '../../modules/presentation/screens/update_new_version_screen.dart';
@@ -86,7 +87,7 @@ class AppRouter {
   late AreaUnitsBloc areaUnitsBloc;
   late PeriodTypesBloc periodTypesBloc;
   late PriceDomainsBloc priceDomainsBloc;
-  late UserDataFetchBloc userDataFetchBloc;
+  late  UserDataBloc userDataBloc;
   late UserLoginBloc userLoginBloc;
   late SystemVariablesBloc systemVariablesBloc;
   late ReportBloc reportBloc;
@@ -97,8 +98,8 @@ class AppRouter {
   bool needUpdate = false;
 
   AppRouter() {
-    userDataFetchBloc = UserDataFetchBloc(
-      userAuthenticationRepository: UserAuthenticationRepository(),
+    userDataBloc = UserDataBloc(
+      UserAuthenticationRepository(),
     );
     userAccessToken = UserSharedPreferences.getAccessToken();
     isThereStoredUser = (userAccessToken != null);
@@ -284,7 +285,7 @@ class AppRouter {
     reportBloc.add(ReportsFetchStarted());
 
     if (isThereStoredUser) {
-      userDataFetchBloc.add(UserDataFetchStarted(token: userAccessToken!));
+      userDataBloc.add(UserDataStarted(token: userAccessToken!));
     }
   }
 
@@ -293,12 +294,14 @@ class AppRouter {
 
     if (isIntroductionScreenPassed) {
       if (isThereStoredUser) {
-        UserDataFetchState userDataFetchState = userDataFetchBloc.state;
-        if (userDataFetchState is UserDataFetchComplete) {
+        UserDataState userDataFetchState = userDataBloc.state;
+        print("hello every $userDataFetchState");
+        if (userDataFetchState is UserDataComplete) {
           userLoginBloc.user = userDataFetchState.user;
-        } else if (userDataFetchState is UserDataFetchError) {
+          UserSharedPreferences.setPhoneNumber(userDataFetchState.user!.authentication!);
+        } else if (userDataFetchState is UserDataError) {
           isUserDataFetched = true;
-          //UserSharedPreferences.clear();
+          UserSharedPreferences.clear();
         } else {
           isUserDataFetched = false;
         }

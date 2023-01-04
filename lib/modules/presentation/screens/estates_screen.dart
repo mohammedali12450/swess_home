@@ -20,14 +20,18 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
+import '../../data/models/search_data.dart';
 import '../widgets/report_estate.dart';
 
 class EstatesScreen extends StatefulWidget {
   static const String id = "EstatesScreen";
 
-  final EstateEvent searchData;
+  final SearchData searchData;
+  final EstateEvent eventSearch;
 
-  const EstatesScreen({Key? key, required this.searchData}) : super(key: key);
+  const EstatesScreen(
+      {Key? key, required this.eventSearch, required this.searchData})
+      : super(key: key);
 
   @override
   _EstatesScreenState createState() => _EstatesScreenState();
@@ -38,6 +42,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
 
   final ChannelCubit _priceSelected = ChannelCubit(false);
   final ChannelCubit _dateSelected = ChannelCubit(true);
+  EstateBloc estateBloc = EstateBloc(EstateRepository());
 
   EstateSearch estateSearch = EstateSearch.init();
   final List<Estate> identicalEstates = [];
@@ -58,6 +63,12 @@ class _EstatesScreenState extends State<EstatesScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -83,7 +94,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
         body: BlocProvider<EstateBloc>(
           create: (_) => EstateBloc(
             EstateRepository(),
-          )..add(widget.searchData),
+          )..add(widget.eventSearch),
           child: BlocConsumer<EstateBloc, EstateState>(
             listener: (_, estateFetchState) async {
               if (estateFetchState is EstateFetchComplete) {
@@ -122,7 +133,8 @@ class _EstatesScreenState extends State<EstatesScreen> {
                 return RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
                   onRefresh: () async {
-                    BlocProvider.of<EstateBloc>(context).add(widget.searchData);
+                    BlocProvider.of<EstateBloc>(context)
+                        .add(widget.eventSearch);
                   },
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -178,6 +190,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                   ),
                 );
               }
+
               return SingleChildScrollView(
                 controller: _scrollController
                   ..addListener(
@@ -188,189 +201,17 @@ class _EstatesScreenState extends State<EstatesScreen> {
                           !isEstatesFinished) {
                         BlocProvider.of<EstateBloc>(context)
                           ..isFetching = true
-                          ..add(widget.searchData);
+                          ..add(widget.eventSearch);
                       }
                     },
                   ),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(8.w, 12.w, 8.w, 7.w),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: BlocBuilder<ChannelCubit, dynamic>(
-                                bloc: _priceSelected,
-                                builder: (_, isPriceSelected) {
-                                  return InkWell(
-                                    onTap: () {
-                                      _priceSelected.setState(!isPriceSelected);
-                                      if (_dateSelected.state) {
-                                        _dateSelected.setState(false);
-                                      }
-                                    },
-                                    child: Container(
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        color: isPriceSelected
-                                            ? AppColors.primaryColor
-                                            : AppColors.white,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(12)),
-                                        border: Border.all(
-                                            color: AppColors.primaryColor),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Text(
-                                            AppLocalizations.of(context)!
-                                                .by_price,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline6!
-                                                .copyWith(
-                                                    color: isPriceSelected
-                                                        ? AppColors.white
-                                                        : AppColors
-                                                            .primaryColor),
-                                          ),
-                                          !isPriceSelected
-                                              ? const Icon(
-                                                  Icons.arrow_downward,
-                                                  color: AppColors.primaryColor,
-                                                  size: 16,
-                                                )
-                                              : const Icon(
-                                                  Icons.arrow_upward,
-                                                  color: AppColors.white,
-                                                  size: 16,
-                                                )
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-                          ),
-                          kWi12,
-                          Expanded(
-                            child: BlocBuilder<ChannelCubit, dynamic>(
-                                bloc: _dateSelected,
-                                builder: (_, isDateSelected) {
-                                  return InkWell(
-                                    onTap: () {
-                                      _dateSelected.setState(!isDateSelected);
-                                      if (_priceSelected.state) {
-                                        _priceSelected.setState(false);
-                                      }
-                                    },
-                                    child: Container(
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        color: isDateSelected
-                                            ? AppColors.primaryColor
-                                            : AppColors.white,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(12)),
-                                        border: Border.all(
-                                            color: AppColors.primaryColor),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Text(
-                                            AppLocalizations.of(context)!
-                                                .by_date,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline6!
-                                                .copyWith(
-                                                    color: isDateSelected
-                                                        ? AppColors.white
-                                                        : AppColors
-                                                            .primaryColor),
-                                          ),
-                                          !isDateSelected
-                                              ? const Icon(
-                                                  Icons.arrow_downward,
-                                                  color: AppColors.primaryColor,
-                                                  size: 16,
-                                                )
-                                              : const Icon(
-                                                  Icons.arrow_upward,
-                                                  color: AppColors.white,
-                                                  size: 16,
-                                                )
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Text(AppLocalizations.of(context)!.identical_estates),
-                        ],
-                      ),
-                    ),
-                    if(estateSearch.identicalEstates.isNotEmpty)
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: estateSearch.identicalEstates.length,
-                      itemBuilder: (_, index) {
-                        return EstateCard(
-                          color: Theme.of(context).colorScheme.background,
-                          estate:
-                              estateSearch.identicalEstates.elementAt(index),
-                          onClosePressed: () {
-                            showReportModalBottomSheet(
-                                context,
-                                estateSearch.identicalEstates
-                                    .elementAt(index)
-                                    .id!);
-                          },
-                          removeCloseButton: false,
-                        );
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Text(AppLocalizations.of(context)!.similar_estates),
-                        ],
-                      ),
-                    ),
-                    if(estateSearch.similarEstates.isNotEmpty)
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: estateSearch.similarEstates.length,
-                      itemBuilder: (_, index) {
-                        return EstateCard(
-                          color: Theme.of(context).colorScheme.background,
-                          estate:
-                              estateSearch.similarEstates.elementAt(index),
-                          onClosePressed: () {
-                            showReportModalBottomSheet(
-                                context,
-                                estateSearch.similarEstates
-                                    .elementAt(index)
-                                    .id!);
-                          },
-                          removeCloseButton: false,
-                        );
-                      },
-                    ),
-
+                    buildFilter(),
+                    if (estateSearch.identicalEstates.isNotEmpty)
+                      buildIdenticalEstates(),
+                    if (estateSearch.similarEstates.isNotEmpty)
+                      buildSimilarEstates(),
                     if (BlocProvider.of<EstateBloc>(context).isFetching)
                       Container(
                         margin: EdgeInsets.only(
@@ -381,43 +222,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                           size: 50,
                         ),
                       ),
-                    if (isEstatesFinished)
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: 50.h,
-                        ),
-                        width: 1.sw,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            kWi16,
-                            Expanded(
-                              flex: 2,
-                              child: Divider(
-                                color: Theme.of(context).colorScheme.primary,
-                                thickness: 1,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: ResText(
-                                AppLocalizations.of(context)!.no_more_results,
-                                textAlign: TextAlign.center,
-                                textStyle: textStyling(S.s18, W.w5, C.bl),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Divider(
-                                color: Theme.of(context).colorScheme.primary,
-                                thickness: 1,
-                              ),
-                            ),
-                            kWi16,
-                          ],
-                        ),
-                      )
+                    if (isEstatesFinished) buildEstatesFinished(),
                   ],
                 ),
               );
@@ -428,17 +233,257 @@ class _EstatesScreenState extends State<EstatesScreen> {
     );
   }
 
+  Widget buildFilter() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(8.w, 12.w, 8.w, 7.w),
+      child: Row(
+        children: [
+          Expanded(
+            child: BlocBuilder<ChannelCubit, dynamic>(
+                bloc: _priceSelected,
+                builder: (_, isPriceSelected) {
+                  return InkWell(
+                    onTap: () {
+                      _priceSelected.setState(!isPriceSelected);
+                      if (_dateSelected.state) {
+                        _dateSelected.setState(false);
+                      }
+
+                      BlocProvider.of<EstateBloc>(context).add(
+                        EstateFetchStarted(
+                          searchData: SearchData(
+                              locationId: widget.searchData.locationId,
+                              estateTypeId: widget.searchData.estateTypeId,
+                              estateOfferTypeId:
+                                  widget.searchData.estateOfferTypeId,
+                              priceMin: widget.searchData.priceMin,
+                              priceMax: widget.searchData.priceMax,
+                              sortType: isPriceSelected ? "desc" : "asc",
+                              sortBy: "price"),
+                          isAdvanced: false,
+                          token: UserSharedPreferences.getAccessToken(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: isPriceSelected
+                            ? AppColors.primaryColor
+                            : AppColors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12)),
+                        border: Border.all(color: AppColors.primaryColor),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.by_price,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6!
+                                .copyWith(
+                                    color: isPriceSelected
+                                        ? AppColors.white
+                                        : AppColors.primaryColor),
+                          ),
+                          !isPriceSelected
+                              ? const Icon(
+                                  Icons.arrow_downward,
+                                  color: AppColors.primaryColor,
+                                  size: 16,
+                                )
+                              : const Icon(
+                                  Icons.arrow_upward,
+                                  color: AppColors.white,
+                                  size: 16,
+                                )
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+          ),
+          kWi12,
+          Expanded(
+            child: BlocBuilder<ChannelCubit, dynamic>(
+                bloc: _dateSelected,
+                builder: (_, isDateSelected) {
+                  return InkWell(
+                    onTap: () {
+                      _dateSelected.setState(!isDateSelected);
+                      if (_priceSelected.state) {
+                        _priceSelected.setState(false);
+                      }
+                      BlocProvider.of<EstateBloc>(context).add(
+                        EstateFetchStarted(
+                          searchData: SearchData(
+                              locationId: widget.searchData.locationId,
+                              estateTypeId: widget.searchData.estateTypeId,
+                              estateOfferTypeId:
+                                  widget.searchData.estateOfferTypeId,
+                              priceMin: widget.searchData.priceMin,
+                              priceMax: widget.searchData.priceMax,
+                              sortType: isDateSelected ? "desc" : "asc"),
+                          isAdvanced: false,
+                          token: UserSharedPreferences.getAccessToken(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: isDateSelected
+                            ? AppColors.primaryColor
+                            : AppColors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12)),
+                        border: Border.all(color: AppColors.primaryColor),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.by_date,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6!
+                                .copyWith(
+                                    color: isDateSelected
+                                        ? AppColors.white
+                                        : AppColors.primaryColor),
+                          ),
+                          !isDateSelected
+                              ? const Icon(
+                                  Icons.arrow_downward,
+                                  color: AppColors.primaryColor,
+                                  size: 16,
+                                )
+                              : const Icon(
+                                  Icons.arrow_upward,
+                                  color: AppColors.white,
+                                  size: 16,
+                                )
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildIdenticalEstates() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text(AppLocalizations.of(context)!.identical_estates),
+            ],
+          ),
+        ),
+        if (estateSearch.identicalEstates.isNotEmpty)
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: estateSearch.identicalEstates.length,
+            itemBuilder: (_, index) {
+              return EstateCard(
+                color: Theme.of(context).colorScheme.background,
+                estate: estateSearch.identicalEstates.elementAt(index),
+                onClosePressed: () {
+                  showReportModalBottomSheet(context,
+                      estateSearch.identicalEstates.elementAt(index).id!);
+                },
+                removeCloseButton: false,
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget buildSimilarEstates() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text(AppLocalizations.of(context)!.similar_estates),
+            ],
+          ),
+        ),
+        if (estateSearch.similarEstates.isNotEmpty)
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: estateSearch.similarEstates.length,
+            itemBuilder: (_, index) {
+              return EstateCard(
+                color: Theme.of(context).colorScheme.background,
+                estate: estateSearch.similarEstates.elementAt(index),
+                onClosePressed: () {
+                  showReportModalBottomSheet(context,
+                      estateSearch.similarEstates.elementAt(index).id!);
+                },
+                removeCloseButton: false,
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget buildEstatesFinished() {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        vertical: 50.h,
+      ),
+      width: 1.sw,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          kWi16,
+          Expanded(
+            flex: 2,
+            child: Divider(
+              color: Theme.of(context).colorScheme.primary,
+              thickness: 1,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: ResText(
+              AppLocalizations.of(context)!.no_more_results,
+              textAlign: TextAlign.center,
+              textStyle: textStyling(S.s18, W.w5, C.bl),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Divider(
+              color: Theme.of(context).colorScheme.primary,
+              thickness: 1,
+            ),
+          ),
+          kWi16,
+        ],
+      ),
+    );
+  }
+
   sortEstateByDate() {
     estateSearch.identicalEstates.sort((a, b) {
       //sorting in descending order
       return DateTime.parse(b.createdAt!)
           .compareTo(DateTime.parse(a.createdAt!));
     });
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
   }
 }

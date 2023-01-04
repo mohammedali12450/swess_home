@@ -351,7 +351,7 @@
   "recent_created_orders": "My real estate requests",
   "call_us": "Call us",
   "rate_us": "Rate this app",
-  "help": "Help",
+  "help": "About Application",
   "logout_confirmation": "Do you want to log out?",
   "sign_in_for_notifications": "Sign in to receive notifications",
   "sell_estates": "Real estate for sale",
@@ -366,6 +366,7 @@
   "undefined": "undefined",
   "advanced_search": "Advanced search",
   "search": "Search",
+  "search_by":"Search by ",
   "select_place_first": "Select place first",
   "enter_office_name": "Enter office name",
   "enter_area_name": "Enter area name",
@@ -537,5 +538,11 @@
   "home":"Home",
   "profile":"Profile",
   "read_more":"Read More...",
-  "read_less":"Read Less"
+  "read_less":"Read Less",
+  "meter":"Meter",
+  "syrian_bound":"L.S",
+  "complete_send":"The message has been sent successfully",
+  "complete_edit":"Personal information has been modified successfully",
+  "whatsapp_number":"WhatsApp number to communicate (Option)",
+  "phone_communicate":"Phone number to communicate"
 }

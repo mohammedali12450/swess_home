@@ -335,7 +335,7 @@
   "recent_created_orders": "الطلبات العقارية المنشأة",
   "call_us": "اتصل بنا",
   "rate_us": "تقييم التطبيق",
-  "help": "مساعدة",
+  "help": "عن التطبيق",
   "confirm_delete": "هل انت متأكد من حذف الطلب العقاري؟",
   "logout_confirmation": "هل تريد تسجيل الخروج؟",
   "sign_in_for_notifications": "قم بتسجيل الدخول لتصلك الإشعارات",
@@ -379,6 +379,7 @@
   "no_results_body": "عذراً عزيزي المستخدم سيتم تخديم المنطقة قريباً",
   "no_results_hint": "قم بتغيير فلتر البحث ثم حاول مجددا",
   "search_again": "ابحث مجددا",
+  "search_by":"بحث حسب ",
   "estate_images": "صور العقار",
   "estate_street_images": "صور شارع العقار",
   "estate_floor_plan_images": "صور مخطط العقار",
@@ -534,5 +535,13 @@
   "home":"الرئيسية",
   "profile":"الشخصي",
   "read_more":"...قراءة المزيد",
-  "read_less":"قراءة القليل"
+  "read_less":"قراءة القليل",
+  "meter":"متر",
+  "syrian_bound":"ل.س",
+  "complete_send":"تم ارسال الرسالة بنجاح",
+  "complete_edit":"تم تعديل المعلومات الشخصية بنجاح",
+  "whatsapp_number":"رقم واتس اب للتواصل (اختياري)",
+  "phone_communicate":"الرقم للتواصل"
+
 }
+

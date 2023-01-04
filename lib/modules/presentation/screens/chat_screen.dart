@@ -13,7 +13,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/notifications_shimmer.dart';
 import '../../../constants/assets_paths.dart';
 import '../../business_logic_components/bloc/message_bloc/message_bloc.dart';
-import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/repositories/send_message_repository.dart';
 import '../widgets/message_card.dart';
 
@@ -31,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     _messageBloc = MessageBloc(MessageRepository());
     _onRefresh();
+    print(UserSharedPreferences.getAccessToken());
     super.initState();
   }
 

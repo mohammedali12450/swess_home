@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_state.dart';
 import 'package:swesshome/modules/data/models/location.dart';
-import 'package:swesshome/modules/data/repositories/locations_repository.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/data/repositories/regions_repository.dart';
 
 class RegionsBloc extends Bloc<RegionsEvent, RegionsState> {
@@ -28,10 +28,10 @@ class RegionsBloc extends Bloc<RegionsEvent, RegionsState> {
     });
   }
 
-  List<RegionViewer> getRegionsViewers(String? pattern) {
+  List<RegionViewer> getRegionsViewers(String? pattern, context) {
     pattern ??= "";
     List<RegionViewer> result = [];
-    result.add(RegionViewer("غير محدد", "غير محدد", null));
+    result.add(RegionViewer(AppLocalizations.of(context)!.undefined, "", null));
     for (Location parentLocation in locations ?? []) {
       if (parentLocation.locations == null) continue;
       for (Location childLocation in parentLocation.locations!) {
@@ -56,7 +56,7 @@ class RegionViewer {
 
   RegionViewer(this.locationName, this.parentLocationName, this.id);
 
-  String getRegionName() {
+  String getLocationName() {
     return parentLocationName + ' , ' + locationName;
   }
 }

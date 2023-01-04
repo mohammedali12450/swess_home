@@ -6,7 +6,7 @@ class PeriodTypesProvider{
 
   Future fetchData()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(periodTypesUrl);
+    Response response = await helper.get(getPeriodTypesURL);
     return response ;
   }
 

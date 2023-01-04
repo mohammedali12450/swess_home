@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/modules/presentation/screens/region_screen.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/colors.dart';
@@ -17,6 +18,7 @@ import '../../business_logic_components/bloc/location_bloc/locations_bloc.dart';
 import '../../business_logic_components/bloc/location_bloc/locations_state.dart';
 import '../../business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
+import '../../business_logic_components/bloc/regions_bloc/regions_event.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_state.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
@@ -57,12 +59,13 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   PriceDomainsBloc priceDomainsBloc =
       PriceDomainsBloc(PriceDomainsRepository());
   EstateTypesBloc estateTypesBloc = EstateTypesBloc(EstateTypesRepository());
+  RegionsBloc regionsBloc = RegionsBloc();
 
   // controllers:
   TextEditingController locationController = TextEditingController();
 
   // others:
-  late List<Location> region;
+  late List<dynamic> locations;
   List<EstateType>? estatesTypes;
   PriceDomain? priceDomains;
   late List<OwnershipType> ownershipsTypes;
@@ -93,17 +96,21 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   //       (widget.searchData.estateTypeId == vacationsPropertyTypeNumber));
   // }
 
-  // initializeOfferData({bool justInitAdvanced = false}) {
-  //   if (!justInitAdvanced) widget.searchData.estateTypeId = null;
-  //   if (!justInitAdvanced) widget.searchData.priceDomainId = null;
-  //   if (!justInitAdvanced) widget.searchData.locationId = null;
-  //   widget.searchData.isFurnished = null;
-  //   widget.searchData.hasSwimmingPool = null;
-  //   widget.searchData.isOnBeach = null;
-  //   // widget.searchData.interiorStatusId = null;
-  //   // widget.searchData.ownershipId = null;
-  //   initializeEstateBooleanVariables();
-  // }
+  initializeOfferData({bool justInitAdvanced = false}) {
+    // if (!justInitAdvanced) widget.searchData.estateTypeId = null;
+    // if (!justInitAdvanced) widget.searchData.priceDomainId = null;
+    // if (!justInitAdvanced) widget.searchData.locationId = null;
+    // widget.searchData.isFurnished = null;
+    // widget.searchData.hasSwimmingPool = null;
+    // widget.searchData.isOnBeach = null;
+    // // widget.searchData.interiorStatusId = null;
+    // // widget.searchData.ownershipId = null;
+    // initializeEstateBooleanVariables();
+    searchData.estateOfferTypeId = 1;
+    searchData.priceMin = int.tryParse(priceDomains!.sale.min[0]);
+    searchData.priceMax =
+        int.tryParse(priceDomains!.sale.max[priceDomains!.sale.max.length - 1]);
+  }
 
   String? userToken;
   late bool isArabic;
@@ -117,7 +124,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
 
     // Initialize search data :
-    // initializeOfferData();
+    initializeOfferData();
 
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
     if (user != null) {
@@ -130,6 +137,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    locationController.text = AppLocalizations.of(context)!.enter_location_name;
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return Scaffold(
@@ -139,35 +147,18 @@ class _SearchScreenState extends State<FilterSearchScreen> {
         backgroundColor: isDark ? const Color(0xff26282B) : null,
         title: Text(AppLocalizations.of(context)!.search),
       ),
-      body: ListView(
-        children: [
-          BlocBuilder<ChannelCubit, dynamic>(
-            bloc: isPressSearchCubit,
-            builder: (_, isPress) {
-              return BlocBuilder<ChannelCubit, dynamic>(
-                  bloc: isAreaSearchCubit,
-                  builder: (_, isArea) {
-                    if (isPress) {
-                      if (isArea) {
-                        return Container(
-                          padding: kMediumSymHeight,
-                          child: buildRegionsDetector(),
-                        );
-                      } else {
-                        return Container(
-                          padding: kMediumSymHeight,
-                          child: buildLocationDetector(),
-                        );
-                      }
-                    }
-                    return Container(
-                      padding: kMediumSymHeight,
-                      child: buildSearchWidgets(isDark),
-                    );
-                  });
-            },
-          ),
-        ],
+      body: BlocBuilder<ChannelCubit, dynamic>(
+        bloc: isAreaSearchCubit,
+        builder: (_, isArea) {
+          return ListView(
+            children: [
+              Container(
+                padding: kMediumSymHeight,
+                child: buildSearchWidgets(isDark),
+              ),
+            ],
+          );
+        },
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.symmetric(vertical: 5.w),
@@ -214,20 +205,22 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           print("ghina : ${searchData.estateOfferTypeId}"
                               "${searchData.estateTypeId}"
                               "${searchData.locationId}"
-                              "${searchData.priceDomainId}");
+                              "${searchData.priceMin}"
+                              "${searchData.priceMax}");
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => EstatesScreen(
-                                searchData: EstateFetchStarted(
+                                searchData: searchData,
+                                eventSearch: EstateFetchStarted(
                                   searchData: SearchData(
-                                    estateOfferTypeId: 1,
-                                    estateTypeId: 1,
-                                    locationId: 185,
-                                    //priceDomainId: 1,
-                                    priceMin: 1000000,
-                                    priceMax: 100000000,
-                                  ),
+                                      locationId: searchData.locationId,
+                                      estateTypeId: searchData.estateTypeId,
+                                      estateOfferTypeId:
+                                          searchData.estateOfferTypeId,
+                                      priceMin: searchData.priceMin,
+                                      priceMax: searchData.priceMax,
+                                      sortType: "desc"),
                                   isAdvanced: false,
                                   token: UserSharedPreferences.getAccessToken(),
                                 ),
@@ -416,6 +409,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                       .toList(),
                                   onSubmit: (data) {
                                     startPriceCubit.setState(data);
+                                    searchData.priceMin = startPriceCubit.state;
                                   },
                                 );
                               },
@@ -480,10 +474,11 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                           // textScaleFactor: 1.2,
                                           // textAlign: TextAlign.center,
                                         ),
-                                      ) //TODO: See it
-                                      .toList(/*growable: false*/),
+                                      )
+                                      .toList(),
                                   onSubmit: (data) {
                                     endPriceCubit.setState(data);
+                                    searchData.priceMax = endPriceCubit.state;
                                   },
                                 );
                               },
@@ -546,14 +541,21 @@ class _SearchScreenState extends State<FilterSearchScreen> {
             cubit: isAreaSearchCubit,
             textRight: AppLocalizations.of(context)!.search_by_area,
             textLeft: AppLocalizations.of(context)!.search_neighborhood,
-            onTapRight: () {},
-            onTapLeft: () {}),
+            onTapRight: () {
+              locationController.text =
+                  AppLocalizations.of(context)!.enter_location_name;
+            },
+            onTapLeft: () {
+              locationController.text =
+                  AppLocalizations.of(context)!.enter_neighborhood_name;
+            }),
         BlocBuilder<ChannelCubit, dynamic>(
           bloc: isAreaSearchCubit,
           builder: (_, isArea) {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               child: Container(
+                height: 50,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black38, width: 1),
                   borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -564,66 +566,31 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                 padding: EdgeInsets.symmetric(
                   horizontal: 12.w,
                 ),
-                child: Center(
-                  child: TextFormField(
-                      validator: (value) => value == null
-                          ? AppLocalizations.of(context)!.this_field_is_required
-                          : null,
-                      readOnly: locationDetectedCubit.state,
-                      onTap: () {
-                        isPressSearchCubit.setState(true);
-                        if (isArea) {
-                          locationController.clear();
-                          locationDetectedCubit.setState(true);
-                          patternCubit.setState(null);
-                          FocusScope.of(context).unfocus();
-
-                          if (locationController.text.isEmpty) {
-                            patternCubit.setState("");
-                            return;
-                          }
-                        } else {
-                          locationController.clear();
-                          locationDetectedCubit.setState(true);
-                          patternCubit.setState(null);
-                          FocusScope.of(context).unfocus();
-
-                          if (locationController.text.isEmpty) {
-                            patternCubit.setState("");
-                            return;
-                          }
-                        }
-                      },
-                      controller: locationController,
-                      textDirection: TextDirection.rtl,
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1!
-                          .copyWith(color: AppColors.black),
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => RegionScreen(
+                                  locationController: locationController,
+                                  isPressSearchCubit: isPressSearchCubit,
+                                  isArea: isAreaSearchCubit.state,
+                                  locationId: searchData.locationId,
+                                )));
+                    isPressSearchCubit.setState(false);
+                  },
+                  child: BlocBuilder<ChannelCubit, dynamic>(
+                    bloc: isPressSearchCubit,
+                    builder: (_, isPress) {
+                      return Center(
+                        child: Row(
+                          children: [
+                            Text(locationController.text),
+                          ],
                         ),
-                        border: kUnderlinedBorderWhite,
-                        focusedBorder: kUnderlinedBorderWhite,
-                        enabledBorder: kUnderlinedBorderBlack,
-                        hintText: (isArea)
-                            ? AppLocalizations.of(context)!.enter_area_name
-                            : AppLocalizations.of(context)!
-                                .enter_neighborhood_name,
-                        hintStyle:
-                            Theme.of(context).textTheme.subtitle1!.copyWith(
-                                  color: Colors.black38,
-                                ),
-                      ),
-                      onChanged: (value) {
-                        if (value.isEmpty) {
-                          //regionsBloc.add(SearchRegionCleared());
-                          return;
-                        } else {
-                          patternCubit.setState(value);
-                        }
-                      }),
+                      );
+                    },
+                  ),
                 ),
               ),
             );
@@ -642,7 +609,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
             builder: (_, pattern) {
               List<LocationViewer> locations =
                   BlocProvider.of<LocationsBloc>(context)
-                      .getLocationsViewers(pattern);
+                      .getLocationsViewers(pattern, context);
               return ListView.separated(
                 shrinkWrap: true,
                 itemBuilder: (_, index) {
@@ -693,7 +660,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     );
   }
 
-  BlocBuilder buildRegionsDetector() {
+  Widget buildRegionsDetector() {
     return BlocBuilder<RegionsBloc, RegionsState>(
       builder: (_, regionsFetchState) {
         if (regionsFetchState is RegionsFetchComplete) {
@@ -702,7 +669,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
             builder: (_, pattern) {
               List<RegionViewer> locations =
                   BlocProvider.of<RegionsBloc>(context)
-                      .getRegionsViewers(pattern);
+                      .getRegionsViewers(pattern, context);
               return ListView.separated(
                 shrinkWrap: true,
                 itemBuilder: (_, index) {
@@ -710,7 +677,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                     onTap: () async {
                       // set location name in location text field:
                       locationController.text =
-                          locations.elementAt(index).getRegionName();
+                          locations.elementAt(index).getLocationName();
                       // print(locations.elementAt(index).locationName);
                       // initialize search data again :
                       //initializeOfferData();
@@ -734,7 +701,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       padding: kMediumSymWidth,
                       width: inf,
                       child: Text(
-                        locations.elementAt(index).getRegionName(),
+                        locations.elementAt(index).getLocationName(),
                         textAlign: TextAlign.right,
                         style: Theme.of(context).textTheme.subtitle1!.copyWith(
                             color: Theme.of(context).colorScheme.onBackground),

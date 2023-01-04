@@ -409,7 +409,7 @@
 //             builder: (_, pattern) {
 //               List<LocationViewer> locations =
 //                   BlocProvider.of<LocationsBloc>(context)
-//                       .getLocationsViewers(pattern);
+//                       .getLocationsViewers(pattern,context);
 //               return (pattern == null)
 //                   ? buildRecentSearchedPlaces()
 //                   : ListView.separated(
@@ -475,7 +475,7 @@
 //             builder: (_, pattern) {
 //               List<RegionViewer> locations =
 //                   BlocProvider.of<RegionsBloc>(context)
-//                       .getRegionsViewers(pattern);
+//                       .getRegionsViewers(pattern,context);
 //               return (pattern == null)
 //                   ? buildRecentSearchedPlaces()
 //                   : ListView.separated(

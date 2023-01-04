@@ -40,7 +40,6 @@ class HomeScreenState extends State<HomeScreen>
   List<Estate> estateSpacial = [];
   List<Estate> estateMostView = [];
 
-
   @override
   bool get wantKeepAlive => true;
 
@@ -55,7 +54,7 @@ class HomeScreenState extends State<HomeScreen>
     }
   }
 
-  _onRefresh() {
+  _onRefresh() async{
     estateBloc.add(NewestEstatesFetchStarted());
     estateBloc.add(MostViewEstatesFetchStarted());
     estateBloc.add(SpacialEstatesFetchStarted());
@@ -105,40 +104,33 @@ class HomeScreenState extends State<HomeScreen>
         onRefresh: () {
           return _onRefresh();
         },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const AdvertisementsEstate(),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Text(
-                  AppLocalizations.of(context)!.new_estate + " :",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline5!
-                      .copyWith(fontWeight: FontWeight.w600),
-                ),
+        child: ListView(
+          children: [
+            const AdvertisementsEstate(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Text(
+                AppLocalizations.of(context)!.new_estate + " :",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5!
+                    .copyWith(fontWeight: FontWeight.w600),
               ),
-              buildNewEstate(),
-              kHe28,
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Text(
-                  AppLocalizations.of(context)!.most_common + " :",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline5!
-                      .copyWith(fontWeight: FontWeight.w600),
-                ),
+            ),
+            buildNewEstate(),
+            kHe28,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Text(
+                AppLocalizations.of(context)!.most_common + " :",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5!
+                    .copyWith(fontWeight: FontWeight.w600),
               ),
-              buildMostViewEstate(),
-            ],
-          ),
+            ),
+            buildMostViewEstate(),
+          ],
         ),
       ),
       drawer: const Drawer(
@@ -158,6 +150,7 @@ class HomeScreenState extends State<HomeScreen>
           }
           if (estateState is EstateNewestFetchComplete) {
             estateNewest = estateState.estates;
+            print(estateNewest);
           }
           print("estateNewest : $estateNewest");
           return SizedBox(

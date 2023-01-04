@@ -71,7 +71,7 @@ class _SearchRegionScreenState extends State<SearchRegionScreen> {
                             margin: EdgeInsets.symmetric(vertical: 16.h),
                             width: 1.sw,
                             child: Text(
-                              locations.elementAt(index).getRegionName(),
+                              locations.elementAt(index).getLocationName(),
                               textAlign: TextAlign.right,
                               style: Theme.of(context).textTheme.bodyText2,
                             ),

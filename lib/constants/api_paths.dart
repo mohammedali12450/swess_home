@@ -19,6 +19,7 @@ const visitOfficeURL = "api/v2/office/visit";
 const visitEstateURL = "api/v2/estate/visit";
 const priceDomainURL = "api/v2/price-domains";
 const getReportsTypesURL = "api/v2/report-types";
+const getPeriodTypesURL = "api/v2/period-types";
 const sendReportURL = "api/v2/report";
 const areaUnitsURL = "api/v2/area-units";
 const estateOfferTypesURL = "api/v2/offer-types";
@@ -31,6 +32,9 @@ const mostViewEstateURL = "api/v2/estate/most-viewed";
 const specialEstateURL = "api/v2/estate/special";
 const sendMessageURL = "api/v2/send-message";
 const getMessagesURL = "api/v2/view-messages";
+const addRentEstateURL = "api/v2/estate/rented-estates";
+const getRentEstatesURL = "api/v2/estate/rented-estates";
+const filterRentEstateURL = "api/v2/estate/rented-estates/filter";
 
 
 //old api

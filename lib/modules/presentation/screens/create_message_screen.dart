@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/message_bloc/message_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/message_bloc/message_state.dart';
 import 'package:swesshome/modules/data/repositories/send_message_repository.dart';
 
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
@@ -13,8 +15,6 @@ import '../../business_logic_components/bloc/message_bloc/message_bloc.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_bloc.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_event.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_state.dart';
-import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
-import '../../business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/user_authentication_repository.dart';
 import '../widgets/fetch_result.dart';
@@ -94,39 +94,34 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
             buildMessageContainer(),
             kHe24,
             Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(240.w, 64.h),
-                  maximumSize: Size(300.w, 64.h),
-                ),
-                child: BlocBuilder<UserLoginBloc, UserLoginState>(
-                  builder: (_, loginState) {
-                    if (loginState is UserLoginProgress) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SpinKitWave(
-                            color: Theme.of(context).colorScheme.onPrimary,
+              child: BlocBuilder<MessageBloc, MessageState>(
+                bloc: _messageBloc,
+                builder: (_, messageState) {
+                  if (messageState is SendMessageFetchComplete) {
+                    Fluttertoast.showToast(
+                        msg: AppLocalizations.of(context)!.complete_send,
+                        toastLength: Toast.LENGTH_LONG);
+                    messageController.clear();
+                  }
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(240.w, 64.h),
+                      maximumSize: Size(300.w, 64.h),
+                    ),
+                    child: (messageState is SendMessageFetchProgress)
+                        ? SpinKitWave(
+                            color: AppColors.white,
                             size: 20.w,
-                          ),
-                          kWi16,
-                          Text(
-                            AppLocalizations.of(context)!.sending,
                           )
-                        ],
-                      );
-                    }
-                    return Text(
-                      AppLocalizations.of(context)!.send,
-                    );
-                  },
-                ),
-                onPressed: () async {
-                  _messageBloc.add(SendMessagesFetchStarted(
-                    token: UserSharedPreferences.getAccessToken(),
-                    message: messageController.text,
-                  ));
-                  FocusScope.of(context).unfocus();
+                        : Text(AppLocalizations.of(context)!.send),
+                    onPressed: () async {
+                      _messageBloc.add(SendMessagesFetchStarted(
+                        token: UserSharedPreferences.getAccessToken(),
+                        message: messageController.text,
+                      ));
+                      FocusScope.of(context).unfocus();
+                    },
+                  );
                 },
               ),
             ),
@@ -144,7 +139,10 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
         buildListTile(AppLocalizations.of(context)!.email, user!.email),
         buildListTile(
             AppLocalizations.of(context)!.telephone, user!.authentication),
-        buildListTile(AppLocalizations.of(context)!.country, user!.country),
+        user!.country == null
+            ? Container()
+            : buildListTile(
+                AppLocalizations.of(context)!.country, user!.country),
       ],
     );
   }

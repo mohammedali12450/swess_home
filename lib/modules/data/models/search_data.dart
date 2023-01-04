@@ -5,8 +5,6 @@ class SearchData {
 
   int? locationId;
 
-  int? priceDomainId;
-
   int? ownershipId;
 
   int? interiorStatusId;
@@ -20,15 +18,19 @@ class SearchData {
   int? priceMin;
   int? priceMax;
 
+  String? sortBy;
+  String? sortType;
+
   SearchData(
       {this.estateOfferTypeId,
       this.locationId,
       this.estateTypeId,
-      this.priceDomainId,
       this.ownershipId,
       this.interiorStatusId,
       this.priceMin,
-      this.priceMax});
+      this.priceMax,
+      this.sortBy,
+      this.sortType});
 
   Map<String, dynamic> toJson(bool isAdvanced) {
     return {
@@ -37,7 +39,8 @@ class SearchData {
       "estate_type_id": estateTypeId,
       "min_price": priceMin,
       "max_price": priceMax,
-      //"price_domain_id": priceDomainId,
+      "sort_by": sortBy,
+      "sort_type": sortType,
       if (isAdvanced) "ownership_type_id": ownershipId,
       if (isAdvanced) "interior_status_id": interiorStatusId,
       if (isAdvanced)

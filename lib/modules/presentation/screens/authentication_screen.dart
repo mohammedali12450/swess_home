@@ -538,6 +538,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     authentication: phoneNumber,
                     password: passwordControllerLogin.text));
                 FocusScope.of(context).unfocus();
+                UserSharedPreferences.setPhoneNumber(phoneNumber);
               },
             ),
           ),
@@ -941,6 +942,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         longitude: longitude == null ? null : longitude),
                   ),
                 );
+                UserSharedPreferences.setPhoneNumber(phoneNumber);
                 FocusScope.of(context).unfocus();
               },
             ),

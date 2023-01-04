@@ -229,7 +229,10 @@ class UserAuthenticationRepository {
       throw UnauthorizedException(
           message: jsonDecode(response.toString())["message"]);
     }
-    return response;
+
+    User userr = User.fromJson(jsonDecode(response.toString())["data"]);
+
+    return userr;
   }
 
   Future deleteUser(String token) async {

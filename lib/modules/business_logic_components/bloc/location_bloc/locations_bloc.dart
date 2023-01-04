@@ -4,6 +4,7 @@ import 'package:swesshome/modules/data/models/location.dart';
 import 'package:swesshome/modules/data/repositories/locations_repository.dart';
 import 'locations_event.dart';
 import 'locations_state.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
   LocationsRepository locationsRepository = LocationsRepository();
@@ -22,10 +23,11 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
     });
   }
 
-  List<LocationViewer> getLocationsViewers(String? pattern) {
+  List<LocationViewer> getLocationsViewers(String? pattern, context) {
     pattern ??= "";
     List<LocationViewer> result = [];
-    result.add(LocationViewer("غير محدد", "غير محدد", null));
+    result
+        .add(LocationViewer(AppLocalizations.of(context)!.undefined, "", null));
     for (Location parentLocation in locations ?? []) {
       if (parentLocation.locations == null) continue;
       for (Location childLocation in parentLocation.locations!) {

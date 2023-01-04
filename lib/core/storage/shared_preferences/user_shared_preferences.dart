@@ -5,6 +5,7 @@ class UserSharedPreferences {
   static late SharedPreferences _preferences;
 
   static const String accessTokenKey = "access_token";
+  static const String userPhoneNumKey = "user_Phone_Num_Key";
 
   static init() async {
     _preferences = await SharedPreferences.getInstance();
@@ -29,5 +30,14 @@ class UserSharedPreferences {
 
   static String? getAccessToken() {
     return _preferences.getString(accessTokenKey);
+  }
+
+  static setPhoneNumber(String phoneNum)async {
+    await _preferences.setString(userPhoneNumKey, phoneNum);
+  }
+
+
+  static String? getPhoneNumber() {
+    return _preferences.getString(userPhoneNumKey);
   }
 }

@@ -158,7 +158,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                                 locationId: selectedRegion!.id!),
                           );
                           textFieldController.text =
-                              selectedRegion!.getRegionName();
+                              selectedRegion!.getLocationName();
                         }
                         return;
                       } else if (searchType == OfficeSearchType.name) {
