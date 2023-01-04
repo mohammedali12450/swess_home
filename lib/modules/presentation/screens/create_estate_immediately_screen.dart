@@ -15,17 +15,15 @@ import 'package:swesshome/modules/presentation/screens/region_screen.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
 import '../../../utils/helpers/numbers_helper.dart';
-import '../../business_logic_components/bloc/area_units_bloc/area_units_bloc.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
+import '../../business_logic_components/bloc/interior_statuses_bloc/interior_statuses_bloc.dart';
 import '../../business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
-import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
-import '../../business_logic_components/bloc/regions_bloc/regions_state.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_event.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_state.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
-import '../../data/models/area_unit.dart';
 import '../../data/models/estate_type.dart';
+import '../../data/models/interior_status.dart';
 import '../../data/models/period_type.dart';
 import '../../data/models/rent_estate.dart';
 import '../../data/providers/locale_provider.dart';
@@ -53,6 +51,7 @@ class _CreateEstateImmediatelyScreenState
 
   List<EstateType>? estatesTypes;
   List<EstateType> estateTypes = [];
+  late List<InteriorStatus> interiorStatuses;
   late List<PeriodType> periodTypes;
   String phoneDialCode = "+963";
 
@@ -67,6 +66,7 @@ class _CreateEstateImmediatelyScreenState
   ChannelCubit salonCubit = ChannelCubit(0);
   ChannelCubit bathroomCubit = ChannelCubit(0);
   ChannelCubit checkFurnishedStateCubit = ChannelCubit(false);
+  ChannelCubit locationIdCubit = ChannelCubit(0);
 
   late RentEstateBloc _rentEstateBloc;
 
@@ -85,6 +85,9 @@ class _CreateEstateImmediatelyScreenState
       estateTypes.add(estatesTypes!.elementAt(i));
     }
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
+    interiorStatuses =
+    BlocProvider.of<InteriorStatusesBloc>(context).interiorStatuses!;
+
     _rentEstateBloc = RentEstateBloc(RentEstateRepository());
     super.initState();
   }
@@ -164,6 +167,7 @@ class _CreateEstateImmediatelyScreenState
           buildSpaceEstate(areaWidget),
           buildPeriodTypes(),
           buildPriceNum(),
+          buildInteriorStatuses(),
           buildFurnishedEstate(isArabic, isDark),
           buildChooseNum(
               textController: floorController,
@@ -370,20 +374,64 @@ class _CreateEstateImmediatelyScreenState
                 elementsList:
                     periodTypes.map((e) => e.name.split("|").first).toList(),
                 onSelect: (index) {
-                  // widget.currentOffer.periodType =
-                  //     periodTypes.elementAt(index);
-                  // selectedPeriodCubit!.setState(
-                  //   periodTypes
-                  //       .elementAt(index)
-                  //       .name
-                  //       .split("|")
-                  //       .elementAt(1),
-                  // );
+                  // set search data estate type :
+                  rentEstate.periodTypeId = estateTypes.elementAt(index).id;
                 },
                 validator: (value) => value == null
                     ? AppLocalizations.of(context)!.this_field_is_required
                     : null,
                 selectedItem: AppLocalizations.of(context)!.please_select_here,
+              ),
+            ),
+          ),
+        ),
+        24.verticalSpace,
+      ],
+    );
+  }
+
+  Widget buildInteriorStatuses() {
+    return Column(
+      children: [
+        //kHe12,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
+          child: Row(
+            children: [
+              const Icon(Icons.chair_outlined),
+              kWi8,
+              Text(
+                AppLocalizations.of(context)!.interior_status + " :",
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ],
+          ),
+        ),
+        kHe12,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.secondaryDark, width: 0.5),
+              borderRadius: const BorderRadius.all(
+                Radius.elliptical(8, 8),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: MyDropdownList(
+                elementsList: interiorStatuses
+                    .map((e) => e.name)
+                    .toList(),
+                onSelect: (index) {
+                  rentEstate.interiorStatusesId =
+                      interiorStatuses.elementAt(index).id;
+                },
+                validator: (value) => value == null
+                    ? AppLocalizations.of(context)!.this_field_is_required
+                    : null,
+                selectedItem: AppLocalizations.of(context)!.please_select,
               ),
             ),
           ),
@@ -815,8 +863,9 @@ class _CreateEstateImmediatelyScreenState
                         builder: (_) => RegionScreen(
                               locationController: locationController,
                               isPressSearchCubit: isPressSearchCubit,
-                              locationId: rentEstate.locationId,
+                              locationId: locationIdCubit,
                             )));
+                rentEstate.locationId = locationIdCubit.state;
                 isPressSearchCubit.setState(false);
               },
               child: BlocBuilder<ChannelCubit, dynamic>(

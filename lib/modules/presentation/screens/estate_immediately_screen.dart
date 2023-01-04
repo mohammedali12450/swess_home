@@ -4,13 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/presentation/screens/region_screen.dart';
 import '../../../constants/design_constants.dart';
-import '../../business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import '../../business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
-import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
-import '../../business_logic_components/bloc/regions_bloc/regions_state.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_event.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_state.dart';
@@ -45,11 +43,12 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
   late List<PeriodType> periodTypes;
   int? estateTypeId;
   final ChannelCubit _priceSelected = ChannelCubit(false);
+  ChannelCubit locationIdCubit = ChannelCubit(0);
+  RentEstateFilter rentEstateFilter = RentEstateFilter.init();
 
   @override
   void initState() {
     _rentEstateBloc = RentEstateBloc(RentEstateRepository());
-    _rentEstateBloc.add(GetRentEstatesFetchStarted());
     estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
 
     for (int i = 0; i < estatesTypes.length; i++) {
@@ -59,6 +58,8 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
       estateTypes.add(estatesTypes.elementAt(i));
     }
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
+    _rentEstateBloc.add(GetRentEstatesFetchStarted(
+        rentEstateFilter: RentEstateFilter(price: "desc")));
     super.initState();
   }
 
@@ -150,60 +151,62 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
           ),
         ],
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.symmetric(vertical: 5.w),
-        child: Directionality(
-          textDirection: TextDirection.ltr,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
-            child: GestureDetector(
-              child: Card(
-                color: AppColors.primaryColor,
-                elevation: 4,
-                shape: StadiumBorder(
-                  side: BorderSide(
-                    // border color
-                    color: AppColors.yellowColor,
-                    // border thickness
-                    width: 2,
-                  ),
-                ),
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(15, 5, 5, 15),
-                  width: 100,
-                  alignment: Alignment.bottomCenter,
-                  height: 72.h,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.add,
-                        color: AppColors.white,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2.0),
-                        child: Text(
-                          AppLocalizations.of(context)!.create,
-                          style: const TextStyle(
-                              color: AppColors.white, fontSize: 16),
+      floatingActionButton: UserSharedPreferences.getAccessToken() != null
+          ? Padding(
+              padding: EdgeInsets.symmetric(vertical: 5.w),
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 5.w),
+                  child: GestureDetector(
+                    child: Card(
+                      color: AppColors.primaryColor,
+                      elevation: 4,
+                      shape: StadiumBorder(
+                        side: BorderSide(
+                          // border color
+                          color: AppColors.yellowColor,
+                          // border thickness
+                          width: 2,
                         ),
                       ),
-                    ],
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(15, 5, 5, 15),
+                        width: 100,
+                        alignment: Alignment.bottomCenter,
+                        height: 72.h,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.add,
+                              color: AppColors.white,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2.0),
+                              child: Text(
+                                AppLocalizations.of(context)!.create,
+                                style: const TextStyle(
+                                    color: AppColors.white, fontSize: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CreateEstateImmediatelyScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const CreateEstateImmediatelyScreen(),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      ),
+            )
+          : Container(),
     );
   }
 
@@ -231,13 +234,18 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                     builder: (_) => RegionScreen(
                           locationController: locationController,
                           isPressSearchCubit: isPressSearchCubit,
-                          locationId: locationId,
+                          locationId: locationIdCubit,
                         )));
+            locationId = locationIdCubit.state;
             isPressSearchCubit.setState(false);
           },
           child: BlocBuilder<ChannelCubit, dynamic>(
             bloc: isPressSearchCubit,
             builder: (_, isPress) {
+              if(isPress){
+                _rentEstateBloc.add(GetRentEstatesFetchStarted(
+                    rentEstateFilter: RentEstateFilter(locationId: locationId)));
+              }
               return Center(
                 child: Row(
                   children: [
@@ -403,7 +411,15 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
           child: Text(
             AppLocalizations.of(context)!.ok,
           ),
-          onPressed: () async {},
+          onPressed: () async {
+            // print(rentEstateFilter.estateTypeId);
+            // print(rentEstateFilter.periodTypeId);
+            // print(rentEstateFilter.locationId);
+            // print(rentEstateFilter.price);
+            _rentEstateBloc.add(
+                GetRentEstatesFetchStarted(rentEstateFilter: rentEstateFilter));
+            Navigator.pop(context);
+          },
         ),
         ElevatedButton(
           child: Text(
@@ -424,22 +440,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
           return InkWell(
             onTap: () {
               _priceSelected.setState(!isPriceSelected);
-
-              // BlocProvider.of<EstateBloc>(context).add(
-              //   EstateFetchStarted(
-              //     searchData: SearchData(
-              //         locationId: widget.searchData.locationId,
-              //         estateTypeId: widget.searchData.estateTypeId,
-              //         estateOfferTypeId:
-              //         widget.searchData.estateOfferTypeId,
-              //         priceMin: widget.searchData.priceMin,
-              //         priceMax: widget.searchData.priceMax,
-              //         sortType: isPriceSelected ? "desc" : "asc",
-              //         sortBy: "price"),
-              //     isAdvanced: false,
-              //     token: UserSharedPreferences.getAccessToken(),
-              //   ),
-              // );
+              rentEstateFilter.price = _priceSelected.state ? "desc" : "asc";
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -513,15 +514,8 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                 elementsList:
                     periodTypes.map((e) => e.name.split("|").first).toList(),
                 onSelect: (index) {
-                  // widget.currentOffer.periodType =
-                  //     periodTypes.elementAt(index);
-                  // selectedPeriodCubit!.setState(
-                  //   periodTypes
-                  //       .elementAt(index)
-                  //       .name
-                  //       .split("|")
-                  //       .elementAt(1),
-                  // );
+                  rentEstateFilter.periodTypeId =
+                      periodTypes.elementAt(index).id;
                 },
                 validator: (value) => value == null
                     ? AppLocalizations.of(context)!.this_field_is_required
@@ -564,7 +558,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
               }).toList(),
               onSelect: (index) {
                 // set search data estate type :
-                estateTypeId = estateTypes.elementAt(index).id;
+                rentEstateFilter.estateTypeId = periodTypes.elementAt(index).id;
               },
               validator: (value) => value == null
                   ? AppLocalizations.of(context)!.this_field_is_required

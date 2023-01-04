@@ -14,7 +14,8 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
   List<Estate> specialEstates = [];
   List<Estate> mostViewEstates = [];
   int page = 1;
-  bool isFetching = false;
+  bool isIdenticalFetching = false;
+  bool isSimilarFetching = false;
 
   EstateBloc(this.estateRepository) : super(EstateFetchNone()) {
     on<EstateFetchStarted>(

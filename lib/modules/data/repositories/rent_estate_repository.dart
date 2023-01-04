@@ -9,8 +9,8 @@ import '../providers/rent_estate_provider.dart';
 class RentEstateRepository {
   final RentEstateProviders _estateProviders = RentEstateProviders();
 
-  Future<List<RentEstate>> getRentEstates() async {
-    Response response = await _estateProviders.getRentEstates();
+  Future<List<RentEstate>> getRentEstates(RentEstateFilter rentEstateFilter) async {
+    Response response = await _estateProviders.getRentEstates(rentEstateFilter);
     if (response.statusCode != 200) {
       throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر");
     }

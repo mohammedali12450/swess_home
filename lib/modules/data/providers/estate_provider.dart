@@ -62,13 +62,12 @@ class EstateProvider {
     try {
       print("baba $token");
       response = await helper.get(
-        token == null
-            ? "$getOfficeDetailsURL$officeId"
-            : "$getOfficeDetailsWithAuthURL$officeId",
-        //, queryParameters: {"office_id": officeId}
-        queryParameters: {"page": page},
-        token: token
-      );
+          token == null
+              ? "$getOfficeDetailsURL$officeId"
+              : "$getOfficeDetailsWithAuthURL$officeId",
+          //, queryParameters: {"office_id": officeId}
+          queryParameters: {"page": page},
+          token: token);
     } catch (e) {
       rethrow;
     }
@@ -180,7 +179,6 @@ class EstateProvider {
       case VisitType.estateOffice:
         data = {"office_id": visitId};
         url = visitOfficeURL;
-
         break;
       case VisitType.officeCall:
         data = {"office_id": visitId};
@@ -189,6 +187,20 @@ class EstateProvider {
     }
 
     Response response = await helper.post(url, data, token: token);
+    return response;
+  }
+
+  Future shareEstateCount(String? token, int estateId) async {
+    NetworkHelper helper = NetworkHelper();
+
+    Response response;
+    try {
+      response = await helper.post(shareCountEstateURL, {"estate_id": estateId},
+          token: token);
+    } catch (e) {
+      rethrow;
+    }
+
     return response;
   }
 

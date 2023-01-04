@@ -18,7 +18,7 @@ class Message {
     return Message(
         id: json["id"],
         username: json["customer"],
-        message: json["subject"],
+        message: json["subject"] == null ? "" : json["subject"],
         sendDate: json["created_at"],
         replayDate: json["reply_date"] == null ? null : json["reply_date"],
         replayMessage:

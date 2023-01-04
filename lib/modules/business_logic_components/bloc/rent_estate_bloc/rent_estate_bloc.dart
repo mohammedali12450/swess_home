@@ -30,7 +30,7 @@ class RentEstateBloc extends Bloc<RentEstatesEvent, RentEstateState> {
     on<GetRentEstatesFetchStarted>((event, emit) async {
       emit(GetRentEstateFetchProgress());
       try {
-        rentEstates = await _messageRepository.getRentEstates();
+        rentEstates = await _messageRepository.getRentEstates(event.rentEstateFilter);
         emit(GetRentEstateFetchComplete(rentEstates: rentEstates!));
       } catch (e, stack) {
         if (e is GeneralException) {

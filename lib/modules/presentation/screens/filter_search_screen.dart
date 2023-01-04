@@ -50,6 +50,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   // Blocs and cubits:
   ChannelCubit patternCubit = ChannelCubit(null);
   ChannelCubit locationDetectedCubit = ChannelCubit(false);
+  ChannelCubit locationIdCubit = ChannelCubit(0);
   ChannelCubit startPriceCubit = ChannelCubit(0);
   ChannelCubit endPriceCubit = ChannelCubit(0);
   ChannelCubit isSellCubit = ChannelCubit(true);
@@ -110,6 +111,8 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     searchData.priceMin = int.tryParse(priceDomains!.sale.min[0]);
     searchData.priceMax =
         int.tryParse(priceDomains!.sale.max[priceDomains!.sale.max.length - 1]);
+    print(searchData.priceMax);
+    print(priceDomains!.sale.max[priceDomains!.sale.max.length - 1]);
   }
 
   String? userToken;
@@ -131,8 +134,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
       userToken = UserSharedPreferences.getAccessToken();
       print(userToken);
     }
-    // priceDomainsBloc.add(PriceDomainsFetchStarted(isSell ? "sale" : "rent"));
-    // estateTypesBloc.add(EstateTypesFetchStarted());
   }
 
   @override
@@ -202,11 +203,12 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                             Fluttertoast.showToast(
                                 msg: AppLocalizations.of(context)!.search);
                           }
-                          print("ghina : ${searchData.estateOfferTypeId}"
-                              "${searchData.estateTypeId}"
-                              "${searchData.locationId}"
-                              "${searchData.priceMin}"
+                          print("ghina : ${searchData.estateOfferTypeId}\n"
+                              "${searchData.estateTypeId}\n"
+                              "${searchData.locationId}\n"
+                              "${searchData.priceMin}\n"
                               "${searchData.priceMax}");
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -409,7 +411,12 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                       .toList(),
                                   onSubmit: (data) {
                                     startPriceCubit.setState(data);
-                                    searchData.priceMin = startPriceCubit.state;
+                                    //print(priceDomains!.sale.min[startPriceCubit.state]);
+                                    searchData.priceMin = priceState
+                                        ? int.tryParse(priceDomains!
+                                            .sale.min[startPriceCubit.state])
+                                        : int.tryParse(priceDomains!
+                                            .rent.min[startPriceCubit.state]);
                                   },
                                 );
                               },
@@ -479,6 +486,11 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                   onSubmit: (data) {
                                     endPriceCubit.setState(data);
                                     searchData.priceMax = endPriceCubit.state;
+                                    searchData.priceMax = priceState
+                                        ? int.tryParse(priceDomains!
+                                            .sale.max[endPriceCubit.state])
+                                        : int.tryParse(priceDomains!
+                                            .rent.max[endPriceCubit.state]);
                                   },
                                 );
                               },
@@ -575,8 +587,10 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                   locationController: locationController,
                                   isPressSearchCubit: isPressSearchCubit,
                                   isArea: isAreaSearchCubit.state,
-                                  locationId: searchData.locationId,
+                                  locationId: locationIdCubit,
                                 )));
+                    print("baba : ${locationIdCubit.state}");
+                    searchData.locationId = locationIdCubit.state;
                     isPressSearchCubit.setState(false);
                   },
                   child: BlocBuilder<ChannelCubit, dynamic>(
@@ -600,125 +614,4 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     );
   }
 
-  BlocBuilder buildLocationDetector() {
-    return BlocBuilder<LocationsBloc, LocationsState>(
-      builder: (_, locationsFetchState) {
-        if (locationsFetchState is LocationsFetchComplete) {
-          return BlocBuilder<ChannelCubit, dynamic>(
-            bloc: patternCubit,
-            builder: (_, pattern) {
-              List<LocationViewer> locations =
-                  BlocProvider.of<LocationsBloc>(context)
-                      .getLocationsViewers(pattern, context);
-              return ListView.separated(
-                shrinkWrap: true,
-                itemBuilder: (_, index) {
-                  return InkWell(
-                    onTap: () async {
-                      // set location name in location text field:
-                      locationController.text =
-                          locations.elementAt(index).getLocationName();
-                      // initialize search data again :
-                      // initializeOfferData();
-                      // set search data location id:
-                      searchData.locationId = locations.elementAt(index).id;
-                      // set location detected state :
-                      locationDetectedCubit.setState(true);
-                      // unfocused text field :
-                      FocusScope.of(context).unfocus();
-                      // save location as recent search:
-                      // await saveAsRecentSearch(
-                      //     locations.elementAt(index).id!);
-
-                      isPressSearchCubit.setState(false);
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(
-                        vertical: 8.h,
-                      ),
-                      padding: kMediumSymWidth,
-                      width: inf,
-                      child: Text(
-                        locations.elementAt(index).getLocationName(),
-                        textAlign: TextAlign.right,
-                        style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                            color: Theme.of(context).colorScheme.onBackground),
-                      ),
-                    ),
-                  );
-                },
-                separatorBuilder: (_, index) {
-                  return const Divider();
-                },
-                itemCount: locations.length,
-              );
-            },
-          );
-        }
-        return Container();
-      },
-    );
-  }
-
-  Widget buildRegionsDetector() {
-    return BlocBuilder<RegionsBloc, RegionsState>(
-      builder: (_, regionsFetchState) {
-        if (regionsFetchState is RegionsFetchComplete) {
-          return BlocBuilder<ChannelCubit, dynamic>(
-            bloc: patternCubit,
-            builder: (_, pattern) {
-              List<RegionViewer> locations =
-                  BlocProvider.of<RegionsBloc>(context)
-                      .getRegionsViewers(pattern, context);
-              return ListView.separated(
-                shrinkWrap: true,
-                itemBuilder: (_, index) {
-                  return InkWell(
-                    onTap: () async {
-                      // set location name in location text field:
-                      locationController.text =
-                          locations.elementAt(index).getLocationName();
-                      // print(locations.elementAt(index).locationName);
-                      // initialize search data again :
-                      //initializeOfferData();
-                      // set search data location id:
-                      searchData.locationId = locations.elementAt(index).id;
-                      // set location detected state :
-                      locationDetectedCubit.setState(true);
-                      // unfocused text field :
-                      FocusScope.of(context).unfocus();
-                      // save location as recent search:
-                      //TODO : add recent search to data base
-                      // await saveAsRecentSearch(
-                      //     locations.elementAt(index).id!);
-
-                      isPressSearchCubit.setState(false);
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(
-                        vertical: 8.h,
-                      ),
-                      padding: kMediumSymWidth,
-                      width: inf,
-                      child: Text(
-                        locations.elementAt(index).getLocationName(),
-                        textAlign: TextAlign.right,
-                        style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                            color: Theme.of(context).colorScheme.onBackground),
-                      ),
-                    ),
-                  );
-                },
-                separatorBuilder: (_, index) {
-                  return const Divider();
-                },
-                itemCount: locations.length,
-              );
-            },
-          );
-        }
-        return Container();
-      },
-    );
-  }
 }

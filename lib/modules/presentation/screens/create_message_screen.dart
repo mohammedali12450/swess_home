@@ -97,12 +97,6 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
               child: BlocBuilder<MessageBloc, MessageState>(
                 bloc: _messageBloc,
                 builder: (_, messageState) {
-                  if (messageState is SendMessageFetchComplete) {
-                    Fluttertoast.showToast(
-                        msg: AppLocalizations.of(context)!.complete_send,
-                        toastLength: Toast.LENGTH_LONG);
-                    messageController.clear();
-                  }
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(240.w, 64.h),
@@ -119,6 +113,12 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                         token: UserSharedPreferences.getAccessToken(),
                         message: messageController.text,
                       ));
+                      if (messageState is SendMessageFetchComplete) {
+                        Fluttertoast.showToast(
+                            msg: AppLocalizations.of(context)!.complete_send,
+                            toastLength: Toast.LENGTH_LONG);
+                        messageController.clear();
+                      }
                       FocusScope.of(context).unfocus();
                     },
                   );

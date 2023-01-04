@@ -48,13 +48,15 @@ class _EstatesScreenState extends State<EstatesScreen> {
   final List<Estate> identicalEstates = [];
   final List<Estate> similarEstates = [];
   final ScrollController _scrollController = ScrollController();
-  bool isEstatesFinished = false;
+  bool isIdenticalEstatesFinished = false;
+  bool isSimilarEstatesFinished = false;
   String? userToken;
 
   @override
   void initState() {
     super.initState();
-    isEstatesFinished = false;
+    isIdenticalEstatesFinished = false;
+    isSimilarEstatesFinished = false;
     if (BlocProvider.of<UserLoginBloc>(context).user != null) {
       userToken = UserSharedPreferences.getAccessToken();
     }
@@ -100,7 +102,13 @@ class _EstatesScreenState extends State<EstatesScreen> {
               if (estateFetchState is EstateFetchComplete) {
                 if (estateFetchState.estateSearch.identicalEstates.isEmpty &&
                     estateSearch.identicalEstates.isNotEmpty) {
-                  isEstatesFinished = true;
+                  print("hello it is me");
+                  isIdenticalEstatesFinished = true;
+                }
+                if (estateFetchState.estateSearch.similarEstates.isEmpty &&
+                    estateSearch.similarEstates.isNotEmpty) {
+                  print("hello it is me");
+                  isSimilarEstatesFinished = true;
                 }
               }
               if (estateFetchState is EstateFetchError) {
@@ -122,14 +130,18 @@ class _EstatesScreenState extends State<EstatesScreen> {
                   estateSearch.identicalEstates
                       .addAll(estatesFetchState.estateSearch.identicalEstates);
                 }
+                BlocProvider.of<EstateBloc>(context).isIdenticalFetching =
+                false;
                 if (estatesFetchState.estateSearch.similarEstates.isNotEmpty) {
                   estateSearch.similarEstates
                       .addAll(estatesFetchState.estateSearch.similarEstates);
                 }
-                BlocProvider.of<EstateBloc>(context).isFetching = false;
+                BlocProvider.of<EstateBloc>(context).isSimilarFetching =
+                false;
               } else if (estatesFetchState is EstateFetchError &&
                   estateSearch.identicalEstates.isEmpty) {
-                BlocProvider.of<EstateBloc>(context).isFetching = false;
+                BlocProvider.of<EstateBloc>(context).isIdenticalFetching =
+                    false;
                 return RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
                   onRefresh: () async {
@@ -197,12 +209,23 @@ class _EstatesScreenState extends State<EstatesScreen> {
                     () {
                       if (_scrollController.offset ==
                               _scrollController.position.maxScrollExtent &&
-                          !BlocProvider.of<EstateBloc>(context).isFetching &&
-                          !isEstatesFinished) {
+                          !BlocProvider.of<EstateBloc>(context)
+                              .isIdenticalFetching &&
+                          !isIdenticalEstatesFinished) {
+                        print("ghina ${widget.searchData.estateTypeId}");
                         BlocProvider.of<EstateBloc>(context)
-                          ..isFetching = true
+                          ..isIdenticalFetching = true
                           ..add(widget.eventSearch);
                       }
+                      // else if (_scrollController.offset ==
+                      //         _scrollController.position.maxScrollExtent &&
+                      //     !BlocProvider.of<EstateBloc>(context)
+                      //         .isSimilarFetching &&
+                      //     !isSimilarEstatesFinished) {
+                      //   BlocProvider.of<EstateBloc>(context)
+                      //     ..isSimilarFetching = true
+                      //     ..add(widget.eventSearch);
+                      // }
                     },
                   ),
                 child: Column(
@@ -210,9 +233,8 @@ class _EstatesScreenState extends State<EstatesScreen> {
                     buildFilter(),
                     if (estateSearch.identicalEstates.isNotEmpty)
                       buildIdenticalEstates(),
-                    if (estateSearch.similarEstates.isNotEmpty)
-                      buildSimilarEstates(),
-                    if (BlocProvider.of<EstateBloc>(context).isFetching)
+                    if (BlocProvider.of<EstateBloc>(context)
+                        .isIdenticalFetching)
                       Container(
                         margin: EdgeInsets.only(
                           top: 12.h,
@@ -222,7 +244,21 @@ class _EstatesScreenState extends State<EstatesScreen> {
                           size: 50,
                         ),
                       ),
-                    if (isEstatesFinished) buildEstatesFinished(),
+                    // if (estateSearch.similarEstates.isNotEmpty)
+                    //   buildSimilarEstates(),
+                    // if (BlocProvider.of<EstateBloc>(context)
+                    //     .isSimilarFetching)
+                    //   Container(
+                    //     margin: EdgeInsets.only(
+                    //       top: 12.h,
+                    //     ),
+                    //     child: SpinKitWave(
+                    //       color: Theme.of(context).colorScheme.primary,
+                    //       size: 50,
+                    //     ),
+                    //   ),
+                    if (isIdenticalEstatesFinished )
+                      buildEstatesFinished(),
                   ],
                 ),
               );
@@ -248,6 +284,11 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       if (_dateSelected.state) {
                         _dateSelected.setState(false);
                       }
+                      print("ghina : ${widget.searchData.estateOfferTypeId}\n"
+                          "${widget.searchData.estateTypeId}\n"
+                          "${widget.searchData.locationId}\n"
+                          "${widget.searchData.priceMin}\n"
+                          "${widget.searchData.priceMax}");
 
                       BlocProvider.of<EstateBloc>(context).add(
                         EstateFetchStarted(

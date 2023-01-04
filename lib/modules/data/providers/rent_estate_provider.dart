@@ -5,9 +5,12 @@ import 'package:swesshome/utils/services/network_helper.dart';
 import '../models/rent_estate.dart';
 
 class RentEstateProviders {
-  Future getRentEstates() async {
+  Future getRentEstates(RentEstateFilter rentEstateFilter) async {
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(getRentEstatesURL);
+
+    FormData data = FormData.fromMap(await rentEstateFilter.toJson());
+
+    Response response = await helper.post(filterRentEstateURL, data);
     return response;
   }
 

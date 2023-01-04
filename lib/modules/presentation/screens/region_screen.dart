@@ -21,7 +21,7 @@ class RegionScreen extends StatefulWidget {
   TextEditingController locationController;
   ChannelCubit isPressSearchCubit;
   bool isArea;
-  int? locationId ;
+  ChannelCubit? locationId;
 
   @override
   State<RegionScreen> createState() => _RegionScreenState();
@@ -34,7 +34,7 @@ class _RegionScreenState extends State<RegionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    widget.locationId == null ? 0 : widget.locationId;
+    //widget.locationId!.state == null ? 0 : widget.locationId;
     return Scaffold(
       appBar: AppBar(
         bottom: PreferredSize(
@@ -119,7 +119,8 @@ class _RegionScreenState extends State<RegionScreen> {
                             locations!.elementAt(index).getLocationName();
                         // print(locations.elementAt(index).locationName);
                         // set search data location id:
-                        widget.locationId = locations.elementAt(index).id!;
+                        widget.locationId!.setState(locations.elementAt(index).id!);
+                        //print("i am ghina ${widget.locationId!.state}");
                         // unfocused text field :
                         FocusScope.of(context).unfocus();
                         // save location as recent search:

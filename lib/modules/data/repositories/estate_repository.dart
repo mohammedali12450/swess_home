@@ -269,6 +269,16 @@ class EstateRepository {
     return response;
   }
 
+  Future shareEstateCount(String? token, int estateId) async {
+    Response response = await _estateProvider.shareEstateCount(token, estateId);
+
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر!");
+    }
+
+    return response;
+  }
+
   Future deleteUserNewEstate(String? token, int? id) async {
     Response response = await _estateProvider.deleteUserNewEstate(token, id);
 

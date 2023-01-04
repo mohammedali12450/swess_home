@@ -14,6 +14,7 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/enums.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/share_estate_bloc/share_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_event.dart';
@@ -27,6 +28,7 @@ import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../../business_logic_components/bloc/share_estate_bloc/share_bloc.dart';
 import '../widgets/cupertino_action_sheet.dart';
 import '../widgets/report_estate.dart';
 import 'images_viewer_screen.dart';
@@ -50,6 +52,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
   ChannelCubit currentImageCubit = ChannelCubit(0);
   final VisitBloc _visitBloc = VisitBloc(EstateRepository());
   VisitBloc visitBloc = VisitBloc(EstateRepository());
+  ShareBloc shareBloc = ShareBloc(EstateRepository());
   String? userToken;
 
   // Switchers :
@@ -127,8 +130,18 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 color: AppColors.white,
               ),
               onPressed: () {
+                print("baba mama");
                 Share.share(
                     'Real Estate Offer https://www.swesshome.com/estate/${widget.estate.id}');
+                if (UserSharedPreferences.getAccessToken() != null) {
+                  print("baba mama");
+                  shareBloc.add(
+                    ShareStarted(
+                      estateId: widget.estate.id!,
+                      token: userToken,
+                    ),
+                  );
+                }
               },
             ),
           ],
@@ -497,8 +510,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         ),
                         6.horizontalSpace,
                         Text(
-                          widget.estate.periodType!
-                              .name
+                          widget.estate.periodType!.name
                               .split("|")
                               .elementAt(1),
                         ),

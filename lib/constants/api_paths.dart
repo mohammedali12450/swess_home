@@ -35,6 +35,8 @@ const getMessagesURL = "api/v2/view-messages";
 const addRentEstateURL = "api/v2/estate/rented-estates";
 const getRentEstatesURL = "api/v2/estate/rented-estates";
 const filterRentEstateURL = "api/v2/estate/rented-estates/filter";
+const lastVisitedEstateURL = "api/v2/estate/last-visited";
+const shareCountEstateURL = "api/v2/estate/share";
 
 
 //old api
