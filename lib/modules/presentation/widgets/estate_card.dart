@@ -108,7 +108,7 @@ class _EstateCardState extends State<EstateCard> {
     String estateType =
         widget.estate.estateType!.name.split('|').elementAt(1);
     String addingDate = DateHelper.getDateByFormat(
-        DateTime.parse(widget.estate.createdAt!), "yyyy/MM/dd");
+        DateTime.parse(widget.estate.publishedAt!), "yyyy/MM/dd");
     List<String> estateImages = widget.estate.images!
         .where((e) => e.type == "estate_image")
         .map((e) => e.url)

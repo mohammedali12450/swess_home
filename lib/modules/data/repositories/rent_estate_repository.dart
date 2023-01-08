@@ -9,8 +9,10 @@ import '../providers/rent_estate_provider.dart';
 class RentEstateRepository {
   final RentEstateProviders _estateProviders = RentEstateProviders();
 
-  Future<List<RentEstate>> getRentEstates(RentEstateFilter rentEstateFilter) async {
-    Response response = await _estateProviders.getRentEstates(rentEstateFilter);
+  Future<List<RentEstate>> getRentEstates(
+      RentEstateFilter rentEstateFilter, int page) async {
+    Response response =
+        await _estateProviders.getRentEstates(rentEstateFilter, page);
     if (response.statusCode != 200) {
       throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر");
     }
@@ -21,7 +23,7 @@ class RentEstateRepository {
   }
 
   Future<bool> sendRentEstate(
-      String? token, RentEstateRequest rentEstate) async {
+      String token, RentEstateRequest rentEstate) async {
     Response response =
         await _estateProviders.sendRentEstate(token, rentEstate);
 

@@ -86,17 +86,23 @@ class _CreateEstateImmediatelyScreenState
     }
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
     interiorStatuses =
-    BlocProvider.of<InteriorStatusesBloc>(context).interiorStatuses!;
+        BlocProvider.of<InteriorStatusesBloc>(context).interiorStatuses!;
 
     _rentEstateBloc = RentEstateBloc(RentEstateRepository());
+
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    //locationController.text = AppLocalizations.of(context)!.enter_location_name;
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
-    locationController.text = AppLocalizations.of(context)!.enter_location_name;
 
     List<Widget> areaWidget = [
       Expanded(
@@ -117,6 +123,9 @@ class _CreateEstateImmediatelyScreenState
                       color: Theme.of(context).colorScheme.onBackground),
                 ),
               ),
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
               cursorColor: Theme.of(context).colorScheme.onBackground,
               onChanged: (value) {
                 spaceErrorCubit.setState(null);
@@ -238,8 +247,10 @@ class _CreateEstateImmediatelyScreenState
                 if (!await getFieldsValidation()) {
                   return;
                 }
-                _rentEstateBloc
-                    .add(SendRentEstatesFetchStarted(rentEstate: rentEstate));
+                rentEstate.locationId = locationIdCubit.state;
+                _rentEstateBloc.add(SendRentEstatesFetchStarted(
+                    rentEstate: rentEstate,
+                    token: UserSharedPreferences.getAccessToken()!));
               },
             ),
           ),
@@ -421,9 +432,7 @@ class _CreateEstateImmediatelyScreenState
             child: Padding(
               padding: const EdgeInsets.only(bottom: 5),
               child: MyDropdownList(
-                elementsList: interiorStatuses
-                    .map((e) => e.name)
-                    .toList(),
+                elementsList: interiorStatuses.map((e) => e.name).toList(),
                 onSelect: (index) {
                   rentEstate.interiorStatusesId =
                       interiorStatuses.elementAt(index).id;
@@ -773,7 +782,7 @@ class _CreateEstateImmediatelyScreenState
                         onTap: () {
                           checkFurnishedStateCubit.setState(true);
                           rentEstate.isFurnished =
-                              checkFurnishedStateCubit.state;
+                              checkFurnishedStateCubit.state ? 1 : 0;
                         },
                       ),
                     ),
@@ -874,7 +883,9 @@ class _CreateEstateImmediatelyScreenState
                   return Center(
                     child: Row(
                       children: [
-                        Text(locationController.text),
+                        Text(locationController.text == ""
+                            ? AppLocalizations.of(context)!.enter_location_name
+                            : locationController.text),
                       ],
                     ),
                   );

@@ -119,7 +119,7 @@ class _RegionScreenState extends State<RegionScreen> {
                             locations!.elementAt(index).getLocationName();
                         // print(locations.elementAt(index).locationName);
                         // set search data location id:
-                        widget.locationId!.setState(locations.elementAt(index).id!);
+                        widget.locationId!.setState(locations.elementAt(index).id);
                         //print("i am ghina ${widget.locationId!.state}");
                         // unfocused text field :
                         FocusScope.of(context).unfocus();

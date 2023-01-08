@@ -45,17 +45,6 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
     );
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
-
-  // @override
-  // void dispose(){
-  //   //pageCubit.close();
-  //   super.dispose();
-  // }
-
   Widget callPage(int _selectedBar) {
     switch (_selectedBar) {
       case 0:
@@ -83,10 +72,6 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
 
   Widget buildNavigationBar() {
     bool isArabic = ApplicationSharedPreferences.getLanguageCode() == "ar";
-    // selectedLanguageCubit = ChannelCubit(
-    //     Provider.of<LocaleProvider>(context).getLocale().languageCode == "ar"
-    //         ? 0
-    //         : 1);
 
     return BlocBuilder<ChannelCubit, dynamic>(
       bloc: ChannelCubit(
@@ -94,16 +79,9 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
               ? false
               : true),
       builder: (_, lang) {
-        print("second");
         return SpinCircleBottomBarHolder(
           onPressedCenterButton: () {
             showBlurScreen(context: context);
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (_) => const CreateEstateScreen(),
-            //   ),
-            // );
           },
           bottomNavigationBar: SCBottomBarDetails(
             circleColors: [
@@ -156,11 +134,6 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                     pageCubit.setState(3);
                   }),
             ],
-            // circleItems: [
-            //   SCItem(icon: const Icon(Icons.add), onPressed: () {}),
-            //   SCItem(icon: const Icon(Icons.print), onPressed: () {}),
-            //   SCItem(icon: const Icon(Icons.map), onPressed: () {}),
-            // ],
           ),
           child: BlocBuilder<ChannelCubit, dynamic>(
             bloc: pageCubit,

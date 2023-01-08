@@ -14,17 +14,12 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_state.dart';
-import '../../business_logic_components/bloc/location_bloc/locations_bloc.dart';
-import '../../business_logic_components/bloc/location_bloc/locations_state.dart';
 import '../../business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
-import '../../business_logic_components/bloc/regions_bloc/regions_event.dart';
-import '../../business_logic_components/bloc/regions_bloc/regions_state.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/estate_type.dart';
 import '../../data/models/interior_status.dart';
-import '../../data/models/location.dart';
 import '../../data/models/ownership_type.dart';
 import '../../data/models/price_domain.dart';
 import '../../data/models/search_data.dart';
@@ -203,7 +198,12 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                             Fluttertoast.showToast(
                                 msg: AppLocalizations.of(context)!.search);
                           }
-                          print("ghina : ${searchData.estateOfferTypeId}\n"
+                          searchData.locationId = locationIdCubit.state;
+                          if (searchData.locationId == 0) {
+                            searchData.locationId = null;
+                          }
+                          print("ghina : "
+                              "${searchData.estateOfferTypeId}\n"
                               "${searchData.estateTypeId}\n"
                               "${searchData.locationId}\n"
                               "${searchData.priceMin}\n"
@@ -249,6 +249,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           isSellCubit.setState(true);
                           isAreaSearchCubit.setState(true);
                           locationDetectedCubit.setState(false);
+                          searchData = SearchData.init();
                         },
                       ),
                     ),
@@ -589,7 +590,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                   isArea: isAreaSearchCubit.state,
                                   locationId: locationIdCubit,
                                 )));
-                    print("baba : ${locationIdCubit.state}");
                     searchData.locationId = locationIdCubit.state;
                     isPressSearchCubit.setState(false);
                   },
@@ -613,5 +613,4 @@ class _SearchScreenState extends State<FilterSearchScreen> {
       ],
     );
   }
-
 }

@@ -77,18 +77,6 @@ class UserAuthenticationRepository {
     // return user;
   }
 
-  Future<User> loginByToken(String token) async {
-    Response response = await userAuthenticationProvider.loginByToken(token);
-    if (response.statusCode == 422) {
-      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
-    }
-    if (response.statusCode != 200) {
-      throw UnknownException();
-    }
-    User user = User.fromJson(jsonDecode(response.toString())["data"]);
-    return user;
-  }
-
   Future login(String authentication, String password) async {
     Response response;
 

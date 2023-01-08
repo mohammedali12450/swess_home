@@ -14,8 +14,8 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
   List<Estate> specialEstates = [];
   List<Estate> mostViewEstates = [];
   int page = 1;
-  bool isIdenticalFetching = false;
-  bool isSimilarFetching = false;
+  int filterPage = 1;
+  bool isFetching = false;
 
   EstateBloc(this.estateRepository) : super(EstateFetchNone()) {
     on<EstateFetchStarted>(
@@ -26,6 +26,27 @@ class EstateBloc extends Bloc<EstateEvent, EstateState> {
               event.searchData, event.isAdvanced, page, event.token);
           emit(EstateFetchComplete(estateSearch: estateSearch!));
           page++;
+        } on ConnectionException catch (e) {
+          emit(
+            EstateFetchError(
+                errorMessage: e.errorMessage, isConnectionError: true),
+          );
+        } on GeneralException catch (e) {
+          emit(
+            EstateFetchError(errorMessage: e.errorMessage!),
+          );
+        }
+      },
+    );
+
+    on<FilterEstateFetchStarted>(
+      (event, emit) async {
+        emit(FilterEstateFetchProgress());
+        try {
+          estateSearch = await estateRepository.search(
+              event.searchData, event.isAdvanced, filterPage, event.token);
+          emit(FilterEstateFetchComplete(estateSearch: estateSearch!));
+          filterPage++;
         } on ConnectionException catch (e) {
           emit(
             EstateFetchError(

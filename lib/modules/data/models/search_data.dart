@@ -32,6 +32,10 @@ class SearchData {
       this.sortBy,
       this.sortType});
 
+  factory SearchData.init() {
+    return SearchData(locationId: 0, estateTypeId: 0, estateOfferTypeId: 1);
+  }
+
   Map<String, dynamic> toJson(bool isAdvanced) {
     return {
       "location_id": locationId,

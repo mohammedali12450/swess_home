@@ -44,6 +44,7 @@ import 'modules/business_logic_components/bloc/notifications_bloc/notifications_
 import 'modules/business_logic_components/bloc/ownership_type_bloc/ownership_type_bloc.dart';
 import 'modules/business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
 import 'modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
+import 'modules/business_logic_components/bloc/rent_estate_bloc/rent_estate_bloc.dart';
 import 'modules/business_logic_components/bloc/send_estate_bloc/send_estate_bloc.dart';
 import 'modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'modules/business_logic_components/bloc/user_data_bloc/user_data_bloc.dart';
@@ -59,6 +60,7 @@ import 'modules/data/repositories/notifications_repository.dart';
 import 'modules/data/repositories/ownership_type_repository.dart';
 import 'modules/data/repositories/period_types_repository.dart';
 import 'modules/data/repositories/price_domains_repository.dart';
+import 'modules/data/repositories/rent_estate_repository.dart';
 import 'modules/data/repositories/system_variables_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -270,6 +272,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         BlocProvider(
           create: (_) => GovernoratesBloc(),
+        ),
+        BlocProvider(
+          create: (_) => RentEstateBloc(RentEstateRepository()),
         ),
       ],
       child: MultiProvider(

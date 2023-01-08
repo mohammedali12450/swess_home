@@ -130,11 +130,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 color: AppColors.white,
               ),
               onPressed: () {
-                print("baba mama");
                 Share.share(
                     'Real Estate Offer https://www.swesshome.com/estate/${widget.estate.id}');
                 if (UserSharedPreferences.getAccessToken() != null) {
-                  print("baba mama");
                   shareBloc.add(
                     ShareStarted(
                       estateId: widget.estate.id!,
@@ -363,7 +361,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         child: Text(
                           DateHelper.getDateByFormat(
                               DateTime.parse(
-                                widget.estate.createdAt.toString(),
+                                widget.estate.publishedAt.toString(),
                               ),
                               "yyyy/MM/dd"),
                           style: Theme.of(context).textTheme.subtitle2,

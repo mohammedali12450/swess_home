@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,7 +49,6 @@ class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    //User? user = BlocProvider.of<UserLoginBloc>(context).user;
     return SingleChildScrollView(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -64,7 +62,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
   buildUserDrawer(isDark) {
     return SizedBox(
-      height: getScreenHeight(context),
+      height: getScreenHeight(context) / 1.1,
       child: Column(
         children: [
           Container(
@@ -181,7 +179,6 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           BlocBuilder<UserLoginBloc, UserLoginState>(
             builder: (context, userLoginState) {
-              if (UserSharedPreferences.getAccessToken() != null) {
                 return RowInformation(
                   content: AppLocalizations.of(context)!.log_out,
                   iconData: Icons.logout,
@@ -234,8 +231,6 @@ class _MyDrawerState extends State<MyDrawer> {
                     );
                   },
                 );
-              }
-              return Container();
             },
           ),
         ],

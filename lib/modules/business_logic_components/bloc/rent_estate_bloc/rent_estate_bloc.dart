@@ -11,13 +11,17 @@ class RentEstateBloc extends Bloc<RentEstatesEvent, RentEstateState> {
 
   bool? rentEstate;
   List<RentEstate>? rentEstates;
+  int page = 1;
+  int filterPage = 1;
+  bool isFetching = false;
+  bool isFilter = false;
 
   RentEstateBloc(this._messageRepository) : super(RentEstateFetchNone()) {
     on<SendRentEstatesFetchStarted>((event, emit) async {
       emit(SendRentEstateFetchProgress());
       try {
-        rentEstate =
-            await _messageRepository.sendRentEstate(event.token, event.rentEstate);
+        rentEstate = await _messageRepository.sendRentEstate(
+            event.token, event.rentEstate);
         emit(SendRentEstateFetchComplete());
       } catch (e, stack) {
         if (e is GeneralException) {
@@ -30,8 +34,25 @@ class RentEstateBloc extends Bloc<RentEstatesEvent, RentEstateState> {
     on<GetRentEstatesFetchStarted>((event, emit) async {
       emit(GetRentEstateFetchProgress());
       try {
-        rentEstates = await _messageRepository.getRentEstates(event.rentEstateFilter);
+        rentEstates = await _messageRepository.getRentEstates(
+            event.rentEstateFilter, page);
         emit(GetRentEstateFetchComplete(rentEstates: rentEstates!));
+        page++;
+      } catch (e, stack) {
+        if (e is GeneralException) {
+          emit(RentEstateFetchError(error: e.errorMessage!));
+        }
+        print(e);
+        print(stack);
+      }
+    });
+    on<FilterRentEstatesFetchStarted>((event, emit) async {
+      emit(FilterRentEstateFetchProgress());
+      try {
+        rentEstates = await _messageRepository.getRentEstates(
+            event.rentEstateFilter, filterPage);
+        emit(FilterRentEstateFetchComplete(rentEstates: rentEstates!));
+        filterPage++;
       } catch (e, stack) {
         if (e is GeneralException) {
           emit(RentEstateFetchError(error: e.errorMessage!));

@@ -13,6 +13,7 @@ import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+import 'package:swesshome/modules/presentation/pages/terms_condition_page.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_snack_bar.dart';
@@ -258,6 +259,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
         6.verticalSpace,
         const Divider(thickness: 0.2),
         6.verticalSpace,
+        buildListTile(
+          isEnglish,
+          icon: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Icon(Icons.verified_user_outlined),
+          ),
+          title: Text(AppLocalizations.of(context)!.terms_condition),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const TermsAndConditionsPage()));
+          },
+        ),
+        buildListTile(
+          isEnglish,
+          icon: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Icon(Icons.lightbulb_outline),
+          ),
+          title:
+              Text(AppLocalizations.of(context)!.intellectual_property_rights),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const TermsAndConditionsPage()));
+          },
+        ),
         //buildChangePassword,
         buildListTile(
           isEnglish,

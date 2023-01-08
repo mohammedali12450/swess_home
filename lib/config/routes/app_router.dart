@@ -39,7 +39,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/re
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/area_units_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/area_units_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_data_fetch_bloc/user_data_fetch_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/after_estate_order_screen.dart';
@@ -295,7 +294,6 @@ class AppRouter {
     if (isIntroductionScreenPassed) {
       if (isThereStoredUser) {
         UserDataState userDataFetchState = userDataBloc.state;
-        print("hello every $userDataFetchState");
         if (userDataFetchState is UserDataComplete) {
           userLoginBloc.user = userDataFetchState.user;
           UserSharedPreferences.setPhoneNumber(userDataFetchState.user!.authentication!);

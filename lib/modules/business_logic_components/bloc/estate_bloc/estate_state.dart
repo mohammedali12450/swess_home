@@ -15,6 +15,12 @@ class EstateFetchComplete extends EstateState {
   EstateFetchComplete({required this.estateSearch});
 }
 
+class FilterEstateFetchComplete extends EstateState {
+  EstateSearch estateSearch;
+
+  FilterEstateFetchComplete({required this.estateSearch});
+}
+
 class EstateOfficeFetchComplete extends EstateState {
   List<Estate> estates;
   //EstateSearch estateSearch;
@@ -38,6 +44,7 @@ class EstateMostViewFetchComplete extends EstateState {
 }
 
 class EstateFetchProgress extends EstateState {}
+class FilterEstateFetchProgress extends EstateState {}
 class EstateSpacialFetchProgress extends EstateState {}
 class EstateNewestFetchProgress extends EstateState {}
 class EstateMostViewFetchProgress extends EstateState {}

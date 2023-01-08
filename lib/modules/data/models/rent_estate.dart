@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class RentEstate {
   int id;
   String location;
@@ -38,7 +40,7 @@ class RentEstate {
         location: json["location"],
         estateType: json["estate_type"],
         periodType: json["period_type"],
-        interiorStatuses: json["interior_statuses"],
+        interiorStatuses: json["interior_status"] == null ? "" : json["interior_status"],
         floor: json["floors_count"],
         room: json["rooms_count"],
         salon: json["salons_count"],
@@ -48,8 +50,8 @@ class RentEstate {
         isFurnished: json["is_furnished"],
         whatsAppNumber:
             json["whatsapp_number"] == null ? null : json["whatsapp_number"],
-        phoneNumber: json["customer_phone"],
-        publishedAt: json["published_at"]);
+        phoneNumber: json["customer_phone"] == null ? "" : json["customer_phone"],
+        publishedAt: json["published_at"] == null ? "" : json["published_at"]);
   }
 }
 
@@ -64,7 +66,7 @@ class RentEstateRequest {
   int bathroom;
   int price;
   int space;
-  bool isFurnished;
+  int isFurnished;
   String? whatsAppNumber;
 
   RentEstateRequest(
@@ -93,7 +95,7 @@ class RentEstateRequest {
         bathroom: 0,
         price: 0,
         space: 0,
-        isFurnished: false);
+        isFurnished: 0);
   }
 
   Future<Map<String, dynamic>> toJson() async {
@@ -101,7 +103,7 @@ class RentEstateRequest {
     map["location"] = locationId;
     map["estate_type"] = estateTypeId;
     map["period_type"] = periodTypeId;
-    map["interior_statuses"] = interiorStatusesId;
+    map["interior_status"] = interiorStatusesId;
     map["floors"] = floor;
     map["rooms"] = room;
     map["salons"] = salon;

@@ -16,12 +16,6 @@ class UserAuthenticationProvider {
     return response;
   }
 
-  Future loginByToken(String token) async {
-    NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(userLoginByTokenUrl, token: token);
-    return response;
-  }
-
   Future login(String authentication, String password) async {
     NetworkHelper helper = NetworkHelper();
     Response response;

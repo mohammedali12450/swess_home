@@ -13,6 +13,17 @@ class EstateFetchStarted extends EstateEvent {
       required this.token});
 }
 
+class FilterEstateFetchStarted extends EstateEvent {
+  SearchData searchData;
+  bool isAdvanced;
+  String? token;
+
+  FilterEstateFetchStarted(
+      {required this.searchData,
+      required this.isAdvanced,
+      required this.token});
+}
+
 class OfficeEstatesFetchStarted extends EstateEvent {
   int officeId;
 

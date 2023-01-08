@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
+import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/last_visited_estates_bloc/last_visited_estates_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/last_visited_estates_bloc/last_visited_estates_event.dart';
@@ -47,7 +48,23 @@ class _SearchScreen1State extends State<SearchScreen1> {
       body: Center(
           child: UserSharedPreferences.getAccessToken() == null
               ? buildEmptyScreen()
-              : buildEstateList()),
+              : Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Text(AppLocalizations.of(context)!.have_recent_search + " :"),
+                      ],
+                    ),
+                  ),
+                  kHe24,
+                  Padding(
+                    padding: EdgeInsets.only(top: 50.h),
+                    child: buildEstateList(),
+                  ),
+                ],
+              )),
       floatingActionButton: Padding(
         padding: EdgeInsets.symmetric(vertical: 5.w),
         child: Directionality(

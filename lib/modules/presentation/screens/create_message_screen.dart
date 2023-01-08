@@ -8,6 +8,7 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/message_bloc/message_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/message_bloc/message_state.dart';
+import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/repositories/send_message_repository.dart';
 
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
@@ -29,6 +30,7 @@ class CreateMessageScreen extends StatefulWidget {
 
 class _CreateMessageScreenState extends State<CreateMessageScreen> {
   TextEditingController messageController = TextEditingController();
+  ChannelCubit messageCubit = ChannelCubit("");
 
   late UserDataBloc _userDataBloc;
   late MessageBloc _messageBloc;
@@ -111,7 +113,7 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                     onPressed: () async {
                       _messageBloc.add(SendMessagesFetchStarted(
                         token: UserSharedPreferences.getAccessToken(),
-                        message: messageController.text,
+                        message: messageCubit.state,
                       ));
                       if (messageState is SendMessageFetchComplete) {
                         Fluttertoast.showToast(
@@ -224,6 +226,13 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                     AppLocalizations.of(context)!.message_notes_descriptions,
               ),
               maxLines: 8,
+              onTap: () {
+                print(messageController.text);
+              },
+              onChanged: (vale) {
+                print(messageController.text);
+                messageCubit.setState(messageController.text);
+              },
             ),
           ),
         ),

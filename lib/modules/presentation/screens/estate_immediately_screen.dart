@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/presentation/screens/region_screen.dart';
 import '../../../constants/design_constants.dart';
+import '../../../core/functions/app_theme_information.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import '../../business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_bloc.dart';
@@ -20,6 +23,7 @@ import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/rent_estate_repository.dart';
 import '../widgets/my_dropdown_list.dart';
+import '../widgets/res_text.dart';
 import 'create_estate_immediately_screen.dart';
 
 class EstateImmediatelyScreen extends StatefulWidget {
@@ -33,15 +37,17 @@ class EstateImmediatelyScreen extends StatefulWidget {
 class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
   late RentEstateBloc _rentEstateBloc;
   List<RentEstate> rentEstates = [];
-  int locationId = 0;
 
   TextEditingController locationController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   ChannelCubit isPressSearchCubit = ChannelCubit(false);
+  ChannelCubit isFilterCubit = ChannelCubit(false);
   late List<EstateType> estatesTypes;
   List<EstateType> estateTypes = [];
   late List<PeriodType> periodTypes;
   int? estateTypeId;
+  bool isEstatesFinished = false;
   final ChannelCubit _priceSelected = ChannelCubit(false);
   ChannelCubit locationIdCubit = ChannelCubit(0);
   RentEstateFilter rentEstateFilter = RentEstateFilter.init();
@@ -71,6 +77,34 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
         AppLocalizations.of(context)!.location;
     return Scaffold(
       body: CustomScrollView(
+        controller: _scrollController
+          ..addListener(
+            () {
+              if (_scrollController.offset ==
+                      _scrollController.position.maxScrollExtent &&
+                  !_rentEstateBloc.isFetching &&
+                  !isEstatesFinished) {
+                _rentEstateBloc.isFilter = false;
+                _rentEstateBloc
+                  ..isFetching = true
+                  ..add(
+                    !isFilterCubit.state
+                        ? GetRentEstatesFetchStarted(
+                            rentEstateFilter: RentEstateFilter(
+                                locationId: null,
+                                periodTypeId: null,
+                                estateTypeId: null,
+                                price: "desc"),
+                          )
+                        : FilterRentEstatesFetchStarted(
+                            rentEstateFilter: rentEstateFilter),
+                  );
+                print("ghina : ${rentEstateFilter.price}\n"
+                    "${rentEstateFilter.locationId}\n"
+                    "${rentEstateFilter.estateTypeId}\n");
+              }
+            },
+          ),
         slivers: [
           SliverAppBar(
             floating: true,
@@ -137,9 +171,56 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
           BlocBuilder<RentEstateBloc, RentEstateState>(
             bloc: _rentEstateBloc,
             builder: (_, getRentState) {
-              if (getRentState is GetRentEstateFetchProgress) {}
+              if (getRentState is GetRentEstateFetchProgress ||
+                  getRentState is GetRentEstateFetchProgress) {}
               if (getRentState is GetRentEstateFetchComplete) {
-                rentEstates = getRentState.rentEstates;
+                rentEstates.addAll(getRentState.rentEstates);
+                _rentEstateBloc.isFetching = false;
+                if (getRentState.rentEstates.isEmpty &&
+                    rentEstates.isNotEmpty) {
+                  isEstatesFinished = true;
+                }
+              }
+              if (getRentState is FilterRentEstateFetchComplete) {
+                if (_rentEstateBloc.filterPage == 2) {
+                  rentEstates = getRentState.rentEstates;
+                  isEstatesFinished = false;
+                } else {
+                  rentEstates.addAll(getRentState.rentEstates);
+                }
+                _rentEstateBloc.isFetching = false;
+                if (getRentState.rentEstates.isEmpty &&
+                    rentEstates.isNotEmpty) {
+                  isEstatesFinished = true;
+                }
+              }
+              if (rentEstates.isEmpty) {
+                return SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: getScreenHeight(context) / 1.2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.24),
+                          size: 120,
+                        ),
+                        kHe24,
+                        Text(
+                          AppLocalizations.of(context)!.no_results_hint,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               }
               return SliverFixedExtentList(
                 itemExtent: 250,
@@ -236,15 +317,23 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                           isPressSearchCubit: isPressSearchCubit,
                           locationId: locationIdCubit,
                         )));
-            locationId = locationIdCubit.state;
+            rentEstateFilter.locationId = locationIdCubit.state;
             isPressSearchCubit.setState(false);
           },
           child: BlocBuilder<ChannelCubit, dynamic>(
             bloc: isPressSearchCubit,
             builder: (_, isPress) {
-              if(isPress){
-                _rentEstateBloc.add(GetRentEstatesFetchStarted(
-                    rentEstateFilter: RentEstateFilter(locationId: locationId)));
+              if (isPress) {
+                _rentEstateBloc.isFilter = true;
+                isFilterCubit.setState(true);
+                _rentEstateBloc.filterPage = 1;
+                rentEstateFilter.locationId = locationIdCubit.state;
+
+                _rentEstateBloc.add(FilterRentEstatesFetchStarted(
+                    rentEstateFilter: rentEstateFilter));
+                print("ghina1 : ${rentEstateFilter.price}\n"
+                    "${rentEstateFilter.locationId}\n"
+                    "${rentEstateFilter.estateTypeId}\n");
               }
               return Center(
                 child: Row(
@@ -412,12 +501,19 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
             AppLocalizations.of(context)!.ok,
           ),
           onPressed: () async {
+            _rentEstateBloc.filterPage = 1;
             // print(rentEstateFilter.estateTypeId);
             // print(rentEstateFilter.periodTypeId);
             // print(rentEstateFilter.locationId);
             // print(rentEstateFilter.price);
-            _rentEstateBloc.add(
-                GetRentEstatesFetchStarted(rentEstateFilter: rentEstateFilter));
+            _rentEstateBloc.isFilter = true;
+            isFilterCubit.setState(true);
+            _rentEstateBloc.add(FilterRentEstatesFetchStarted(
+                rentEstateFilter: rentEstateFilter));
+            print("ghina2 : ${rentEstateFilter.price}\n"
+                "${rentEstateFilter.locationId}\n"
+                "${rentEstateFilter.estateTypeId}\n");
+            //_rentEstateBloc.isFilter = false;
             Navigator.pop(context);
           },
         ),
@@ -568,6 +664,45 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget buildEstatesFinished() {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        vertical: 50.h,
+      ),
+      width: 1.sw,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          kWi16,
+          Expanded(
+            flex: 2,
+            child: Divider(
+              color: Theme.of(context).colorScheme.primary,
+              thickness: 1,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: ResText(
+              AppLocalizations.of(context)!.no_more_results,
+              textAlign: TextAlign.center,
+              textStyle: textStyling(S.s18, W.w5, C.bl),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Divider(
+              color: Theme.of(context).colorScheme.primary,
+              thickness: 1,
+            ),
+          ),
+          kWi16,
+        ],
+      ),
     );
   }
 }
