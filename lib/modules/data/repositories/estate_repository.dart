@@ -27,10 +27,30 @@ class EstateRepository {
       rethrow;
     }
 
-    if (response.statusCode != 201) {
+    if (response.statusCode != 200) {
       throw UnknownException();
     }
     return response;
+  }
+
+  Future getEstate(int estateId) async {
+    Response response;
+
+    try {
+      response = await _estateProvider.getEstate(estateId);
+    } catch (e) {
+      rethrow;
+    }
+
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: "! لا يمكن الاتصال بالسيرفر");
+    }
+
+    dynamic jsonEstates = jsonDecode(response.toString())["data"];
+
+    Estate estates =  Estate.fromJson(jsonEstates);
+
+    return estates;
   }
 
   Future<EstateSearch> search(
@@ -108,25 +128,6 @@ class EstateRepository {
     return estateSearch;
   }
 
-  Future getOfficeEstates(int officeId) async {
-    Response response;
-
-    try {
-      response = await _estateProvider.getOfficeEstates(officeId);
-    } catch (e) {
-      rethrow;
-    }
-
-    if (response.statusCode != 200) {
-      throw GeneralException(errorMessage: "! لا يمكن الاتصال بالسيرفر");
-    }
-
-    dynamic jsonEstates = jsonDecode(response.toString())["data"];
-    List<Estate> estates = [];
-    estates = jsonEstates.map<Estate>((e) => Estate.fromJson(e)).toList();
-    return estates;
-  }
-
   Future getOfficeDetails(int officeId, int page, String? token) async {
     Response response;
     try {
@@ -150,10 +151,13 @@ class EstateRepository {
     dynamic jsonEstates = jsonDecode(response.toString())["data"]["estates"];
 
     print("ghina1: $jsonEstates");
+    print("ghina2: $jsonCommunication");
+    print("ghina3: $jsonOffice");
     EstateOffice office = EstateOffice.fromJson(jsonOffice);
     print("gaga1");
+
     CommunicationMedias? communicationMedias;
-    if (jsonCommunication == []) {
+    if (jsonCommunication == null) {
       communicationMedias = null;
     } else {
       communicationMedias = CommunicationMedias.fromJson(jsonCommunication);
@@ -263,6 +267,7 @@ class EstateRepository {
         await _estateProvider.visitRegister(token, visitId, visitType);
 
     if (response.statusCode != 200) {
+     print(jsonDecode(response.toString())["data"]);
       throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر!");
     }
 
@@ -301,8 +306,8 @@ class EstateRepository {
     }
 
     dynamic jsonEstates = jsonDecode(response.toString())["data"];
-    List<Estate> estates = [];
-    estates = jsonEstates.map<Estate>((e) => Estate.fromJson(e)).toList();
+    List<SpecialEstate> estates = [];
+    estates = jsonEstates.map<SpecialEstate>((e) => SpecialEstate.fromJson(e)).toList();
     return estates;
   }
 

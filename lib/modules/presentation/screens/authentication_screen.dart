@@ -319,7 +319,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 } else {
                   Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (_) => const NavigationBarScreen()),
+                      MaterialPageRoute(
+                          builder: (_) => const NavigationBarScreen()),
                       (route) => false);
                 }
               }
@@ -359,8 +360,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                 } else {
                                   Navigator.pushAndRemoveUntil(
                                       context,
-                                      MaterialPageRoute(builder: (_) => const NavigationBarScreen()),
-                                          (route) => false);
+                                      MaterialPageRoute(
+                                          builder: (_) =>
+                                              const NavigationBarScreen()),
+                                      (route) => false);
                                 }
                               },
                             ),
@@ -762,7 +765,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           BlocBuilder<ChannelCubit, dynamic>(
             bloc: userCountry,
             builder: (_, state) {
-              List<Governorate>? governorates;
+              List<Governorate> governorates = [];
               return state == "Syrian Arab Republic"
                   ? BlocBuilder<GovernoratesBloc, dynamic>(
                       bloc: governoratesBloc,
@@ -787,17 +790,33 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                               bloc: countryError,
                               builder: (_, errorMessage) {
                                 return MyDropdownList(
-                                  elementsList:
-                                      governorates!.map((e) => e.name).toList(),
+                                  elementsList: governorates.map((e) {
+                                    return e.name;
+                                  }).toList(),
                                   onSelect: (index) {
-                                    selectedGovernorateId = index;
+                                    selectedGovernorateId = index + 1;
                                   },
-                                  // validator: (value) => value == null
-                                  //     ? AppLocalizations.of(context)!.this_field_is_required
-                                  //     : null,
+                                  validator: (value) => value == null
+                                      ? AppLocalizations.of(context)!
+                                          .this_field_is_required
+                                      : null,
                                   selectedItem: AppLocalizations.of(context)!
                                       .please_select,
                                 );
+                                // return DropdownButtonFormField<Governorate>(
+                                //   value: _ratingController,
+                                //   items: governorates!
+                                //       .map((label) => DropdownMenuItem(
+                                //     child: Text(label.name),
+                                //     value: label.name,
+                                //   )).toList(),
+                                //   hint: Text('Rating'),
+                                //   onChanged: (value) {
+                                //     setState(() {
+                                //       _ratingController = value;
+                                //     });
+                                //   },
+                                // );
                               },
                             ),
                           ],

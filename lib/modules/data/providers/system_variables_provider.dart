@@ -6,7 +6,7 @@ class SystemVariablesProvider{
 
   Future fetchData()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(systemVariablesUrl);
+    Response response = await helper.get(systemVariablesURL);
     return response ;
   }
 

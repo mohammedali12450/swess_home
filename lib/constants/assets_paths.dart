@@ -25,6 +25,12 @@ const String sadFacePath = 'assets/icons/sad_face.svg' ;
 const String happyFacePath = 'assets/icons/happy_face.svg' ;
 const String normalFacePath = 'assets/icons/normal_face.svg' ;
 const String id1IconPath = 'assets/icons/id.svg' ;
+const String estateIconPath = 'assets/icons/estate.png' ;
+const String farmIconPath = 'assets/icons/farm.png' ;
+const String landIconPath = 'assets/icons/land.png' ;
+const String shopIconPath = 'assets/icons/shop.png' ;
+const String buildIconPath = 'assets/icons/building.png' ;
+const String villaIconPath = 'assets/icons/villa.png' ;
 
 
 

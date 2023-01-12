@@ -33,26 +33,26 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            AppLocalizations.of(context)!.create_estate_order,
-          ),
-          actions: [ Container(
-            margin: EdgeInsets.only(
-              left: (isArabic) ? 16.w : 0,
-              right: (!isArabic) ? 16.w : 0,
+            title: Text(
+              AppLocalizations.of(context)!.create_estate_order,
             ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.history,
-                color: AppColors.white,
-              ),
-              onPressed: () {
-                Navigator.pushNamed(context, RecentEstateOrdersScreen.id);
-              },
-            ),
-          )
-          ]
-        ),
+            actions: [
+              Container(
+                margin: EdgeInsets.only(
+                  left: (isArabic) ? 16.w : 0,
+                  right: (!isArabic) ? 16.w : 0,
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.history,
+                    color: AppColors.white,
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, RecentEstateOrdersScreen.id);
+                  },
+                ),
+              )
+            ]),
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
@@ -74,22 +74,26 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
               kHe24,
               Text(
                 AppLocalizations.of(context)!.after_order_body,
-                style: Theme.of(context).textTheme.bodyText2!.copyWith(height: 1.8),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText2!
+                    .copyWith(height: 1.8),
                 textAlign: TextAlign.center,
                 maxLines: 50,
               ),
               kHe40,
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(200 , 64) ,
+                  fixedSize: const Size(200, 64),
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.ok,
                 ),
                 onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    NavigationBarScreen.id,
+                    MaterialPageRoute(
+                        builder: (_) => const NavigationBarScreen()),
                     ModalRoute.withName('/'),
                   );
                 },

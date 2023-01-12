@@ -9,7 +9,7 @@ class RegionsRepository {
 
   Future<List<Location>> getRegions() async {
     Response response = await _regionsProvider.getRegions();
-    var jsonLocations = jsonDecode(response.toString())["data"] as List ;
+    var jsonLocations = jsonDecode(response.toString())["data"]["data"] as List ;
     List<Location> locations = jsonLocations.map<Location>((locationJson) =>
         Location.fromJson(locationJson)).toList();
     return locations ;

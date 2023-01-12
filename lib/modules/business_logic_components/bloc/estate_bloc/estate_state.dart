@@ -8,11 +8,17 @@ class EstateFetchError extends EstateState {
   EstateFetchError({required this.errorMessage , this.isConnectionError = false});
 }
 
-class EstateFetchComplete extends EstateState {
+class EstatesFetchComplete extends EstateState {
   //List<Estate> estates;
   EstateSearch estateSearch;
 
-  EstateFetchComplete({required this.estateSearch});
+  EstatesFetchComplete({required this.estateSearch});
+}
+
+class EstateFetchComplete extends EstateState {
+  Estate estate;
+
+  EstateFetchComplete({required this.estate});
 }
 
 class FilterEstateFetchComplete extends EstateState {
@@ -21,32 +27,8 @@ class FilterEstateFetchComplete extends EstateState {
   FilterEstateFetchComplete({required this.estateSearch});
 }
 
-class EstateOfficeFetchComplete extends EstateState {
-  List<Estate> estates;
-  //EstateSearch estateSearch;
-
-  EstateOfficeFetchComplete({required this.estates});
-}
-
-class EstateNewestFetchComplete extends EstateState {
-  List<Estate> estates;
-  EstateNewestFetchComplete({required this.estates});
-}
-
-class EstateSpacialFetchComplete extends EstateState {
-  List<Estate> estates;
-  EstateSpacialFetchComplete({required this.estates});
-}
-
-class EstateMostViewFetchComplete extends EstateState {
-  List<Estate> estates;
-  EstateMostViewFetchComplete({required this.estates});
-}
-
+class EstatesFetchProgress extends EstateState {}
 class EstateFetchProgress extends EstateState {}
 class FilterEstateFetchProgress extends EstateState {}
-class EstateSpacialFetchProgress extends EstateState {}
-class EstateNewestFetchProgress extends EstateState {}
-class EstateMostViewFetchProgress extends EstateState {}
 
 class EstateFetchNone extends EstateState {}

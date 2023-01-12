@@ -10,8 +10,8 @@ import '../providers/send_message_provider.dart';
 class MessageRepository {
   final MessageProvider _messageProvider = MessageProvider();
 
-  Future<List<Message>> getMessages(String token) async {
-    Response response = await _messageProvider.getMessages(token);
+  Future<List<Message>> getMessages(String token, int page) async {
+    Response response = await _messageProvider.getMessages(token, page);
     if (response.statusCode != 200) {
       throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر");
     }

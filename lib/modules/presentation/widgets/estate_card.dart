@@ -85,7 +85,7 @@ class _EstateCardState extends State<EstateCard> {
     );
 
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null ) {
+    if (user != null) {
       userToken = UserSharedPreferences.getAccessToken()!;
     }
   }
@@ -105,8 +105,7 @@ class _EstateCardState extends State<EstateCard> {
     int intPrice = int.parse(widget.estate.price!);
     String estatePrice = NumbersHelper.getMoneyFormat(intPrice);
 
-    String estateType =
-        widget.estate.estateType!.name.split('|').elementAt(1);
+    String estateType = widget.estate.estateType!.name.split('|').elementAt(1);
     String addingDate = DateHelper.getDateByFormat(
         DateTime.parse(widget.estate.publishedAt!), "yyyy/MM/dd");
     List<String> estateImages = widget.estate.images!
@@ -140,8 +139,7 @@ class _EstateCardState extends State<EstateCard> {
             break;
           }
       }
-    }
-    else {
+    } else {
       switch (widget.estate.contractId!) {
         case 1:
         case 2:
@@ -396,10 +394,11 @@ class _EstateCardState extends State<EstateCard> {
                                     AppLocalizations.of(context)!
                                         .currency_over_period(
                                       currency,
-                                      widget.estate.periodType!
-                                          .name
-                                          .split("|")
-                                          .first,
+                                      widget.estate.periodType != null
+                                          ? widget.estate.periodType!.name
+                                              .split("|")
+                                              .first
+                                          : "",
                                     ),
                                     style: Theme.of(context)
                                         .textTheme
@@ -559,7 +558,8 @@ class _EstateCardState extends State<EstateCard> {
                                       BlocProvider.of<UserLoginBloc>(context)
                                           .user;
                                   if (user != null) {
-                                    userToken = UserSharedPreferences.getAccessToken();
+                                    userToken =
+                                        UserSharedPreferences.getAccessToken();
                                   }
                                   return;
                                 },
@@ -680,8 +680,9 @@ class _EstateCardState extends State<EstateCard> {
                                   User? user =
                                       BlocProvider.of<UserLoginBloc>(context)
                                           .user;
-                                  if (user != null ) {
-                                    userToken = UserSharedPreferences.getAccessToken();
+                                  if (user != null) {
+                                    userToken =
+                                        UserSharedPreferences.getAccessToken();
                                   }
                                   return;
                                 },

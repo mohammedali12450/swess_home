@@ -7,14 +7,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../../../constants/api_paths.dart';
 
 class ImagesViewerScreen extends StatefulWidget {
   final List<String> images;
   final String screenTitle;
+  final String videoUrl;
 
-  const ImagesViewerScreen(this.images, this.screenTitle, {Key? key})
+  const ImagesViewerScreen(this.images, this.screenTitle, this.videoUrl,
+      {Key? key})
       : super(key: key);
 
   @override
@@ -23,26 +26,32 @@ class ImagesViewerScreen extends StatefulWidget {
 
 class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
   ChannelCubit currentImageCubit = ChannelCubit(0);
+  late YoutubePlayerController _ytbPlayerController;
 
   // Future<void> secureScreen() async {
   //   await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
   // }
   //
-  // @override
-  // void initState() {
-  //   secureScreen();
-  //   super.initState();
-  // }
-  //
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //    FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
-  // }
+  @override
+  void initState() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      setState(() {
+        String? id = convertUrlToId(widget.videoUrl);
+        id ??= "";
+        _ytbPlayerController = YoutubePlayerController(
+          initialVideoId: id,
+          params: const YoutubePlayerParams(
+            showFullscreenButton: true,
+            autoPlay: false,
+          ),
+        );
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-   
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -57,18 +66,18 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
             ],
           ),
         ),
-        body:TabBarView(
+        body: TabBarView(
           children: [
             buildImageScreen(),
-            Icon(Icons.directions_car, size: 350),
+            buildVideoScreen(),
+            //Icon(Icons.directions_car, size: 350),
           ],
         ),
-
       ),
     );
   }
 
-  Widget buildImageScreen(){
+  Widget buildImageScreen() {
     List<Image> image = [];
     for (int i = 0; i < widget.images.length; i++) {
       image.add(Image.network(imagesBaseUrl + widget.images.elementAt(i)));
@@ -92,10 +101,10 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
                   .resolve(const ImageConfiguration())
                   .addListener(ImageStreamListener(
                       (ImageInfo info, bool synchronousCall) {
-                    if (!completer.isCompleted) {
-                      completer.complete(info.image);
-                    }
-                  }));
+                if (!completer.isCompleted) {
+                  completer.complete(info.image);
+                }
+              }));
               return InteractiveViewer(
                 panEnabled: false, // Set it to false to prevent panning.
                 //boundaryMargin: const EdgeInsets.all(80),
@@ -115,17 +124,46 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
                   AppLocalizations.of(context)!.image_counting(
                       (currentImageCubit.state + 1).toString(),
                       widget.images.length.toString()),
-                  style: Theme.of(context)
-                      .textTheme
-                      .subtitle2
-              ),
+                  style: Theme.of(context).textTheme.subtitle2),
             );
           },
         ),
       ],
     );
   }
-  
+
+  Widget buildVideoScreen() {
+    return convertUrlToId(widget.videoUrl) == null
+        ? Container(
+            alignment: Alignment.center,
+            height: getScreenHeight(context),
+            child: Text(AppLocalizations.of(context)!.no_video),
+          )
+        : AspectRatio(
+            aspectRatio: 16 / 9,
+            child: _ytbPlayerController != null
+                ? YoutubePlayerIFrame(controller: _ytbPlayerController)
+                : const Center(child: CircularProgressIndicator()),
+          );
+  }
+
+  static String? convertUrlToId(String url) {
+    if (!url.contains("http") && (url.length == 11)) return url;
+
+    for (var exp in [
+      RegExp(
+          r"^https:\/\/(?:www\.|m\.)?youtube\.com\/watch\?v=([_\-a-zA-Z0-9]{11}).*$"),
+      RegExp(
+          r"^https:\/\/(?:www\.|m\.)?youtube(?:-nocookie)?\.com\/embed\/([_\-a-zA-Z0-9]{11}).*$"),
+      RegExp(r"^https:\/\/youtu\.be\/([_\-a-zA-Z0-9]{11}).*$")
+    ]) {
+      Match? match = exp.firstMatch(url);
+      if (match != null && match.groupCount >= 1) return match.group(1);
+    }
+
+    return null;
+  }
+
 /*@override
   Widget build(BuildContext context) {
     CachedNetworkImage image = CachedNetworkImage(

@@ -11,7 +11,7 @@
 // import 'package:swesshome/constants/design_constants.dart';
 // import 'package:swesshome/constants/enums.dart';
 // import 'package:swesshome/core/storage/shared_preferences/recent_searches_shared_preferences.dart';
-// import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_event.dart';
+// import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_newest_event.dart';
 // import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 // import 'package:swesshome/modules/business_logic_components/bloc/interior_statuses_bloc/interior_statuses_bloc.dart';
 // import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';

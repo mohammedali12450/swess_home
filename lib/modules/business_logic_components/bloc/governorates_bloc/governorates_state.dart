@@ -1,7 +1,3 @@
-
-import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';
-import 'package:swesshome/modules/data/models/location.dart';
-
 import '../../../data/models/governorates.dart';
 
 abstract class GovernoratesState {}

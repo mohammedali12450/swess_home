@@ -64,43 +64,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
           title: Text(
             AppLocalizations.of(context)!.notifications,
           ),
-          actions: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () async {
-                  await showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.confirmation,
-                    AppLocalizations.of(context)!.clear_notifications_dialog,
-                    removeDefaultButton: true,
-                    dialogButtons: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          NotificationRepository notificationRepo =
-                              NotificationRepository();
-                          await notificationRepo.clearNotifications(
-                            token,
-                          );
-                          Navigator.pop(context);
-                          notificationsBloc
-                              .add(NotificationsFetchStarted(token: token));
-                        },
-                        child: Text(AppLocalizations.of(context)!.yes),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(AppLocalizations.of(context)!.cancel),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            )
-          ],
         ),
         body: RefreshIndicator(
           color: Theme.of(context).colorScheme.primary,

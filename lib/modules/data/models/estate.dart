@@ -37,6 +37,7 @@ class Estate {
   int? visitCount;
   String? createdAt;
   String? publishedAt;
+  String? videoUrl;
 
   bool? isLiked;
   bool? isSaved;
@@ -85,6 +86,7 @@ class Estate {
     this.likesCount,
     this.visitCount,
     this.locationS,
+    this.videoUrl
   });
 
   factory Estate.init() {
@@ -206,6 +208,7 @@ class Estate {
       hasSwimmingPool: hasSwimmingPool == null ? null : hasSwimmingPool,
       isFurnished: isFurnished == null ? null : isFurnished,
       isOnBeach: isOnBeach == null ? null : isOnBeach,
+      videoUrl: json['video_url'] == null ? "" :json['video_url']
     );
   }
 
@@ -242,24 +245,25 @@ class Estate {
     map["estate_offer_type_id"] = estateOfferType!.id;
     map["estate_type_id"] = estateType!.id;
     map["area_unit_id"] = areaUnit!.id;
-    map["price"] = price;
-    map["area"] = area;
-    map["id"] = id;
-    map["estate_office_id"] = officeId;
-    map["interior_status_id"] = interiorStatusId;
     map["ownership_type_id"] = ownershipTypeId;
+    map["interior_status_id"] = interiorStatusId;
+    map["estate_office_id"] = officeId;
     map["period_type_id"] = periodTypeId;
-    map["is_furnished"] = isFurnished;
-    map["description"] = description;
-    map["nearby_places"] = nearbyPlaces;
     map["location_id"] = locationId;
-    map["rooms_count"] = roomsCount;
-    map["floor"] = floor;
-    map["period_number"] = period;
     map["longitude"] = longitude;
-    map["on_beach"] = isOnBeach;
     map["latitude"] = latitude;
+    map["rooms_count"] = roomsCount;
+    map["area"] = area;
+    map["nearby_places"] = nearbyPlaces;
+    map["price"] = price;
+    map["floor"] = floor;
+    map["description"] = description;
     map["swimming_pool"] = hasSwimmingPool;
+    map["is_furnished"] = isFurnished;
+    map["on_beach"] = isOnBeach;
+    map["period_number"] = period;
+    //map["estate_office_id"] = estateOffice!.id;
+    map["id"] = id;
     map["floor_plan"] = floorPlanImages;
     map["estate_images[]"] = estateImages;
     map["street_images[]"] = streetImages;
@@ -284,17 +288,26 @@ class Estate {
   }
 }
 
-
-class EstateSearch{
+class EstateSearch {
   List<Estate> identicalEstates;
-  List<Estate> similarEstates ;
+  List<Estate> similarEstates;
 
-  factory EstateSearch.init(){
-    return EstateSearch(
-      identicalEstates : [],
-      similarEstates : []
-    );
+  factory EstateSearch.init() {
+    return EstateSearch(identicalEstates: [], similarEstates: []);
   }
 
   EstateSearch({required this.identicalEstates, required this.similarEstates});
+}
+
+class SpecialEstate {
+  String? imageUrl;
+  int? estateId;
+
+  SpecialEstate({this.imageUrl, this.estateId});
+
+  factory SpecialEstate.fromJson(Map<String, dynamic> json) {
+    return SpecialEstate(
+        imageUrl: json["images"] == null ? null : json["images"],
+        estateId: json["id"] == null ? null : json["id"]);
+  }
 }

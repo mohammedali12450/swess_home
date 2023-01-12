@@ -85,6 +85,12 @@ SizedBox kHe40 = SizedBox(
 SizedBox kHe44 = SizedBox(
   height: 44.h,
 );
+SizedBox kHe50 = SizedBox(
+  height: 50.h,
+);
+SizedBox kHe60 = SizedBox(
+  height: 60.h,
+);
 
 EdgeInsets kTinyAllPadding = EdgeInsets.all(kTinyPadding.w);
 EdgeInsets kSmallAllPadding = EdgeInsets.all(kSmallPadding.w);

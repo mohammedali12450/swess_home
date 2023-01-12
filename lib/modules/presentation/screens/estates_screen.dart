@@ -96,7 +96,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
           create: (_) => estateBloc..add(widget.eventSearch),
           child: BlocConsumer<EstateBloc, EstateState>(
             listener: (_, estateFetchState) async {
-              if (estateFetchState is EstateFetchComplete) {
+              if (estateFetchState is EstatesFetchComplete) {
                 if (estateFetchState.estateSearch.identicalEstates.isEmpty &&
                     estateSearch.identicalEstates.isNotEmpty) {
                   isIdenticalEstatesFinished = true;
@@ -116,10 +116,10 @@ class _EstatesScreenState extends State<EstatesScreen> {
             },
             builder: (context, EstateState estatesFetchState) {
               if (estatesFetchState is EstateFetchNone ||
-                  (estatesFetchState is EstateFetchProgress &&
+                  (estatesFetchState is EstatesFetchProgress &&
                       estateSearch.identicalEstates.isEmpty)) {
                 return const PropertyShimmer();
-              } else if (estatesFetchState is EstateFetchComplete) {
+              } else if (estatesFetchState is EstatesFetchComplete) {
                 if (estatesFetchState
                     .estateSearch.identicalEstates.isNotEmpty) {
                   estateSearch.identicalEstates
@@ -227,17 +227,9 @@ class _EstatesScreenState extends State<EstatesScreen> {
                     buildFilter(),
                     if (estateSearch.identicalEstates.isNotEmpty)
                       buildIdenticalEstates(),
-                    if (estateBloc.isFetching)
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 12.h,
-                        ),
-                        child: SpinKitWave(
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 50,
-                        ),
-                      ),
-                    if (isIdenticalEstatesFinished) buildEstatesFinished(),
+                    if (estateSearch.similarEstates.isNotEmpty)
+                      buildSimilarEstates(),
+                    if (isSimilarEstatesFinished) buildEstatesFinished(),
                   ],
                 ),
               );
@@ -422,22 +414,31 @@ class _EstatesScreenState extends State<EstatesScreen> {
             ],
           ),
         ),
-        if (estateSearch.identicalEstates.isNotEmpty)
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: estateSearch.identicalEstates.length,
-            itemBuilder: (_, index) {
-              return EstateCard(
-                color: Theme.of(context).colorScheme.background,
-                estate: estateSearch.identicalEstates.elementAt(index),
-                onClosePressed: () {
-                  showReportModalBottomSheet(context,
-                      estateSearch.identicalEstates.elementAt(index).id!);
-                },
-                removeCloseButton: false,
-              );
-            },
+        ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: estateSearch.identicalEstates.length,
+          itemBuilder: (_, index) {
+            return EstateCard(
+              color: Theme.of(context).colorScheme.background,
+              estate: estateSearch.identicalEstates.elementAt(index),
+              onClosePressed: () {
+                showReportModalBottomSheet(context,
+                    estateSearch.identicalEstates.elementAt(index).id!);
+              },
+              removeCloseButton: false,
+            );
+          },
+        ),
+        if (estateBloc.isFetching)
+          Container(
+            margin: EdgeInsets.only(
+              top: 12.h,
+            ),
+            child: SpinKitWave(
+              color: Theme.of(context).colorScheme.primary,
+              size: 50,
+            ),
           ),
       ],
     );
@@ -454,22 +455,31 @@ class _EstatesScreenState extends State<EstatesScreen> {
             ],
           ),
         ),
-        if (estateSearch.similarEstates.isNotEmpty)
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: estateSearch.similarEstates.length,
-            itemBuilder: (_, index) {
-              return EstateCard(
-                color: Theme.of(context).colorScheme.background,
-                estate: estateSearch.similarEstates.elementAt(index),
-                onClosePressed: () {
-                  showReportModalBottomSheet(context,
-                      estateSearch.similarEstates.elementAt(index).id!);
-                },
-                removeCloseButton: false,
-              );
-            },
+        ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: estateSearch.similarEstates.length,
+          itemBuilder: (_, index) {
+            return EstateCard(
+              color: Theme.of(context).colorScheme.background,
+              estate: estateSearch.similarEstates.elementAt(index),
+              onClosePressed: () {
+                showReportModalBottomSheet(
+                    context, estateSearch.similarEstates.elementAt(index).id!);
+              },
+              removeCloseButton: false,
+            );
+          },
+        ),
+        if (estateBloc.isFetching)
+          Container(
+            margin: EdgeInsets.only(
+              top: 12.h,
+            ),
+            child: SpinKitWave(
+              color: Theme.of(context).colorScheme.primary,
+              size: 50,
+            ),
           ),
       ],
     );

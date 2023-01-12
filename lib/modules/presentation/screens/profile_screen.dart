@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
+import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
@@ -24,6 +25,7 @@ import '../../business_logic_components/bloc/user_data_bloc/user_data_state.dart
 import '../../business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import '../../business_logic_components/cubits/notifications_cubit.dart';
 import '../../data/models/user.dart';
+import '../pages/intellectual_property_rights_page.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/icone_badge.dart';
@@ -164,6 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       .copyWith(color: Colors.grey),
                 ),
               ),
+              kHe36,
             ],
           ),
         ),
@@ -285,19 +288,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (_) => const TermsAndConditionsPage()));
+                    builder: (_) => const IntellectualPropertyRightsPage()));
           },
         ),
         //buildChangePassword,
-        buildListTile(
-          isEnglish,
-          icon: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.key_outlined),
-          ),
-          title: Text(AppLocalizations.of(context)!.change_password),
-          onTap: () {},
-        ),
+        // buildListTile(
+        //   isEnglish,
+        //   icon: const Padding(
+        //     padding: EdgeInsets.symmetric(horizontal: 10.0),
+        //     child: Icon(Icons.key_outlined),
+        //   ),
+        //   title: Text(AppLocalizations.of(context)!.change_password),
+        //   onTap: () {},
+        // ),
 
         buildDeleteMyAccount(isDark, isEnglish),
         buildLogout(isEnglish),

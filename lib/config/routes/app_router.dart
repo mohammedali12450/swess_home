@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:dio/dio.dart';
@@ -86,7 +87,7 @@ class AppRouter {
   late AreaUnitsBloc areaUnitsBloc;
   late PeriodTypesBloc periodTypesBloc;
   late PriceDomainsBloc priceDomainsBloc;
-  late  UserDataBloc userDataBloc;
+  late UserDataBloc userDataBloc;
   late UserLoginBloc userLoginBloc;
   late SystemVariablesBloc systemVariablesBloc;
   late ReportBloc reportBloc;
@@ -134,6 +135,7 @@ class AppRouter {
                   await fetchBaseUrl();
                   // Fetch application data :
                   fetchApplicationData(context);
+                  downloadUrl();
                   int seconds = 0;
                   while (true) {
                     await Future.delayed(const Duration(seconds: 1));
@@ -249,7 +251,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const LanguagesScreen(),
         );
-        case EditProfileScreen.id:
+      case EditProfileScreen.id:
         return MaterialPageRoute(
           builder: (_) => EditProfileScreen(),
         );
@@ -296,7 +298,8 @@ class AppRouter {
         UserDataState userDataFetchState = userDataBloc.state;
         if (userDataFetchState is UserDataComplete) {
           userLoginBloc.user = userDataFetchState.user;
-          UserSharedPreferences.setPhoneNumber(userDataFetchState.user!.authentication!);
+          UserSharedPreferences.setPhoneNumber(
+              userDataFetchState.user!.authentication!);
         } else if (userDataFetchState is UserDataError) {
           isUserDataFetched = true;
           UserSharedPreferences.clear();
@@ -378,6 +381,21 @@ class AppRouter {
     if (response.data == "1") {
       needUpdate = true;
     }
+    return response;
+  }
+
+  Future downloadUrl() async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+    try {
+      response = await helper.get(
+        downloadURL,
+      );
+    } catch (_) {
+      rethrow;
+    }
+    ApplicationSharedPreferences.setDownloadUrl(
+        jsonDecode(response.toString())["data"]);
     return response;
   }
 }

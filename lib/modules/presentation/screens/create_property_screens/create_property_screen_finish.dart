@@ -42,6 +42,7 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
   }
 
   sendEstate() {
+    print(UserSharedPreferences.getAccessToken());
     int applyProgress = 0;
     _sendEstateBloc.add(
       SendEstateStarted(

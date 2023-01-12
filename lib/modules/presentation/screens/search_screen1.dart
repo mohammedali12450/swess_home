@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
@@ -16,8 +15,8 @@ import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import '../../../constants/assets_paths.dart';
 import '../../business_logic_components/bloc/last_visited_estates_bloc/last_visited_estates_state.dart';
-import '../../data/providers/locale_provider.dart';
 import '../widgets/shimmers/estates_shimmer.dart';
+import 'office_search_screen.dart';
 
 class SearchScreen1 extends StatefulWidget {
   const SearchScreen1({Key? key}) : super(key: key);
@@ -37,7 +36,6 @@ class _SearchScreen1State extends State<SearchScreen1> {
       lastVisitedEstatesBloc.add(LastVisitedEstatesFetchStarted(
           token: UserSharedPreferences.getAccessToken()!));
     }
-
     super.initState();
   }
 
@@ -49,22 +47,24 @@ class _SearchScreen1State extends State<SearchScreen1> {
           child: UserSharedPreferences.getAccessToken() == null
               ? buildEmptyScreen()
               : Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Text(AppLocalizations.of(context)!.have_recent_search + " :"),
-                      ],
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                              AppLocalizations.of(context)!.have_recent_search +
+                                  " :"),
+                        ],
+                      ),
                     ),
-                  ),
-                  kHe24,
-                  Padding(
-                    padding: EdgeInsets.only(top: 50.h),
-                    child: buildEstateList(),
-                  ),
-                ],
-              )),
+                    kHe24,
+                    Padding(
+                      padding: EdgeInsets.only(top: 50.h),
+                      child: buildEstateList(),
+                    ),
+                  ],
+                )),
       floatingActionButton: Padding(
         padding: EdgeInsets.symmetric(vertical: 5.w),
         child: Directionality(
@@ -96,10 +96,81 @@ class _SearchScreen1State extends State<SearchScreen1> {
                 ),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const FilterSearchScreen(),
+                showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                    elevation: 2,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.h, horizontal: 12.w),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.background,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            15.verticalSpace,
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const FilterSearchScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.home_work_outlined),
+                                    kWi16,
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                          .estate_search,
+                                      style:
+                                          Theme.of(context).textTheme.headline5,
+                                    ),
+                                  ],
+                                )),
+                            const Divider(
+                              indent: 20,
+                              thickness: 0.1,
+                              endIndent: 20,
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const OfficeSearchScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.house_outlined),
+                                    kWi16,
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                          .search_for_estate_agent,
+                                      style:
+                                          Theme.of(context).textTheme.headline5,
+                                    ),
+                                  ],
+                                )),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 );
               },

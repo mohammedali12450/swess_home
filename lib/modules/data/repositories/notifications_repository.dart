@@ -8,21 +8,6 @@ import 'package:swesshome/modules/data/providers/notifications_provider.dart';
 class NotificationRepository {
   final NotificationsProvider _notificationsProvider = NotificationsProvider();
 
-  Future getNotificationTypes() async {
-    Response response = await _notificationsProvider.getNotificationTypes();
-
-    if (response.statusCode != 200) {
-      throw GeneralException(errorMessage: "حدث أثناء الاتصال بالسيرفر");
-    }
-
-    var jsonNotificationTypes = jsonDecode(response.toString())["data"] as List;
-
-    List<NotificationType> notificationTypes =
-        jsonNotificationTypes.map((e) => NotificationType.fromJson(e)).toList();
-
-    return notificationTypes;
-  }
-
   Future getNotifications(String token) async {
     Response response;
 
@@ -44,17 +29,4 @@ class NotificationRepository {
     return notifications;
   }
 
-  Future clearNotifications(String token)async{
-    Response response;
-
-    try {
-      response = await _notificationsProvider.clearNotifications(token);
-    } catch (e) {
-      rethrow;
-    }
-
-    if (response.statusCode != 200) {
-      throw GeneralException(errorMessage: "حدث أثناء الاتصال بالسيرفر");
-    }
-  }
 }

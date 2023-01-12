@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constants/colors.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
+import '../../data/providers/theme_provider.dart';
 
 Widget buildChoiceContainer({
   required context,
@@ -14,6 +16,7 @@ Widget buildChoiceContainer({
   double? paddingVertical,
   double? paddingHorizontal,
 }) {
+  bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
   return BlocBuilder<ChannelCubit, dynamic>(
       bloc: cubit,
       builder: (_, isChoice) {
@@ -25,7 +28,9 @@ Widget buildChoiceContainer({
             padding: const EdgeInsets.all(3),
             height: 37,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.black38, width: 1),
+              border: Border.all(
+                  color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                  width: 1),
               borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),
             child: Row(
@@ -44,9 +49,13 @@ Widget buildChoiceContainer({
                       child: Text(
                         textLeft,
                         style: Theme.of(context).textTheme.headline5!.copyWith(
-                            color: !isChoice
-                                ? AppColors.primaryColor
-                                : AppColors.secondaryDark,
+                            color: isDark
+                                ? !isChoice
+                                    ? AppColors.white
+                                    : AppColors.secondaryDark
+                                : !isChoice
+                                    ? AppColors.primaryColor
+                                    : AppColors.secondaryDark,
                             fontWeight: FontWeight.w600),
                       ),
                     ),

@@ -15,11 +15,15 @@ class MessageProvider {
     return response;
   }
 
-  Future getMessages(String? token) async {
+  Future getMessages(String? token, int page) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
     try {
-      response = await helper.get(getMessagesURL, token: token);
+      response = await helper.get(
+        getMessagesURL,
+        token: token,
+        queryParameters: {"page": page},
+      );
     } catch (_) {
       rethrow;
     }

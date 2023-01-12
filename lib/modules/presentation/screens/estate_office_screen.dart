@@ -31,7 +31,6 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/office_details_bloc/office_details_bloc.dart';
 import '../../business_logic_components/bloc/office_details_bloc/office_details_event.dart';
 import '../../business_logic_components/bloc/office_details_bloc/office_details_state.dart';
-import '../../data/models/estate_new.dart';
 import '../widgets/cupertino_action_sheet.dart';
 import '../widgets/report_estate.dart';
 import 'authentication_screen.dart';
@@ -63,7 +62,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
     super.initState();
 
     // Register office visit :
-    if (BlocProvider.of<UserLoginBloc>(context).user != null) {
+    if (UserSharedPreferences.getAccessToken() != null) {
       userToken = UserSharedPreferences.getAccessToken();
     }
 
@@ -74,11 +73,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
 
     _getOfficesBloc.add(
       GetOfficesDetailsStarted(
-          officeId: widget.id, token: userToken == null ? null : userToken),
+          officeId: widget.id, token: UserSharedPreferences.getAccessToken()),
     );
-    // _estateBloc.add(
-    //   OfficeEstatesFetchStarted(officeId: widget.id),
-    // );
     isEstatesFinished = false;
   }
 
@@ -96,9 +92,6 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
       body: RefreshIndicator(
         color: Theme.of(context).colorScheme.primary,
         onRefresh: () async {
-          // _estateBloc.add(
-          //   OfficeEstatesFetchStarted(officeId: widget.id),
-          // );
           _getOfficesBloc.add(
             GetOfficesDetailsStarted(officeId: widget.id),
           );
@@ -133,7 +126,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       onRefresh: () async {
                         _getOfficesBloc.add(GetOfficesDetailsStarted(
                             officeId: widget.id,
-                            token: userToken == null ? null : userToken));
+                            token: UserSharedPreferences.getAccessToken()));
                       },
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -145,7 +138,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                     .error_happened_when_executing_operation)),
                       ),
                     );
-                  } else if (estateState is GetOfficesFetchProgress) {
+                  }
+                  else if (estateState is GetOfficesFetchProgress) {
                     return const PropertyShimmer();
                   } else if (estateState is! GetOfficesFetchComplete) {
                     return FetchResult(
@@ -153,10 +147,9 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           .error_happened_when_executing_operation,
                       iconSize: 0.25.sw,
                     );
-                  } else if (estateState is GetOfficesFetchComplete) {
-                    estates.addAll(estateState.results.estates);
-                    _getOfficesBloc.isFetching = false;
                   }
+                  estates.addAll(estateState.results.estates);
+                  _getOfficesBloc.isFetching = false;
                   return Column(
                     children: [
                       Directionality(

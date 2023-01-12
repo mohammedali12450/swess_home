@@ -13,8 +13,20 @@ class EstateProvider {
     Response response;
 
     try {
-      response = await helper.post(sendEstateUrl, data,
+      response = await helper.post(createEstateOfferURL, data,
           token: token, onSendProgress: onSendProgress);
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+
+  Future getEstate(int estateId) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+
+    try {
+      response = await helper.get(getEstateDetailsURL + "$estateId");
     } catch (e) {
       rethrow;
     }
@@ -28,26 +40,13 @@ class EstateProvider {
 
     try {
       response = await helper.post(
-          (isAdvanced) ? advancedSearchUrl : searchResultEstateURL,
+         // (isAdvanced) ? advancedSearchUrl :
+          searchResultEstateURL,
           FormData.fromMap(
             searchData.toJson(isAdvanced),
           ),
           queryParameters: {"page": page},
           token: token);
-    } catch (e) {
-      rethrow;
-    }
-
-    return response;
-  }
-
-  Future getOfficeEstates(int officeId) async {
-    NetworkHelper helper = NetworkHelper();
-
-    Response response;
-    try {
-      response = await helper
-          .get(getOfficeEstatesUrl, queryParameters: {"office_id": officeId});
     } catch (e) {
       rethrow;
     }
@@ -80,7 +79,7 @@ class EstateProvider {
     Response response;
 
     try {
-      response = await helper.get(getUserEstatesUrl, token: token);
+      response = await helper.get(getEstateOfferURL, token: token);
     } catch (e) {
       rethrow;
     }
@@ -92,7 +91,7 @@ class EstateProvider {
     Response response;
 
     try {
-      response = await helper.get(getSavedEstatesUrl, token: token);
+      response = await helper.get(getSavedEstatesURL, token: token);
     } catch (e) {
       rethrow;
     }
@@ -107,11 +106,11 @@ class EstateProvider {
     switch (likeType) {
       case LikeType.estate:
         data = {"estate_id": likeObjectId};
-        url = likeEstateUrl;
+        url = likeEstateURL;
         break;
       case LikeType.estateOffice:
         data = {"office_id": likeObjectId};
-        url = likeOfficeUrl;
+        url = likeOfficeURL;
         break;
     }
 
@@ -134,11 +133,11 @@ class EstateProvider {
     switch (likeType) {
       case LikeType.estate:
         data = {"estate_id": likeObjectId};
-        url = unlikeEstateUrl;
+        url = unlikeEstateURL;
         break;
       case LikeType.estateOffice:
         data = {"office_id": likeObjectId};
-        url = unlikeOfficeUrl;
+        url = unlikeOfficeURL;
         break;
     }
 
@@ -155,13 +154,13 @@ class EstateProvider {
   Future saveEstate(String? token, int estateId) async {
     NetworkHelper helper = NetworkHelper();
     Response response =
-        await helper.post(saveEstateUrl, {"estate_id": estateId}, token: token);
+        await helper.post(saveEstateURL, {"estate_id": estateId}, token: token);
     return response;
   }
 
   Future unSaveEstate(String? token, int estateId) async {
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.delete(unSaveEstateUrl,
+    Response response = await helper.delete(unSaveEstateURL,
         fromData: {"estate_id": estateId}, token: token);
     return response;
   }
@@ -174,7 +173,7 @@ class EstateProvider {
     switch (visitType) {
       case VisitType.estate:
         data = {"estate_id": visitId};
-        url = visitEstateUrl;
+        url = visitEstateURL;
         break;
       case VisitType.estateOffice:
         data = {"office_id": visitId};
@@ -182,7 +181,7 @@ class EstateProvider {
         break;
       case VisitType.officeCall:
         data = {"office_id": visitId};
-        url = callEstateUrl;
+        url = callEstateURL;
         break;
     }
 
@@ -206,7 +205,7 @@ class EstateProvider {
 
   Future deleteUserNewEstate(String? token, int? id) async {
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.delete(deleteUserNewEstateUrl,
+    Response response = await helper.delete(deleteUserEstateOfferURL,
         queryParameters: {"id": id}, token: token);
     return response;
   }

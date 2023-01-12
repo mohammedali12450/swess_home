@@ -24,10 +24,10 @@ class VerificationCodeBloc extends Bloc<VerificationCodeEvent, VerificationCodeS
         emit(VerificationCodeComplete(user: user));
       } on FieldsException catch (e) {
         emit(VerificationCodeError(
-            errorResponse: (e.jsonErrorFields["errors"] != null)
-                ? e.jsonErrorFields["errors"] as Map<String, dynamic>
+            errorResponse: (e.jsonErrorFields != null)
+                ? e.jsonErrorFields
                 : null,
-            errorMessage: e.jsonErrorFields["message"]));
+            errorMessage: e.jsonErrorFields ));
       } on GeneralException catch (e) {
         emit(VerificationCodeError(errorMessage: e.errorMessage));
       } on ConnectionException catch (e) {

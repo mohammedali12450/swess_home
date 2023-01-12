@@ -122,9 +122,7 @@ class _VerificationCodeScreenResetState
   }
 
   void loginErrorHandling(errorResponseMap) {
-    if (errorResponseMap.containsKey("user")) {
-      officePhoneErrorLogin.setState(errorResponseMap["user"].first);
-    }
+    officePhoneErrorLogin.setState(errorResponseMap);
   }
 
   @override
@@ -192,8 +190,7 @@ class _VerificationCodeScreenResetState
                 );
               }
             }
-            if (resendVerifyState is ResendVerificationCodeComplete) {
-            }
+            if (resendVerifyState is ResendVerificationCodeComplete) {}
           },
         ),
       ],

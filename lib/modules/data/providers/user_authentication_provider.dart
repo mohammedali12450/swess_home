@@ -35,7 +35,7 @@ class UserAuthenticationProvider {
     Response response;
     try {
       response =
-          await helper.post(forgetPasswordUrl, {"authentication": mobile});
+          await helper.post(sendCodeURL, {"authentication": mobile});
     } catch (e) {
       rethrow;
     }
@@ -47,7 +47,7 @@ class UserAuthenticationProvider {
     Response response;
     try {
       response = await helper
-          .post(verificationUrl, {"authentication": mobile, "code": code});
+          .post(verificationCodeURL, {"authentication": mobile, "code": code});
     } catch (e) {
       rethrow;
     }
@@ -59,7 +59,7 @@ class UserAuthenticationProvider {
     NetworkHelper helper = NetworkHelper();
     Response response;
     try {
-      response = await helper.post(resetPasswordUrl, {
+      response = await helper.post(resetPasswordURL, {
         "authentication": mobile,
         "password": password,
         "password_confirmation": confirmPassword
@@ -75,7 +75,7 @@ class UserAuthenticationProvider {
     Response response;
 
     try {
-      response = await helper.delete(logoutUrl, token: token);
+      response = await helper.delete(logoutURL, token: token);
     } catch (_) {
       rethrow;
     }
@@ -85,21 +85,21 @@ class UserAuthenticationProvider {
   Future sendVerificationCode(String phone, String code) async {
     NetworkHelper helper = NetworkHelper();
     Response response = await helper
-        .post(checkConfirmationCode, {"authentication": phone, "code": code});
+        .post(checkCodeURL, {"authentication": phone, "code": code});
     return response;
   }
 
   Future sendVerificationLoginCode(String phone, String code) async {
     NetworkHelper helper = NetworkHelper();
     Response response = await helper
-        .post(multiLoginUrl, {"authentication": phone, "code": code});
+        .post(multiLoginURL, {"authentication": phone, "code": code});
     return response;
   }
 
   Future resendVerificationCode(String phone) async {
     NetworkHelper helper = NetworkHelper();
     Response response =
-        await helper.post(resendConfirmationCode, {"authentication": phone});
+        await helper.post(resendCodeURL, {"authentication": phone});
     return response;
   }
 
@@ -134,7 +134,7 @@ class UserAuthenticationProvider {
     Response response;
 
     try {
-      response = await helper.delete(deleteUserUrl, token: token);
+      response = await helper.delete(deleteUserURL, token: token);
     } catch (_) {
       rethrow;
     }

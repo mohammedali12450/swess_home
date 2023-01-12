@@ -48,7 +48,8 @@ class EstateOfficeCard extends StatelessWidget {
                   ),
                   kHe12,
                   Text(
-                    office.locationS!,//.getLocationName(),
+                   // office.location!.getLocationName(),
+                    office.locationS!,
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ],

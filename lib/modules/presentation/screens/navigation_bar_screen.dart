@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:spincircle_bottom_bar/modals.dart';
 import 'package:spincircle_bottom_bar/spincircle_bottom_bar.dart';
 import 'package:swesshome/constants/colors.dart' as colors;
+import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
@@ -14,7 +17,9 @@ import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/assets_paths.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../../main.dart';
+import '../../data/providers/theme_provider.dart';
 import '../widgets/blur_create_estate.dart';
 
 class NavigationBarScreen extends StatefulWidget {
@@ -35,33 +40,85 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         drawer: const Drawer(
           child: MyDrawer(),
         ),
-        body: Directionality(
-            textDirection: TextDirection.ltr, child: buildNavigationBar()),
-        resizeToAvoidBottomInset: true,
+        body: BlocBuilder<ChannelCubit, dynamic>(
+          bloc: pageCubit,
+          builder: (_, pageNum) {
+            return Directionality(
+                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                child: callPage(pageNum));
+          },
+        ),
+        floatingActionButton: Padding(
+          padding: EdgeInsets.only(bottom: 20.w),
+          child: FloatingActionButton(
+            elevation: 2,
+            backgroundColor: colors.AppColors.white,
+            shape: StadiumBorder(
+                side: BorderSide(color: Colors.yellow.shade700, width: 1)),
+            onPressed: () {
+              showBlurScreen(context: context);
+            },
+            child: Image.asset(
+              swessHomeIconPath,
+              //color: Colors.white,
+            ),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: BlocBuilder<ChannelCubit, dynamic>(
+            bloc: pageCubit,
+            builder: (_, pageNum) {
+              return BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                showSelectedLabels: true,
+                showUnselectedLabels: true,
+                items: [
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.person_outline),
+                    label: AppLocalizations.of(context)!.profile,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.chat_outlined),
+                    label: AppLocalizations.of(context)!.chat,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.search),
+                    label: AppLocalizations.of(context)!.search,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.home_outlined),
+                    label: AppLocalizations.of(context)!.home,
+                  ),
+                ],
+                currentIndex: pageCubit.state,
+                onTap: (index) {
+                  pageCubit.setState(index);
+                },
+              );
+            }),
       ),
     );
   }
 
   Widget callPage(int _selectedBar) {
     switch (_selectedBar) {
-      case 0:
+      case 3:
         if (homeScreen == null) {
-          print("ghina null");
           homeScreen = const HomeScreen();
           homeScreenState = homeScreen!.createState();
           return homeScreen!;
         } else {
-          print("ghina not null");
           return homeScreenState!.build(context);
         }
-      case 1:
-        return const SearchScreen1();
       case 2:
+        return const SearchScreen1();
+      case 1:
         return const ChatScreen();
-      case 3:
+      case 0:
         return const ProfileScreen();
       default:
         return const HomeScreen();
@@ -72,7 +129,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
 
   Widget buildNavigationBar() {
     bool isArabic = ApplicationSharedPreferences.getLanguageCode() == "ar";
-
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return BlocBuilder<ChannelCubit, dynamic>(
       bloc: ChannelCubit(
           Provider.of<LocaleProvider>(context).getLocale().languageCode == "ar"
@@ -89,11 +146,15 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
               colors.AppColors.lastColor,
               colors.AppColors.primaryColor,
             ],
-            iconTheme: const IconThemeData(color: Colors.black45, size: 17),
+            iconTheme: IconThemeData(
+                color: isDark ? Colors.white : Colors.black45, size: 17),
             activeIconTheme: const IconThemeData(
                 color: colors.AppColors.lastColor, size: 22),
-            backgroundColor: Colors.white,
-            titleStyle: const TextStyle(color: Colors.black45, fontSize: 13),
+            backgroundColor:
+                !isDark ? Colors.white : colors.AppColors.secondaryDark,
+            titleStyle: TextStyle(
+                color: isDark ? colors.AppColors.white : Colors.black45,
+                fontSize: 13),
             activeTitleStyle: Theme.of(context).textTheme.headline5!.copyWith(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,

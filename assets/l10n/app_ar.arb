@@ -378,6 +378,7 @@
   "error_send_report": "حدث خطأ أثناء إرسال البلاغ!",
   "no_more_results": "انتهت النتائج",
   "no_results_body": "عذراً عزيزي المستخدم سيتم تخديم المنطقة قريباً",
+  "no_message": "عذراً عزيزي المستخدم لايوجد رسائل سابقة ",
   "no_results_hint": "قم بتغيير فلتر البحث ثم حاول مجددا",
   "search_again": "ابحث مجددا",
   "search_by":"بحث حسب ",
@@ -437,6 +438,7 @@
   "special_estate": "عقار مميز",
   "office_page": "صفحة المكتب",
   "call": "اتصال",
+  "done":"تم",
   "place_already_existed": "هذا المكان موجود مسبقا",
   "delete_image_confirmation": "هل تريد حذف هذه الصورة؟",
   "error_when_sending_estate": "حدث خطأ عند إرسال العقار",
@@ -446,6 +448,8 @@
   "select_rating": "قم باختيار التقييم",
   "enter_rating_notes": "أكتب ملاحظاتك واقتراحاتك",
   "after_rate_message": "شكرا لكم, تم إرسال التقييم بنجاح",
+  "location_message": "الرجاء تحديد الموقع",
+  "login_new_features": "قم بتسجيل الدخول للحصول على ميزات اخرى",
   "send_rate": "إرسال التقييم",
   "you_must_select_rate_first": "يجب تحديد التقييم أولا",
   "can_not_select_more_than_nearby_places": "لا يمكنك تحديد أكثر من {count} مكان قريب",
@@ -543,7 +547,10 @@
   "complete_send":"تم ارسال الرسالة بنجاح",
   "complete_edit":"تم تعديل المعلومات الشخصية بنجاح",
   "whatsapp_number":"رقم واتس اب للتواصل (اختياري)",
-  "phone_communicate":"الرقم للتواصل"
+  "phone_communicate":"الرقم للتواصل",
+  "upload_app":" Swess Home  لتحميل تطبيق",
+  "no_whatsapp_number":"لا يوجد رقم واتس اب للتواصل",
+  "no_video":"لا يوجد فيديو لعرضه"
 
 }
 

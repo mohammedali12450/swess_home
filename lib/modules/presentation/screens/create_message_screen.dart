@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/message_bloc/message_event.dart';
@@ -17,6 +18,7 @@ import '../../business_logic_components/bloc/user_data_bloc/user_data_bloc.dart'
 import '../../business_logic_components/bloc/user_data_bloc/user_data_event.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_state.dart';
 import '../../data/models/user.dart';
+import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/user_authentication_repository.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/shimmers/details_shimmer.dart';
@@ -50,6 +52,7 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.contact_us),
@@ -89,7 +92,7 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                   }
                   if (userEditState is UserDataComplete) {
                     user = userEditState.user;
-                    return buildDetails();
+                    return buildDetails(isDark);
                   }
                   return Container();
                 }),
@@ -115,13 +118,17 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                         token: UserSharedPreferences.getAccessToken(),
                         message: messageCubit.state,
                       ));
-                      if (messageState is SendMessageFetchComplete) {
-                        Fluttertoast.showToast(
-                            msg: AppLocalizations.of(context)!.complete_send,
-                            toastLength: Toast.LENGTH_LONG);
-                        messageController.clear();
-                      }
+                      await Future.delayed(
+                        const Duration(seconds: 2),
+                      );
+                      //if (messageState is SendMessageFetchComplete) {
+                      Fluttertoast.showToast(
+                          msg: AppLocalizations.of(context)!.complete_send,
+                          toastLength: Toast.LENGTH_LONG);
+                      messageController.clear();
+                      //  }
                       FocusScope.of(context).unfocus();
+                      Navigator.pop(context);
                     },
                   );
                 },
@@ -134,22 +141,23 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
     );
   }
 
-  Widget buildDetails() {
+  Widget buildDetails(isDark) {
     return Column(
       children: [
-        buildListTile(AppLocalizations.of(context)!.name, user!.firstName),
-        buildListTile(AppLocalizations.of(context)!.email, user!.email),
         buildListTile(
-            AppLocalizations.of(context)!.telephone, user!.authentication),
+            AppLocalizations.of(context)!.name, user!.firstName, isDark),
+        buildListTile(AppLocalizations.of(context)!.email, user!.email, isDark),
+        buildListTile(AppLocalizations.of(context)!.telephone,
+            user!.authentication, isDark),
         user!.country == null
             ? Container()
             : buildListTile(
-                AppLocalizations.of(context)!.country, user!.country),
+                AppLocalizations.of(context)!.country, user!.country, isDark),
       ],
     );
   }
 
-  Widget buildListTile(leading, title) {
+  Widget buildListTile(leading, title, isDark) {
     return Column(
       children: [
         Padding(
@@ -164,7 +172,8 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                         height: 2,
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.primaryColor,
+                        color:
+                            isDark ? AppColors.primaryColor : AppColors.white,
                       ),
                 ),
               ),

@@ -22,7 +22,7 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
   @override
   void initState() {
     _termsConditionBloc = TermsConditionBloc(TermsAndConditionsRepository());
-    _termsConditionBloc.add(TermsConditionFetchStarted(termsType: "home"));
+    _termsConditionBloc.add(TermsConditionFetchStarted(termsType: "terms-home"));
     super.initState();
   }
 

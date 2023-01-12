@@ -50,7 +50,6 @@ class EstateDetailsScreen extends StatefulWidget {
 class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
   // Blocs and Cubits :
   ChannelCubit currentImageCubit = ChannelCubit(0);
-  final VisitBloc _visitBloc = VisitBloc(EstateRepository());
   VisitBloc visitBloc = VisitBloc(EstateRepository());
   ShareBloc shareBloc = ShareBloc(EstateRepository());
   String? userToken;
@@ -74,7 +73,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
     if (BlocProvider.of<UserLoginBloc>(context).user != null) {
       userToken = UserSharedPreferences.getAccessToken();
     }
-    _visitBloc.add(VisitStarted(
+    visitBloc.add(VisitStarted(
         visitId: widget.estate.id!,
         token: userToken,
         visitType: VisitType.estate));
@@ -130,8 +129,11 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 color: AppColors.white,
               ),
               onPressed: () {
-                Share.share(
-                    'Real Estate Offer https://www.swesshome.com/estate/${widget.estate.id}');
+                Share.share('${AppLocalizations.of(context)!.estate_offers} :\n'
+                    '${widget.estate.estateType!.name.split("|")[1]} لل'
+                    '${widget.estate.estateOfferType!.name} '
+                    ' في ${widget.estate.locationS} \n'
+                    'https://www.swesshome.com/estate/${widget.estate.id} ');
                 if (UserSharedPreferences.getAccessToken() != null) {
                   shareBloc.add(
                     ShareStarted(
@@ -157,8 +159,12 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ImagesViewerScreen(estateImages,
-                              AppLocalizations.of(context)!.estate_images),
+                          builder: (_) => ImagesViewerScreen(
+                              estateImages,
+                              AppLocalizations.of(context)!.estate_images,
+                              widget.estate.videoUrl == null
+                                  ? ""
+                                  : widget.estate.videoUrl!),
                         ),
                       );
                     },
@@ -336,9 +342,11 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                 AppLocalizations.of(context)!
                                     .currency_over_period(
                                   currency,
-                                  widget.estate.periodType!.name
-                                      .split("|")
-                                      .first,
+                                  widget.estate.periodType != null
+                                      ? widget.estate.periodType!.name
+                                          .split("|")
+                                          .first
+                                      : "",
                                 ),
                                 style: Theme.of(context)
                                     .textTheme
@@ -508,9 +516,11 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         ),
                         6.horizontalSpace,
                         Text(
-                          widget.estate.periodType!.name
-                              .split("|")
-                              .elementAt(1),
+                          widget.estate.periodType != null
+                              ? widget.estate.periodType!.name
+                                  .split("|")
+                                  .elementAt(1)
+                              : "",
                         ),
                       ],
                     ),
@@ -647,7 +657,10 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           builder: (_) => ImagesViewerScreen(
                               streetImages,
                               AppLocalizations.of(context)!
-                                  .estate_street_images),
+                                  .estate_street_images,
+                              widget.estate.videoUrl == null
+                                  ? ""
+                                  : widget.estate.videoUrl!),
                         ),
                       );
                     },
@@ -667,7 +680,10 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           builder: (_) => ImagesViewerScreen(
                               floorPlanImages,
                               AppLocalizations.of(context)!
-                                  .estate_floor_plan_images),
+                                  .estate_floor_plan_images,
+                              widget.estate.videoUrl == null
+                                  ? ""
+                                  : widget.estate.videoUrl!),
                         ),
                       );
                     },
@@ -735,7 +751,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       kHe8,
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            fixedSize: Size(155.w, 50.h)),
+                            fixedSize: Size(160.w, 50.h)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

@@ -1,15 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
 
 import '../../../constants/colors.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../screens/create_order_screen.dart';
-import '../screens/create_property_screens/create_property_introduction_screen.dart';
 
 void showBlurScreen({context}) {
   showDialog(
@@ -33,62 +32,64 @@ void showBlurScreen({context}) {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  InkWell(
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.home_outlined,
-                          size: 50,
-                          color: AppColors.yellowColor,
-                        ),
-                        kHe12,
-                        Text(
-                          AppLocalizations.of(context)!.create_estate_order,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline5!
-                              .copyWith(color: AppColors.white),
-                        ),
-                      ],
+                  if (UserSharedPreferences.getAccessToken() != null)
+                    InkWell(
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.home_outlined,
+                            size: 50,
+                            color: AppColors.yellowColor,
+                          ),
+                          kHe12,
+                          Text(
+                            AppLocalizations.of(context)!.create_estate_order,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline5!
+                                .copyWith(color: AppColors.white),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const CreateOrderScreen(),
+                          ),
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const CreateOrderScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  InkWell(
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.local_offer_outlined,
-                          size: 50,
-                          color: AppColors.yellowColor,
-                        ),
-                        kHe12,
-                        Text(
-                          AppLocalizations.of(context)!.estate_offer_creating,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline5!
-                              .copyWith(color: AppColors.white),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              const CreatePropertyIntroductionScreen(
-                                  officeId: 1),
-                        ),
-                      );
-                    },
-                  ),
+                  // if (UserSharedPreferences.getAccessToken() != null)
+                  //   InkWell(
+                  //     child: Column(
+                  //       children: [
+                  //         Icon(
+                  //           Icons.local_offer_outlined,
+                  //           size: 50,
+                  //           color: AppColors.yellowColor,
+                  //         ),
+                  //         kHe12,
+                  //         Text(
+                  //           AppLocalizations.of(context)!.estate_offer_creating,
+                  //           style: Theme.of(context)
+                  //               .textTheme
+                  //               .headline5!
+                  //               .copyWith(color: AppColors.white),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (_) =>
+                  //               const CreatePropertyIntroductionScreen(
+                  //                   officeId: 50288),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
                   InkWell(
                     child: Column(
                       children: [
@@ -111,12 +112,25 @@ void showBlurScreen({context}) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              const EstateImmediatelyScreen(),
+                          builder: (_) => const EstateImmediatelyScreen(),
                         ),
                       );
                     },
                   ),
+                  if (UserSharedPreferences.getAccessToken() == null)
+                    SizedBox(
+                      width: 150,
+                      child: Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.login_new_features,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline5!
+                              .copyWith(color: AppColors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
                 ],
               ),
             ),

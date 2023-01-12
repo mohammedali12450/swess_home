@@ -24,6 +24,7 @@ import 'package:swesshome/modules/presentation/screens/authentication_screen.dar
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_state.dart';
@@ -50,14 +51,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   // Blocs and Cubits :
   EstateTypesBloc estateTypesBloc = EstateTypesBloc(EstateTypesRepository());
   EstateOfferTypesBloc offerTypesBloc =
-      EstateOfferTypesBloc(EstateOfferTypesRepository());
+  EstateOfferTypesBloc(EstateOfferTypesRepository());
   PriceDomainsBloc priceDomainsBloc =
-      PriceDomainsBloc(PriceDomainsRepository());
+  PriceDomainsBloc(PriceDomainsRepository());
 
   ChannelCubit locationErrorCubit = ChannelCubit(null);
   ChannelCubit startPriceCubit = ChannelCubit(0);
   ChannelCubit endPriceCubit = ChannelCubit(0);
   ChannelCubit isSellCubit = ChannelCubit(true);
+  ChannelCubit isPressTypeCubit = ChannelCubit(0);
 
   // Controllers :
   TextEditingController officeAddressController = TextEditingController();
@@ -69,10 +71,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   List<EstateOfferType>? offerTypes;
   PriceDomain? priceDomains;
   int? selectedEstateTypeId;
+  EstateOrder? estateOrder;
 
-  int? selectedEstateOfferTypeId;
-
-  int? selectedPriceDomainId;
+  int selectedEstateOfferTypeId = 1;
 
   LocationViewer? selectedLocation;
   final _formKey = GlobalKey<FormState>();
@@ -81,17 +82,18 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   void initState() {
     super.initState();
 
-    //estateTypesBloc.add(EstateTypesFetchStarted());
-    //offerTypesBloc.add(EstateOfferTypesFetchStarted());
-    //priceDomainsBloc.add(PriceDomainsFetchStarted("rent"));
-
-    estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
+    estatesTypes = BlocProvider
+        .of<EstateTypesBloc>(context)
+        .estateTypes!;
     offerTypes =
-        BlocProvider.of<EstateOfferTypesBloc>(context).estateOfferTypes!;
-    priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
-
-    //selectedEstateTypeId = estatesTypes.first.id;
-    //selectedEstateOfferTypeId = offerTypes.first.id;
+    BlocProvider
+        .of<EstateOfferTypesBloc>(context)
+        .estateOfferTypes!;
+    priceDomains = BlocProvider
+        .of<PriceDomainsBloc>(context)
+        .priceDomains!;
+    estateOrder = EstateOrder(maxPrice: int.tryParse(priceDomains!.sale.max[0]),
+        minPrice: int.tryParse(priceDomains!.sale.min[0]));
   }
 
   @override
@@ -149,10 +151,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           paddingVertical: 5,
                           paddingHorizontal: 0),
                       kHe36,
-                      buildLocation(),
-                      buildEstateType(),
+                      buildLocation(isDark),
+                      buildEstateType(isDark),
                       buildPriceDomain(isArabic, isDark),
-                      buildNote(),
+                      buildNote(isDark),
                       buildButton(),
                       kHe32,
                     ],
@@ -166,7 +168,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     );
   }
 
-  Widget buildLocation() {
+  Widget buildLocation(isDark) {
     return Column(
       children: [
         Row(
@@ -175,7 +177,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             kWi8,
             Text(
               AppLocalizations.of(context)!.estate_location + " :",
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headline6,
             ),
           ],
         ),
@@ -183,34 +188,44 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         BlocBuilder<ChannelCubit, dynamic>(
           bloc: locationErrorCubit,
           builder: (_, errorMessage) {
-            return TextField(
-              textDirection: TextDirection.rtl,
-              onTap: () async {
-                selectedLocation = await Navigator.of(context)
-                    .pushNamed(SearchLocationScreen.id) as LocationViewer?;
-                if (selectedLocation != null) {
-                  officeAddressController.text =
-                      selectedLocation!.getLocationName();
-                  locationErrorCubit.setState(null);
-                } else {
-                  officeAddressController.clear();
-                }
-              },
-              controller: officeAddressController,
-              keyboardType: TextInputType.text,
-              readOnly: true,
-              decoration: InputDecoration(
-                errorText: errorMessage,
-                hintText: AppLocalizations.of(context)!.estate_location_hint,
-                contentPadding: kSmallSymWidth,
-                errorBorder: kOutlinedBorderRed,
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  borderSide: BorderSide(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onBackground
-                        .withOpacity(0.4),
+            return Container(
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                      Radius.circular(11)),
+                  border: Border.all(
+                    color: !isDark ? AppColors.primaryColor : AppColors.yellowDarkColor,
+                    width: 1,
+                  )),
+              child: TextField(
+                textDirection: TextDirection.rtl,
+                onTap: () async {
+                  selectedLocation = await Navigator.of(context)
+                      .pushNamed(SearchLocationScreen.id) as LocationViewer?;
+                  if (selectedLocation != null) {
+                    officeAddressController.text =
+                        selectedLocation!.getLocationName();
+                    locationErrorCubit.setState(null);
+                  } else {
+                    officeAddressController.clear();
+                  }
+                },
+                controller: officeAddressController,
+                keyboardType: TextInputType.text,
+                readOnly: true,
+                decoration: InputDecoration(
+                  errorText: errorMessage,
+                  hintText: AppLocalizations.of(context)!.estate_location_hint,
+                  contentPadding: kSmallSymWidth,
+                  errorBorder: kOutlinedBorderRed,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    borderSide: BorderSide(
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .onBackground
+                          .withOpacity(0.4),
+                    ),
                   ),
                 ),
               ),
@@ -222,7 +237,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     );
   }
 
-  Widget buildEstateType() {
+  Widget buildEstateType(isDark) {
     return Column(
       children: [
         Row(
@@ -231,58 +246,209 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             kWi8,
             Text(
               AppLocalizations.of(context)!.estate_type + " :",
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headline6,
             ),
           ],
         ),
         kHe12,
-        BlocBuilder<EstateTypesBloc, EstateTypesState>(
-          bloc: estateTypesBloc,
-          builder: (_, estateTypesState) {
-            if (estateTypesState is EstateTypesFetchError) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: SizedBox(
-                    width: 1.sw,
-                    height: 1.sh - 75.h,
-                    child: FetchResult(
-                        content: AppLocalizations.of(context)!
-                            .error_happened_when_executing_operation)),
-              );
-            }
-            if (estateTypesState is EstateTypesFetchProgress) {
-              return SpinKitWave(
-                color: Theme.of(context).colorScheme.background,
-                size: 24.w,
-              );
-            } else if (estateTypesState is EstateTypesFetchComplete) {
-              estatesTypes = estateTypesState.estateTypes!;
-              // List<String> estateTypesAdd =
-              //     estatesTypes!.map((e) => e.name.split('|').first).toList();
-              // estateTypesAdd.insert(
-              //   0,
-              //   AppLocalizations.of(context)!.undefined,
-              // );
-              // estateTypesAdd = estateTypesAdd.toSet().toList();
-            }
-            return Container(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black38, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-              ),
-              child: MyDropdownList(
-                elementsList:
-                    estatesTypes!.map((e) => e.name.split('|').first).toList(),
-                onSelect: (index) {
-                  // set search data estate type :
-                  selectedEstateTypeId = estatesTypes!.elementAt(index).id;
-                },
-                validator: (value) => value == null
-                    ? AppLocalizations.of(context)!.this_field_is_required
-                    : null,
-                selectedItem: AppLocalizations.of(context)!.please_select,
-              ),
+        BlocBuilder<ChannelCubit, dynamic>(
+          bloc: isPressTypeCubit,
+          builder: (_, pressState) {
+            return Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      isPressTypeCubit.setState(0);
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 60,
+                          padding: kSmallAllPadding,
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius:
+                            const BorderRadius.all(Radius.circular(100)),
+                            border: Border.all(
+                                color: pressState == 0
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.primaryColor),
+                          ),
+                          child: Image.asset(buildIconPath,
+                              color: AppColors.primaryColor),
+                        ),
+                        Text(
+                          estatesTypes!.elementAt(0).name.split("|")[1],
+                          style: TextStyle(
+                              color: !isDark
+                                  ? pressState == 0
+                                  ? AppColors.yellowDarkColor
+                                  : AppColors.primaryColor
+                                  : pressState == 0
+                                  ? AppColors.yellowDarkColor
+                                  : AppColors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                kWi16,
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      isPressTypeCubit.setState(3);
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 60,
+                          padding: kSmallAllPadding,
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius:
+                            const BorderRadius.all(Radius.circular(100)),
+                            border: Border.all(
+                                color: pressState == 3
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.primaryColor),
+                          ),
+                          child: Image.asset(farmIconPath,
+                              color: AppColors.primaryColor),
+                        ),
+                        Text(
+                          estatesTypes!.elementAt(3).name.split("|")[1],
+                          style: TextStyle(
+                              color: !isDark
+                                  ? pressState == 3
+                                  ? AppColors.yellowDarkColor
+                                  : AppColors.primaryColor
+                                  : pressState == 3
+                                  ? AppColors.yellowDarkColor
+                                  : AppColors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                kWi16,
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      isPressTypeCubit.setState(2);
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 60,
+                          padding: kTinyAllPadding,
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius:
+                            const BorderRadius.all(Radius.circular(100)),
+                            border: Border.all(
+                                color: pressState == 2
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.primaryColor),
+                          ),
+                          child: Image.asset(landIconPath,
+                              color: AppColors.primaryColor),
+                        ),
+                        Text(
+                          estatesTypes!.elementAt(2).name.split("|")[1],
+                          style: TextStyle(
+                              color: !isDark
+                                  ? pressState == 2
+                                  ? AppColors.yellowDarkColor
+                                  : AppColors.primaryColor
+                                  : pressState == 2
+                                  ? AppColors.yellowDarkColor
+                                  : AppColors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                kWi16,
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      isPressTypeCubit.setState(1);
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 60,
+                          padding: kTinyAllPadding,
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius:
+                            const BorderRadius.all(Radius.circular(100)),
+                            border: Border.all(
+                                color: pressState == 1
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.primaryColor),
+                          ),
+                          child: Image.asset(shopIconPath,
+                              color: AppColors.primaryColor),
+                        ),
+                        Text(
+                          estatesTypes!.elementAt(1).name.split("|")[1],
+                          style: TextStyle(
+                              color: !isDark
+                                  ? pressState == 1
+                                  ? AppColors.yellowDarkColor
+                                  : AppColors.primaryColor
+                                  : pressState == 1
+                                  ? AppColors.yellowDarkColor
+                                  : AppColors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                kWi16,
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      isPressTypeCubit.setState(4);
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 60,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius:
+                            const BorderRadius.all(Radius.circular(100)),
+                            border: Border.all(
+                                color: pressState == 4
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.primaryColor),
+                          ),
+                          child: Image.asset(villaIconPath,
+                              color: AppColors.primaryColor),
+                        ),
+                        Text(
+                          estatesTypes!.elementAt(4).name.split("|")[1],
+                          style: TextStyle(
+                              color: !isDark
+                                  ? pressState == 4
+                                  ? AppColors.yellowDarkColor
+                                  : AppColors.primaryColor
+                                  : pressState == 4
+                                  ? AppColors.yellowDarkColor
+                                  : AppColors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             );
           },
         ),
@@ -300,7 +466,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             kWi8,
             Text(
               AppLocalizations.of(context)!.price_domain + " :",
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headline6,
             ),
           ],
         ),
@@ -337,15 +506,21 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                     .title_min_price,
                                 items: min
                                     .map(
-                                      (names) => Text(
+                                      (names) =>
+                                      Text(
                                         names,
                                         // textScaleFactor: 1.2,
                                         // textAlign: TextAlign.center,
                                       ),
-                                    )
+                                )
                                     .toList(),
                                 onSubmit: (data) {
                                   startPriceCubit.setState(data);
+                                  estateOrder!.minPrice = priceState
+                                      ? int.tryParse(priceDomains!
+                                      .sale.min[startPriceCubit.state])
+                                      : int.tryParse(priceDomains!
+                                      .rent.min[startPriceCubit.state]);
                                 },
                               );
                             },
@@ -362,12 +537,12 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                   height: 55.h,
                                   width: 150.w,
                                   padding:
-                                      EdgeInsets.symmetric(horizontal: 8.w),
+                                  EdgeInsets.symmetric(horizontal: 8.w),
                                   decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(8)),
                                       border: Border.all(
-                                        color: AppColors.primaryColor,
+                                        color: !isDark ? AppColors.primaryColor : AppColors.yellowDarkColor,
                                         width: 1,
                                       )),
                                   child: Text(textMin),
@@ -405,15 +580,21 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                     .title_max_price,
                                 items: max
                                     .map(
-                                      (names) => Text(
+                                      (names) =>
+                                      Text(
                                         names,
                                         // textScaleFactor: 1.2,
                                         // textAlign: TextAlign.center,
                                       ),
-                                    )
+                                )
                                     .toList(),
                                 onSubmit: (data) {
                                   endPriceCubit.setState(data);
+                                  estateOrder!.maxPrice = priceState
+                                      ? int.tryParse(priceDomains!
+                                      .sale.max[endPriceCubit.state])
+                                      : int.tryParse(priceDomains!
+                                      .rent.max[endPriceCubit.state]);
                                 },
                               );
                             },
@@ -430,12 +611,12 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                     height: 55.h,
                                     width: 150.w,
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 8.w),
+                                    EdgeInsets.symmetric(horizontal: 8.w),
                                     decoration: BoxDecoration(
                                         borderRadius: const BorderRadius.all(
                                             Radius.circular(8)),
                                         border: Border.all(
-                                          color: AppColors.primaryColor,
+                                          color:!isDark ? AppColors.primaryColor : AppColors.yellowDarkColor,
                                           width: 1,
                                         )),
                                     child: Text(textMax),
@@ -456,7 +637,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     );
   }
 
-  Widget buildNote() {
+  Widget buildNote(isDark) {
     return Column(
       children: [
         Row(
@@ -465,7 +646,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             kWi8,
             Text(
               AppLocalizations.of(context)!.notes + " :",
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headline6,
             ),
           ],
         ),
@@ -476,7 +660,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           height: 250.h,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(12)),
-            border: Border.all(color: Colors.black),
+            border: Border.all(color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,),
           ),
           child: TextField(
             maxLength: 600,
@@ -487,7 +671,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
               hintText:
-                  AppLocalizations.of(context)!.order_create_notes_descriptions,
+              AppLocalizations.of(context)!.order_create_notes_descriptions,
             ),
             maxLines: 8,
           ),
@@ -507,7 +691,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           builder: (_, estateOrderState) {
             if (estateOrderState is SendEstateOrderProgress) {
               return SpinKitWave(
-                color: Theme.of(context).colorScheme.background,
+                color: Theme
+                    .of(context)
+                    .colorScheme
+                    .background,
                 size: 24.w,
               );
             }
@@ -526,22 +713,29 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             return;
           }
 
-          EstateOrder estateOrder = EstateOrder(
-            locationId: selectedLocation!.id,
-            estateTypeId: selectedEstateTypeId,
-            estateOfferId: selectedEstateOfferTypeId,
-            priceDomainId: selectedPriceDomainId,
-            description:
-                (notesController.text.isEmpty) ? null : notesController.text,
-          );
+          print("${selectedLocation!.id}\n"
+              "${isPressTypeCubit.state + 1}\n"
+              "$selectedEstateOfferTypeId\n"
+              "${estateOrder!.minPrice}\n"
+              "${estateOrder!.maxPrice}");
+
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
 
-            User? user = BlocProvider.of<UserLoginBloc>(context).user;
-            String? token =
-                (user == null) ? null : UserSharedPreferences.getAccessToken()!;
+            print("bash ${isPressTypeCubit.state + 1}");
             BlocProvider.of<EstateOrderBloc>(context).add(
-              SendEstateOrderStarted(order: estateOrder, token: token),
+              SendEstateOrderStarted(
+                  order: EstateOrder(
+                    locationId: selectedLocation!.id,
+                    estateTypeId: isPressTypeCubit.state + 1,
+                    estateOfferId: selectedEstateOfferTypeId,
+                    minPrice: estateOrder!.minPrice,
+                    maxPrice: estateOrder!.maxPrice,
+                    description: (notesController.text.isEmpty)
+                        ? null
+                        : notesController.text,
+                  ),
+                  token: UserSharedPreferences.getAccessToken()),
             );
           }
         },

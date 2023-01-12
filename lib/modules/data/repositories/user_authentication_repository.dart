@@ -43,9 +43,8 @@ class UserAuthenticationRepository {
     } catch (e) {
       rethrow;
     }
-
     if (response.statusCode == 422) {
-      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString())["message"]);
     }
     if (response.statusCode != 200) {
       throw GeneralException(
@@ -88,14 +87,14 @@ class UserAuthenticationRepository {
     }
 
     if (response.statusCode == 422) {
-      throw FieldsException(jsonErrorFields: jsonDecode(response.toString())["message"]);
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
 
     if (response.statusCode == 403) {
       throw UnauthorizedException(message: jsonDecode(response.toString())["message"]);
     }
 
-    if (response.statusCode == 401) {
+    if (response.statusCode == 400) {
       throw GeneralException(
           errorMessage: jsonDecode(response.toString())["message"]);
     }
@@ -119,9 +118,8 @@ class UserAuthenticationRepository {
     } catch (e) {
       rethrow;
     }
-
     if (response.statusCode == 422) {
-      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString())["message"]);
     }
     if (response.statusCode != 200) {
       throw GeneralException(
@@ -154,7 +152,7 @@ class UserAuthenticationRepository {
     }
     if (response.statusCode == 403) {
       throw FieldsException(
-          jsonErrorFields: jsonDecode(response.toString())["message"]);
+          jsonErrorFields: jsonDecode(response.toString()));
     }
     User user = User.fromJson(jsonDecode(response.toString())["data"]);
 

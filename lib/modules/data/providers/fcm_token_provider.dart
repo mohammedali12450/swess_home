@@ -10,7 +10,7 @@ class FcmTokenProvider {
       "FCM_token": firebaseToken,
     };
     Response response =
-        await helper.post(fcmTokenUrl, data, token: userToken);
+        await helper.post(fcmTokenURL, data, token: userToken);
     return response;
   }
 }

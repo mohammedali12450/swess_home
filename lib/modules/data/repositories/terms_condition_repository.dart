@@ -26,7 +26,7 @@ class TermsAndConditionsRepository {
     // return termsCondition;
 
     TermsCondition termsCondition =
-        TermsCondition.fromJson((jsonDecode(response.toString())));
+        TermsCondition.fromJson(jsonDecode(response.toString())["data"]);
     return termsCondition;
   }
 }

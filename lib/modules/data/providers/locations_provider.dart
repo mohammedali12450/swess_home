@@ -6,7 +6,7 @@ class LocationsProvider{
 
   Future getLocations()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(allLocationUrl) ;
+    Response response = await helper.get(getLocationURL) ;
     return response ;
   }
 }

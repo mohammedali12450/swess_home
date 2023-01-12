@@ -9,8 +9,10 @@ import 'message_state.dart';
 class MessageBloc extends Bloc<MessagesEvent, MessageState> {
   final MessageRepository _messageRepository;
 
+  bool isFetching = false;
   bool? message;
   List<Message>? messages;
+  int page = 1;
 
   MessageBloc(this._messageRepository) : super(MessageFetchNone()) {
     on<SendMessagesFetchStarted>((event, emit) async {
@@ -30,8 +32,9 @@ class MessageBloc extends Bloc<MessagesEvent, MessageState> {
     on<GetMessagesFetchStarted>((event, emit) async {
       emit(GetMessageFetchProgress());
       try {
-        messages = await _messageRepository.getMessages(event.token!);
+        messages = await _messageRepository.getMessages(event.token!,page);
         emit(GetMessageFetchComplete(messages: messages!));
+        page ++;
       } catch (e, stack) {
         if (e is GeneralException) {
           emit(MessageFetchError(error: e.errorMessage!));

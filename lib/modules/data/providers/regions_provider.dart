@@ -6,7 +6,7 @@ class RegionsProvider{
 
   Future getRegions()async{
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.get(allregionsUrl) ;
+    Response response = await helper.get(getRegionsURL) ;
     return response ;
   }
 }

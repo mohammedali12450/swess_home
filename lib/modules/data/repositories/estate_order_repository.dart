@@ -22,7 +22,7 @@ class EstateOrderRepository {
       throw UnauthorizedException(
           message: "يجب تسجيل الدخول لاستخدام هذه الميزة");
     }
-    if (response.statusCode != 201) {
+    if (response.statusCode != 200) {
       throw GeneralException(errorMessage: "حدث خطأ أثناء إرسال الطلب");
     }
   }

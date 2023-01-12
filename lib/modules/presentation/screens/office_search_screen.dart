@@ -21,7 +21,6 @@ import 'package:swesshome/modules/presentation/screens/estate_office_screen.dart
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_region_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_office_card.dart';
-import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/offices_list_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -48,6 +47,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
 
   // Controllers :
   TextEditingController textFieldController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   // Others :
 
@@ -60,6 +60,9 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
   LocationViewer? selectedLocation;
   RegionViewer? selectedRegion;
   String? token;
+  bool isEstatesFinished = false;
+  ChannelCubit value = ChannelCubit("");
+  List<EstateOffice> results = [];
 
   @override
   void initState() {
@@ -135,6 +138,8 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         // unfocused text field :
                         FocusScope.of(context).unfocus();
                         if (selectedLocation != null) {
+                          results.clear();
+                          searchOfficesBloc.pageLocation = 1;
                           searchOfficesBloc.add(
                             SearchOfficesByLocationStarted(
                                 locationId: selectedLocation!.id!),
@@ -153,6 +158,8 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         // unfocused text field :
                         FocusScope.of(context).unfocus();
                         if (selectedRegion != null) {
+                          results.clear();
+                          searchOfficesBloc.pageLocation = 1;
                           searchOfficesBloc.add(
                             SearchOfficesByLocationStarted(
                                 locationId: selectedRegion!.id!),
@@ -162,6 +169,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         }
                         return;
                       } else if (searchType == OfficeSearchType.name) {
+                        searchOfficesBloc.pageName = 1;
                         searchOfficesBloc.add(
                           SearchOfficesByNameStarted(name: null, token: token),
                         );
@@ -169,10 +177,15 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                     },
                     onChanged: (newValue) {
                       if (newValue.isEmpty) {
+                        results.clear();
+                        searchOfficesBloc.pageName = 1;
                         searchOfficesBloc.add(SearchOfficesCleared());
                         return;
                       }
+                      value.setState(newValue);
                       if (searchType == OfficeSearchType.name) {
+                        results.clear();
+                        searchOfficesBloc.pageName = 1;
                         searchOfficesBloc.add(
                           SearchOfficesByNameStarted(
                               name: newValue, token: token),
@@ -217,8 +230,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                   selectedLocation == null) {
                 return Container();
               }
-
-              return buildResultsList();
+              return buildResultsList(searchType);
             },
           ),
         ),
@@ -226,7 +238,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
     );
   }
 
-  BlocConsumer buildResultsList() {
+  BlocConsumer buildResultsList(searchType) {
     return BlocConsumer<SearchOfficesBloc, SearchOfficesStates>(
       bloc: searchOfficesBloc,
       listener: (_, searchResultsState) {
@@ -246,24 +258,30 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
         }
       },
       builder: (_, searchResultsState) {
-        if (searchResultsState is SearchOfficesFetchProgress) {
+        if (searchResultsState is SearchOfficesFetchProgress &&
+            results.isEmpty) {
           return const OfficesListShimmer();
         }
         if (searchResultsState is SearchOfficesFetchNone) {
           return Container();
         }
-        if (searchResultsState is! SearchOfficesFetchComplete) {
-          return SizedBox(
-            width: 1.sw,
-            height: 1.sh - 75.h,
-            child: FetchResult(
-              content: AppLocalizations.of(context)!
-                  .error_happened_when_executing_operation,
-            ),
-          );
+        // if (searchResultsState is! SearchOfficesFetchComplete) {
+        //   return SizedBox(
+        //     width: 1.sw,
+        //     height: 1.sh - 75.h,
+        //     child: FetchResult(
+        //       content: AppLocalizations.of(context)!
+        //           .error_happened_when_executing_operation,
+        //     ),
+        //   );
+        // }
+        if (searchResultsState is SearchOfficesFetchComplete) {
+          results.addAll(searchResultsState.results);
+          searchOfficesBloc.isFetching = false;
+          if (searchResultsState.results.isEmpty && results.isNotEmpty) {
+            isEstatesFinished = true;
+          }
         }
-
-        List<EstateOffice> results = searchResultsState.results;
 
         if (results.isEmpty) {
           return Center(
@@ -288,6 +306,28 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
         }
 
         return SingleChildScrollView(
+          controller: _scrollController
+            ..addListener(
+              () {
+                if (_scrollController.offset ==
+                        _scrollController.position.maxScrollExtent &&
+                    !searchOfficesBloc.isFetching &&
+                    !isEstatesFinished) {
+                  searchOfficesBloc
+                    ..isFetching = true
+                    ..add(
+                      searchType == OfficeSearchType.area
+                          ? SearchOfficesByLocationStarted(
+                              locationId: selectedRegion!.id!)
+                          : searchType == OfficeSearchType.neighborhood
+                              ? SearchOfficesByLocationStarted(
+                                  locationId: selectedRegion!.id!)
+                              : SearchOfficesByNameStarted(
+                                  name: value.state, token: token),
+                    );
+                }
+              },
+            ),
           child: Column(
             children: [
               if (searchTypeCubit.state == OfficeSearchType.area) ...[

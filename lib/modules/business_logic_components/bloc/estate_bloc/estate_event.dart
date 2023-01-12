@@ -1,13 +1,15 @@
 import 'package:swesshome/modules/data/models/search_data.dart';
 
+import '../../../data/models/estate.dart';
+
 abstract class EstateEvent {}
 
-class EstateFetchStarted extends EstateEvent {
+class EstatesFetchStarted extends EstateEvent {
   SearchData searchData;
   bool isAdvanced;
   String? token;
 
-  EstateFetchStarted(
+  EstatesFetchStarted(
       {required this.searchData,
       required this.isAdvanced,
       required this.token});
@@ -30,14 +32,8 @@ class OfficeEstatesFetchStarted extends EstateEvent {
   OfficeEstatesFetchStarted({required this.officeId});
 }
 
-class NewestEstatesFetchStarted extends EstateEvent {
-  NewestEstatesFetchStarted();
-}
+class EstateFetchStarted extends EstateEvent {
+ int estateId;
 
-class MostViewEstatesFetchStarted extends EstateEvent {
-  MostViewEstatesFetchStarted();
-}
-
-class SpacialEstatesFetchStarted extends EstateEvent {
-  SpacialEstatesFetchStarted();
+  EstateFetchStarted({required this.estateId});
 }

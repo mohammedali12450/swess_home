@@ -7,22 +7,36 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_state.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/estate_spacial_bloc/estate_spacial_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import '../../../constants/application_constants.dart';
 import '../../../core/storage/shared_preferences/application_shared_preferences.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_bloc.dart';
-import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
+import '../../business_logic_components/bloc/estate_newest_bloc/estate_newest_bloc.dart';
+import '../../business_logic_components/bloc/estate_newest_bloc/estate_newest_event.dart';
+import '../../business_logic_components/bloc/estate_newest_bloc/estate_newest_state.dart';
+import '../../business_logic_components/bloc/estate_spacial_bloc/estate_spacial_event.dart';
+import '../../business_logic_components/bloc/estate_spacial_bloc/estate_spacial_state.dart';
+import '../../business_logic_components/bloc/estate_view_bloc/estate_view_bloc.dart';
+import '../../business_logic_components/bloc/estate_view_bloc/estate_view_event.dart';
+import '../../business_logic_components/bloc/estate_view_bloc/estate_view_state.dart';
 import '../../business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
 import '../../business_logic_components/bloc/fcm_bloc/fcm_event.dart';
 import '../../data/providers/locale_provider.dart';
+import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_repository.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/estate_card.dart';
+import '../widgets/shimmer_widget.dart';
 import '../widgets/shimmers/estates_shimmer.dart';
+import 'estate_details_screen.dart';
 
 late EstateBloc estateBloc;
+late EstateViewBloc estateViewBloc;
+late EstateNewestBloc estateNewestBloc;
+late EstateSpacialBloc estateSpacialBloc;
 
 class HomeScreen extends StatefulWidget {
   static const String id = "HomeScreen";
@@ -33,19 +47,19 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen>
-    with AutomaticKeepAliveClientMixin {
+class HomeScreenState extends State<HomeScreen> {
   late bool isArabic;
   List<Estate> estateNewest = [];
-  List<Estate> estateSpacial = [];
+  List<SpecialEstate> estateSpacial = [];
   List<Estate> estateMostView = [];
 
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
+    estateNewestBloc = EstateNewestBloc(EstateRepository());
+    estateViewBloc = EstateViewBloc(EstateRepository());
+    estateSpacialBloc = EstateSpacialBloc(EstateRepository());
     estateBloc = EstateBloc(EstateRepository());
     ApplicationSharedPreferences.setWalkThroughPassState(true);
     _onRefresh();
@@ -54,10 +68,10 @@ class HomeScreenState extends State<HomeScreen>
     }
   }
 
-  _onRefresh() async{
-    estateBloc.add(NewestEstatesFetchStarted());
-    estateBloc.add(MostViewEstatesFetchStarted());
-    estateBloc.add(SpacialEstatesFetchStarted());
+  _onRefresh() async {
+    estateNewestBloc.add(NewestEstatesFetchStarted());
+    estateViewBloc.add(MostViewEstatesFetchStarted());
+    estateSpacialBloc.add(SpacialEstatesFetchStarted());
   }
 
   Future sendFcmToken(int attempt) async {
@@ -142,17 +156,17 @@ class HomeScreenState extends State<HomeScreen>
   Widget buildNewEstate() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: BlocBuilder<EstateBloc, EstateState>(
-        bloc: estateBloc,
+      child: BlocBuilder<EstateNewestBloc, EstateNewestState>(
+        bloc: estateNewestBloc,
         builder: (_, estateState) {
           if (estateState is EstateNewestFetchProgress) {
             return const PropertyShimmer();
           }
           if (estateState is EstateNewestFetchComplete) {
-            estateNewest = estateState.estates;
-            print(estateNewest);
+            if (estateNewest.isEmpty) {
+              estateNewest = estateState.estates;
+            }
           }
-          print("estateNewest : $estateNewest");
           return SizedBox(
             height: 430,
             child: ListView.builder(
@@ -175,16 +189,17 @@ class HomeScreenState extends State<HomeScreen>
   Widget buildMostViewEstate() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: BlocBuilder<EstateBloc, EstateState>(
-        bloc: estateBloc,
+      child: BlocBuilder<EstateViewBloc, EstateViewState>(
+        bloc: estateViewBloc,
         builder: (_, estateState) {
           if (estateState is EstateMostViewFetchProgress) {
             return const PropertyShimmer();
           }
           if (estateState is EstateMostViewFetchComplete) {
-            estateMostView = estateState.estates;
+            if (estateMostView.isEmpty) {
+              estateMostView = estateState.estates;
+            }
           }
-          print("estateMostView : $estateMostView");
           return SizedBox(
             height: 430,
             child: ListView.builder(
@@ -205,55 +220,9 @@ class HomeScreenState extends State<HomeScreen>
   }
 }
 
-final List<String> imgList = [
-  'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
-  'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
-  'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
-  'https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=89719a0d55dd05e2deae4120227e6efc&auto=format&fit=crop&w=1953&q=80',
-  'https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80',
-  'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
-];
+List<SpecialEstate> imgList = [];
 
-final List<Widget> imageSliders = imgList
-    .map((item) => Container(
-          margin: const EdgeInsets.all(5.0),
-          child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(12.0)),
-              child: Stack(
-                children: <Widget>[
-                  CachedNetworkImage(
-                      imageUrl: item, fit: BoxFit.cover, width: 1000.0),
-                  Positioned(
-                    bottom: 0.0,
-                    left: 0.0,
-                    right: 0.0,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(200, 0, 0, 0),
-                            Color.fromARGB(0, 0, 0, 0)
-                          ],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                        ),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 20.0),
-                      child: Text(
-                        'No. ${imgList.indexOf(item)} image',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )),
-        ))
-    .toList();
+List<Widget> imageSliders = [];
 
 class AdvertisementsEstate extends StatefulWidget {
   const AdvertisementsEstate({Key? key}) : super(key: key);
@@ -265,50 +234,102 @@ class AdvertisementsEstate extends StatefulWidget {
 }
 
 class _AdvertisementsEstateState extends State<AdvertisementsEstate> {
-  int _current = 0;
+  ChannelCubit currentCubit = ChannelCubit(0);
   final CarouselController _controller = CarouselController();
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      SizedBox(
-        width: getScreenWidth(context),
-        child: CarouselSlider(
-          items: imageSliders,
-          carouselController: _controller,
-          options: CarouselOptions(
-              //height: 230,
-              autoPlay: true,
-              viewportFraction: 1.0,
-              //enlargeCenterPage: true,
-              // aspectRatio: 1.7,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _current = index;
-                });
-              }),
-        ),
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: imgList.asMap().entries.map((entry) {
-          return GestureDetector(
-            onTap: () => _controller.animateToPage(entry.key),
-            child: Container(
-              width: 8.0,
-              height: 8.0,
-              margin:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: (Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black)
-                      .withOpacity(_current == entry.key ? 0.9 : 0.4)),
-            ),
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    return BlocBuilder<EstateSpacialBloc, EstateSpacialState>(
+      bloc: estateSpacialBloc,
+      builder: (_, spacialState) {
+        if (spacialState is EstateSpacialFetchProgress) {
+          ShimmerWidget.rectangular(
+            baseColor: isDark ? Colors.grey[400] : Colors.grey[300],
+            highlightColor: isDark ? Colors.grey[300] : Colors.grey[200],
+            height: 1000.h,
+            width: 1000.w,
           );
-        }).toList(),
-      ),
-    ]);
+        }
+        if (spacialState is EstateSpacialFetchComplete) {
+          imgList = spacialState.estates;
+          imageSliders = imgList
+              .map((item) => InkWell(
+                    child: Container(
+                      margin: const EdgeInsets.all(5.0),
+                      child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12.0)),
+                          child: CachedNetworkImage(
+                              imageUrl: item.imageUrl!,
+                              fit: BoxFit.cover,
+                              width: 1000.0)),
+                    ),
+                    onTap: () async {
+                      EstateRepository estateRepository = EstateRepository();
+                      Estate estate =
+                          await estateRepository.getEstate(item.estateId!);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => EstateDetailsScreen(
+                            estate: estate,
+                          ),
+                        ),
+                      );
+                    },
+                  ))
+              .toList();
+        }
+        return BlocBuilder<ChannelCubit, dynamic>(
+          bloc: currentCubit,
+          builder: (_, current) {
+            return Column(
+              children: [
+                SizedBox(
+                  width: getScreenWidth(context),
+                  child: CarouselSlider(
+                    items: imageSliders,
+                    carouselController: _controller,
+                    options: CarouselOptions(
+                        //height: 230,
+                        autoPlay: true,
+                        viewportFraction: 1.0,
+                        //enlargeCenterPage: true,
+                        // aspectRatio: 1.7,
+                        onPageChanged: (index, reason) {
+                          currentCubit.setState(index);
+                        }),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: imgList.asMap().entries.map((entry) {
+                    return GestureDetector(
+                      onTap: () => _controller.animateToPage(entry.key),
+                      child: Container(
+                        width: 8.0,
+                        height: 8.0,
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 4.0),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color:
+                                (Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(currentCubit.state == entry.key
+                                        ? 0.9
+                                        : 0.4)),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }

@@ -3,25 +3,13 @@ import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/utils/services/network_helper.dart';
 
 class NotificationsProvider {
-  Future<Response> getNotificationTypes() async {
-    NetworkHelper helper = NetworkHelper();
-    Response response;
-
-    try {
-      response = await helper.get(notificationTypesUrl);
-    } catch (_) {
-      rethrow;
-    }
-    return response;
-  }
-
   Future<Response> getNotifications(String token) async {
     NetworkHelper helper = NetworkHelper();
 
     Response response;
 
     try {
-      response = await helper.get(notificationsUrl, token: token);
+      response = await helper.get(notificationsURL, token: token);
     } catch (e) {
       rethrow;
     }
@@ -29,15 +17,4 @@ class NotificationsProvider {
     return response;
   }
 
-
-  Future clearNotifications(String token)async{
-    NetworkHelper helper = NetworkHelper();
-    Response response;
-    try {
-      response = await helper.delete(clearNotificationsUrl, token: token);
-    } catch (e) {
-      rethrow;
-    }
-    return response;
-  }
 }

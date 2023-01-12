@@ -10,8 +10,7 @@ class ApplicationSharedPreferences {
   static const String languageCode = "language_code";
   static const String isLanguageSelected = "is_language_selected";
   static const String versionKey = "version_Key";
-
-
+  static const String downloadKey = "Download_Key";
 
   static init() async {
     _preferences = await SharedPreferences.getInstance();
@@ -51,7 +50,15 @@ class ApplicationSharedPreferences {
     return _preferences.getBool(isMapTutorialPassed)!;
   }
 
- static setVersionAppState(String isPassed) async {
+  static setDownloadUrl(String url) async {
+    await _preferences.setString(downloadKey, url);
+  }
+
+  static String getDownloadUrl() {
+    return _preferences.getString(downloadKey)!;
+  }
+
+  static setVersionAppState(String isPassed) async {
     await _preferences.setString(versionKey, isPassed);
   }
 
@@ -88,13 +95,12 @@ class ApplicationSharedPreferences {
     return await _preferences.remove(isDarkMode);
   }
 
-
   static setLanguageCode(String selectedCode) async {
     await _preferences.setString(languageCode, selectedCode);
   }
 
   static String? getLanguageCode() {
-    return _preferences.getString(languageCode) ;
+    return _preferences.getString(languageCode);
   }
 
   static Future<bool> removeLanguageCode() async {
@@ -106,11 +112,10 @@ class ApplicationSharedPreferences {
   }
 
   static bool getIsLanguageSelected() {
-    return _preferences.getBool(isLanguageSelected) ?? false ;
+    return _preferences.getBool(isLanguageSelected) ?? false;
   }
 
   static Future<bool> removeIsLanguageSelected() async {
     return await _preferences.remove(isLanguageSelected);
   }
-
 }

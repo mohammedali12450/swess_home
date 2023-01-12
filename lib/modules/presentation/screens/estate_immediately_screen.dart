@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/presentation/screens/region_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../constants/design_constants.dart';
 import '../../../core/functions/app_theme_information.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
@@ -172,7 +174,9 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
             bloc: _rentEstateBloc,
             builder: (_, getRentState) {
               if (getRentState is GetRentEstateFetchProgress ||
-                  getRentState is GetRentEstateFetchProgress) {}
+                  getRentState is GetRentEstateFetchProgress) {
+               // return const SliverToBoxAdapter(child: ImmediateShimmer());
+              }
               if (getRentState is GetRentEstateFetchComplete) {
                 rentEstates.addAll(getRentState.rentEstates);
                 _rentEstateBloc.isFetching = false;
@@ -223,7 +227,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                 );
               }
               return SliverFixedExtentList(
-                itemExtent: 250,
+                itemExtent: 350,
                 delegate: SliverChildBuilderDelegate((builder, index) {
                   return buildEstateCard(rentEstates.elementAt(index));
                 }, childCount: rentEstates.length),
@@ -340,7 +344,10 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                   children: [
                     Text(
                       locationController.text,
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6!
+                          .copyWith(color: AppColors.primaryColor),
                     ),
                   ],
                 ),
@@ -385,7 +392,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                     child: Row(
                       children: [
                         Text(AppLocalizations.of(context)!.estate_type + " : "),
-                        Text(rentEstate.estateType),
+                        Text(rentEstate.estateType.split("|")[1])
                       ],
                     ),
                   ),
@@ -393,7 +400,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                     child: Row(
                       children: [
                         Text(AppLocalizations.of(context)!.rental_term + " : "),
-                        Text(rentEstate.periodType),
+                        Text(rentEstate.periodType.split("|").first),
                       ],
                     ),
                   ),
@@ -454,7 +461,9 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                     child: Row(
                       children: [
                         Text(AppLocalizations.of(context)!.furnished + " : "),
-                        Text(rentEstate.isFurnished.toString()),
+                        Text(rentEstate.isFurnished
+                            ? AppLocalizations.of(context)!.yes
+                            : AppLocalizations.of(context)!.no),
                       ],
                     ),
                   ),
@@ -462,8 +471,54 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
               ),
               Row(
                 children: [
+                  Text(AppLocalizations.of(context)!.interior_status + " : "),
+                  Text(rentEstate.interiorStatuses),
+                ],
+              ),
+              Row(
+                children: [
                   Text(AppLocalizations.of(context)!.estate_price + " : "),
                   Text(rentEstate.price.toString()),
+                ],
+              ),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () async {
+                      if (rentEstate.whatsAppNumber != null) {
+                        launch(
+                          "tel://" + rentEstate.whatsAppNumber!,
+                        );
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: AppLocalizations.of(context)!
+                                .no_whatsapp_number);
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.whatsapp_outlined,
+                      size: 30,
+                      color: Colors.green,
+                    ),
+                  ),
+                  const VerticalDivider(
+                    thickness: 2,
+                    width: 2,
+                    color: AppColors.black,
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      launch(
+                        "tel://" + rentEstate.phoneNumber,
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.call_outlined,
+                      size: 30,
+                    ),
+                  )
                 ],
               ),
             ],

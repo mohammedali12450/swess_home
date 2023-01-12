@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,6 +13,8 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/estate_spacial_bloc/estate_spacial_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/estate_view_bloc/estate_view_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
@@ -34,6 +37,7 @@ import 'core/storage/shared_preferences/notifications_shared_preferences.dart';
 import 'core/storage/shared_preferences/shared_preferences_controllers.dart';
 import 'modules/business_logic_components/bloc/area_units_bloc/area_units_bloc.dart';
 import 'modules/business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
+import 'modules/business_logic_components/bloc/estate_newest_bloc/estate_newest_bloc.dart';
 import 'modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_bloc.dart';
 import 'modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import 'modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
@@ -93,7 +97,7 @@ void main() async {
   // Run application:
   if (!_clearSharedPreferences) {
     runApp(
-       Phoenix(
+      Phoenix(
         child: const MyApp(),
       ),
     );
@@ -162,6 +166,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     precacheImage(const AssetImage(swessHomeIconPath), context);
 
     return MultiBlocProvider(
@@ -240,8 +248,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           lazy: false,
           create: (_) => NotificationsBloc(NotificationRepository()),
         ),
+        BlocProvider<EstateNewestBloc>(
+          create: (_) => EstateNewestBloc(
+            EstateRepository(),
+          ),
+        ),
         BlocProvider<EstateBloc>(
           create: (_) => EstateBloc(
+            EstateRepository(),
+          ),
+        ),
+        BlocProvider<EstateViewBloc>(
+          create: (_) => EstateViewBloc(
+            EstateRepository(),
+          ),
+        ),
+        BlocProvider<EstateSpacialBloc>(
+          create: (_) => EstateSpacialBloc(
             EstateRepository(),
           ),
         ),

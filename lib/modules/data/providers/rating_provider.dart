@@ -9,7 +9,8 @@ class RatingProvider {
     Response response;
 
     try {
-      response = await helper.post(ratingUrl, {"rate": rate, "notes": notes}, token: token);
+      response = await helper.post(ratingURL, {"rate": rate, "notes": notes},
+          token: token);
     } catch (_) {
       rethrow;
     }

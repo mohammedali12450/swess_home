@@ -193,9 +193,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       governorates!.elementAt(index).name;
                                   print(selectedGovernorateId);
                                 },
-                                // validator: (value) => value == null
-                                //     ? AppLocalizations.of(context)!.this_field_is_required
-                                //     : null,
+                                validator: (value) => value == null
+                                    ? AppLocalizations.of(context)!.this_field_is_required
+                                    : null,
                                 selectedItem: widget.user!.governorate,
                               );
                             },

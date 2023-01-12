@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/presentation/screens/region_screen.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
-import '../../../constants/enums.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
-import '../../business_logic_components/bloc/estate_types_bloc/estate_types_state.dart';
 import '../../business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
@@ -29,8 +27,6 @@ import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_types_repository.dart';
 import '../../data/repositories/price_domains_repository.dart';
 import '../widgets/choice_container.dart';
-import '../widgets/fetch_result.dart';
-import '../widgets/my_dropdown_list.dart';
 import '../widgets/price_picker.dart';
 import 'estates_screen.dart';
 
@@ -51,11 +47,11 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   ChannelCubit isSellCubit = ChannelCubit(true);
   ChannelCubit isAreaSearchCubit = ChannelCubit(true);
   ChannelCubit isPressSearchCubit = ChannelCubit(false);
+  ChannelCubit isPressTypeCubit = ChannelCubit(5);
 
   PriceDomainsBloc priceDomainsBloc =
       PriceDomainsBloc(PriceDomainsRepository());
   EstateTypesBloc estateTypesBloc = EstateTypesBloc(EstateTypesRepository());
-  RegionsBloc regionsBloc = RegionsBloc();
 
   // controllers:
   TextEditingController locationController = TextEditingController();
@@ -66,10 +62,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   PriceDomain? priceDomains;
   late List<OwnershipType> ownershipsTypes;
   late List<InteriorStatus> interiorStatuses;
-  List<NewSearchType> searchTypes = [
-    NewSearchType.neighborhood,
-    NewSearchType.area
-  ];
 
   SearchData searchData = SearchData();
 
@@ -143,18 +135,20 @@ class _SearchScreenState extends State<FilterSearchScreen> {
         backgroundColor: isDark ? const Color(0xff26282B) : null,
         title: Text(AppLocalizations.of(context)!.search),
       ),
-      body: BlocBuilder<ChannelCubit, dynamic>(
-        bloc: isAreaSearchCubit,
-        builder: (_, isArea) {
-          return ListView(
-            children: [
-              Container(
-                padding: kMediumSymHeight,
-                child: buildSearchWidgets(isDark),
-              ),
-            ],
-          );
-        },
+      body: SingleChildScrollView(
+        child: BlocBuilder<ChannelCubit, dynamic>(
+          bloc: isAreaSearchCubit,
+          builder: (_, isArea) {
+            return Column(
+              children: [
+                Container(
+                  padding: kMediumSymHeight,
+                  child: buildSearchWidgets(isDark),
+                ),
+              ],
+            );
+          },
+        ),
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.symmetric(vertical: 5.w),
@@ -204,7 +198,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           }
                           print("ghina : "
                               "${searchData.estateOfferTypeId}\n"
-                              "${searchData.estateTypeId}\n"
+                              "${isPressTypeCubit.state}\n"
                               "${searchData.locationId}\n"
                               "${searchData.priceMin}\n"
                               "${searchData.priceMax}");
@@ -214,10 +208,12 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                             MaterialPageRoute(
                               builder: (_) => EstatesScreen(
                                 searchData: searchData,
-                                eventSearch: EstateFetchStarted(
+                                eventSearch: EstatesFetchStarted(
                                   searchData: SearchData(
                                       locationId: searchData.locationId,
-                                      estateTypeId: searchData.estateTypeId,
+                                      estateTypeId: isPressTypeCubit.state == 5
+                                          ? null
+                                          : isPressTypeCubit.state,
                                       estateOfferTypeId:
                                           searchData.estateOfferTypeId,
                                       priceMin: searchData.priceMin,
@@ -279,13 +275,14 @@ class _SearchScreenState extends State<FilterSearchScreen> {
               searchData.estateOfferTypeId = 2;
             }),
         buildLocation(isDark),
-        buildEstateType(),
+        buildEstateType(isDark),
         buildPriceDomain(isDark),
+        kHe60,
       ],
     );
   }
 
-  Widget buildEstateType() {
+  Widget buildEstateType(isDark) {
     return Column(
       children: [
         Padding(
@@ -301,8 +298,228 @@ class _SearchScreenState extends State<FilterSearchScreen> {
             ],
           ),
         ),
-        kHe12,
-        BlocBuilder<EstateTypesBloc, EstateTypesState>(
+        BlocBuilder<ChannelCubit, dynamic>(
+          bloc: isPressTypeCubit,
+          builder: (_, pressState) {
+            return Padding(
+              padding: kTinyAllPadding,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        if (pressState < 5 && pressState == 0) {
+                          isPressTypeCubit.setState(5);
+                        } else {
+                          isPressTypeCubit.setState(0);
+                        }
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 60,
+                            padding: kSmallAllPadding,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              border: Border.all(
+                                  color: pressState == 0
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor),
+                            ),
+                            child: Image.asset(buildIconPath,
+                                color: AppColors.primaryColor),
+                          ),
+                          Text(
+                            estatesTypes!.elementAt(0).name.split("|")[1],
+                            style: TextStyle(
+                                color: !isDark
+                                    ? pressState == 0
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.primaryColor
+                                    : pressState == 0
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  kWi16,
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        if (pressState < 5 && pressState == 3) {
+                          isPressTypeCubit.setState(5);
+                        } else {
+                          isPressTypeCubit.setState(3);
+                        }
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 60,
+                            padding: kSmallAllPadding,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              border: Border.all(
+                                  color: pressState == 3
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor),
+                            ),
+                            child: Image.asset(farmIconPath,
+                                color: AppColors.primaryColor),
+                          ),
+                          Text(
+                            estatesTypes!.elementAt(3).name.split("|")[1],
+                            style: TextStyle(
+                                color: !isDark
+                                    ? pressState == 3
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.primaryColor
+                                    : pressState == 3
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  kWi16,
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        if (pressState < 5 && pressState == 2) {
+                          isPressTypeCubit.setState(5);
+                        } else {
+                          isPressTypeCubit.setState(2);
+                        }
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 60,
+                            padding: kTinyAllPadding,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              border: Border.all(
+                                  color: pressState == 2
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor),
+                            ),
+                            child: Image.asset(landIconPath,
+                                color: AppColors.primaryColor),
+                          ),
+                          Text(
+                            estatesTypes!.elementAt(2).name.split("|")[1],
+                            style: TextStyle(
+                                color: !isDark
+                                    ? pressState == 2
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.primaryColor
+                                    : pressState == 2
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  kWi16,
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        if (pressState < 5 && pressState == 1) {
+                          isPressTypeCubit.setState(5);
+                        } else {
+                          isPressTypeCubit.setState(1);
+                        }
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 60,
+                            padding: kTinyAllPadding,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              border: Border.all(
+                                  color: pressState == 1
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor),
+                            ),
+                            child: Image.asset(shopIconPath,
+                                color: AppColors.primaryColor),
+                          ),
+                          Text(
+                            estatesTypes!.elementAt(1).name.split("|")[1],
+                            style: TextStyle(
+                                color: !isDark
+                                    ? pressState == 1
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.primaryColor
+                                    : pressState == 1
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  kWi16,
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        if (pressState < 5 && pressState == 4) {
+                          isPressTypeCubit.setState(5);
+                        } else {
+                          isPressTypeCubit.setState(4);
+                        }
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 60,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              border: Border.all(
+                                  color: pressState == 4
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor),
+                            ),
+                            child: Image.asset(villaIconPath,
+                                color: AppColors.primaryColor),
+                          ),
+                          Text(
+                            estatesTypes!.elementAt(4).name.split("|")[1],
+                            style: TextStyle(
+                                color: !isDark
+                                    ? pressState == 4
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.primaryColor
+                                    : pressState == 4
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        /* BlocBuilder<EstateTypesBloc, EstateTypesState>(
           bloc: estateTypesBloc,
           builder: (_, estateTypesState) {
             if (estateTypesState is EstateTypesFetchError) {
@@ -348,8 +565,8 @@ class _SearchScreenState extends State<FilterSearchScreen> {
               ),
             );
           },
-        ),
-        kHe24,
+        ),*/
+        kHe12,
       ],
     );
   }
@@ -439,7 +656,9 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                         borderRadius: const BorderRadius.all(
                                             Radius.circular(8)),
                                         border: Border.all(
-                                          color: AppColors.primaryColor,
+                                          color: !isDark
+                                              ? Colors.black38
+                                              : AppColors.yellowDarkColor,
                                           width: 1,
                                         )),
                                     child: Text(textMin),
@@ -513,7 +732,9 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(8)),
                                           border: Border.all(
-                                            color: AppColors.primaryColor,
+                                            color: !isDark
+                                                ? Colors.black38
+                                                : AppColors.yellowDarkColor,
                                             width: 1,
                                           )),
                                       child: Text(textMax),
@@ -570,7 +791,10 @@ class _SearchScreenState extends State<FilterSearchScreen> {
               child: Container(
                 height: 50,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black38, width: 1),
+                  border: Border.all(
+                      color:
+                          !isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                      width: 1),
                   borderRadius: const BorderRadius.all(Radius.circular(8)),
                 ),
                 margin: EdgeInsets.only(

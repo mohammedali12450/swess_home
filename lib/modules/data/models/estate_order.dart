@@ -7,33 +7,35 @@ import 'location.dart';
 
 class EstateOrder {
   // Receive state :
-  final int? id;
+   int? id;
 
-  final EstateType? estateType;
+   EstateType? estateType;
 
-  final EstateOfferType? estateOfferType;
+   EstateOfferType? estateOfferType;
 
-  final Location? location;
+   Location? location;
 
-  final PriceDomain? priceDomain;
+   PriceDomain? priceDomain;
 
-  final String? createdAt;
+   String? createdAt;
 
   List<Estate>? candidatesEstates;
 
   // Send state :
 
-  final int? locationId;
+   int? locationId;
 
-  final int? estateTypeId;
+   int? estateTypeId;
 
-  final int? estateOfferId;
+   int? estateOfferId;
 
-  final int? priceDomainId;
+   int? minPrice;
+
+   int? maxPrice;
 
   // Both states:
 
-  final String? description;
+   String? description;
 
   EstateOrder({
     this.id,
@@ -47,7 +49,8 @@ class EstateOrder {
     this.estateTypeId,
     this.estateOfferId,
     this.locationId,
-    this.priceDomainId,
+    this.maxPrice,
+    this.minPrice
   });
 
   factory EstateOrder.fromJson(json) {
@@ -79,8 +82,9 @@ class EstateOrder {
     Map<String, dynamic> map = {};
     map["estate_type_id"] = estateTypeId;
     map["estate_offer_type_id"] = estateOfferId;
-    map["price_domain_id"] = priceDomainId;
     map["location_id"] = locationId;
+    map["min_price"] = minPrice;
+    map["max_price"] = maxPrice;
     map["notes"] = description;
     return map;
   }

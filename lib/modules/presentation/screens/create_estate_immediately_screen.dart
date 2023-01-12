@@ -12,6 +12,7 @@ import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/data/repositories/rent_estate_repository.dart';
 import 'package:swesshome/modules/presentation/screens/region_screen.dart';
+import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
 import '../../../utils/helpers/numbers_helper.dart';
@@ -67,6 +68,7 @@ class _CreateEstateImmediatelyScreenState
   ChannelCubit bathroomCubit = ChannelCubit(0);
   ChannelCubit checkFurnishedStateCubit = ChannelCubit(false);
   ChannelCubit locationIdCubit = ChannelCubit(0);
+  ChannelCubit isPressTypeCubit = ChannelCubit(1);
 
   late RentEstateBloc _rentEstateBloc;
 
@@ -91,12 +93,6 @@ class _CreateEstateImmediatelyScreenState
     _rentEstateBloc = RentEstateBloc(RentEstateRepository());
 
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    //locationController.text = AppLocalizations.of(context)!.enter_location_name;
-    super.didChangeDependencies();
   }
 
   @override
@@ -172,7 +168,7 @@ class _CreateEstateImmediatelyScreenState
       child: Column(
         children: [
           buildLocation(isDark),
-          buildEstateType(),
+          buildEstateType(isDark),
           buildSpaceEstate(areaWidget),
           buildPeriodTypes(),
           buildPriceNum(),
@@ -248,6 +244,13 @@ class _CreateEstateImmediatelyScreenState
                   return;
                 }
                 rentEstate.locationId = locationIdCubit.state;
+                if (locationIdCubit.state == 0) {
+                  Fluttertoast.showToast(
+                      msg: AppLocalizations.of(context)!.location_message,
+                      textColor: AppColors.primaryColor,
+                      toastLength: Toast.LENGTH_LONG);
+                  return;
+                }
                 _rentEstateBloc.add(SendRentEstatesFetchStarted(
                     rentEstate: rentEstate,
                     token: UserSharedPreferences.getAccessToken()!));
@@ -381,7 +384,6 @@ class _CreateEstateImmediatelyScreenState
             child: Padding(
               padding: const EdgeInsets.only(bottom: 5),
               child: MyDropdownList(
-                // isOnChangeNull: isKeyboardOpened,
                 elementsList:
                     periodTypes.map((e) => e.name.split("|").first).toList(),
                 onSelect: (index) {
@@ -566,7 +568,7 @@ class _CreateEstateImmediatelyScreenState
     );
   }
 
-  Widget buildEstateType() {
+  Widget buildEstateType(isDark) {
     return Column(
       children: [
         kHe12,
@@ -585,30 +587,164 @@ class _CreateEstateImmediatelyScreenState
         ),
         kHe12,
         BlocBuilder<ChannelCubit, dynamic>(
-          bloc: estateTypeErrorCubit,
-          builder: (_, messageText) {
+          bloc: isPressTypeCubit,
+          builder: (_, pressState) {
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black38, width: 1),
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                ),
-                child: MyDropdownList(
-                  elementsList: estateTypes.map((e) {
-                    return e.name.split('|').first;
-                  }).toList(),
-                  onSelect: (index) {
-                    // set search data estate type :
-                    rentEstate.estateTypeId = estateTypes.elementAt(index).id;
-                    estateTypeErrorCubit.setState(null);
-                  },
-                  validator: (value) => value == null
-                      ? AppLocalizations.of(context)!.this_field_is_required
-                      : null,
-                  selectedItem: AppLocalizations.of(context)!.please_select,
-                ),
+              padding: kSmallAllPadding,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        isPressTypeCubit.setState(0);
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 70,
+                            padding: kSmallAllPadding,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              border: Border.all(
+                                  color: pressState == 0
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor),
+                            ),
+                            child: Image.asset(buildIconPath,
+                                color: AppColors.primaryColor),
+                          ),
+                          Text(
+                            estatesTypes!.elementAt(0).name.split("|")[1],
+                            style: TextStyle(
+                                color: !isDark
+                                    ? pressState == 0
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.primaryColor
+                                    : pressState == 0
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  kWi16,
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        isPressTypeCubit.setState(3);
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 70,
+                            padding: kSmallAllPadding,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              border: Border.all(
+                                  color: pressState == 3
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor),
+                            ),
+                            child: Image.asset(farmIconPath,
+                                color: AppColors.primaryColor),
+                          ),
+                          Text(
+                            estatesTypes!.elementAt(3).name.split("|")[1],
+                            style: TextStyle(
+                                color:!isDark
+                                    ? pressState == 3
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.primaryColor
+                                    : pressState == 3
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  kWi16,
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        isPressTypeCubit.setState(1);
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 70,
+                            padding: kTinyAllPadding,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              border: Border.all(
+                                  color: pressState == 1
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor),
+                            ),
+                            child: Image.asset(shopIconPath,
+                                color: AppColors.primaryColor),
+                          ),
+                          Text(
+                            estatesTypes!.elementAt(1).name.split("|")[1],
+                            style: TextStyle(
+                                color: !isDark
+                                    ? pressState == 1
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.primaryColor
+                                    : pressState == 1
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  kWi16,
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        isPressTypeCubit.setState(4);
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 70,
+                            padding: kSmallAllPadding,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              border: Border.all(
+                                  color: pressState == 4
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor),
+                            ),
+                            child: Image.asset(villaIconPath,
+                                color: AppColors.primaryColor),
+                          ),
+                          Text(
+                            estatesTypes!.elementAt(4).name.split("|")[1],
+                            style: TextStyle(
+                                color: !isDark
+                                    ? pressState == 4
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.primaryColor
+                                    : pressState == 4
+                                    ? AppColors.yellowDarkColor
+                                    : AppColors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             );
           },
@@ -855,7 +991,9 @@ class _CreateEstateImmediatelyScreenState
           child: Container(
             height: 50,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.black38, width: 1),
+              border: Border.all(
+                  color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                  width: 1),
               borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),
             margin: EdgeInsets.only(

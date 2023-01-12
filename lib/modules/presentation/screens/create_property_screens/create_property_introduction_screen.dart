@@ -12,13 +12,16 @@ class CreatePropertyIntroductionScreen extends StatefulWidget {
   static const String id = "CreatePropertyIntroductionScreen";
   final int officeId;
 
-  const CreatePropertyIntroductionScreen({Key? key, required this.officeId}) : super(key: key);
+  const CreatePropertyIntroductionScreen({Key? key, required this.officeId})
+      : super(key: key);
 
   @override
-  _CreatePropertyIntroductionScreenState createState() => _CreatePropertyIntroductionScreenState();
+  _CreatePropertyIntroductionScreenState createState() =>
+      _CreatePropertyIntroductionScreenState();
 }
 
-class _CreatePropertyIntroductionScreenState extends State<CreatePropertyIntroductionScreen> {
+class _CreatePropertyIntroductionScreenState
+    extends State<CreatePropertyIntroductionScreen> {
   @override
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
@@ -31,7 +34,9 @@ class _CreatePropertyIntroductionScreenState extends State<CreatePropertyIntrodu
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.95),
               image: const DecorationImage(
-                  image: AssetImage(flatImagePath), fit: BoxFit.cover, opacity: 0.32),
+                  image: AssetImage(flatImagePath),
+                  fit: BoxFit.cover,
+                  opacity: 0.32),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -72,7 +77,10 @@ class _CreatePropertyIntroductionScreenState extends State<CreatePropertyIntrodu
                     AppLocalizations.of(context)!.create_estate_introduction,
                     maxLines: 10,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyText2!.copyWith(color: Colors.white),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText2!
+                        .copyWith(color: Colors.white),
                   ),
                 ),
                 40.verticalSpace,
@@ -83,13 +91,17 @@ class _CreatePropertyIntroductionScreenState extends State<CreatePropertyIntrodu
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.start_now,
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1!
+                        .copyWith(color: Colors.black),
                   ),
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => CreatePropertyScreen1(officeId: widget.officeId),
+                        builder: (_) =>
+                            CreatePropertyScreen1(officeId: widget.officeId),
                       ),
                     );
                   },
@@ -102,7 +114,8 @@ class _CreatePropertyIntroductionScreenState extends State<CreatePropertyIntrodu
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               width: 1.sw,
-              alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+              alignment:
+                  isArabic ? Alignment.centerRight : Alignment.centerLeft,
               child: IconButton(
                 icon: Icon(
                   Icons.arrow_back,

@@ -8,11 +8,12 @@ class EstateOfficesRepository {
   final EstateOfficeProvider _estateOfficeProvider = EstateOfficeProvider();
 
   Future<List<EstateOffice>> searchEstateOfficesByName(
-      String? name, String? token) async {
+      String? name, String? token, int page) async {
     Response response;
 
     try {
-      response = await _estateOfficeProvider.getEstatesByName(name, token);
+      response =
+          await _estateOfficeProvider.getEstatesByName(name, token, page);
     } catch (e) {
       rethrow;
     }
@@ -30,11 +31,12 @@ class EstateOfficesRepository {
   }
 
   Future<List<EstateOffice>> searchEstateOfficesByLocationId(
-      int locationId) async {
+      int locationId, int page) async {
     Response response;
 
     try {
-      response = await _estateOfficeProvider.getEstatesByLocationId(locationId);
+      response =
+          await _estateOfficeProvider.getEstatesByLocationId(locationId, page);
     } catch (_) {
       rethrow;
     }
@@ -43,7 +45,8 @@ class EstateOfficesRepository {
       throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر");
     }
 
-    var estateOfficesList = jsonDecode(response.toString())["data"] as List;
+    var estateOfficesList =
+        jsonDecode(response.toString())["data"]as List;
     List<EstateOffice> estateOffices = estateOfficesList
         .map<EstateOffice>((jsonOffice) => EstateOffice.fromJson(jsonOffice))
         .toList();

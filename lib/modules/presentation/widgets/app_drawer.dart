@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
+import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
@@ -163,11 +165,8 @@ class _MyDrawerState extends State<MyDrawer> {
             content: AppLocalizations.of(context)!.invite_friends,
             iconData: Icons.people_alt_outlined,
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (_) => const SettingsScreen()),
-              // );
-              //Navigator.pushNamed(context, SettingsScreen.id);
+              Share.share(AppLocalizations.of(context)!.upload_app +
+                  '\n${ApplicationSharedPreferences.getDownloadUrl()}');
             },
           ),
           RowInformation(
@@ -179,58 +178,58 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           BlocBuilder<UserLoginBloc, UserLoginState>(
             builder: (context, userLoginState) {
-                return RowInformation(
-                  content: AppLocalizations.of(context)!.log_out,
-                  iconData: Icons.logout,
-                  onTap: () async {
-                    await showWonderfulAlertDialog(
-                      context,
-                      AppLocalizations.of(context)!.confirmation,
-                      AppLocalizations.of(context)!.logout_confirmation,
-                      removeDefaultButton: true,
-                      width: 450.w,
-                      dialogButtons: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              fixedSize: Size(140.w, 56.h),
-                              padding: EdgeInsets.zero),
-                          child: BlocBuilder<ChannelCubit, dynamic>(
-                            bloc: isLogoutLoadingCubit,
-                            builder: (_, isLogoutLoading) {
-                              return (isLogoutLoading)
-                                  ? SpinKitWave(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .background,
-                                      size: 16.w,
-                                    )
-                                  : Text(
-                                      AppLocalizations.of(context)!.log_out,
-                                    );
-                            },
-                          ),
-                          onPressed: () async {
-                            isLogoutLoadingCubit.setState(true);
-                            await _logout();
-                            isLogoutLoadingCubit.setState(false);
-                            UserSharedPreferences.clear();
+              return RowInformation(
+                content: AppLocalizations.of(context)!.log_out,
+                iconData: Icons.logout,
+                onTap: () async {
+                  await showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.confirmation,
+                    AppLocalizations.of(context)!.logout_confirmation,
+                    removeDefaultButton: true,
+                    width: 450.w,
+                    dialogButtons: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(140.w, 56.h),
+                            padding: EdgeInsets.zero),
+                        child: BlocBuilder<ChannelCubit, dynamic>(
+                          bloc: isLogoutLoadingCubit,
+                          builder: (_, isLogoutLoading) {
+                            return (isLogoutLoading)
+                                ? SpinKitWave(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
+                                    size: 16.w,
+                                  )
+                                : Text(
+                                    AppLocalizations.of(context)!.log_out,
+                                  );
                           },
                         ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              fixedSize: Size(140.w, 56.h),
-                              padding: EdgeInsets.zero),
-                          child: Text(
-                            AppLocalizations.of(context)!.cancel,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+                        onPressed: () async {
+                          isLogoutLoadingCubit.setState(true);
+                          await _logout();
+                          isLogoutLoadingCubit.setState(false);
+                          UserSharedPreferences.clear();
+                        },
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(140.w, 56.h),
+                            padding: EdgeInsets.zero),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
                         ),
-                      ],
-                    );
-                  },
-                );
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ],
@@ -319,17 +318,6 @@ class _MyDrawerState extends State<MyDrawer> {
                       .systemVariables!
                       .normalCompanyPhoneNumber,
             );
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.settings,
-          iconData: Icons.settings_outlined,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ProfileScreen()),
-            );
-            //Navigator.pushNamed(context, SettingsScreen.id);
           },
         ),
         RowInformation(
