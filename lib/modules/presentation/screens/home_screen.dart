@@ -29,6 +29,7 @@ import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_repository.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/estate_card.dart';
+import '../widgets/home_estate_card.dart';
 import '../widgets/shimmer_widget.dart';
 import '../widgets/shimmers/estates_shimmer.dart';
 import 'estate_details_screen.dart';
@@ -52,7 +53,6 @@ class HomeScreenState extends State<HomeScreen> {
   List<Estate> estateNewest = [];
   List<SpecialEstate> estateSpacial = [];
   List<Estate> estateMostView = [];
-
 
   @override
   void initState() {
@@ -122,25 +122,25 @@ class HomeScreenState extends State<HomeScreen> {
           children: [
             const AdvertisementsEstate(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
               child: Text(
                 AppLocalizations.of(context)!.new_estate + " :",
                 style: Theme.of(context)
                     .textTheme
                     .headline5!
-                    .copyWith(fontWeight: FontWeight.w600),
+                    .copyWith(fontWeight: FontWeight.w600, fontSize: 20),
               ),
             ),
             buildNewEstate(),
-            kHe28,
+            kHe16,
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
               child: Text(
                 AppLocalizations.of(context)!.most_common + " :",
                 style: Theme.of(context)
                     .textTheme
                     .headline5!
-                    .copyWith(fontWeight: FontWeight.w600),
+                    .copyWith(fontWeight: FontWeight.w600, fontSize: 20),
               ),
             ),
             buildMostViewEstate(),
@@ -168,16 +168,16 @@ class HomeScreenState extends State<HomeScreen> {
             }
           }
           return SizedBox(
-            height: 430,
+            height: 475.h,
             child: ListView.builder(
               itemCount: estateNewest.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (BuildContext context, int index) {
-                return EstateCard(
-                    removeBottomBar: true,
-                    estate: estateNewest.elementAt(index),
-                    removeCloseButton: true,
-                    color: Theme.of(context).colorScheme.background);
+                return Padding(
+                  padding:
+                      EdgeInsets.only(left: 18.w, right: 3.w, bottom: 20.h),
+                  child: HomeEstateCard(estate: estateNewest.elementAt(index)),
+                );
               },
             ),
           );
@@ -201,16 +201,16 @@ class HomeScreenState extends State<HomeScreen> {
             }
           }
           return SizedBox(
-            height: 430,
+            height: 475.h,
             child: ListView.builder(
               itemCount: estateMostView.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (BuildContext context, int index) {
-                return EstateCard(
-                    removeBottomBar: true,
-                    estate: estateMostView.elementAt(index),
-                    removeCloseButton: true,
-                    color: Theme.of(context).colorScheme.background);
+                return Padding(
+                  padding:
+                  EdgeInsets.only(left: 18.w, right: 3.w, bottom: 20.h),
+                  child: HomeEstateCard(estate: estateNewest.elementAt(index)),
+                );
               },
             ),
           );
@@ -244,11 +244,10 @@ class _AdvertisementsEstateState extends State<AdvertisementsEstate> {
       bloc: estateSpacialBloc,
       builder: (_, spacialState) {
         if (spacialState is EstateSpacialFetchProgress) {
-          ShimmerWidget.rectangular(
+          return ShimmerWidget.rectangular(
             baseColor: isDark ? Colors.grey[400] : Colors.grey[300],
             highlightColor: isDark ? Colors.grey[300] : Colors.grey[200],
-            height: 1000.h,
-            width: 1000.w,
+            height: 300.h,
           );
         }
         if (spacialState is EstateSpacialFetchComplete) {
@@ -297,7 +296,7 @@ class _AdvertisementsEstateState extends State<AdvertisementsEstate> {
                         viewportFraction: 1.0,
                         //enlargeCenterPage: true,
                         // aspectRatio: 1.7,
-                        onPageChanged: (index, reason) {
+                        onPageChanged: (index, _) {
                           currentCubit.setState(index);
                         }),
                   ),

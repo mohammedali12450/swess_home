@@ -68,6 +68,7 @@
   "estate_office_logo": "estate office logo",
   "optional": "optional",
   "done":"Done",
+  "filter": "filter",
   "tap_to_choice_an_image": "tap to choice an image",
   "detect_location": "detect location",
   "change_image": "change image",
@@ -553,5 +554,8 @@
   "phone_communicate":"Phone number to communicate",
   "upload_app":"To upload Swess Home",
   "no_whatsapp_number":"There is no WhatsApp Number",
-  "no_video":"There is no video to Show"
+  "no_video":"There is no video to Show",
+  "in_progress":"In progress",
+  "from_company":"From Company",
+  "from_agent":"From Agent"
 }

@@ -94,24 +94,6 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     }
   }
 
-  final _processes = [
-    'قيد الانتظار',
-    'من قبل الشركة',
-    'من قبل المكتب',
-  ];
-
-  final int _processIndex = 0;
-
-  Color getColor(int index) {
-    if (index == _processIndex) {
-      return inProgressColor;
-    } else if (index < _processIndex) {
-      return completeColor;
-    } else {
-      return todoColor;
-    }
-  }
-
   _onRefresh() {
     if (UserSharedPreferences.getAccessToken() != null) {
       _createdEstatesBloc.add(
@@ -226,26 +208,44 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                     // shrinkWrap: true,
                     itemCount: estates.length,
                     itemBuilder: (_, index) {
+                      int estateStatusId =
+                          estates.elementAt(index).estateStatus! == 3
+                              ? 1
+                              : estates.elementAt(index).estateStatus! == 1
+                                  ? 3
+                                  : 2;
                       return (widget.estateId != null && find)
                           ? AnimatedBuilder(
                               animation: _colorTween,
-                              builder: (context, child) => Stack(
-                                children: [
-                                  EstateCard(
-                                    color: (int.parse(widget.estateId!) ==
-                                            estates.elementAt(index).id)
-                                        ? _colorTween.value
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .background,
-                                    estate: estates.elementAt(index),
-                                    onClosePressed: () async {
-                                      await onClosePressed(index);
-                                    },
-                                    removeCloseButton: false,
-                                    removeBottomBar: true,
-                                  ),
-                                ],
+                              builder: (context, child) => Card(
+                                elevation: 5,
+                                child: Column(
+                                  children: [
+                                    EstateCard(
+                                      color: (int.parse(widget.estateId!) ==
+                                              estates.elementAt(index).id)
+                                          ? _colorTween.value
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .background,
+                                      estate: estates.elementAt(index),
+                                      onClosePressed: () async {
+                                        await onClosePressed(index);
+                                      },
+                                      removeCloseButton: false,
+                                      removeBottomBar: true,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 8.0, left: 8, right: 8),
+                                      child: SizedBox(
+                                          height: 63,
+                                          width: getScreenWidth(context),
+                                          child: ProcessTimelinePage(
+                                              estateStatusId: estateStatusId)),
+                                    ),
+                                  ],
+                                ),
                               ),
                             )
                           : Card(
@@ -269,7 +269,9 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                                     child: SizedBox(
                                         height: 63,
                                         width: getScreenWidth(context),
-                                        child: buildTimeLine()),
+                                        child: ProcessTimelinePage(
+                                          estateStatusId: estateStatusId,
+                                        )),
                                   ),
                                 ],
                               ),
@@ -281,126 +283,6 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget buildTimeLine() {
-    return Timeline.tileBuilder(
-      theme: TimelineThemeData(
-        direction: Axis.horizontal,
-        connectorTheme: const ConnectorThemeData(
-          space: 30.0,
-          thickness: 5.0,
-        ),
-      ),
-      builder: TimelineTileBuilder.connected(
-        connectionDirection: ConnectionDirection.before,
-        contentsBuilder: (context, index) {
-          return Row(
-            children: [
-              Text(
-                _processes[index],
-                style: TextStyle(
-                  //fontWeight: FontWeight.bold,
-                  color: getColor(index),
-                  fontSize: 12,
-                ),
-              ),
-              kWi8,
-            ],
-          );
-        },
-        indicatorBuilder: (_, index) {
-          Color color;
-          Widget? child;
-          if (index == _processIndex) {
-            color = inProgressColor;
-            child = const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(
-                strokeWidth: 3.0,
-                valueColor: AlwaysStoppedAnimation(Colors.white),
-              ),
-            );
-          } else if (index < _processIndex) {
-            color = completeColor;
-            child = const Icon(
-              Icons.check,
-              color: Colors.white,
-              size: 15.0,
-            );
-          } else {
-            color = todoColor;
-          }
-
-          if (index <= _processIndex) {
-            return Stack(
-              children: [
-                CustomPaint(
-                  size: const Size(30.0, 30.0),
-                  painter: BezierPainter(
-                    color: color,
-                    drawStart: index > 0,
-                    drawEnd: index < _processIndex,
-                  ),
-                ),
-                DotIndicator(
-                  size: 30.0,
-                  color: color,
-                  child: child,
-                ),
-              ],
-            );
-          } else {
-            return Stack(
-              children: [
-                CustomPaint(
-                  size: const Size(15.0, 15.0),
-                  painter: BezierPainter(
-                    color: color,
-                    drawEnd: index < _processes.length - 1,
-                  ),
-                ),
-                OutlinedDotIndicator(
-                  borderWidth: 4.0,
-                  color: color,
-                ),
-              ],
-            );
-          }
-        },
-        connectorBuilder: (_, index, type) {
-          if (index > 0) {
-            if (index == _processIndex) {
-              final prevColor = getColor(index - 1);
-              final color = getColor(index);
-              List<Color> gradientColors;
-              if (type == ConnectorType.start) {
-                gradientColors = [Color.lerp(prevColor, color, 0.5)!, color];
-              } else {
-                gradientColors = [
-                  prevColor,
-                  Color.lerp(prevColor, color, 0.5)!
-                ];
-              }
-              return DecoratedLineConnector(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: gradientColors,
-                  ),
-                ),
-              );
-            } else {
-              return SolidLineConnector(
-                color: getColor(index),
-              );
-            }
-          } else {
-            return null;
-          }
-        },
-        itemCount: _processes.length,
       ),
     );
   }
@@ -419,7 +301,8 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
             onPressed: () async {
               Navigator.pop(context);
               deleteUserNewEstateBloc.add(DeleteUserNewEstateFetchStarted(
-                  token: UserSharedPreferences.getAccessToken(), orderId: estates.elementAt(index).id));
+                  token: UserSharedPreferences.getAccessToken(),
+                  orderId: estates.elementAt(index).id));
               await _onRefresh();
             },
           ),

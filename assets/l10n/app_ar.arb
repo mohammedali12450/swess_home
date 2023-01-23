@@ -337,6 +337,7 @@
   "call_us": "اتصل بنا",
   "rate_us": "تقييم التطبيق",
   "help": "عن التطبيق",
+  "filter": "فلترة",
   "confirm_delete": "هل انت متأكد من حذف الطلب العقاري؟",
   "logout_confirmation": "هل تريد تسجيل الخروج؟",
   "sign_in_for_notifications": "قم بتسجيل الدخول لتصلك الإشعارات",
@@ -550,7 +551,9 @@
   "phone_communicate":"الرقم للتواصل",
   "upload_app":" Swess Home  لتحميل تطبيق",
   "no_whatsapp_number":"لا يوجد رقم واتس اب للتواصل",
-  "no_video":"لا يوجد فيديو لعرضه"
-
+  "no_video":"لا يوجد فيديو لعرضه",
+  "in_progress":"قيد الانتظار",
+  "from_company":"من قبل الشركة",
+  "from_agent":"من قبل المكتب"
 }
 

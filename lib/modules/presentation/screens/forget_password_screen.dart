@@ -15,6 +15,8 @@ import 'package:swesshome/modules/presentation/screens/verificaton_screen_reset.
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
 
+import '../../business_logic_components/bloc/forget_password_bloc/forget_password_event.dart';
+
 class ForgetPasswordScreen extends StatefulWidget {
   static const String id = 'ForgetPasswordScreen';
 
@@ -80,6 +82,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     return BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
       listener: (_, forgetState) {
         if (forgetState is ForgetPasswordError) {
+          print("hi $forgetState");
           if (forgetState.isConnectionError) {
             showWonderfulAlertDialog(
               context,
@@ -88,16 +91,14 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             );
             return;
           }
-
           if (forgetState.errorResponse != null) {
             loginErrorHandling(forgetState.errorResponse);
-          } else if (forgetState.errorMessage != null) {
+          }
+          if (forgetState.errorMessage != null) {
             showWonderfulAlertDialog(
               context,
               AppLocalizations.of(context)!.error,
-              AppLocalizations.of(context)!.localeName == "en"
-                  ? forgetState.errorMessage!
-                  : "هذا الحساب غير موجود",
+              forgetState.errorMessage!,
               defaultButtonContent: AppLocalizations.of(context)!.ok,
             );
           }
@@ -215,17 +216,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               if (!await signInFieldsValidation()) {
                 return;
               }
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => VerificationCodeScreenReset(
-                    phoneNumber: "+" +
-                        phoneNumber!.countryCode +
-                        phoneNumber!.nationalNumber,
-                  ),
+              forgetPasswordBloc.add(
+                ForgetPasswordStarted(
+                  mobile: "+" +
+                      phoneNumber!.countryCode +
+                      phoneNumber!.nationalNumber,
                 ),
               );
-              FocusScope.of(context).unfocus();
             },
             child: BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
               builder: (_, forgetState) {

@@ -48,7 +48,7 @@ class EstateRepository {
 
     dynamic jsonEstates = jsonDecode(response.toString())["data"];
 
-    Estate estates =  Estate.fromJson(jsonEstates);
+    Estate estates = Estate.fromJson(jsonEstates);
 
     return estates;
   }
@@ -267,10 +267,8 @@ class EstateRepository {
         await _estateProvider.visitRegister(token, visitId, visitType);
 
     if (response.statusCode != 200) {
-     print(jsonDecode(response.toString())["data"]);
       throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر!");
     }
-
     return response;
   }
 
@@ -307,7 +305,9 @@ class EstateRepository {
 
     dynamic jsonEstates = jsonDecode(response.toString())["data"];
     List<SpecialEstate> estates = [];
-    estates = jsonEstates.map<SpecialEstate>((e) => SpecialEstate.fromJson(e)).toList();
+    estates = jsonEstates
+        .map<SpecialEstate>((e) => SpecialEstate.fromJson(e))
+        .toList();
     return estates;
   }
 

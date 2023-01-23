@@ -11,7 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/data/repositories/rent_estate_repository.dart';
-import 'package:swesshome/modules/presentation/screens/region_screen.dart';
 import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
@@ -19,6 +18,7 @@ import '../../../utils/helpers/numbers_helper.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import '../../business_logic_components/bloc/interior_statuses_bloc/interior_statuses_bloc.dart';
 import '../../business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
+import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_event.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_state.dart';
@@ -30,6 +30,7 @@ import '../../data/models/rent_estate.dart';
 import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../widgets/my_dropdown_list.dart';
+import 'search_region_screen.dart';
 
 class CreateEstateImmediatelyScreen extends StatefulWidget {
   const CreateEstateImmediatelyScreen({Key? key}) : super(key: key);
@@ -41,7 +42,6 @@ class CreateEstateImmediatelyScreen extends StatefulWidget {
 
 class _CreateEstateImmediatelyScreenState
     extends State<CreateEstateImmediatelyScreen> {
-  TextEditingController locationController = TextEditingController();
   TextEditingController spaceController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController roomController = TextEditingController(text: "0");
@@ -67,12 +67,13 @@ class _CreateEstateImmediatelyScreenState
   ChannelCubit salonCubit = ChannelCubit(0);
   ChannelCubit bathroomCubit = ChannelCubit(0);
   ChannelCubit checkFurnishedStateCubit = ChannelCubit(false);
-  ChannelCubit locationIdCubit = ChannelCubit(0);
   ChannelCubit isPressTypeCubit = ChannelCubit(1);
+  ChannelCubit locationNameCubit = ChannelCubit("");
 
   late RentEstateBloc _rentEstateBloc;
 
   RentEstateRequest rentEstate = RentEstateRequest.init();
+  RegionViewer? selectedRegion;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -243,8 +244,7 @@ class _CreateEstateImmediatelyScreenState
                 if (!await getFieldsValidation()) {
                   return;
                 }
-                rentEstate.locationId = locationIdCubit.state;
-                if (locationIdCubit.state == 0) {
+                if (selectedRegion!.id == 0) {
                   Fluttertoast.showToast(
                       msg: AppLocalizations.of(context)!.location_message,
                       textColor: AppColors.primaryColor,
@@ -620,11 +620,11 @@ class _CreateEstateImmediatelyScreenState
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 0
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.primaryColor
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.primaryColor
                                     : pressState == 0
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.white),
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.white),
                           ),
                         ],
                       ),
@@ -656,13 +656,13 @@ class _CreateEstateImmediatelyScreenState
                           Text(
                             estatesTypes!.elementAt(3).name.split("|")[1],
                             style: TextStyle(
-                                color:!isDark
+                                color: !isDark
                                     ? pressState == 3
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.primaryColor
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.primaryColor
                                     : pressState == 3
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.white),
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.white),
                           ),
                         ],
                       ),
@@ -696,11 +696,11 @@ class _CreateEstateImmediatelyScreenState
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 1
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.primaryColor
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.primaryColor
                                     : pressState == 1
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.white),
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.white),
                           ),
                         ],
                       ),
@@ -734,11 +734,11 @@ class _CreateEstateImmediatelyScreenState
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 4
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.primaryColor
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.primaryColor
                                     : pressState == 4
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.white),
+                                        ? AppColors.yellowDarkColor
+                                        : AppColors.white),
                           ),
                         ],
                       ),
@@ -1003,27 +1003,29 @@ class _CreateEstateImmediatelyScreenState
               horizontal: 12.w,
             ),
             child: InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => RegionScreen(
-                              locationController: locationController,
-                              isPressSearchCubit: isPressSearchCubit,
-                              locationId: locationIdCubit,
-                            )));
-                rentEstate.locationId = locationIdCubit.state;
-                isPressSearchCubit.setState(false);
+              onTap: () async {
+                selectedRegion = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SearchRegionScreen(),
+                  ),
+                ) as RegionViewer;
+                FocusScope.of(context).unfocus();
+                if (selectedRegion != null) {
+                  rentEstate.locationId = selectedRegion!.id!;
+                  locationNameCubit.setState(selectedRegion!.getLocationName());
+                }
+                return;
               },
               child: BlocBuilder<ChannelCubit, dynamic>(
-                bloc: isPressSearchCubit,
-                builder: (_, isPress) {
+                bloc: locationNameCubit,
+                builder: (_, locationName) {
                   return Center(
                     child: Row(
                       children: [
-                        Text(locationController.text == ""
+                        Text(locationName == ""
                             ? AppLocalizations.of(context)!.enter_location_name
-                            : locationController.text),
+                            : locationName),
                       ],
                     ),
                   );

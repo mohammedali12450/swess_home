@@ -62,17 +62,6 @@ class _EstatesScreenState extends State<EstatesScreen> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -307,12 +296,12 @@ class _EstatesScreenState extends State<EstatesScreen> {
                           ),
                           !isPriceSelected
                               ? const Icon(
-                                  Icons.arrow_downward,
+                                  Icons.arrow_upward,
                                   color: AppColors.primaryColor,
                                   size: 16,
                                 )
                               : const Icon(
-                                  Icons.arrow_upward,
+                                  Icons.arrow_downward,
                                   color: AppColors.white,
                                   size: 16,
                                 )
@@ -383,12 +372,12 @@ class _EstatesScreenState extends State<EstatesScreen> {
                           ),
                           !isDateSelected
                               ? const Icon(
-                                  Icons.arrow_downward,
+                                  Icons.arrow_upward,
                                   color: AppColors.primaryColor,
                                   size: 16,
                                 )
                               : const Icon(
-                                  Icons.arrow_upward,
+                                  Icons.arrow_downward,
                                   color: AppColors.white,
                                   size: 16,
                                 )

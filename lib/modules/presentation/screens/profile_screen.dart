@@ -16,6 +16,8 @@ import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/pages/terms_condition_page.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
+import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_snack_bar.dart';
 import '../../../constants/assets_paths.dart';
@@ -30,6 +32,7 @@ import '../widgets/app_drawer.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/icone_badge.dart';
 import '../widgets/shimmers/profile_shimmer.dart';
+import 'created_estates_screen.dart';
 import 'edit_profile_screen.dart';
 import 'languages_screen.dart';
 import 'navigation_bar_screen.dart';
@@ -266,31 +269,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
           isEnglish,
           icon: const Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.verified_user_outlined),
+            child: Icon(Icons.bookmark_border_outlined),
           ),
-          title: Text(AppLocalizations.of(context)!.terms_condition),
+          title: Text(AppLocalizations.of(context)!.saved_estates),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const TermsAndConditionsPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const SavedEstatesScreen()));
           },
         ),
         buildListTile(
           isEnglish,
           icon: const Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.lightbulb_outline),
+            child: Icon(Icons.article_outlined),
           ),
-          title:
-              Text(AppLocalizations.of(context)!.intellectual_property_rights),
+          title: Text(AppLocalizations.of(context)!.recent_created_estates),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const IntellectualPropertyRightsPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => CreatedEstatesScreen()));
           },
         ),
+        buildListTile(
+          isEnglish,
+          icon: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Icon(Icons.history),
+          ),
+          title: Text(AppLocalizations.of(context)!.recent_created_orders),
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => RecentEstateOrdersScreen()));
+          },
+        ),
+
         //buildChangePassword,
         // buildListTile(
         //   isEnglish,

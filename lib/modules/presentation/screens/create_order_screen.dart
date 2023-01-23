@@ -140,12 +140,12 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       buildChoiceContainer(
                           context: context,
                           cubit: isSellCubit,
-                          textRight: AppLocalizations.of(context)!.buy,
-                          textLeft: AppLocalizations.of(context)!.rent,
-                          onTapRight: () {
+                          textLeft: AppLocalizations.of(context)!.buy,
+                          textRight: AppLocalizations.of(context)!.rent,
+                          onTapLeft: () {
                             selectedEstateOfferTypeId = 1;
                           },
-                          onTapLeft: () {
+                          onTapRight: () {
                             selectedEstateOfferTypeId = 2;
                           },
                           paddingVertical: 5,

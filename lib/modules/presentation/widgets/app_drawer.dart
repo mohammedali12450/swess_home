@@ -24,11 +24,12 @@ import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
-import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../pages/intellectual_property_rights_page.dart';
+import '../pages/terms_condition_page.dart';
 import '../screens/navigation_bar_screen.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -122,27 +123,6 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           kHe16,
           RowInformation(
-            content: AppLocalizations.of(context)!.saved_estates,
-            iconData: Icons.bookmark_border_outlined,
-            onTap: () {
-              Navigator.pushNamed(context, SavedEstatesScreen.id);
-            },
-          ),
-          RowInformation(
-            content: AppLocalizations.of(context)!.recent_created_estates,
-            iconData: Icons.article_outlined,
-            onTap: () {
-              Navigator.pushNamed(context, CreatedEstatesScreen.id);
-            },
-          ),
-          RowInformation(
-            content: AppLocalizations.of(context)!.recent_created_orders,
-            iconData: Icons.history,
-            onTap: () {
-              Navigator.pushNamed(context, RecentEstateOrdersScreen.id);
-            },
-          ),
-          RowInformation(
             content: AppLocalizations.of(context)!.call_us,
             iconData: Icons.call_outlined,
             onTap: () {
@@ -170,7 +150,27 @@ class _MyDrawerState extends State<MyDrawer> {
             },
           ),
           RowInformation(
-            content: AppLocalizations.of(context)!.help,
+            content: AppLocalizations.of(context)!.terms_condition,
+            iconData: Icons.verified_user_outlined,
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const TermsAndConditionsPage()));
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.intellectual_property_rights,
+            iconData: Icons.lightbulb_outline,
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const IntellectualPropertyRightsPage()));
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.faq,
             iconData: Icons.error_outline,
             onTap: () {
               Navigator.pushNamed(context, FAQScreen.id);

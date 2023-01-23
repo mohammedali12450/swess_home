@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,12 +9,11 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
-import 'package:swesshome/modules/presentation/screens/region_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../constants/design_constants.dart';
 import '../../../core/functions/app_theme_information.dart';
-import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import '../../business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
+import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_event.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_state.dart';
@@ -27,6 +27,7 @@ import '../../data/repositories/rent_estate_repository.dart';
 import '../widgets/my_dropdown_list.dart';
 import '../widgets/res_text.dart';
 import 'create_estate_immediately_screen.dart';
+import 'search_region_screen.dart';
 
 class EstateImmediatelyScreen extends StatefulWidget {
   const EstateImmediatelyScreen({Key? key}) : super(key: key);
@@ -40,31 +41,31 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
   late RentEstateBloc _rentEstateBloc;
   List<RentEstate> rentEstates = [];
 
-  TextEditingController locationController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
   ChannelCubit isPressSearchCubit = ChannelCubit(false);
   ChannelCubit isFilterCubit = ChannelCubit(false);
-  late List<EstateType> estatesTypes;
+  ChannelCubit locationNameCubit = ChannelCubit("");
+
+  //late List<EstateType> estatesTypes;
   List<EstateType> estateTypes = [];
   late List<PeriodType> periodTypes;
-  int? estateTypeId;
   bool isEstatesFinished = false;
   final ChannelCubit _priceSelected = ChannelCubit(false);
-  ChannelCubit locationIdCubit = ChannelCubit(0);
   RentEstateFilter rentEstateFilter = RentEstateFilter.init();
+  RegionViewer? selectedRegion;
 
   @override
   void initState() {
     _rentEstateBloc = RentEstateBloc(RentEstateRepository());
-    estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
+    //estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
 
-    for (int i = 0; i < estatesTypes.length; i++) {
-      if (estatesTypes.elementAt(i).id == 3) {
-        continue;
-      }
-      estateTypes.add(estatesTypes.elementAt(i));
-    }
+    // for (int i = 0; i < estatesTypes.length; i++) {
+    //   if (estatesTypes.elementAt(i).id == 3) {
+    //     continue;
+    //   }
+    //   estateTypes.add(estatesTypes.elementAt(i));
+    // }
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
     _rentEstateBloc.add(GetRentEstatesFetchStarted(
         rentEstateFilter: RentEstateFilter(price: "desc")));
@@ -75,8 +76,6 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    locationController.text = AppLocalizations.of(context)!.search_by +
-        AppLocalizations.of(context)!.location;
     return Scaffold(
       body: CustomScrollView(
         controller: _scrollController
@@ -121,49 +120,59 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                 children: [
                   Expanded(
                       flex: 1,
-                      child: IconButton(
-                        padding: EdgeInsets.only(
-                            right: !isArabic ? 12 : 0, left: isArabic ? 12 : 0),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) => Dialog(
-                                    elevation: 2,
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 16.h, horizontal: 12.w),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .background,
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1,
+                            color: AppColors.yellowDarkColor,
+                          ),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(80),
+                          ),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                      elevation: 2,
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 16.h, horizontal: 12.w),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .background,
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(8),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            // Text(
+                                            //   AppLocalizations.of(context)!
+                                            //       .filter,
+                                            //   style: const TextStyle(
+                                            //       fontWeight: FontWeight.bold,
+                                            //       color: Colors.red,
+                                            //       fontSize: 20),
+                                            // ),
+                                            24.verticalSpace,
+                                            buildDialogBody()
+                                          ],
                                         ),
                                       ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          // Text(
-                                          //   AppLocalizations.of(context)!
-                                          //       .filter,
-                                          //   style: const TextStyle(
-                                          //       fontWeight: FontWeight.bold,
-                                          //       color: Colors.red,
-                                          //       fontSize: 20),
-                                          // ),
-                                          24.verticalSpace,
-                                          buildDialogBody()
-                                        ],
-                                      ),
-                                    ),
-                                  ));
-                        },
-                        icon: const Icon(Icons.filter_alt_outlined),
+                                    ));
+                          },
+                          icon: const Icon(Icons.filter_alt_outlined),
+                        ),
                       )),
+                  kWi20,
                   Expanded(
-                    flex: 8,
+                    flex: 4,
                     child: buildLocation(isDark),
                   ),
                 ],
@@ -175,7 +184,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
             builder: (_, getRentState) {
               if (getRentState is GetRentEstateFetchProgress ||
                   getRentState is GetRentEstateFetchProgress) {
-               // return const SliverToBoxAdapter(child: ImmediateShimmer());
+                // return const SliverToBoxAdapter(child: ImmediateShimmer());
               }
               if (getRentState is GetRentEstateFetchComplete) {
                 rentEstates.addAll(getRentState.rentEstates);
@@ -302,7 +311,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
         height: 40,
         decoration: BoxDecoration(
           color: AppColors.white,
-          border: Border.all(color: Colors.white, width: 1),
+          border: Border.all(color: AppColors.yellowDarkColor, width: 1),
           borderRadius: const BorderRadius.all(Radius.circular(5)),
         ),
         margin: EdgeInsets.only(
@@ -312,17 +321,19 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
           horizontal: 12.w,
         ),
         child: InkWell(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => RegionScreen(
-                          locationController: locationController,
-                          isPressSearchCubit: isPressSearchCubit,
-                          locationId: locationIdCubit,
-                        )));
-            rentEstateFilter.locationId = locationIdCubit.state;
-            isPressSearchCubit.setState(false);
+          onTap: () async {
+            selectedRegion = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const SearchRegionScreen(),
+              ),
+            ) as RegionViewer;
+            FocusScope.of(context).unfocus();
+            if (selectedRegion != null) {
+              rentEstateFilter.locationId = selectedRegion!.id!;
+              locationNameCubit.setState(selectedRegion!.getLocationName());
+            }
+            return;
           },
           child: BlocBuilder<ChannelCubit, dynamic>(
             bloc: isPressSearchCubit,
@@ -331,7 +342,6 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                 _rentEstateBloc.isFilter = true;
                 isFilterCubit.setState(true);
                 _rentEstateBloc.filterPage = 1;
-                rentEstateFilter.locationId = locationIdCubit.state;
 
                 _rentEstateBloc.add(FilterRentEstatesFetchStarted(
                     rentEstateFilter: rentEstateFilter));
@@ -339,19 +349,26 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                     "${rentEstateFilter.locationId}\n"
                     "${rentEstateFilter.estateTypeId}\n");
               }
-              return Center(
-                child: Row(
-                  children: [
-                    Text(
-                      locationController.text,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6!
-                          .copyWith(color: AppColors.primaryColor),
-                    ),
-                  ],
-                ),
-              );
+              return BlocBuilder<ChannelCubit, dynamic>(
+                  bloc: locationNameCubit,
+                  builder: (_, locationName) {
+                    return Center(
+                      child: Row(
+                        children: [
+                          Text(
+                            locationName == ""
+                                ? AppLocalizations.of(context)!
+                                    .enter_location_name
+                                : locationName,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline5!
+                                .copyWith(color: AppColors.black, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    );
+                  });
             },
           ),
         ),
@@ -413,7 +430,9 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                       children: [
                         Text(
                             AppLocalizations.of(context)!.estate_space + " : "),
-                        Text(rentEstate.space.toString()),
+                        Text(rentEstate.space.toString() +
+                            " " +
+                            AppLocalizations.of(context)!.meter),
                       ],
                     ),
                   ),
@@ -478,7 +497,9 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
               Row(
                 children: [
                   Text(AppLocalizations.of(context)!.estate_price + " : "),
-                  Text(rentEstate.price.toString()),
+                  Text(rentEstate.price.toString() +
+                      " " +
+                      AppLocalizations.of(context)!.syrian_bound),
                 ],
               ),
               const Divider(),
@@ -488,9 +509,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                   IconButton(
                     onPressed: () async {
                       if (rentEstate.whatsAppNumber != null) {
-                        launch(
-                          "tel://" + rentEstate.whatsAppNumber!,
-                        );
+                        openWhatsApp(rentEstate.whatsAppNumber);
                       } else {
                         Fluttertoast.showToast(
                             msg: AppLocalizations.of(context)!
@@ -582,6 +601,28 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
         ),
       ],
     );
+  }
+
+  openWhatsApp(whatsapp) async {
+    var whatsappURlAndroid = "whatsapp://send?phone=" + whatsapp + "&text=";
+    var whatappURLIos = "https://wa.me/$whatsapp?text=${Uri.parse("")}";
+    if (Platform.isIOS) {
+      // for iOS phone only
+      if (await canLaunch(whatappURLIos)) {
+        await launch(whatappURLIos, forceSafariVC: false);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("whatsapp no installed")));
+      }
+    } else {
+      // android , web
+      if (await canLaunch(whatsappURlAndroid)) {
+        await launch(whatsappURlAndroid);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("whatsapp no installed")));
+      }
+    }
   }
 
   Widget buildPriceFilter() {

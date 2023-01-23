@@ -21,7 +21,6 @@ import 'package:swesshome/modules/presentation/screens/reset_password_screen.dar
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
 import '../../business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
-import '../../business_logic_components/bloc/forget_password_bloc/forget_password_event.dart';
 
 class VerificationCodeScreenReset extends StatefulWidget {
   static const String id = 'VerificationCodeScreenReset';
@@ -82,11 +81,11 @@ class _VerificationCodeScreenResetState
       // check if there is no timer to send code
       if (value.requestedTime!
           .isBefore(DateTime.now().subtract(const Duration(minutes: 1)))) {
-        forgetPasswordBloc.add(
-          ForgetPasswordStarted(
-            mobile: widget.phoneNumber,
-          ),
-        );
+        // forgetPasswordBloc.add(
+        //   ForgetPasswordStarted(
+        //     mobile: widget.phoneNumber,
+        //   ),
+        // );
       }
 
       if (value.textValue != dataStore.user.data!.authentication ||

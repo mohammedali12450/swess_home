@@ -112,18 +112,17 @@ class UserAuthenticationRepository {
 
   Future forgetPassword(String mobile) async {
     Response response;
-
     try {
       response = await userAuthenticationProvider.forgetPassword(mobile);
     } catch (e) {
       rethrow;
     }
     if (response.statusCode == 422) {
-      throw FieldsException(jsonErrorFields: jsonDecode(response.toString())["message"]);
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
     if (response.statusCode != 200) {
       throw GeneralException(
-          errorMessage: jsonDecode(response.toString())["message"]);
+          errorMessage: jsonDecode(response.toString()));
     }
     // User user = User.fromJson(jsonDecode(response.toString())["data"]);
     // return user;

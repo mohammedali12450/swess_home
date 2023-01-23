@@ -84,8 +84,7 @@ class _EstateCardState extends State<EstateCard> {
       EstateRepository(),
     );
 
-    User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null) {
+    if (UserSharedPreferences.getAccessToken() != null) {
       userToken = UserSharedPreferences.getAccessToken()!;
     }
   }
@@ -102,12 +101,17 @@ class _EstateCardState extends State<EstateCard> {
       currency = AppLocalizations.of(context)!.lebanon_currency;
     }
 
-    int intPrice = int.parse(widget.estate.price!);
+    int intPrice = int.tryParse(widget.estate.price!)!;
     String estatePrice = NumbersHelper.getMoneyFormat(intPrice);
 
     String estateType = widget.estate.estateType!.name.split('|').elementAt(1);
-    String addingDate = DateHelper.getDateByFormat(
-        DateTime.parse(widget.estate.publishedAt!), "yyyy/MM/dd");
+
+    String addingDate = widget.estate.publishedAt == null
+        ? DateHelper.getDateByFormat(
+            DateTime.parse(widget.estate.createdAt!), "yyyy/MM/dd")
+        : DateHelper.getDateByFormat(
+            DateTime.parse(widget.estate.publishedAt!), "yyyy/MM/dd");
+
     List<String> estateImages = widget.estate.images!
         .where((e) => e.type == "estate_image")
         .map((e) => e.url)

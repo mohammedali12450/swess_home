@@ -21,16 +21,18 @@ class ForgetPasswordBloc extends Bloc<ForgetPasswordEvent, ForgetPasswordState> 
         //   UserSharedPreferences.setAccessToken(user!.token!);
         // }
         emit(ForgetPasswordComplete());
-      } on FieldsException catch (e) {
-        emit(ForgetPasswordError(
-            errorResponse: (e.jsonErrorFields["errors"] != null)
-                ? e.jsonErrorFields["errors"] as Map<String, dynamic>
-                : null,
-            errorMessage: e.jsonErrorFields["message"]));
-      } on GeneralException catch (e) {
-        emit(ForgetPasswordError(errorMessage: e.errorMessage));
-      } on ConnectionException catch (e) {
-        emit(ForgetPasswordError(errorMessage: e.errorMessage, isConnectionError: true));
+      } catch (e, stack) {
+        if (e is FieldsException) {
+          print(e.jsonErrorFields["message"]);
+          emit(ForgetPasswordError(
+              errorMessage: e.jsonErrorFields["message"]));
+        } else if (e is GeneralException) {
+          emit(ForgetPasswordError(errorMessage: e.errorMessage));
+        } else if (e is ConnectionException) {
+           emit(ForgetPasswordError(errorMessage: e.errorMessage, isConnectionError: true));
+        }
+        print(e);
+        print(stack);
       }
     });
   }

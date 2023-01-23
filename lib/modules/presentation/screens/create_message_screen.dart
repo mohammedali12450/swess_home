@@ -69,7 +69,9 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                     AppLocalizations.of(context)!.your_contact_details,
                     style: Theme.of(context).textTheme.headline6!.copyWith(
                           fontSize: 16,
-                          color: AppColors.primaryColor,
+                          color: isDark
+                              ? AppColors.primaryDark
+                              : AppColors.primaryColor,
                         ),
                   ),
                 ],
@@ -96,7 +98,7 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                   }
                   return Container();
                 }),
-            buildMessageContainer(),
+            buildMessageContainer(isDark),
             kHe24,
             Center(
               child: BlocBuilder<MessageBloc, MessageState>(
@@ -173,7 +175,7 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                         color:
-                            isDark ? AppColors.primaryColor : AppColors.white,
+                            !isDark ? AppColors.primaryColor : AppColors.white,
                       ),
                 ),
               ),
@@ -192,7 +194,7 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
     );
   }
 
-  Widget buildMessageContainer() {
+  Widget buildMessageContainer(isDark) {
     return Column(
       children: [
         kHe24,
@@ -206,7 +208,9 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                       height: 2,
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.primaryColor,
+                      color: isDark
+                          ? AppColors.primaryDark
+                          : AppColors.primaryColor,
                     ),
               ),
             ],

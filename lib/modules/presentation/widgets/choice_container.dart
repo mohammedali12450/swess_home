@@ -9,10 +9,10 @@ import '../../data/providers/theme_provider.dart';
 Widget buildChoiceContainer({
   required context,
   required ChannelCubit cubit,
-  required String textRight,
   required String textLeft,
-  required Function() onTapRight,
+  required String textRight,
   required Function() onTapLeft,
+  required Function() onTapRight,
   double? paddingVertical,
   double? paddingHorizontal,
 }) {
@@ -39,18 +39,22 @@ Widget buildChoiceContainer({
                   child: InkWell(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: !isChoice
-                            ? AppColors.lastColor.withOpacity(0.5)
-                            : AppColors.white,
+                        color: isDark
+                            ? isChoice
+                                ? AppColors.lastColor.withOpacity(0.5)
+                                : AppColors.white
+                            : !isChoice
+                                ? AppColors.lastColor.withOpacity(0.5)
+                                : AppColors.white,
                         borderRadius:
                             const BorderRadius.all(Radius.circular(4)),
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        textLeft,
+                        textRight,
                         style: Theme.of(context).textTheme.headline5!.copyWith(
                             color: isDark
-                                ? !isChoice
+                                ? isChoice
                                     ? AppColors.white
                                     : AppColors.secondaryDark
                                 : !isChoice
@@ -60,7 +64,7 @@ Widget buildChoiceContainer({
                       ),
                     ),
                     onTap: () {
-                      onTapLeft();
+                      onTapRight();
                       cubit.setState(false);
                     },
                   ),
@@ -69,24 +73,28 @@ Widget buildChoiceContainer({
                   child: InkWell(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: isChoice
-                            ? AppColors.lastColor.withOpacity(0.5)
-                            : AppColors.white,
+                        color: isDark
+                            ? !isChoice
+                                ? AppColors.lastColor.withOpacity(0.5)
+                                : AppColors.white
+                            : isChoice
+                                ? AppColors.lastColor.withOpacity(0.5)
+                                : AppColors.white,
                         borderRadius:
                             const BorderRadius.all(Radius.circular(4)),
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        textRight,
+                        textLeft,
                         style: Theme.of(context).textTheme.headline5!.copyWith(
-                            color: isChoice
+                            color: !isChoice
                                 ? AppColors.primaryColor
                                 : AppColors.secondaryDark,
                             fontWeight: FontWeight.w600),
                       ),
                     ),
                     onTap: () {
-                      onTapRight();
+                      onTapLeft();
                       cubit.setState(true);
                     },
                   ),

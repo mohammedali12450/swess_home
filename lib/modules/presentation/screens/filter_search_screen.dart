@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/modules/presentation/screens/region_screen.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
+import '../../business_logic_components/bloc/location_bloc/locations_bloc.dart';
 import '../../business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/estate_type.dart';
-import '../../data/models/interior_status.dart';
-import '../../data/models/ownership_type.dart';
 import '../../data/models/price_domain.dart';
 import '../../data/models/search_data.dart';
 import '../../data/models/user.dart';
@@ -29,6 +25,8 @@ import '../../data/repositories/price_domains_repository.dart';
 import '../widgets/choice_container.dart';
 import '../widgets/price_picker.dart';
 import 'estates_screen.dart';
+import 'search_location_screen.dart';
+import 'search_region_screen.dart';
 
 class FilterSearchScreen extends StatefulWidget {
   const FilterSearchScreen({Key? key}) : super(key: key);
@@ -40,39 +38,25 @@ class FilterSearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<FilterSearchScreen> {
   // Blocs and cubits:
   ChannelCubit patternCubit = ChannelCubit(null);
-  ChannelCubit locationDetectedCubit = ChannelCubit(false);
   ChannelCubit locationIdCubit = ChannelCubit(0);
+  ChannelCubit locationNameCubit = ChannelCubit("");
   ChannelCubit startPriceCubit = ChannelCubit(0);
   ChannelCubit endPriceCubit = ChannelCubit(0);
   ChannelCubit isSellCubit = ChannelCubit(true);
   ChannelCubit isAreaSearchCubit = ChannelCubit(true);
-  ChannelCubit isPressSearchCubit = ChannelCubit(false);
   ChannelCubit isPressTypeCubit = ChannelCubit(5);
 
   PriceDomainsBloc priceDomainsBloc =
       PriceDomainsBloc(PriceDomainsRepository());
   EstateTypesBloc estateTypesBloc = EstateTypesBloc(EstateTypesRepository());
 
-  // controllers:
-  TextEditingController locationController = TextEditingController();
-
   // others:
-  late List<dynamic> locations;
   List<EstateType>? estatesTypes;
   PriceDomain? priceDomains;
-  late List<OwnershipType> ownershipsTypes;
-  late List<InteriorStatus> interiorStatuses;
-
   SearchData searchData = SearchData();
-
-  bool isSell = false;
-  bool isLands = false;
-  bool isShops = false;
-  bool isHouse = false;
-  bool isFarmsAndVacations = false;
-  RegionViewer? selectedRegion;
   String? token;
-  SfRangeValues? values;
+  LocationViewer? selectedLocation;
+  RegionViewer? selectedRegion;
 
   // initializeEstateBooleanVariables() {
   //   isSell = (widget.searchData.estateOfferTypeId == sellOfferTypeNumber);
@@ -98,8 +82,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     searchData.priceMin = int.tryParse(priceDomains!.sale.min[0]);
     searchData.priceMax =
         int.tryParse(priceDomains!.sale.max[priceDomains!.sale.max.length - 1]);
-    print(searchData.priceMax);
-    print(priceDomains!.sale.max[priceDomains!.sale.max.length - 1]);
   }
 
   String? userToken;
@@ -119,13 +101,11 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
     if (user != null) {
       userToken = UserSharedPreferences.getAccessToken();
-      print(userToken);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    locationController.text = AppLocalizations.of(context)!.enter_location_name;
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return Scaffold(
@@ -188,11 +168,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           ],
                         ),
                         onPressed: () {
-                          if (locationDetectedCubit.state == false) {
-                            Fluttertoast.showToast(
-                                msg: AppLocalizations.of(context)!.search);
-                          }
-                          searchData.locationId = locationIdCubit.state;
                           if (searchData.locationId == 0) {
                             searchData.locationId = null;
                           }
@@ -241,10 +216,11 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           AppLocalizations.of(context)!.clear,
                         ),
                         onPressed: () {
-                          locationController.clear();
+                          locationNameCubit.setState(
+                              AppLocalizations.of(context)!
+                                  .enter_location_name);
                           isSellCubit.setState(true);
                           isAreaSearchCubit.setState(true);
-                          locationDetectedCubit.setState(false);
                           searchData = SearchData.init();
                         },
                       ),
@@ -266,12 +242,12 @@ class _SearchScreenState extends State<FilterSearchScreen> {
         buildChoiceContainer(
             context: context,
             cubit: isSellCubit,
-            textRight: AppLocalizations.of(context)!.sell,
-            textLeft: AppLocalizations.of(context)!.rent,
-            onTapRight: () {
+            textLeft: AppLocalizations.of(context)!.sell,
+            textRight: AppLocalizations.of(context)!.rent,
+            onTapLeft: () {
               searchData.estateOfferTypeId = 1;
             },
-            onTapLeft: () {
+            onTapRight: () {
               searchData.estateOfferTypeId = 2;
             }),
         buildLocation(isDark),
@@ -773,15 +749,15 @@ class _SearchScreenState extends State<FilterSearchScreen> {
         buildChoiceContainer(
             context: context,
             cubit: isAreaSearchCubit,
-            textRight: AppLocalizations.of(context)!.search_by_area,
-            textLeft: AppLocalizations.of(context)!.search_neighborhood,
-            onTapRight: () {
-              locationController.text =
-                  AppLocalizations.of(context)!.enter_location_name;
-            },
+            textLeft: AppLocalizations.of(context)!.search_by_area,
+            textRight: AppLocalizations.of(context)!.search_neighborhood,
             onTapLeft: () {
-              locationController.text =
-                  AppLocalizations.of(context)!.enter_neighborhood_name;
+              locationNameCubit
+                  .setState(AppLocalizations.of(context)!.enter_location_name);
+            },
+            onTapRight: () {
+              locationNameCubit.setState(
+                  AppLocalizations.of(context)!.enter_neighborhood_name);
             }),
         BlocBuilder<ChannelCubit, dynamic>(
           bloc: isAreaSearchCubit,
@@ -804,26 +780,48 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                   horizontal: 12.w,
                 ),
                 child: InkWell(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    if (isArea) {
+                      selectedRegion = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => RegionScreen(
-                                  locationController: locationController,
-                                  isPressSearchCubit: isPressSearchCubit,
-                                  isArea: isAreaSearchCubit.state,
-                                  locationId: locationIdCubit,
-                                )));
-                    searchData.locationId = locationIdCubit.state;
-                    isPressSearchCubit.setState(false);
+                          builder: (_) => const SearchRegionScreen(),
+                        ),
+                      ) as RegionViewer;
+                      FocusScope.of(context).unfocus();
+                      if (selectedRegion != null) {
+                        searchData.locationId = selectedRegion!.id;
+                        locationNameCubit
+                            .setState(selectedRegion!.getLocationName());
+                      }
+                      return;
+                    } else {
+                      selectedLocation = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SearchLocationScreen(),
+                        ),
+                      ) as LocationViewer;
+                      // unfocused text field :
+                      FocusScope.of(context).unfocus();
+                      if (selectedLocation != null) {
+                        searchData.locationId = selectedLocation!.id;
+                        locationNameCubit
+                            .setState(selectedLocation!.getLocationName());
+                      }
+                      return;
+                    }
                   },
                   child: BlocBuilder<ChannelCubit, dynamic>(
-                    bloc: isPressSearchCubit,
-                    builder: (_, isPress) {
+                    bloc: locationNameCubit,
+                    builder: (_, locationName) {
                       return Center(
                         child: Row(
                           children: [
-                            Text(locationController.text),
+                            Text(locationName == ""
+                                ? AppLocalizations.of(context)!
+                                    .enter_location_name
+                                : locationName),
                           ],
                         ),
                       );

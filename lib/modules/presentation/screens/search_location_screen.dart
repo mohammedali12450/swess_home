@@ -32,7 +32,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                 .copyWith(color: AppColors.white),
             cursorColor: Theme.of(context).colorScheme.background,
             decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.enter_location_name,
+              hintText: AppLocalizations.of(context)!.enter_neighborhood_name,
               hintStyle: Theme.of(context).textTheme.subtitle1!.copyWith(
                   color: AppColors.white.withOpacity(0.64),
                   fontWeight: FontWeight.w400),

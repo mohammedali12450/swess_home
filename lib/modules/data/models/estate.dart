@@ -49,45 +49,48 @@ class Estate {
   List<File>? floorPlanImages;
   PeriodType? periodType;
   int? locationId;
+  int? estateStatus;
+  int? officeStatus;
 
-  Estate({
-    this.price,
-    this.estateImages,
-    required this.estateOfferType,
-    required this.estateType,
-    this.location,
-    this.area,
-    this.areaUnit,
-    this.images,
-    this.locationId,
-    this.officeId,
-    this.id = -1,
-    this.streetImages,
-    this.floorPlanImages,
-    this.ownershipType,
-    this.period,
-    this.longitude,
-    this.latitude,
-    this.roomsCount,
-    this.nearbyPlaces,
-    this.floor,
-    this.description,
-    this.isFurnished,
-    this.hasSwimmingPool,
-    this.isOnBeach,
-    this.interiorStatus,
-    this.periodType,
-    this.estateOffice,
-    this.contractId,
-    this.createdAt,
-    this.publishedAt,
-    this.isLiked,
-    this.isSaved,
-    this.likesCount,
-    this.visitCount,
-    this.locationS,
-    this.videoUrl
-  });
+  Estate(
+      {this.price,
+      this.estateImages,
+      required this.estateOfferType,
+      required this.estateType,
+      this.location,
+      this.area,
+      this.areaUnit,
+      this.images,
+      this.locationId,
+      this.officeId,
+      this.id = -1,
+      this.streetImages,
+      this.floorPlanImages,
+      this.ownershipType,
+      this.period,
+      this.longitude,
+      this.latitude,
+      this.roomsCount,
+      this.nearbyPlaces,
+      this.floor,
+      this.description,
+      this.isFurnished,
+      this.hasSwimmingPool,
+      this.isOnBeach,
+      this.interiorStatus,
+      this.periodType,
+      this.estateOffice,
+      this.contractId,
+      this.createdAt,
+      this.publishedAt,
+      this.isLiked,
+      this.isSaved,
+      this.likesCount,
+      this.visitCount,
+      this.locationS,
+      this.videoUrl,
+      this.estateStatus,
+      this.officeStatus});
 
   factory Estate.init() {
     // important : this constructor was built to pass estate object through multi screens :
@@ -208,7 +211,13 @@ class Estate {
       hasSwimmingPool: hasSwimmingPool == null ? null : hasSwimmingPool,
       isFurnished: isFurnished == null ? null : isFurnished,
       isOnBeach: isOnBeach == null ? null : isOnBeach,
-      videoUrl: json['video_url'] == null ? "" :json['video_url']
+      videoUrl: json['video_url'] == null ? "" : json['video_url'],
+      estateStatus: json['system_estate_status'] == null
+          ? null
+          : json['system_estate_status']['id'],
+      officeStatus: json['office_estate_status'] == null
+          ? null
+          : json['office_estate_status']['id'],
     );
   }
 
