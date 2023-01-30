@@ -119,6 +119,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             AppLocalizations.of(context)!.estate_details,
           ),
@@ -380,7 +381,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 ),
                 // Estate Logo and type :
                 Container(
-                  height: 100.h,
+                  height: 126.h,
                   padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 6.w),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -414,17 +415,51 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                 builder: (_) => ImageDialog(
                                     path: widget.estate.estateOffice!.logo!));
                           },
-                          child: Container(
-                            height: 75.h,
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              image: DecorationImage(
-                                image: CachedNetworkImageProvider(
-                                  imagesBaseUrl +
-                                      widget.estate.estateOffice!.logo!,
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 75.h,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  image: DecorationImage(
+                                    image: CachedNetworkImageProvider(
+                                      imagesBaseUrl +
+                                          widget.estate.estateOffice!.logo!,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                              // Estate Viewer
+                              if (widget.estate.visitCount != null)
+                                Container(
+                                  padding:
+                                      const EdgeInsets.only(top: 5),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(bottom: 3.0),
+                                        child: Icon(
+                                          Icons.remove_red_eye_outlined,
+                                          color: AppColors.lastColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      kWi8,
+                                      Text(
+                                        widget.estate.visitCount!.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5!
+                                            .copyWith(
+                                                color: AppColors.lastColor,
+                                                fontSize: 14,
+                                                height: 1.5),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
                       ),
@@ -798,18 +833,13 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           await myCupertinoActionSheet(
                             context,
                             elementsList: [
-                              "ghina",
-                              "sharaf",
+                              widget.estate.estateOffice!.phone!.split("+")[1] +
+                                  "+"
                             ],
                             onPressed: [
                               () {
                                 launch("tel://" +
-                                    widget.estate.estateOffice!.mobile
-                                        .toString());
-                              },
-                              () {
-                                launch("tel://" +
-                                    widget.estate.estateOffice!.mobile
+                                    widget.estate.estateOffice!.phone
                                         .toString());
                               },
                             ],

@@ -54,6 +54,7 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
           }
           return Scaffold(
             appBar: AppBar(
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.language_word),
             ),
             body: Padding(

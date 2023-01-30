@@ -28,6 +28,7 @@ class EstateOffice {
   bool? isLiked;
   String? workHours;
   int? estateLength;
+  String? phone;
 
   EstateOffice(
       {required this.id,
@@ -39,6 +40,7 @@ class EstateOffice {
       this.latitude,
       this.telephone,
       this.mobile,
+      this.phone,
       this.rating,
       this.location,
       this.locationS,
@@ -56,6 +58,7 @@ class EstateOffice {
       contractId:
           jsonMap["contract_id"] == null ? null : jsonMap["contract_id"],
       mobile: jsonMap["mobile"] == null ? null : jsonMap["mobile"],
+      phone: jsonMap["phone"] == "null" ? "null" : jsonMap["phone"],
       location: jsonMap["location"] == null
           ? null
           : Location.fromJson(jsonMap["location"]),

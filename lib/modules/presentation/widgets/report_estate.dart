@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
@@ -13,6 +14,7 @@ import '../../business_logic_components/bloc/reports_bloc/reports_bloc.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../data/models/report.dart';
 import '../../data/providers/locale_provider.dart';
+import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/reports_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -22,6 +24,8 @@ void showReportModalBottomSheet(context, int estateId) {
   List<Report> reports = BlocProvider.of<ReportBloc>(context).reports!;
   bool isArabic =
       Provider.of<LocaleProvider>(context, listen: false).isArabic();
+  bool isDark =
+      Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
   String? userToken;
   if (BlocProvider.of<UserLoginBloc>(context).user != null) {
     userToken = UserSharedPreferences.getAccessToken();
@@ -34,7 +38,7 @@ void showReportModalBottomSheet(context, int estateId) {
       borderRadius: BorderRadius.only(
           topRight: Radius.circular(16), topLeft: Radius.circular(16)),
     ),
-    backgroundColor: Colors.white,
+    backgroundColor: isDark ? AppColors.secondaryDark : Colors.white,
     builder: (_) {
       return Container(
         padding: kLargeSymHeight,
@@ -47,7 +51,7 @@ void showReportModalBottomSheet(context, int estateId) {
                 child: ResText(
                   AppLocalizations.of(context)!.report_estate,
                   textAlign: TextAlign.right,
-                  textStyle: textStyling(S.s18, W.w6, C.bl),
+                  textStyle: textStyling(S.s20, W.w6, isDark ? C.c1 : C.bl),
                 ),
               ),
               kHe32,
@@ -295,7 +299,7 @@ void showReportModalBottomSheet(context, int estateId) {
                     child: ResText(
                       reports.elementAt(index).name,
                       textAlign: TextAlign.right,
-                      textStyle: textStyling(S.s15, W.w5, C.bl),
+                      textStyle: textStyling(S.s15, W.w5, isDark ? C.c1 : C.bl),
                     ),
                   ),
                 ),

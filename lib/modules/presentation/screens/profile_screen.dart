@@ -9,25 +9,27 @@ import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/governorates_bloc/governorates_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
-import 'package:swesshome/modules/presentation/pages/terms_condition_page.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_snack_bar.dart';
 import '../../../constants/assets_paths.dart';
+import '../../business_logic_components/bloc/governorates_bloc/governorates_bloc.dart';
+import '../../business_logic_components/bloc/governorates_bloc/governorates_event.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_bloc.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_event.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_state.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import '../../business_logic_components/cubits/notifications_cubit.dart';
+import '../../data/models/governorates.dart';
 import '../../data/models/user.dart';
-import '../pages/intellectual_property_rights_page.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/icone_badge.dart';
@@ -51,9 +53,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late ChannelCubit isDarkModeSelectedCubit;
 
   //late UserLoginBloc _userLoginBloc;
+  late GovernoratesBloc governoratesBloc;
   UserDataBloc? _userDataBloc;
   final ChannelCubit isLogoutLoadingCubit = ChannelCubit(false);
-
+  List<Governorate>? governorates;
   User? user;
 
   @override
@@ -63,6 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _userDataBloc = UserDataBloc(UserAuthenticationRepository());
     }
     _onRefresh();
+    governoratesBloc = BlocProvider.of<GovernoratesBloc>(context);
   }
 
   _onRefresh() {
@@ -153,6 +157,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                       if (userEditState is UserDataComplete) {
                         user = userEditState.user;
+                        if (user!.country == "Syrian Arab Republic") {
+                          governoratesBloc.add(GovernoratesFetchStarted());
+                        }
                         return buildUserProfile(isDark, isEnglish);
                       }
                       return Container();
@@ -330,21 +337,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
             //width: getScreenWidth(context),
             child: Stack(
               children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.edit_outlined,
-                      color: !isDark ? AppColors.primaryColor : AppColors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => EditProfileScreen(user: user!)),
-                      );
-                    },
-                  ),
+                BlocBuilder<GovernoratesBloc, GovernoratesState>(
+                  bloc: governoratesBloc,
+                  builder: (_, governoratesState) {
+                    if (governoratesState is GovernoratesFetchComplete) {
+                      governorates = governoratesState.governorates;
+                    }
+                    return Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.edit_outlined,
+                          color: !isDark
+                              ? AppColors.primaryColor
+                              : AppColors.white,
+                        ),
+                        onPressed: () async {
+                          final bool value = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => EditProfileScreen(
+                                      user: user!,
+                                      governorates: governorates,
+                                    )),
+                          );
+                          if (value) {
+                            await _onRefresh();
+                          }
+                        },
+                      ),
+                    );
+                  },
                 ),
                 Center(
                   child: CircleAvatar(
@@ -362,7 +385,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "${user!.firstName} ${user!.lastName}",
+                  user!.firstName! + " " + user!.lastName!,
                   style: Theme.of(context).textTheme.headline3!.copyWith(
                       color: !isDark ? AppColors.black : AppColors.white),
                 ),
@@ -379,15 +402,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        "${user!.authentication}",
+                        user!.authentication!,
                         style: Theme.of(context).textTheme.headline6!.copyWith(
                             color: !isDark
                                 ? AppColors.primaryColor
                                 : AppColors.primaryDark),
                       ),
                       Text(
-                        "${user!.country}"
-                        " , ${user?.governorate ?? ""}",
+                        user!.country! + " , ${user?.governorate ?? ""}",
                         style: Theme.of(context).textTheme.headline6!.copyWith(
                             color: !isDark
                                 ? AppColors.primaryColor

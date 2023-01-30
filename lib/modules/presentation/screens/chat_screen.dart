@@ -37,11 +37,12 @@ class _ChatScreenState extends State<ChatScreen> {
     if (UserSharedPreferences.getAccessToken() != null) {
       _onRefresh();
     }
-
     super.initState();
   }
 
   _onRefresh() {
+    _messageBloc.page = 1;
+    messages.clear();
     _messageBloc.add(
         GetMessagesFetchStarted(token: UserSharedPreferences.getAccessToken()));
   }
@@ -50,13 +51,11 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(AppLocalizations.of(context)!.chat),
       ),
       body: RefreshIndicator(
-        color: Theme
-            .of(context)
-            .colorScheme
-            .primary,
+        color: Theme.of(context).colorScheme.primary,
         onRefresh: () async {
           if (UserSharedPreferences.getAccessToken() != null) {
             _onRefresh();
@@ -69,40 +68,43 @@ class _ChatScreenState extends State<ChatScreen> {
       floatingActionButton: UserSharedPreferences.getAccessToken() == null
           ? Container()
           : Padding(
-        padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 5.w),
-        child: GestureDetector(
-          child: Card(
-            color: AppColors.primaryColor,
-            elevation: 4,
-            shape: CircleBorder(
-              side: BorderSide(
-                color: AppColors.yellowColor,
-                width: 2,
-              ),
-            ),
-            child: Container(
-              width: 75.w,
-              alignment: Alignment.center,
-              height: 75.h,
-              child: const Padding(
-                padding: EdgeInsets.only(top: 2.0),
-                child: Icon(
-                  Icons.add,
-                  color: AppColors.white,
+              padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 5.w),
+              child: GestureDetector(
+                child: Card(
+                  color: AppColors.primaryColor,
+                  elevation: 4,
+                  shape: CircleBorder(
+                    side: BorderSide(
+                      color: AppColors.yellowColor,
+                      width: 2,
+                    ),
+                  ),
+                  child: Container(
+                    width: 75.w,
+                    alignment: Alignment.center,
+                    height: 75.h,
+                    child: const Padding(
+                      padding: EdgeInsets.only(top: 2.0),
+                      child: Icon(
+                        Icons.add,
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ),
                 ),
+                onTap: () async {
+                  final bool value = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CreateMessageScreen(),
+                    ),
+                  );
+                  if (value) {
+                    await _onRefresh();
+                  }
+                },
               ),
             ),
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const CreateMessageScreen(),
-              ),
-            );
-          },
-        ),
-      ),
       //floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       drawer: const Drawer(child: MyDrawer()),
     );
@@ -132,22 +134,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 Icon(
                   Icons.search,
                   color:
-                  Theme
-                      .of(context)
-                      .colorScheme
-                      .primary
-                      .withOpacity(0.24),
+                      Theme.of(context).colorScheme.primary.withOpacity(0.24),
                   size: 120,
                 ),
                 kHe24,
                 Text(
                   AppLocalizations.of(context)!.no_message,
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .headline5,
+                  style: Theme.of(context).textTheme.headline5,
                 ),
-
                 kHe40,
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -157,8 +151,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     AppLocalizations.of(context)!.contact_us,
                   ),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (_) => const CreateMessageScreen()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const CreateMessageScreen()));
                   },
                 )
               ],
@@ -167,11 +163,12 @@ class _ChatScreenState extends State<ChatScreen> {
         }
 
         return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           controller: _scrollController
             ..addListener(
-                  () {
+              () {
                 if (_scrollController.offset ==
-                    _scrollController.position.maxScrollExtent &&
+                        _scrollController.position.maxScrollExtent &&
                     !_messageBloc.isFetching &&
                     !isEstatesFinished) {
                   _messageBloc
@@ -199,10 +196,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     top: 12.h,
                   ),
                   child: SpinKitWave(
-                    color: Theme
-                        .of(context)
-                        .colorScheme
-                        .primary,
+                    color: Theme.of(context).colorScheme.primary,
                     size: 50,
                   ),
                 ),
@@ -223,10 +217,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           Text(
             "\n${AppLocalizations.of(context)!.this_features_require_login}",
-            style: Theme
-                .of(context)
-                .textTheme
-                .headline5,
+            style: Theme.of(context).textTheme.headline5,
           ),
         ],
       ),

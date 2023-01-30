@@ -9,20 +9,20 @@ import '../../business_logic_components/bloc/terms_condition_bloc/terms_conditio
 import '../../data/repositories/terms_condition_repository.dart';
 import '../widgets/wonderful_alert_dialog.dart';
 
-class TermsAndConditionsPage extends StatefulWidget {
-  const TermsAndConditionsPage({Key? key}) : super(key: key);
+class TermsOfUsePage extends StatefulWidget {
+  const TermsOfUsePage({Key? key}) : super(key: key);
 
   @override
-  State<TermsAndConditionsPage> createState() => _TermsAndConditionsPageState();
+  State<TermsOfUsePage> createState() => _TermsOfUsePageState();
 }
 
-class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
+class _TermsOfUsePageState extends State<TermsOfUsePage> {
   late TermsConditionBloc _termsConditionBloc;
 
   @override
   void initState() {
     _termsConditionBloc = TermsConditionBloc(TermsAndConditionsRepository());
-    _termsConditionBloc.add(TermsConditionFetchStarted(termsType: "terms-home"));
+    _termsConditionBloc.add(TermsConditionFetchStarted(termsType: "home-terms-use"));
     super.initState();
   }
 

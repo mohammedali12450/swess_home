@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -49,6 +48,8 @@ class _CreateEstateImmediatelyScreenState
   TextEditingController salonController = TextEditingController(text: "0");
   TextEditingController bathroomController = TextEditingController(text: "0");
   TextEditingController authenticationController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  ScrollController scrollController = ScrollController();
 
   List<EstateType>? estatesTypes;
   List<EstateType> estateTypes = [];
@@ -56,18 +57,20 @@ class _CreateEstateImmediatelyScreenState
   late List<PeriodType> periodTypes;
   String phoneDialCode = "+963";
 
-  ChannelCubit isPressSearchCubit = ChannelCubit(false);
-  ChannelCubit patternCubit = ChannelCubit(null);
   ChannelCubit spaceErrorCubit = ChannelCubit(null);
   ChannelCubit priceErrorCubit = ChannelCubit(null);
-  ChannelCubit estateTypeErrorCubit = ChannelCubit(null);
+  ChannelCubit roomErrorCubit = ChannelCubit(null);
+  ChannelCubit salonErrorCubit = ChannelCubit(null);
+  ChannelCubit bathErrorCubit = ChannelCubit(null);
+  ChannelCubit floorErrorCubit = ChannelCubit(null);
+  ChannelCubit locationErrorCubit = ChannelCubit(null);
   ChannelCubit authenticationError = ChannelCubit(null);
   ChannelCubit roomCubit = ChannelCubit(0);
   ChannelCubit floorCubit = ChannelCubit(0);
   ChannelCubit salonCubit = ChannelCubit(0);
   ChannelCubit bathroomCubit = ChannelCubit(0);
   ChannelCubit checkFurnishedStateCubit = ChannelCubit(false);
-  ChannelCubit isPressTypeCubit = ChannelCubit(1);
+  ChannelCubit isPressTypeCubit = ChannelCubit(0);
   ChannelCubit locationNameCubit = ChannelCubit("");
 
   late RentEstateBloc _rentEstateBloc;
@@ -147,11 +150,13 @@ class _CreateEstateImmediatelyScreenState
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(AppLocalizations.of(context)!.rent),
       ),
       body: Stack(
         children: [
           SingleChildScrollView(
+            controller: scrollController,
             child: Container(
               padding: kMediumSymHeight,
               child: buildSearchWidgets(isArabic, isDark, areaWidget),
@@ -181,6 +186,7 @@ class _CreateEstateImmediatelyScreenState
               icon: Icons.house_siding,
               label: AppLocalizations.of(context)!.floor,
               hint: AppLocalizations.of(context)!.floor_number,
+              errorCubit: floorErrorCubit,
               onTap: () {
                 rentEstate.floor = int.tryParse(floorController.text)!;
               }),
@@ -190,6 +196,7 @@ class _CreateEstateImmediatelyScreenState
               icon: Icons.bed,
               label: AppLocalizations.of(context)!.room,
               hint: AppLocalizations.of(context)!.rooms_count,
+              errorCubit: roomErrorCubit,
               onTap: () {
                 rentEstate.room = int.tryParse(roomController.text)!;
               }),
@@ -199,6 +206,7 @@ class _CreateEstateImmediatelyScreenState
               icon: Icons.chair_outlined,
               label: AppLocalizations.of(context)!.salon,
               hint: AppLocalizations.of(context)!.salon_count,
+              errorCubit: salonErrorCubit,
               onTap: () {
                 rentEstate.salon = int.tryParse(salonController.text)!;
               }),
@@ -208,6 +216,7 @@ class _CreateEstateImmediatelyScreenState
               icon: Icons.bathtub_outlined,
               label: AppLocalizations.of(context)!.bathroom,
               hint: AppLocalizations.of(context)!.bathroom_count,
+              errorCubit: bathErrorCubit,
               onTap: () {
                 rentEstate.bathroom = int.tryParse(bathroomController.text)!;
               }),
@@ -268,6 +277,7 @@ class _CreateEstateImmediatelyScreenState
       required IconData icon,
       required String label,
       required String hint,
+      required ChannelCubit errorCubit,
       required Function() onTap}) {
     return Column(
       children: [
@@ -295,6 +305,10 @@ class _CreateEstateImmediatelyScreenState
                     if (textCubit.state > 0) {
                       textCubit.setState(textCubit.state - 1);
                       textController.text = textCubit.state.toString();
+                    } else if (label == AppLocalizations.of(context)!.floor &&
+                        textCubit.state > -2) {
+                      textCubit.setState(textCubit.state - 1);
+                      textController.text = textCubit.state.toString();
                     }
                   },
                   child: const SizedBox(
@@ -308,25 +322,32 @@ class _CreateEstateImmediatelyScreenState
                 child: BlocBuilder<ChannelCubit, dynamic>(
                   bloc: textCubit,
                   builder: (_, state) {
-                    return TextField(
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1!
-                          .copyWith(height: 2),
-                      onChanged: (String text) {
-                        textController.text = text;
-                        //textCubit.setState(int.tryParse(text) ?? 0);
+                    return BlocBuilder<ChannelCubit, dynamic>(
+                      bloc: errorCubit,
+                      builder: (_, errorMessage) {
+                        return TextField(
+                          readOnly: true,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(height: 2),
+                          onChanged: (String text) {
+                            textController.text = text;
+                            textCubit.setState(int.tryParse(text) ?? 0);
+                          },
+                          controller: textController,
+                          // keyboardType: TextInputType.number,
+                          // inputFormatters: <TextInputFormatter>[
+                          //   FilteringTextInputFormatter.digitsOnly,
+                          // ],
+                          decoration: InputDecoration(
+                            // errorText: AppLocalizations.of(context)!.this_field_is_required,
+                            hintText: hint,
+                            errorText: errorMessage,
+                          ),
+                        );
                       },
-                      controller: textController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      decoration: InputDecoration(
-                        // errorText: AppLocalizations.of(context)!.this_field_is_required,
-                        hintText: hint,
-                      ),
                     );
                   },
                 ),
@@ -597,6 +618,7 @@ class _CreateEstateImmediatelyScreenState
                     child: InkWell(
                       onTap: () {
                         isPressTypeCubit.setState(0);
+                        rentEstate.estateTypeId = 1;
                       },
                       child: Column(
                         children: [
@@ -616,7 +638,7 @@ class _CreateEstateImmediatelyScreenState
                                 color: AppColors.primaryColor),
                           ),
                           Text(
-                            estatesTypes!.elementAt(0).name.split("|")[1],
+                            AppLocalizations.of(context)!.house,
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 0
@@ -635,6 +657,7 @@ class _CreateEstateImmediatelyScreenState
                     child: InkWell(
                       onTap: () {
                         isPressTypeCubit.setState(3);
+                        rentEstate.estateTypeId = 4;
                       },
                       child: Column(
                         children: [
@@ -654,7 +677,7 @@ class _CreateEstateImmediatelyScreenState
                                 color: AppColors.primaryColor),
                           ),
                           Text(
-                            estatesTypes!.elementAt(3).name.split("|")[1],
+                            AppLocalizations.of(context)!.farm,
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 3
@@ -673,6 +696,7 @@ class _CreateEstateImmediatelyScreenState
                     child: InkWell(
                       onTap: () {
                         isPressTypeCubit.setState(1);
+                        rentEstate.estateTypeId = 2;
                       },
                       child: Column(
                         children: [
@@ -692,7 +716,7 @@ class _CreateEstateImmediatelyScreenState
                                 color: AppColors.primaryColor),
                           ),
                           Text(
-                            estatesTypes!.elementAt(1).name.split("|")[1],
+                            AppLocalizations.of(context)!.shop,
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 1
@@ -711,6 +735,7 @@ class _CreateEstateImmediatelyScreenState
                     child: InkWell(
                       onTap: () {
                         isPressTypeCubit.setState(4);
+                        rentEstate.estateTypeId = 5;
                       },
                       child: Column(
                         children: [
@@ -730,7 +755,7 @@ class _CreateEstateImmediatelyScreenState
                                 color: AppColors.primaryColor),
                           ),
                           Text(
-                            estatesTypes!.elementAt(4).name.split("|")[1],
+                            AppLocalizations.of(context)!.villa,
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 4
@@ -970,7 +995,7 @@ class _CreateEstateImmediatelyScreenState
     );
   }
 
-  Column buildLocation(isDark) {
+  Widget buildLocation(isDark) {
     return Column(
       children: [
         Padding(
@@ -980,160 +1005,155 @@ class _CreateEstateImmediatelyScreenState
               const Icon(Icons.location_on_outlined),
               kWi8,
               Text(
-                AppLocalizations.of(context)!.location + " :",
+                AppLocalizations.of(context)!.estate_location + " :",
                 style: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
         ),
+        kHe12,
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-          child: Container(
-            height: 50,
-            decoration: BoxDecoration(
-              border: Border.all(
-                  color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,
-                  width: 1),
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-            ),
-            margin: EdgeInsets.only(
-              bottom: 8.h,
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: 12.w,
-            ),
-            child: InkWell(
-              onTap: () async {
-                selectedRegion = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const SearchRegionScreen(),
-                  ),
-                ) as RegionViewer;
-                FocusScope.of(context).unfocus();
-                if (selectedRegion != null) {
-                  rentEstate.locationId = selectedRegion!.id!;
-                  locationNameCubit.setState(selectedRegion!.getLocationName());
-                }
-                return;
-              },
-              child: BlocBuilder<ChannelCubit, dynamic>(
-                bloc: locationNameCubit,
-                builder: (_, locationName) {
-                  return Center(
-                    child: Row(
-                      children: [
-                        Text(locationName == ""
-                            ? AppLocalizations.of(context)!.enter_location_name
-                            : locationName),
-                      ],
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: BlocBuilder<ChannelCubit, dynamic>(
+            bloc: locationErrorCubit,
+            builder: (_, errorMessage) {
+              return Container(
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(11)),
+                    border: Border.all(
+                      color: !isDark
+                          ? AppColors.primaryColor
+                          : AppColors.yellowDarkColor,
+                      width: 0.3,
+                    )),
+                child: TextField(
+                  textDirection: TextDirection.rtl,
+                  onTap: () async {
+                    selectedRegion = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SearchRegionScreen(),
+                      ),
+                    ) as RegionViewer;
+                    FocusScope.of(context).unfocus();
+                    if (selectedRegion != null) {
+                      rentEstate.locationId = selectedRegion!.id!;
+                      locationNameCubit
+                          .setState(selectedRegion!.getLocationName());
+                      locationController.text = locationNameCubit.state;
+                      locationErrorCubit.setState(null);
+                    }
+                    return;
+                  },
+                  controller: locationController,
+                  keyboardType: TextInputType.text,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    errorText: errorMessage,
+                    hintText:
+                        AppLocalizations.of(context)!.estate_location_hint,
+                    contentPadding: kSmallSymWidth,
+                    // errorBorder: kOutlinedBorderRed,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onBackground
+                            .withOpacity(0.4),
+                      ),
                     ),
-                  );
-                },
-              ),
-            ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
+        kHe36,
       ],
     );
   }
 
-  // BlocBuilder buildRegionsDetector() {
-  //   return BlocBuilder<RegionsBloc, RegionsState>(
-  //     builder: (_, regionsFetchState) {
-  //       if (regionsFetchState is RegionsFetchComplete) {
-  //         return BlocBuilder<ChannelCubit, dynamic>(
-  //           bloc: patternCubit,
-  //           builder: (_, pattern) {
-  //             List<RegionViewer> locations =
-  //                 BlocProvider.of<RegionsBloc>(context)
-  //                     .getRegionsViewers(pattern, context);
-  //             return ListView.separated(
-  //               shrinkWrap: true,
-  //               itemBuilder: (_, index) {
-  //                 return InkWell(
-  //                   onTap: () async {
-  //                     // set location name in location text field:
-  //                     locationController.text =
-  //                         locations.elementAt(index).getRegionName();
-  //                     // print(locations.elementAt(index).locationName);
-  //                     // set search data location id:
-  //                     rentEstate.locationId = locations.elementAt(index).id!;
-  //                     // unfocused text field :
-  //                     FocusScope.of(context).unfocus();
-  //                     // save location as recent search:
-  //                     //TODO : add recent search to data base
-  //                     // await saveAsRecentSearch(
-  //                     //     locations.elementAt(index).id!);
-  //
-  //                     isPressSearchCubit.setState(false);
-  //                   },
-  //                   child: Container(
-  //                     margin: EdgeInsets.symmetric(
-  //                       vertical: 8.h,
-  //                     ),
-  //                     padding: kMediumSymWidth,
-  //                     width: inf,
-  //                     child: Text(
-  //                       locations.elementAt(index).getRegionName(),
-  //                       textAlign: TextAlign.right,
-  //                       style: Theme.of(context).textTheme.subtitle1!.copyWith(
-  //                           color: Theme.of(context).colorScheme.onBackground),
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //               separatorBuilder: (_, index) {
-  //                 return const Divider();
-  //               },
-  //               itemCount: locations.length,
-  //             );
-  //           },
-  //         );
-  //       }
-  //       return Container();
-  //     },
-  //   );
-  // }
-
-  ScrollController scrollController = ScrollController();
-
   Future<bool> getFieldsValidation() async {
     bool isValidationSuccess = true;
 
-    if (!_formKey.currentState!.validate()) {
-      // phone number validate :
-      if (authenticationController.text.isNotEmpty) {
-        try {
-          final parsedPhoneNumber = await PhoneNumberUtil()
-              .parse(phoneDialCode + authenticationController.text);
-          rentEstate.whatsAppNumber =
-              parsedPhoneNumber.international.replaceAll(" ", "");
-        } catch (e) {
-          authenticationError
-              .setState(AppLocalizations.of(context)!.invalid_mobile_number);
-          return false;
-        }
-      }
-
-      // space verification
-      if (spaceController.text.isEmpty) {
-        spaceErrorCubit
-            .setState(AppLocalizations.of(context)!.this_field_is_required);
-        return false;
-      }
-      spaceErrorCubit.setState(null);
-
-      // price verification
-      if (priceController.text.isEmpty) {
-        priceErrorCubit
-            .setState(AppLocalizations.of(context)!.this_field_is_required);
-        return false;
-      }
-      priceErrorCubit.setState(null);
-
+    // location verification
+    if (selectedRegion == null) {
+      locationErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
+      scrollController.animateTo(0,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
       return false;
     }
+    locationErrorCubit.setState(null);
+
+    // space verification
+    if (spaceController.text.isEmpty) {
+      spaceErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
+      scrollController.animateTo(0,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      return false;
+    }
+    spaceErrorCubit.setState(null);
+
+    // estate InteriorStatuses & PeriodTypes verification
+    if (!_formKey.currentState!.validate()) {
+      scrollController.animateTo(500,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      return false;
+    }
+
+    // price verification
+    if (priceController.text.isEmpty) {
+      priceErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
+      scrollController.animateTo(300,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      return false;
+    }
+    priceErrorCubit.setState(null);
+
+    //room verification
+    if (roomCubit.state == 0 || roomController.text.isEmpty) {
+      roomErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
+      scrollController.animateTo(700,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      return false;
+    }
+    roomErrorCubit.setState(null);
+
+    //salon verification
+    if (salonCubit.state == 0 || salonController.text.isEmpty) {
+      salonErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
+      return false;
+    }
+    salonErrorCubit.setState(null);
+
+    //bath verification
+    if (bathroomCubit.state == 0 || roomController.text.isEmpty) {
+      bathErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
+      return false;
+    }
+    bathErrorCubit.setState(null);
+
+    // phone number validate :
+    if (authenticationController.text.isNotEmpty) {
+      try {
+        final parsedPhoneNumber = await PhoneNumberUtil()
+            .parse(phoneDialCode + authenticationController.text);
+        rentEstate.whatsAppNumber =
+            parsedPhoneNumber.international.replaceAll(" ", "");
+      } catch (e) {
+        authenticationError
+            .setState(AppLocalizations.of(context)!.invalid_mobile_number);
+        return false;
+      }
+    }
+
     _formKey.currentState!.save();
 
     return isValidationSuccess;

@@ -28,10 +28,10 @@ class RegionsBloc extends Bloc<RegionsEvent, RegionsState> {
     });
   }
 
+  //not used
   List<RegionViewer> getRegionsViewers(String? pattern, context) {
     pattern ??= "";
     List<RegionViewer> result = [];
-    result.add(RegionViewer(AppLocalizations.of(context)!.undefined, "", null));
     for (Location parentLocation in locations ?? []) {
       if (parentLocation.locations == null) continue;
       for (Location childLocation in parentLocation.locations!) {

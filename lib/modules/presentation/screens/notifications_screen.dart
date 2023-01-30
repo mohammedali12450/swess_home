@@ -9,7 +9,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/notifications_b
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/my_notification.dart';
-import 'package:swesshome/modules/data/repositories/notifications_repository.dart';
 import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/notification_card.dart';
@@ -61,6 +60,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             AppLocalizations.of(context)!.notifications,
           ),

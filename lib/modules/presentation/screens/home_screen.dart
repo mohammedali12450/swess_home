@@ -50,6 +50,7 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   late bool isArabic;
+  late bool isDark;
   List<Estate> estateNewest = [];
   List<SpecialEstate> estateSpacial = [];
   List<Estate> estateMostView = [];
@@ -90,6 +91,8 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     //super.build(context);
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -168,7 +171,7 @@ class HomeScreenState extends State<HomeScreen> {
             }
           }
           return SizedBox(
-            height: 475.h,
+            height: !isDark ? 475.h : 485.h,
             child: ListView.builder(
               itemCount: estateNewest.length,
               scrollDirection: Axis.horizontal,
@@ -201,7 +204,7 @@ class HomeScreenState extends State<HomeScreen> {
             }
           }
           return SizedBox(
-            height: 475.h,
+            height: !isDark ? 475.h : 485.h,
             child: ListView.builder(
               itemCount: estateMostView.length,
               scrollDirection: Axis.horizontal,

@@ -4,37 +4,25 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:swesshome/modules/data/models/estate_offer_type.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/models/estate_type.dart';
 import 'package:swesshome/modules/data/models/price_domain.dart';
-import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/after_estate_order_screen.dart';
-import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
-import '../../business_logic_components/bloc/estate_types_bloc/estate_types_state.dart';
-import '../../business_logic_components/bloc/price_domains_bloc/price_domains_state.dart';
+import '../../business_logic_components/bloc/estate_order_bloc/estate_order_event.dart';
 import '../../data/providers/theme_provider.dart';
-import '../../data/repositories/estate_offer_types_repository.dart';
-import '../../data/repositories/estate_types_repository.dart';
-import '../../data/repositories/price_domains_repository.dart';
 import '../widgets/choice_container.dart';
-import '../widgets/fetch_result.dart';
 import '../widgets/price_picker.dart';
 import 'search_location_screen.dart';
 
@@ -49,13 +37,8 @@ class CreateOrderScreen extends StatefulWidget {
 
 class _CreateOrderScreenState extends State<CreateOrderScreen> {
   // Blocs and Cubits :
-  EstateTypesBloc estateTypesBloc = EstateTypesBloc(EstateTypesRepository());
-  EstateOfferTypesBloc offerTypesBloc =
-  EstateOfferTypesBloc(EstateOfferTypesRepository());
-  PriceDomainsBloc priceDomainsBloc =
-  PriceDomainsBloc(PriceDomainsRepository());
-
   ChannelCubit locationErrorCubit = ChannelCubit(null);
+  ChannelCubit noteErrorCubit = ChannelCubit(null);
   ChannelCubit startPriceCubit = ChannelCubit(0);
   ChannelCubit endPriceCubit = ChannelCubit(0);
   ChannelCubit isSellCubit = ChannelCubit(true);
@@ -68,12 +51,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
   // Others :
   List<EstateType>? estatesTypes;
-  List<EstateOfferType>? offerTypes;
   PriceDomain? priceDomains;
-  int? selectedEstateTypeId;
-  EstateOrder? estateOrder;
-
-  int selectedEstateOfferTypeId = 1;
+  late EstateOrder estateOrder;
 
   LocationViewer? selectedLocation;
   final _formKey = GlobalKey<FormState>();
@@ -82,18 +61,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   void initState() {
     super.initState();
 
-    estatesTypes = BlocProvider
-        .of<EstateTypesBloc>(context)
-        .estateTypes!;
-    offerTypes =
-    BlocProvider
-        .of<EstateOfferTypesBloc>(context)
-        .estateOfferTypes!;
-    priceDomains = BlocProvider
-        .of<PriceDomainsBloc>(context)
-        .priceDomains!;
-    estateOrder = EstateOrder(maxPrice: int.tryParse(priceDomains!.sale.max[0]),
-        minPrice: int.tryParse(priceDomains!.sale.min[0]));
+    estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
+    priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
+
+    estateOrder = EstateOrder(
+        estateOfferId: 1,
+        maxPrice: int.tryParse(priceDomains!.sale.max[0]),
+        minPrice: int.tryParse(priceDomains!.sale.min[0]),
+        description: "");
+    estateOrder.estateOfferId = 1;
   }
 
   @override
@@ -116,6 +92,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             title: Text(
               AppLocalizations.of(context)!.create_estate_order,
             ),
@@ -143,10 +120,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           textLeft: AppLocalizations.of(context)!.buy,
                           textRight: AppLocalizations.of(context)!.rent,
                           onTapLeft: () {
-                            selectedEstateOfferTypeId = 1;
+                            estateOrder.estateOfferId = 1;
                           },
                           onTapRight: () {
-                            selectedEstateOfferTypeId = 2;
+                            estateOrder.estateOfferId = 2;
                           },
                           paddingVertical: 5,
                           paddingHorizontal: 0),
@@ -177,10 +154,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             kWi8,
             Text(
               AppLocalizations.of(context)!.estate_location + " :",
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .headline6,
+              style: Theme.of(context).textTheme.headline6,
             ),
           ],
         ),
@@ -190,10 +164,11 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           builder: (_, errorMessage) {
             return Container(
               decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                      Radius.circular(11)),
+                  borderRadius: const BorderRadius.all(Radius.circular(11)),
                   border: Border.all(
-                    color: !isDark ? AppColors.primaryColor : AppColors.yellowDarkColor,
+                    color: !isDark
+                        ? AppColors.primaryColor
+                        : AppColors.yellowDarkColor,
                     width: 1,
                   )),
               child: TextField(
@@ -204,6 +179,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   if (selectedLocation != null) {
                     officeAddressController.text =
                         selectedLocation!.getLocationName();
+                    estateOrder.locationId = selectedLocation!.id;
                     locationErrorCubit.setState(null);
                   } else {
                     officeAddressController.clear();
@@ -220,8 +196,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     borderSide: BorderSide(
-                      color: Theme
-                          .of(context)
+                      color: Theme.of(context)
                           .colorScheme
                           .onBackground
                           .withOpacity(0.4),
@@ -246,10 +221,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             kWi8,
             Text(
               AppLocalizations.of(context)!.estate_type + " :",
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .headline6,
+              style: Theme.of(context).textTheme.headline6,
             ),
           ],
         ),
@@ -263,6 +235,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   child: InkWell(
                     onTap: () {
                       isPressTypeCubit.setState(0);
+                      estateOrder.estateTypeId = 1;
                     },
                     child: Column(
                       children: [
@@ -272,7 +245,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           decoration: BoxDecoration(
                             color: AppColors.white,
                             borderRadius:
-                            const BorderRadius.all(Radius.circular(100)),
+                                const BorderRadius.all(Radius.circular(100)),
                             border: Border.all(
                                 color: pressState == 0
                                     ? AppColors.yellowDarkColor
@@ -282,15 +255,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                               color: AppColors.primaryColor),
                         ),
                         Text(
-                          estatesTypes!.elementAt(0).name.split("|")[1],
+                          AppLocalizations.of(context)!.house,
                           style: TextStyle(
                               color: !isDark
                                   ? pressState == 0
-                                  ? AppColors.yellowDarkColor
-                                  : AppColors.primaryColor
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor
                                   : pressState == 0
-                                  ? AppColors.yellowDarkColor
-                                  : AppColors.white),
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.white),
                         ),
                       ],
                     ),
@@ -301,6 +274,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   child: InkWell(
                     onTap: () {
                       isPressTypeCubit.setState(3);
+                      estateOrder.estateTypeId = 4;
                     },
                     child: Column(
                       children: [
@@ -310,7 +284,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           decoration: BoxDecoration(
                             color: AppColors.white,
                             borderRadius:
-                            const BorderRadius.all(Radius.circular(100)),
+                                const BorderRadius.all(Radius.circular(100)),
                             border: Border.all(
                                 color: pressState == 3
                                     ? AppColors.yellowDarkColor
@@ -320,15 +294,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                               color: AppColors.primaryColor),
                         ),
                         Text(
-                          estatesTypes!.elementAt(3).name.split("|")[1],
+                          AppLocalizations.of(context)!.farm,
                           style: TextStyle(
                               color: !isDark
                                   ? pressState == 3
-                                  ? AppColors.yellowDarkColor
-                                  : AppColors.primaryColor
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor
                                   : pressState == 3
-                                  ? AppColors.yellowDarkColor
-                                  : AppColors.white),
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.white),
                         ),
                       ],
                     ),
@@ -339,6 +313,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   child: InkWell(
                     onTap: () {
                       isPressTypeCubit.setState(2);
+                      estateOrder.estateTypeId = 3;
                     },
                     child: Column(
                       children: [
@@ -348,7 +323,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           decoration: BoxDecoration(
                             color: AppColors.white,
                             borderRadius:
-                            const BorderRadius.all(Radius.circular(100)),
+                                const BorderRadius.all(Radius.circular(100)),
                             border: Border.all(
                                 color: pressState == 2
                                     ? AppColors.yellowDarkColor
@@ -358,15 +333,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                               color: AppColors.primaryColor),
                         ),
                         Text(
-                          estatesTypes!.elementAt(2).name.split("|")[1],
+                          AppLocalizations.of(context)!.land,
                           style: TextStyle(
                               color: !isDark
                                   ? pressState == 2
-                                  ? AppColors.yellowDarkColor
-                                  : AppColors.primaryColor
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor
                                   : pressState == 2
-                                  ? AppColors.yellowDarkColor
-                                  : AppColors.white),
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.white),
                         ),
                       ],
                     ),
@@ -377,6 +352,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   child: InkWell(
                     onTap: () {
                       isPressTypeCubit.setState(1);
+                      estateOrder.estateTypeId = 2;
                     },
                     child: Column(
                       children: [
@@ -386,7 +362,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           decoration: BoxDecoration(
                             color: AppColors.white,
                             borderRadius:
-                            const BorderRadius.all(Radius.circular(100)),
+                                const BorderRadius.all(Radius.circular(100)),
                             border: Border.all(
                                 color: pressState == 1
                                     ? AppColors.yellowDarkColor
@@ -396,15 +372,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                               color: AppColors.primaryColor),
                         ),
                         Text(
-                          estatesTypes!.elementAt(1).name.split("|")[1],
+                          AppLocalizations.of(context)!.shop,
                           style: TextStyle(
                               color: !isDark
                                   ? pressState == 1
-                                  ? AppColors.yellowDarkColor
-                                  : AppColors.primaryColor
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor
                                   : pressState == 1
-                                  ? AppColors.yellowDarkColor
-                                  : AppColors.white),
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.white),
                         ),
                       ],
                     ),
@@ -415,6 +391,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   child: InkWell(
                     onTap: () {
                       isPressTypeCubit.setState(4);
+                      estateOrder.estateTypeId = 5;
                     },
                     child: Column(
                       children: [
@@ -424,7 +401,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           decoration: BoxDecoration(
                             color: AppColors.white,
                             borderRadius:
-                            const BorderRadius.all(Radius.circular(100)),
+                                const BorderRadius.all(Radius.circular(100)),
                             border: Border.all(
                                 color: pressState == 4
                                     ? AppColors.yellowDarkColor
@@ -434,15 +411,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                               color: AppColors.primaryColor),
                         ),
                         Text(
-                          estatesTypes!.elementAt(4).name.split("|")[1],
+                          AppLocalizations.of(context)!.villa,
                           style: TextStyle(
                               color: !isDark
                                   ? pressState == 4
-                                  ? AppColors.yellowDarkColor
-                                  : AppColors.primaryColor
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.primaryColor
                                   : pressState == 4
-                                  ? AppColors.yellowDarkColor
-                                  : AppColors.white),
+                                      ? AppColors.yellowDarkColor
+                                      : AppColors.white),
                         ),
                       ],
                     ),
@@ -466,10 +443,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             kWi8,
             Text(
               AppLocalizations.of(context)!.price_domain + " :",
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .headline6,
+              style: Theme.of(context).textTheme.headline6,
             ),
           ],
         ),
@@ -506,21 +480,20 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                     .title_min_price,
                                 items: min
                                     .map(
-                                      (names) =>
-                                      Text(
+                                      (names) => Text(
                                         names,
                                         // textScaleFactor: 1.2,
                                         // textAlign: TextAlign.center,
                                       ),
-                                )
+                                    )
                                     .toList(),
                                 onSubmit: (data) {
                                   startPriceCubit.setState(data);
-                                  estateOrder!.minPrice = priceState
+                                  estateOrder.minPrice = priceState
                                       ? int.tryParse(priceDomains!
-                                      .sale.min[startPriceCubit.state])
+                                          .sale.min[startPriceCubit.state])
                                       : int.tryParse(priceDomains!
-                                      .rent.min[startPriceCubit.state]);
+                                          .rent.min[startPriceCubit.state]);
                                 },
                               );
                             },
@@ -537,12 +510,14 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                   height: 55.h,
                                   width: 150.w,
                                   padding:
-                                  EdgeInsets.symmetric(horizontal: 8.w),
+                                      EdgeInsets.symmetric(horizontal: 8.w),
                                   decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(8)),
                                       border: Border.all(
-                                        color: !isDark ? AppColors.primaryColor : AppColors.yellowDarkColor,
+                                        color: !isDark
+                                            ? AppColors.primaryColor
+                                            : AppColors.yellowDarkColor,
                                         width: 1,
                                       )),
                                   child: Text(textMin),
@@ -580,21 +555,20 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                     .title_max_price,
                                 items: max
                                     .map(
-                                      (names) =>
-                                      Text(
+                                      (names) => Text(
                                         names,
                                         // textScaleFactor: 1.2,
                                         // textAlign: TextAlign.center,
                                       ),
-                                )
+                                    )
                                     .toList(),
                                 onSubmit: (data) {
                                   endPriceCubit.setState(data);
-                                  estateOrder!.maxPrice = priceState
+                                  estateOrder.maxPrice = priceState
                                       ? int.tryParse(priceDomains!
-                                      .sale.max[endPriceCubit.state])
+                                          .sale.max[endPriceCubit.state])
                                       : int.tryParse(priceDomains!
-                                      .rent.max[endPriceCubit.state]);
+                                          .rent.max[endPriceCubit.state]);
                                 },
                               );
                             },
@@ -611,12 +585,14 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                     height: 55.h,
                                     width: 150.w,
                                     padding:
-                                    EdgeInsets.symmetric(horizontal: 8.w),
+                                        EdgeInsets.symmetric(horizontal: 8.w),
                                     decoration: BoxDecoration(
                                         borderRadius: const BorderRadius.all(
                                             Radius.circular(8)),
                                         border: Border.all(
-                                          color:!isDark ? AppColors.primaryColor : AppColors.yellowDarkColor,
+                                          color: !isDark
+                                              ? AppColors.primaryColor
+                                              : AppColors.yellowDarkColor,
                                           width: 1,
                                         )),
                                     child: Text(textMax),
@@ -646,35 +622,43 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             kWi8,
             Text(
               AppLocalizations.of(context)!.notes + " :",
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .headline6,
+              style: Theme.of(context).textTheme.headline6,
             ),
           ],
         ),
         kHe12,
-        Container(
-          width: inf,
-          padding: kSmallSymWidth,
-          height: 250.h,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
-            border: Border.all(color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,),
-          ),
-          child: TextField(
-            maxLength: 600,
-            controller: notesController,
-            textDirection: TextDirection.rtl,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              hintText:
-              AppLocalizations.of(context)!.order_create_notes_descriptions,
-            ),
-            maxLines: 8,
-          ),
+        BlocBuilder<ChannelCubit, dynamic>(
+          bloc: noteErrorCubit,
+          builder: (_, errorMessage) {
+            return Container(
+              width: inf,
+              padding: kSmallSymWidth,
+              height: 250.h,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                border: Border.all(
+                  color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                ),
+              ),
+              child: TextField(
+                maxLength: 600,
+                controller: notesController,
+                textDirection: TextDirection.rtl,
+                onChanged: (value) {
+                  estateOrder.description = value;
+                },
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  hintText: AppLocalizations.of(context)!
+                      .order_create_notes_descriptions,
+                  errorText: errorMessage,
+                ),
+                maxLines: 8,
+              ),
+            );
+          },
         ),
         kHe32,
       ],
@@ -691,10 +675,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           builder: (_, estateOrderState) {
             if (estateOrderState is SendEstateOrderProgress) {
               return SpinKitWave(
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .background,
+                color: Theme.of(context).colorScheme.background,
                 size: 24.w,
               );
             }
@@ -704,42 +685,40 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           },
         ),
         onPressed: () {
-          if (selectedLocation == null) {
-            locationErrorCubit
-                .setState(AppLocalizations.of(context)!.this_field_is_required);
-            scrollController.animateTo(0,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.ease);
-            return;
-          }
+          if (validFields()) {
+            print("ghina : ${estateOrder.locationId}\n"
+                "${estateOrder.estateTypeId}\n"
+                "${estateOrder.estateOfferId}\n"
+                "${estateOrder.minPrice}\n"
+                "${estateOrder.maxPrice}");
 
-          print("${selectedLocation!.id}\n"
-              "${isPressTypeCubit.state + 1}\n"
-              "$selectedEstateOfferTypeId\n"
-              "${estateOrder!.minPrice}\n"
-              "${estateOrder!.maxPrice}");
-
-          if (_formKey.currentState!.validate()) {
-            _formKey.currentState!.save();
-
-            print("bash ${isPressTypeCubit.state + 1}");
-            BlocProvider.of<EstateOrderBloc>(context).add(
-              SendEstateOrderStarted(
-                  order: EstateOrder(
-                    locationId: selectedLocation!.id,
-                    estateTypeId: isPressTypeCubit.state + 1,
-                    estateOfferId: selectedEstateOfferTypeId,
-                    minPrice: estateOrder!.minPrice,
-                    maxPrice: estateOrder!.maxPrice,
-                    description: (notesController.text.isEmpty)
-                        ? null
-                        : notesController.text,
-                  ),
-                  token: UserSharedPreferences.getAccessToken()),
-            );
+            if (_formKey.currentState!.validate()) {
+              _formKey.currentState!.save();
+              BlocProvider.of<EstateOrderBloc>(context).add(
+                SendEstateOrderStarted(
+                    order: estateOrder,
+                    token: UserSharedPreferences.getAccessToken()),
+              );
+            }
           }
         },
       ),
     );
+  }
+
+  bool validFields() {
+    if (selectedLocation == null) {
+      locationErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
+      scrollController.animateTo(0,
+          duration: const Duration(milliseconds: 500), curve: Curves.ease);
+      return false;
+    }
+    if (notesController.text == "") {
+      noteErrorCubit
+          .setState(AppLocalizations.of(context)!.this_field_is_required);
+      return false;
+    }
+    return true;
   }
 }

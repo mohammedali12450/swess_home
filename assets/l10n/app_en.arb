@@ -20,6 +20,7 @@
   "password_match": "password don't match",
   "accept_terms_condition": "I agree to the ",
   "terms_condition": "Terms and Conditions policy",
+  "terms_of_use":"Terms of use",
   "accept_terms_conditions": "please accept terms and conditions policy",
   "intellectual_property_rights":"intellectual property rights",
   "gold": "gold",
@@ -557,5 +558,11 @@
   "no_video":"There is no video to Show",
   "in_progress":"In progress",
   "from_company":"From Company",
-  "from_agent":"From Agent"
+  "from_agent":"From Agent",
+  "whats_app_not_installed":"whatsapp no installed",
+  "house":"House",
+  "shop":"Shop",
+  "land":"Land",
+  "farm":"Farm",
+  "villa":"Villa"
 }

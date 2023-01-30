@@ -155,20 +155,22 @@ class _VerificationLoginCodeScreenState
                               ),
                               kHe40,
                               TextField(
-                                  controller: confirmationCodeController,
-                                  textDirection: TextDirection.ltr,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.headline3,
-                                  onChanged: (text) {
-                                    if (NumbersHelper.isNumeric(text) &&
-                                        text.length == 6) {
-                                      isVerificationButtonActiveCubit
-                                          .setState(true);
-                                    } else {
-                                      isVerificationButtonActiveCubit
-                                          .setState(false);
-                                    }
-                                  }),
+                                controller: confirmationCodeController,
+                                textDirection: TextDirection.ltr,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.headline3,
+                                onChanged: (text) {
+                                  if (NumbersHelper.isNumeric(text) &&
+                                      text.length == 6) {
+                                    isVerificationButtonActiveCubit
+                                        .setState(true);
+                                  } else {
+                                    isVerificationButtonActiveCubit
+                                        .setState(false);
+                                  }
+                                },
+                                keyboardType: TextInputType.number,
+                              ),
                               SizedBox(height: 64.h),
                               BlocProvider(
                                 create: (context) =>
@@ -179,15 +181,18 @@ class _VerificationLoginCodeScreenState
                                   listener: (context, sendCodeState) async {
                                     if (sendCodeState
                                         is SendVerificationCodeLoginComplete) {
-                                      if (UserSharedPreferences.getAccessToken() != null) {
+                                      if (UserSharedPreferences
+                                              .getAccessToken() !=
+                                          null) {
                                         // save user token in shared preferences :
                                         UserSharedPreferences.setAccessToken(
-                                            UserSharedPreferences.getAccessToken()!);
+                                            UserSharedPreferences
+                                                .getAccessToken()!);
                                         // Send user fcm token to server :
                                         BlocProvider.of<FcmBloc>(context).add(
                                           SendFcmTokenProcessStarted(
-                                              userToken:
-                                              UserSharedPreferences.getAccessToken()!),
+                                              userToken: UserSharedPreferences
+                                                  .getAccessToken()!),
                                         );
                                         BlocProvider.of<UserLoginBloc>(context)
                                             .user = sendCodeState.user;
@@ -282,12 +287,16 @@ class _VerificationLoginCodeScreenState
                                                   if (widget.user != null) {
                                                     // save user token in shared preferences :
                                                     UserSharedPreferences
-                                                        .setAccessToken(UserSharedPreferences.getAccessToken()!);
+                                                        .setAccessToken(
+                                                            UserSharedPreferences
+                                                                .getAccessToken()!);
                                                     // Send user fcm token to server :
                                                     BlocProvider.of<FcmBloc>(
                                                             context)
                                                         .add(SendFcmTokenProcessStarted(
-                                                            userToken: UserSharedPreferences.getAccessToken()!));
+                                                            userToken:
+                                                                UserSharedPreferences
+                                                                    .getAccessToken()!));
                                                     BlocProvider.of<
                                                                 UserLoginBloc>(
                                                             context)

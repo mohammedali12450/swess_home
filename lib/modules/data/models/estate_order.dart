@@ -7,60 +7,59 @@ import 'location.dart';
 
 class EstateOrder {
   // Receive state :
-   int? id;
+  int? id;
 
-   EstateType? estateType;
+  EstateType? estateType;
 
-   EstateOfferType? estateOfferType;
+  EstateOfferType? estateOfferType;
 
-   Location? location;
+  Location? location;
 
-   PriceDomain? priceDomain;
+  PriceDomain? priceDomain;
 
-   String? createdAt;
+  String? createdAt;
 
   List<Estate>? candidatesEstates;
 
   // Send state :
 
-   int? locationId;
+  int? locationId;
 
-   int? estateTypeId;
+  int? estateTypeId;
 
-   int? estateOfferId;
+  int? estateOfferId;
 
-   int? minPrice;
+  int? minPrice;
 
-   int? maxPrice;
+  int? maxPrice;
 
   // Both states:
 
-   String? description;
+  String description;
 
-  EstateOrder({
-    this.id,
-    this.estateType,
-    this.estateOfferType,
-    this.priceDomain,
-    this.description,
-    this.createdAt,
-    this.location,
-    this.candidatesEstates,
-    this.estateTypeId,
-    this.estateOfferId,
-    this.locationId,
-    this.maxPrice,
-    this.minPrice
-  });
+  EstateOrder(
+      {this.id,
+      this.estateType,
+      this.estateOfferType,
+      this.priceDomain,
+      required this.description,
+      this.createdAt,
+      this.location,
+      this.candidatesEstates,
+      this.estateTypeId,
+      this.estateOfferId,
+      this.locationId,
+      this.maxPrice,
+      this.minPrice});
 
   factory EstateOrder.fromJson(json) {
     List<Estate>? candidatesEstates;
     if (json["office_candidates"] != null) {
       var candidates = json["office_candidates"]["data"] as List;
-      for (var element in candidates){
-        if(element["estate"]!=null){
-          candidatesEstates ??= [] ;
-          candidatesEstates.add(Estate.fromJson(element["estate"])) ;
+      for (var element in candidates) {
+        if (element["estate"] != null) {
+          candidatesEstates ??= [];
+          candidatesEstates.add(Estate.fromJson(element["estate"]));
         }
       }
     }
@@ -69,8 +68,9 @@ class EstateOrder {
       id: json["id"],
       estateType: EstateType.fromJson(json["estate_type"]),
       estateOfferType: EstateOfferType.fromJson(json["estate_offer_type"]),
-      priceDomain:
-          (json["price_domain"] != null) ? PriceDomain.fromJson(json["price_domain"]) : null,
+      priceDomain: (json["price_domain"] != null)
+          ? PriceDomain.fromJson(json["price_domain"])
+          : null,
       description: json["notes"],
       createdAt: json["created_at"],
       location: Location.fromJson(json["location"]),

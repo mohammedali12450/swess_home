@@ -62,8 +62,8 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                 return BlocBuilder<ChannelCubit, dynamic>(
                   bloc: patternCubit,
                   builder: (_, pattern) {
-                    List<LocationViewer> locations =
-                        locationsFetchState.getLocationsViewers(pattern);
+                    List<LocationViewer> locations = locationsFetchState
+                        .getLocationsViewers(pattern, context);
                     return ListView.separated(
                       itemBuilder: (_, index) {
                         return InkWell(

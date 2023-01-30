@@ -46,7 +46,6 @@ import 'package:swesshome/modules/presentation/screens/after_estate_order_screen
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/created_estates_screen.dart';
-import 'package:swesshome/modules/presentation/screens/edit_profile_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/languages_screen.dart';
 import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
@@ -251,10 +250,6 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const LanguagesScreen(),
         );
-      case EditProfileScreen.id:
-        return MaterialPageRoute(
-          builder: (_) => EditProfileScreen(),
-        );
       default:
         return null;
     }
@@ -357,7 +352,7 @@ class AppRouter {
     }
     //0 if you want to connect to pronet
     //1 if you want to connect to hostinger
-    if (response.data == "1") {
+    if (response.data == "\n0") {
       print("PPPRRRROOOOO");
       baseUrl = proNetBaseUrl;
       imagesBaseUrl = proNetImagesUrl;

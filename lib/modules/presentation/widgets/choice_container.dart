@@ -87,9 +87,13 @@ Widget buildChoiceContainer({
                       child: Text(
                         textLeft,
                         style: Theme.of(context).textTheme.headline5!.copyWith(
-                            color: !isChoice
-                                ? AppColors.primaryColor
-                                : AppColors.secondaryDark,
+                            color: isDark
+                                ? !isChoice
+                                    ? AppColors.white
+                                    : AppColors.secondaryDark
+                                : isChoice
+                                    ? AppColors.primaryColor
+                                    : AppColors.secondaryDark,
                             fontWeight: FontWeight.w600),
                       ),
                     ),

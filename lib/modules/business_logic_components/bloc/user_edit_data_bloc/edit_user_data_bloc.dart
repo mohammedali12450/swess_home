@@ -20,10 +20,8 @@ class UserEditDataBloc extends Bloc<UserEditDataEvent, UserEditDataState> {
     on<UserEditDataStarted>((event, emit) async {
       emit(UserEditDataProgress());
       try {
-        print("baba");
         user = await userAuthenticationRepository.editUserData(
             event.token!, event.user!);
-        print("ghina: $user");
         emit(UserEditDataComplete(user: user));
       } on ConnectionException catch (e) {
         emit(

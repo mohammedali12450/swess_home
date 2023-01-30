@@ -1,6 +1,6 @@
 class EstateOfferType {
-  final int id;
-  final String name;
+  int id;
+  String name;
 
 
   EstateOfferType({required this.id, required this.name});

@@ -18,6 +18,7 @@ import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+import 'package:swesshome/modules/presentation/pages/terms_of_use_page.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/created_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
@@ -123,59 +124,13 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           kHe16,
           RowInformation(
-            content: AppLocalizations.of(context)!.call_us,
-            iconData: Icons.call_outlined,
-            onTap: () {
-              launch(
-                "tel://" +
-                    BlocProvider.of<SystemVariablesBloc>(context)
-                        .systemVariables!
-                        .normalCompanyPhoneNumber,
-              );
-            },
-          ),
-          RowInformation(
             content: AppLocalizations.of(context)!.rate_us,
             iconData: Icons.star_rate_outlined,
             onTap: () {
               Navigator.pushNamed(context, RatingScreen.id);
             },
           ),
-          RowInformation(
-            content: AppLocalizations.of(context)!.invite_friends,
-            iconData: Icons.people_alt_outlined,
-            onTap: () {
-              Share.share(AppLocalizations.of(context)!.upload_app +
-                  '\n${ApplicationSharedPreferences.getDownloadUrl()}');
-            },
-          ),
-          RowInformation(
-            content: AppLocalizations.of(context)!.terms_condition,
-            iconData: Icons.verified_user_outlined,
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const TermsAndConditionsPage()));
-            },
-          ),
-          RowInformation(
-            content: AppLocalizations.of(context)!.intellectual_property_rights,
-            iconData: Icons.lightbulb_outline,
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const IntellectualPropertyRightsPage()));
-            },
-          ),
-          RowInformation(
-            content: AppLocalizations.of(context)!.faq,
-            iconData: Icons.error_outline,
-            onTap: () {
-              Navigator.pushNamed(context, FAQScreen.id);
-            },
-          ),
+          buildMainDrawer(isDark),
           BlocBuilder<UserLoginBloc, UserLoginState>(
             builder: (context, userLoginState) {
               return RowInformation(
@@ -308,6 +263,52 @@ class _MyDrawerState extends State<MyDrawer> {
             ],
           ),
         ),
+        buildMainDrawer(isDark),
+      ],
+    );
+  }
+
+  buildMainDrawer(isDark){
+    return Column(
+      children: [
+        RowInformation(
+          content: AppLocalizations.of(context)!.invite_friends,
+          iconData: Icons.people_alt_outlined,
+          onTap: () {
+            Share.share(AppLocalizations.of(context)!.upload_app +
+                '\n${ApplicationSharedPreferences.getDownloadUrl()}');
+          },
+        ),
+        RowInformation(
+          content: AppLocalizations.of(context)!.terms_condition,
+          iconData: Icons.verified_user_outlined,
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const TermsAndConditionsPage()));
+          },
+        ),
+        RowInformation(
+          content: AppLocalizations.of(context)!.intellectual_property_rights,
+          iconData: Icons.lightbulb_outline,
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const IntellectualPropertyRightsPage()));
+          },
+        ),
+        RowInformation(
+          content: AppLocalizations.of(context)!.terms_of_use,
+          iconData: Icons.security_outlined,
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const TermsOfUsePage()));
+          },
+        ),
         RowInformation(
           content: AppLocalizations.of(context)!.call_us,
           iconData: Icons.call_outlined,
@@ -325,65 +326,6 @@ class _MyDrawerState extends State<MyDrawer> {
           iconData: Icons.error_outline,
           onTap: () {
             Navigator.pushNamed(context, FAQScreen.id);
-          },
-        ),
-        BlocBuilder<UserLoginBloc, UserLoginState>(
-          builder: (context, userLoginState) {
-            User? user = BlocProvider.of<UserLoginBloc>(context).user;
-            if (user != null) {
-              return RowInformation(
-                content: AppLocalizations.of(context)!.log_out,
-                iconData: Icons.logout,
-                onTap: () async {
-                  await showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.confirmation,
-                    AppLocalizations.of(context)!.logout_confirmation,
-                    removeDefaultButton: true,
-                    width: 450.w,
-                    dialogButtons: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(140.w, 56.h),
-                            padding: EdgeInsets.zero),
-                        child: BlocBuilder<ChannelCubit, dynamic>(
-                          bloc: isLogoutLoadingCubit,
-                          builder: (_, isLogoutLoading) {
-                            return (isLogoutLoading)
-                                ? SpinKitWave(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .background,
-                                    size: 16.w,
-                                  )
-                                : Text(
-                                    AppLocalizations.of(context)!.log_out,
-                                  );
-                          },
-                        ),
-                        onPressed: () async {
-                          isLogoutLoadingCubit.setState(true);
-                          await _logout();
-                          isLogoutLoadingCubit.setState(false);
-                        },
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(140.w, 56.h),
-                            padding: EdgeInsets.zero),
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            }
-            return Container();
           },
         ),
       ],
@@ -452,7 +394,7 @@ class RowInformation extends StatelessWidget {
               children: [
                 Icon(
                   iconData,
-                  size: 32.w,
+                  size: 30.w,
                 ),
                 kWi16,
                 Text(

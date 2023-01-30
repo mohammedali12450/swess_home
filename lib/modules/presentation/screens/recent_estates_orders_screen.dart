@@ -121,6 +121,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             AppLocalizations.of(context)!.recent_created_orders,
           ),

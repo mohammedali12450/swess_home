@@ -18,6 +18,7 @@
   "accept_terms_condition": "أوافق على ",
   "terms_condition": "سياسة الخصوصية",
   "accept_terms_conditions": "الرجاء الموافقة على بند سياسة الخصوصية",
+  "terms_of_use":"شروط الاستخدام",
   "intellectual_property_rights":"حماية الملكية الفكرية",
   "gold": "الذهبي",
   "silver": "الفضي",
@@ -554,6 +555,12 @@
   "no_video":"لا يوجد فيديو لعرضه",
   "in_progress":"قيد الانتظار",
   "from_company":"من قبل الشركة",
-  "from_agent":"من قبل المكتب"
+  "from_agent":"من قبل المكتب",
+  "whats_app_not_installed":"تطبيق الواتس اب غير مثبت",
+  "house":"بيت",
+  "shop":"محل",
+  "land":"ارض",
+  "farm":"مزرعة",
+  "villa":"فيلا"
 }
 

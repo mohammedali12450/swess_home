@@ -36,6 +36,7 @@ class _FAQScreenState extends State<FAQScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             AppLocalizations.of(context)!.faq,
           ),

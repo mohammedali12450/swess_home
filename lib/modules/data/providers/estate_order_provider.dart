@@ -18,15 +18,14 @@ class EstateOrderProvider {
 
   Future<Response> getRecentEstateOrders(String? token) async {
     NetworkHelper helper = NetworkHelper();
-    Response response =
-        await helper.get(getEstateOrderURL, token: token);
+    Response response = await helper.get(getEstateOrderURL, token: token);
     return response;
   }
 
   Future<Response> deleteRecentEstateOrders(String? token, int? orderId) async {
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.delete(deleteEstateOrderURL,
-        queryParameters: {"estate_order_id": orderId}, token: token);
+    Response response = await helper
+        .delete(deleteEstateOrderURL + orderId.toString(), token: token);
     return response;
   }
 }

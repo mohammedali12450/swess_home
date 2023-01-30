@@ -98,6 +98,10 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     // Initialize search data :
     initializeOfferData();
 
+    for(int i = 0 ; i < estatesTypes!.length; i++){
+      print(estatesTypes!.elementAt(i).name);
+    }
+
     User? user = BlocProvider.of<UserLoginBloc>(context).user;
     if (user != null) {
       userToken = UserSharedPreferences.getAccessToken();
@@ -173,7 +177,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           }
                           print("ghina : "
                               "${searchData.estateOfferTypeId}\n"
-                              "${isPressTypeCubit.state}\n"
+                              "${searchData.estateTypeId}\n"
                               "${searchData.locationId}\n"
                               "${searchData.priceMin}\n"
                               "${searchData.priceMax}");
@@ -186,9 +190,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                 eventSearch: EstatesFetchStarted(
                                   searchData: SearchData(
                                       locationId: searchData.locationId,
-                                      estateTypeId: isPressTypeCubit.state == 5
-                                          ? null
-                                          : isPressTypeCubit.state,
+                                      estateTypeId: searchData.estateTypeId,
                                       estateOfferTypeId:
                                           searchData.estateOfferTypeId,
                                       priceMin: searchData.priceMin,
@@ -286,8 +288,10 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       onTap: () {
                         if (pressState < 5 && pressState == 0) {
                           isPressTypeCubit.setState(5);
+                          searchData.estateTypeId = null;
                         } else {
                           isPressTypeCubit.setState(0);
+                          searchData.estateTypeId = 1;
                         }
                       },
                       child: Column(
@@ -308,7 +312,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                 color: AppColors.primaryColor),
                           ),
                           Text(
-                            estatesTypes!.elementAt(0).name.split("|")[1],
+                            AppLocalizations.of(context)!.house,
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 0
@@ -328,8 +332,10 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       onTap: () {
                         if (pressState < 5 && pressState == 3) {
                           isPressTypeCubit.setState(5);
+                          searchData.estateTypeId = null;
                         } else {
                           isPressTypeCubit.setState(3);
+                          searchData.estateTypeId = 4;
                         }
                       },
                       child: Column(
@@ -350,7 +356,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                 color: AppColors.primaryColor),
                           ),
                           Text(
-                            estatesTypes!.elementAt(3).name.split("|")[1],
+                            AppLocalizations.of(context)!.farm,
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 3
@@ -370,8 +376,10 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       onTap: () {
                         if (pressState < 5 && pressState == 2) {
                           isPressTypeCubit.setState(5);
+                          searchData.estateTypeId = null;
                         } else {
                           isPressTypeCubit.setState(2);
+                          searchData.estateTypeId = 3;
                         }
                       },
                       child: Column(
@@ -392,7 +400,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                 color: AppColors.primaryColor),
                           ),
                           Text(
-                            estatesTypes!.elementAt(2).name.split("|")[1],
+                            AppLocalizations.of(context)!.land,
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 2
@@ -412,8 +420,10 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       onTap: () {
                         if (pressState < 5 && pressState == 1) {
                           isPressTypeCubit.setState(5);
+                          searchData.estateTypeId = null;
                         } else {
                           isPressTypeCubit.setState(1);
+                          searchData.estateTypeId = 2;
                         }
                       },
                       child: Column(
@@ -434,7 +444,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                 color: AppColors.primaryColor),
                           ),
                           Text(
-                            estatesTypes!.elementAt(1).name.split("|")[1],
+                            AppLocalizations.of(context)!.shop,
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 1
@@ -454,8 +464,10 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       onTap: () {
                         if (pressState < 5 && pressState == 4) {
                           isPressTypeCubit.setState(5);
+                          searchData.estateTypeId = null;
                         } else {
                           isPressTypeCubit.setState(4);
+                          searchData.estateTypeId = 5;
                         }
                       },
                       child: Column(
@@ -476,7 +488,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                                 color: AppColors.primaryColor),
                           ),
                           Text(
-                            estatesTypes!.elementAt(4).name.split("|")[1],
+                            AppLocalizations.of(context)!.villa,
                             style: TextStyle(
                                 color: !isDark
                                     ? pressState == 4

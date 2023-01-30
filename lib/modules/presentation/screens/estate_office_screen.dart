@@ -15,7 +15,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/like_and_unlike
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bloc/dart/visit_event.dart';
-import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
@@ -31,12 +30,13 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/office_details_bloc/office_details_bloc.dart';
 import '../../business_logic_components/bloc/office_details_bloc/office_details_event.dart';
 import '../../business_logic_components/bloc/office_details_bloc/office_details_state.dart';
+import '../../data/models/estate.dart';
+import '../../data/models/estate_office.dart';
 import '../widgets/cupertino_action_sheet.dart';
 import '../widgets/report_estate.dart';
 import 'authentication_screen.dart';
 
 class EstateOfficeScreen extends StatefulWidget {
-  //final EstateOffice office;
   final int id;
 
   const EstateOfficeScreen(this.id, {Key? key}) : super(key: key);
@@ -52,11 +52,11 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
       LikeAndUnlikeBloc(Unliked(), EstateRepository());
   final GetOfficesBloc _getOfficesBloc = GetOfficesBloc(EstateRepository());
 
-  //final EstateBloc _estateBloc = EstateBloc(EstateRepository());
   final ScrollController _scrollController = ScrollController();
   final List<Estate> estates = [];
   bool isEstatesFinished = false;
   String? userToken;
+  OfficeDetails? results;
 
   @override
   void initState() {
@@ -66,17 +66,19 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
     if (UserSharedPreferences.getAccessToken() != null) {
       userToken = UserSharedPreferences.getAccessToken();
     }
-
+    _onRefresh();
     _visitBloc.add(VisitStarted(
         visitId: widget.id,
         token: userToken,
         visitType: VisitType.estateOffice));
 
-    _getOfficesBloc.add(
-      GetOfficesDetailsStarted(
-          officeId: widget.id, token: UserSharedPreferences.getAccessToken()),
-    );
     isEstatesFinished = false;
+  }
+
+  _onRefresh() async {
+    _getOfficesBloc.add(
+      GetOfficesDetailsStarted(officeId: widget.id, token: userToken),
+    );
   }
 
   @override
@@ -86,6 +88,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.office_details,
         ),
@@ -93,9 +96,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
       body: RefreshIndicator(
         color: Theme.of(context).colorScheme.primary,
         onRefresh: () async {
-          _getOfficesBloc.add(
-            GetOfficesDetailsStarted(officeId: widget.id),
-          );
+          _onRefresh();
         },
         child: SingleChildScrollView(
           controller: _scrollController
@@ -109,8 +110,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                     ..isFetching = true
                     ..add(
                       GetOfficesDetailsStarted(
-                          officeId: widget.id,
-                          token: UserSharedPreferences.getAccessToken()),
+                          officeId: widget.id, token: userToken),
                     );
                 }
               },
@@ -130,6 +130,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         context, AppLocalizations.of(context)!.error, error);
                   }
                   if (estateState is GetOfficesFetchComplete) {
+                    results = estateState.results;
+                    estates.addAll(estateState.results.estates);
                     _getOfficesBloc.isFetching = false;
                     if (estateState.results.estates.isEmpty &&
                         estates.isNotEmpty) {
@@ -139,13 +141,11 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                 },
                 builder: (_, estateState) {
                   if (estateState is GetOfficesFetchError && estates.isEmpty) {
-
                     return RefreshIndicator(
                       color: Theme.of(context).colorScheme.primary,
                       onRefresh: () async {
-                        _getOfficesBloc.add(GetOfficesDetailsStarted(
-                            officeId: widget.id,
-                            token: UserSharedPreferences.getAccessToken()));
+                        _getOfficesBloc.page = 1;
+                        _onRefresh();
                       },
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -157,217 +157,66 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                     .error_happened_when_executing_operation)),
                       ),
                     );
-                  } else if (estateState is GetOfficesFetchNone &&
-                      estateState is GetOfficesFetchProgress &&
+                  }
+                  if (estateState is GetOfficesFetchProgress &&
                       estates.isEmpty) {
                     return const PropertyShimmer();
-                  } else if (estateState is! GetOfficesFetchComplete) {
+                  } else if (estateState is! GetOfficesFetchComplete &&
+                      estates.isEmpty) {
                     return FetchResult(
                       content: AppLocalizations.of(context)!
                           .error_happened_when_executing_operation,
                       iconSize: 0.25.sw,
                     );
                   }
-                  estates.addAll(estateState.results.estates);
-                  _getOfficesBloc.isFetching = false;
                   return Column(
                     children: [
-                      Directionality(
-                        textDirection: TextDirection.ltr,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: SizedBox(
-                                  height: 230.h,
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: InkWell(
-                                      onTap: () async {
-                                        await showDialog(
-                                            context: context,
-                                            builder: (_) => ImageDialog(
-                                                path: estateState.results
-                                                    .estateOffice.logo!));
-                                      },
-                                      child: Hero(
-                                        tag: estateState.results.estateOffice.id
-                                            .toString(),
-                                        child: Container(
-                                          clipBehavior: Clip.antiAlias,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(90.w),
-                                          ),
-                                          child: CachedNetworkImage(
-                                              imageUrl: imagesBaseUrl +
-                                                  estateState.results
-                                                      .estateOffice.logo!),
-                                        ),
-                                        // child: CircleAvatar(
-                                        //   radius: 90.w,
-                                        //   backgroundColor: Colors.grey,
-                                        //   backgroundImage:
-                                        //       CachedNetworkImageProvider(
-                                        //           imagesBaseUrl +
-                                        //               estateState.results.logo!),
-                                        // ),
-                                      ),
-                                    ),
+                      Container(
+                        padding: EdgeInsets.only(
+                            left: (results!.communicationMedias == null)
+                                ? 20
+                                : 0),
+                        width: getScreenWidth(context),
+                        child: (results!.communicationMedias != null)
+                            ? Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: buildImage(),
                                   ),
-                                ),
-                              ),
-                            ),
-                            estateState.results.communicationMedias != null
-                                ? Expanded(
+                                  Expanded(
                                     flex: 2,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          estateState
-                                              .results.estateOffice.name!,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline5,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        12.verticalSpace,
-                                        Text(
-                                          estateState
-                                              .results.estateOffice.locationS!,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline6,
-                                        ),
-                                        12.verticalSpace,
-                                        SizedBox(
-                                          width: 200.w,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              InkWell(
-                                                onTap: () async {
-                                                  // _visitBloc.add(
-                                                  //   VisitStarted(
-                                                  //       visitId: estateState.results.id,
-                                                  //       token: userToken,
-                                                  //       visitType: VisitType.officeCall),
-                                                  // );
-                                                  await myCupertinoActionSheet(
-                                                    context,
-                                                    elementsList: estateState
-                                                        .results
-                                                        .communicationMedias!
-                                                        .phone!
-                                                        .map((e) => e.value)
-                                                        .toList(),
-                                                    onPressed: [
-                                                      () {},
-                                                      () {},
-                                                    ],
-                                                  );
-                                                  // launch(
-                                                  //   "tel://" + estateState.results.mobile!,
-                                                  // );
-                                                },
-                                                child: const Icon(
-                                                    Icons.phone_outlined),
-                                              ),
-                                              InkWell(
-                                                onTap: () async {
-                                                  // _visitBloc.add(
-                                                  //   VisitStarted(
-                                                  //       visitId: estateState.results.id,
-                                                  //       token: userToken,
-                                                  //       visitType: VisitType.officeCall),
-                                                  // );
-                                                  // launch(
-                                                  //   "tel://" + estateState.results.mobile!,
-                                                  // );
-                                                },
-                                                child: const Icon(
-                                                    Icons.facebook_rounded),
-                                              ),
-                                              InkWell(
-                                                onTap: () async {
-                                                  // _visitBloc.add(
-                                                  //   VisitStarted(
-                                                  //       visitId: estateState.results.id,
-                                                  //       token: userToken,
-                                                  //       visitType: VisitType.officeCall),
-                                                  // );
-                                                  await myCupertinoActionSheet(
-                                                    context,
-                                                    elementsList: estateState
-                                                        .results
-                                                        .communicationMedias!
-                                                        .whatsApp!
-                                                        .map((e) => e.value)
-                                                        .toList(),
-                                                    onPressed: [
-                                                      () {
-                                                        launch(
-                                                          "tel://" +
-                                                              estateState
-                                                                  .results
-                                                                  .estateOffice
-                                                                  .mobile!,
-                                                        );
-                                                      },
-                                                      () {
-                                                        launch(
-                                                          "tel://" +
-                                                              estateState
-                                                                  .results
-                                                                  .estateOffice
-                                                                  .mobile!,
-                                                        );
-                                                      },
-                                                    ],
-                                                  );
-                                                },
-                                                child: const Icon(
-                                                    Icons.whatsapp_outlined),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        ),
+                                    child: buildOfficeDetails(),
+                                  ),
+                                ],
+                              )
+                            : buildImage(),
                       ),
                       8.verticalSpace,
                       // Account name and rate :
                       kHe12,
-                      Directionality(
-                        textDirection: TextDirection.ltr,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Colors.green,
+                      if (results!.estateOffice.workHours! != " - ")
+                        Directionality(
+                          textDirection: TextDirection.ltr,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: Colors.green,
+                              ),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(8),
+                              ),
                             ),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(8),
+                            child: Text(
+                              results!.estateOffice.workHours!,
+                              textDirection: TextDirection.ltr,
                             ),
-                          ),
-                          child: Text(
-                            estateState.results.estateOffice.workHours!,
-                            textDirection: TextDirection.ltr,
                           ),
                         ),
-                      ),
                       kHe32,
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -391,8 +240,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                     MaterialPageRoute(
                                       builder: (_) =>
                                           CreatePropertyIntroductionScreen(
-                                              officeId: estateState
-                                                  .results.estateOffice.id),
+                                              officeId:
+                                                  results!.estateOffice.id),
                                     ),
                                   );
                                 },
@@ -429,14 +278,12 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                         error);
                                     _likeAndUnlikeBloc.add(
                                         ReInitializeLikeState(
-                                            isLike: estateState.results
+                                            isLike: results!
                                                 .estateOffice.isLiked!));
                                   } else if (likeAndUnlikeState is Liked) {
-                                    estateState.results.estateOffice.isLiked =
-                                        true;
+                                    results!.estateOffice.isLiked = true;
                                   } else if (likeAndUnlikeState is Unliked) {
-                                    estateState.results.estateOffice.isLiked =
-                                        false;
+                                    results!.estateOffice.isLiked = false;
                                   }
                                 },
                                 builder: (_, likeAndUnlikeState) {
@@ -453,8 +300,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                         _likeAndUnlikeBloc.add(
                                           UnlikeStarted(
                                               token: userToken,
-                                              unlikedObjectId: estateState
-                                                  .results.estateOffice.id,
+                                              unlikedObjectId:
+                                                  results!.estateOffice.id,
                                               likeType: LikeType.estateOffice),
                                         );
                                       }
@@ -462,8 +309,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                         _likeAndUnlikeBloc.add(
                                           LikeStarted(
                                               token: userToken,
-                                              likedObjectId: estateState
-                                                  .results.estateOffice.id,
+                                              likedObjectId:
+                                                  results!.estateOffice.id,
                                               likeType: LikeType.estateOffice),
                                         );
                                       }
@@ -528,7 +375,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                   ),
                             ),
                             Text(
-                              "${estateState.results.estateOffice.estateLength!} : ",
+                              "  ${results!.estateOffice.estateLength!} : ",
                               style: Theme.of(context)
                                   .textTheme
                                   .subtitle2!
@@ -539,67 +386,162 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           ],
                         ),
                       ),
+                      kHe24,
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: estates.length,
+                        itemBuilder: (_, index) {
+                          return EstateCard(
+                            color: Theme.of(context).colorScheme.background,
+                            estate: estates.elementAt(index),
+                            onClosePressed: () {
+                              showReportModalBottomSheet(
+                                  context, estates.elementAt(index).id!);
+                            },
+                            removeCloseButton: false,
+                          );
+                        },
+                      ),
                     ],
                   );
                 },
               ),
-              kHe24,
-              BlocConsumer<GetOfficesBloc, GetOfficesStates>(
-                bloc: _getOfficesBloc,
-                listener: (_, estateState) async {
-                  if (estateState is GetOfficesFetchError) {
-                    var error = estateState.isConnectionError
-                        ? AppLocalizations.of(context)!.no_internet_connection
-                        : estateState.errorMessage;
-                    await showWonderfulAlertDialog(
-                        context, AppLocalizations.of(context)!.error, error);
-                  }
-                },
-                builder: (_, estateState) {
-                  if (estateState is GetOfficesFetchProgress) {
-                    return const PropertyShimmer();
-                  }
-                  if (estateState is! GetOfficesFetchComplete) {
-                    return FetchResult(
-                      content: AppLocalizations.of(context)!
-                          .error_happened_when_executing_operation,
-                      iconSize: 0.25.sw,
-                    );
-                  }
-
-                  if (estates.isEmpty) {
-                    return Container(
-                      margin: EdgeInsets.only(top: 60.h),
-                      width: 1.sw,
-                      child: Text(
-                        AppLocalizations.of(context)!.office_have_not_estates,
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    physics: const ClampingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: estates.length,
-                    itemBuilder: (_, index) {
-                      return EstateCard(
-                        color: Theme.of(context).colorScheme.background,
-                        estate: estates.elementAt(index),
-                        onClosePressed: () {
-                          showReportModalBottomSheet(
-                              context, estates.elementAt(index).id!);
-                        },
-                        removeCloseButton: false,
-                        //removeCloseButton: true,
-                      );
-                    },
-                  );
-                },
-              )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildImage() {
+    return SizedBox(
+      height: 230.h,
+      child: Align(
+        alignment: Alignment.center,
+        child: InkWell(
+          onTap: () async {
+            await showDialog(
+              context: context,
+              builder: (_) => ImageDialog(path: results!.estateOffice.logo!),
+            );
+          },
+          child: Hero(
+            tag: results!.estateOffice.id.toString(),
+            child: Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(90.w),
+              ),
+              child: CachedNetworkImage(
+                  imageUrl: imagesBaseUrl + results!.estateOffice.logo!),
+            ),
+            // child: CircleAvatar(
+            //   radius: 90.w,
+            //   backgroundColor: Colors.grey,
+            //   backgroundImage:
+            //       CachedNetworkImageProvider(
+            //           imagesBaseUrl +
+            //               results!.logo!),
+            // ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildOfficeDetails() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text(
+          results!.estateOffice.name!,
+          style: Theme.of(context).textTheme.headline5,
+          textAlign: TextAlign.center,
+        ),
+        12.verticalSpace,
+        Text(
+          results!.estateOffice.locationS!,
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        12.verticalSpace,
+        SizedBox(
+          width: 200.w,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              InkWell(
+                onTap: () async {
+                  // _visitBloc.add(
+                  //   VisitStarted(
+                  //       visitId: results!.id,
+                  //       token: userToken,
+                  //       visitType: VisitType.officeCall),
+                  // );
+                  await myCupertinoActionSheet(
+                    context,
+                    elementsList: results!.communicationMedias!.phone!
+                        .map((e) => e.value)
+                        .toList(),
+                    onPressed: [
+                      () {},
+                      () {},
+                    ],
+                  );
+                  // launch(
+                  //   "tel://" + results!.mobile!,
+                  // );
+                },
+                child: const Icon(Icons.phone_outlined),
+              ),
+              InkWell(
+                onTap: () async {
+                  // _visitBloc.add(
+                  //   VisitStarted(
+                  //       visitId: results!.id,
+                  //       token: userToken,
+                  //       visitType: VisitType.officeCall),
+                  // );
+                  // launch(
+                  //   "tel://" + results!.mobile!,
+                  // );
+                },
+                child: const Icon(Icons.facebook_rounded),
+              ),
+              InkWell(
+                onTap: () async {
+                  // _visitBloc.add(
+                  //   VisitStarted(
+                  //       visitId: results!.id,
+                  //       token: userToken,
+                  //       visitType: VisitType.officeCall),
+                  // );
+                  await myCupertinoActionSheet(
+                    context,
+                    elementsList: results!.communicationMedias!.whatsApp!
+                        .map((e) => e.value)
+                        .toList(),
+                    onPressed: [
+                      () {
+                        launch(
+                          "tel://" + results!.estateOffice.mobile!,
+                        );
+                      },
+                      () {
+                        launch(
+                          "tel://" + results!.estateOffice.mobile!,
+                        );
+                      },
+                    ],
+                  );
+                },
+                child: const Icon(Icons.whatsapp_outlined),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

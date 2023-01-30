@@ -55,7 +55,15 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(AppLocalizations.of(context)!.contact_us),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: (){
+            Navigator.pop(context,false);
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -101,8 +109,17 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
             buildMessageContainer(isDark),
             kHe24,
             Center(
-              child: BlocBuilder<MessageBloc, MessageState>(
+              child: BlocConsumer<MessageBloc, MessageState>(
                 bloc: _messageBloc,
+                listener: (_, messageState) {
+                  if (messageState is SendMessageFetchComplete) {
+                    Fluttertoast.showToast(
+                        msg: AppLocalizations.of(context)!.complete_send,
+                        toastLength: Toast.LENGTH_LONG);
+                    messageController.clear();
+                    Navigator.pop(context, true);
+                  }
+                },
                 builder: (_, messageState) {
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -120,17 +137,7 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
                         token: UserSharedPreferences.getAccessToken(),
                         message: messageCubit.state,
                       ));
-                      await Future.delayed(
-                        const Duration(seconds: 2),
-                      );
-                      //if (messageState is SendMessageFetchComplete) {
-                      Fluttertoast.showToast(
-                          msg: AppLocalizations.of(context)!.complete_send,
-                          toastLength: Toast.LENGTH_LONG);
-                      messageController.clear();
-                      //  }
                       FocusScope.of(context).unfocus();
-                      Navigator.pop(context);
                     },
                   );
                 },

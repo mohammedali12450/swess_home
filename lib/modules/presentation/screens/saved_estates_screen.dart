@@ -48,6 +48,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             AppLocalizations.of(context)!.saved_estates,
           ),

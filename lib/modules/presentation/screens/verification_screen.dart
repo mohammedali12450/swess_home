@@ -322,12 +322,11 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                                   UserLoginBloc>(
                                                   context)
                                                   .user = widget.user;
-                                              Navigator.pushAndRemoveUntil(
+                                              Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (_) =>
-                                                      const NavigationBarScreen()),
-                                                      (route) => false);
+                                                      const NavigationBarScreen()));
                                             }
                                           } on ConnectionException catch (_) {
                                             showWonderfulAlertDialog(

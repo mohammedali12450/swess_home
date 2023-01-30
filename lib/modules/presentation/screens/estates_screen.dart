@@ -68,6 +68,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
         key: _scaffoldKey,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             AppLocalizations.of(context)!.search_results,
           ),

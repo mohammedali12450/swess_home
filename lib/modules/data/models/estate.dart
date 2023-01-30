@@ -51,6 +51,8 @@ class Estate {
   int? locationId;
   int? estateStatus;
   int? officeStatus;
+  String? phone;
+  String? viewer;
 
   Estate(
       {this.price,
@@ -89,6 +91,8 @@ class Estate {
       this.visitCount,
       this.locationS,
       this.videoUrl,
+      this.phone,
+      this.viewer,
       this.estateStatus,
       this.officeStatus});
 
@@ -149,8 +153,8 @@ class Estate {
     }
     // period type :
     PeriodType? periodType;
-    if (json.containsKey("period_type") && json["period_type"] != null) {
-      periodType = PeriodType.fromJson(json["period_type"]);
+    if (json.containsKey("period_types") && json["period_types"] != null) {
+      periodType = PeriodType.fromJson(json["period_types"]);
     }
     // Estate Office :
     EstateOffice? estateOffice;
@@ -212,6 +216,8 @@ class Estate {
       isFurnished: isFurnished == null ? null : isFurnished,
       isOnBeach: isOnBeach == null ? null : isOnBeach,
       videoUrl: json['video_url'] == null ? "" : json['video_url'],
+      phone: json["phone"] == null ? "" : json["phone"],
+      viewer: json["viewer_count"] == null ? null : json["viewer_count"],
       estateStatus: json['system_estate_status'] == null
           ? null
           : json['system_estate_status']['id'],

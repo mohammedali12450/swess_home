@@ -39,6 +39,7 @@ class _RatingScreenState extends State<RatingScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             AppLocalizations.of(context)!.rate_us,
           ),

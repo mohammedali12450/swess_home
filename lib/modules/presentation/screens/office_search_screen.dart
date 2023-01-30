@@ -80,6 +80,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          centerTitle: true,
           titleSpacing: 0,
           title: Row(
             children: [

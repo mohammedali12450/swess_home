@@ -109,6 +109,7 @@ class MyThemes {
           opacity: 1,
         ),
         appBarTheme: AppBarTheme(
+          centerTitle: true,
           color: AppColors.primaryColor,
           toolbarHeight: 75.h,
           titleTextStyle: TextStyle(

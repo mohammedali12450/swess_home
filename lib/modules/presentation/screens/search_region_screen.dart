@@ -60,7 +60,7 @@ class _SearchRegionScreenState extends State<SearchRegionScreen> {
                 return BlocBuilder<ChannelCubit, dynamic>(
                   bloc: patternCubit,
                   builder: (_, pattern) {
-                    List<RegionViewer> locations = regionsFetchState.getRegionsViewers(pattern);
+                    List<RegionViewer> locations = regionsFetchState.getRegionsViewers(pattern,context);
                     return ListView.separated(
                       itemBuilder: (_, index) {
                         return InkWell(

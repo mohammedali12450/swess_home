@@ -12,6 +12,8 @@ import 'package:swesshome/core/storage/shared_preferences/user_shared_preference
 import 'package:url_launcher/url_launcher.dart';
 import '../../../constants/design_constants.dart';
 import '../../../core/functions/app_theme_information.dart';
+import '../../../utils/helpers/numbers_helper.dart';
+import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import '../../business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_bloc.dart';
@@ -21,7 +23,6 @@ import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/estate_type.dart';
 import '../../data/models/period_type.dart';
 import '../../data/models/rent_estate.dart';
-import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/rent_estate_repository.dart';
 import '../widgets/my_dropdown_list.dart';
@@ -46,8 +47,10 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
   ChannelCubit isPressSearchCubit = ChannelCubit(false);
   ChannelCubit isFilterCubit = ChannelCubit(false);
   ChannelCubit locationNameCubit = ChannelCubit("");
+  ChannelCubit patternCubit = ChannelCubit(null);
 
-  //late List<EstateType> estatesTypes;
+  late List<EstateType> estatesTypes;
+
   List<EstateType> estateTypes = [];
   late List<PeriodType> periodTypes;
   bool isEstatesFinished = false;
@@ -58,192 +61,205 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
   @override
   void initState() {
     _rentEstateBloc = RentEstateBloc(RentEstateRepository());
-    //estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
+    estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
 
-    // for (int i = 0; i < estatesTypes.length; i++) {
-    //   if (estatesTypes.elementAt(i).id == 3) {
-    //     continue;
-    //   }
-    //   estateTypes.add(estatesTypes.elementAt(i));
-    // }
+    for (int i = 0; i < estatesTypes.length; i++) {
+      if (estatesTypes.elementAt(i).id == 3) {
+        continue;
+      }
+      estateTypes.add(estatesTypes.elementAt(i));
+    }
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
+    _onRefresh();
+    super.initState();
+  }
+
+  _onRefresh() {
+    _rentEstateBloc.page = 1;
+    rentEstates.clear();
     _rentEstateBloc.add(GetRentEstatesFetchStarted(
         rentEstateFilter: RentEstateFilter(price: "desc")));
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
-      body: CustomScrollView(
-        controller: _scrollController
-          ..addListener(
-            () {
-              if (_scrollController.offset ==
-                      _scrollController.position.maxScrollExtent &&
-                  !_rentEstateBloc.isFetching &&
-                  !isEstatesFinished) {
-                _rentEstateBloc.isFilter = false;
-                _rentEstateBloc
-                  ..isFetching = true
-                  ..add(
-                    !isFilterCubit.state
-                        ? GetRentEstatesFetchStarted(
-                            rentEstateFilter: RentEstateFilter(
-                                locationId: null,
-                                periodTypeId: null,
-                                estateTypeId: null,
-                                price: "desc"),
-                          )
-                        : FilterRentEstatesFetchStarted(
-                            rentEstateFilter: rentEstateFilter),
-                  );
-                print("ghina : ${rentEstateFilter.price}\n"
-                    "${rentEstateFilter.locationId}\n"
-                    "${rentEstateFilter.estateTypeId}\n");
-              }
-            },
-          ),
-        slivers: [
-          SliverAppBar(
-            floating: true,
-            pinned: true,
-            snap: false,
-            centerTitle: false,
-            title: Text(AppLocalizations.of(context)!.estate_immediately),
-            bottom: AppBar(
-              automaticallyImplyLeading: false,
-              toolbarHeight: 60,
-              title: Row(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 1,
-                            color: AppColors.yellowDarkColor,
-                          ),
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(80),
-                          ),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => Dialog(
-                                      elevation: 2,
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 16.h, horizontal: 12.w),
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .background,
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(8),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _onRefresh();
+        },
+        child: CustomScrollView(
+          controller: _scrollController
+            ..addListener(
+              () {
+                if (_scrollController.offset ==
+                        _scrollController.position.maxScrollExtent &&
+                    !_rentEstateBloc.isFetching &&
+                    !isEstatesFinished) {
+                  _rentEstateBloc.isFilter = false;
+                  _rentEstateBloc
+                    ..isFetching = true
+                    ..add(
+                      !isFilterCubit.state
+                          ? GetRentEstatesFetchStarted(
+                              rentEstateFilter: RentEstateFilter(
+                                  locationId: null,
+                                  periodTypeId: null,
+                                  estateTypeId: null,
+                                  price: "desc"),
+                            )
+                          : FilterRentEstatesFetchStarted(
+                              rentEstateFilter: rentEstateFilter),
+                    );
+                  print("ghina : ${rentEstateFilter.price}\n"
+                      "${rentEstateFilter.locationId}\n"
+                      "${rentEstateFilter.estateTypeId}\n");
+                }
+              },
+            ),
+          slivers: [
+            SliverAppBar(
+              floating: true,
+              pinned: true,
+              snap: false,
+              centerTitle: false,
+              title: Text(AppLocalizations.of(context)!.estate_immediately),
+              bottom: AppBar(
+                centerTitle: true,
+                automaticallyImplyLeading: false,
+                toolbarHeight: 60,
+                title: Row(
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: AppColors.yellowDarkColor,
+                              ),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(80),
+                              ),
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                          elevation: 2,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .background,
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                Radius.circular(8),
+                                              ),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                // Text(
+                                                //   AppLocalizations.of(context)!
+                                                //       .filter,
+                                                //   style: const TextStyle(
+                                                //       fontWeight: FontWeight.bold,
+                                                //       color: Colors.red,
+                                                //       fontSize: 20),
+                                                // ),
+                                                24.verticalSpace,
+                                                buildDialogBody()
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            // Text(
-                                            //   AppLocalizations.of(context)!
-                                            //       .filter,
-                                            //   style: const TextStyle(
-                                            //       fontWeight: FontWeight.bold,
-                                            //       color: Colors.red,
-                                            //       fontSize: 20),
-                                            // ),
-                                            24.verticalSpace,
-                                            buildDialogBody()
-                                          ],
-                                        ),
-                                      ),
-                                    ));
-                          },
-                          icon: const Icon(Icons.filter_alt_outlined),
-                        ),
-                      )),
-                  kWi20,
-                  Expanded(
-                    flex: 4,
-                    child: buildLocation(isDark),
-                  ),
-                ],
+                                        ));
+                              },
+                              icon: const Icon(Icons.filter_alt_outlined),
+                            ),
+                          ),
+                        )),
+                    kWi20,
+                    Expanded(
+                      flex: 4,
+                      child: buildLocation(isDark),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          BlocBuilder<RentEstateBloc, RentEstateState>(
-            bloc: _rentEstateBloc,
-            builder: (_, getRentState) {
-              if (getRentState is GetRentEstateFetchProgress ||
-                  getRentState is GetRentEstateFetchProgress) {
-                // return const SliverToBoxAdapter(child: ImmediateShimmer());
-              }
-              if (getRentState is GetRentEstateFetchComplete) {
-                rentEstates.addAll(getRentState.rentEstates);
-                _rentEstateBloc.isFetching = false;
-                if (getRentState.rentEstates.isEmpty &&
-                    rentEstates.isNotEmpty) {
-                  isEstatesFinished = true;
+            BlocBuilder<RentEstateBloc, RentEstateState>(
+              bloc: _rentEstateBloc,
+              builder: (_, getRentState) {
+                if (getRentState is GetRentEstateFetchProgress) {
+                  // return const SliverToBoxAdapter(child: ImmediateShimmer());
                 }
-              }
-              if (getRentState is FilterRentEstateFetchComplete) {
-                if (_rentEstateBloc.filterPage == 2) {
-                  rentEstates = getRentState.rentEstates;
-                  isEstatesFinished = false;
-                } else {
+                if (getRentState is GetRentEstateFetchComplete) {
                   rentEstates.addAll(getRentState.rentEstates);
+                  _rentEstateBloc.isFetching = false;
+                  if (getRentState.rentEstates.isEmpty &&
+                      rentEstates.isNotEmpty) {
+                    isEstatesFinished = true;
+                  }
                 }
-                _rentEstateBloc.isFetching = false;
-                if (getRentState.rentEstates.isEmpty &&
-                    rentEstates.isNotEmpty) {
-                  isEstatesFinished = true;
+                if (getRentState is FilterRentEstateFetchComplete) {
+                  if (_rentEstateBloc.filterPage == 2) {
+                    rentEstates = getRentState.rentEstates;
+                    isEstatesFinished = false;
+                  } else {
+                    rentEstates.addAll(getRentState.rentEstates);
+                  }
+                  _rentEstateBloc.isFetching = false;
+                  if (getRentState.rentEstates.isEmpty &&
+                      rentEstates.isNotEmpty) {
+                    isEstatesFinished = true;
+                  }
                 }
-              }
-              if (rentEstates.isEmpty) {
-                return SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: getScreenHeight(context) / 1.2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.24),
-                          size: 120,
-                        ),
-                        kHe24,
-                        Text(
-                          AppLocalizations.of(context)!.no_results_hint,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(fontWeight: FontWeight.w400),
-                        ),
-                      ],
+                if (rentEstates.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: getScreenHeight(context) / 1.2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.search,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.24),
+                            size: 120,
+                          ),
+                          kHe24,
+                          Text(
+                            AppLocalizations.of(context)!.no_results_hint,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  );
+                }
+                return SliverFixedExtentList(
+                  itemExtent: 350,
+                  delegate: SliverChildBuilderDelegate((builder, index) {
+                    return buildEstateCard(rentEstates.elementAt(index));
+                  }, childCount: rentEstates.length),
                 );
-              }
-              return SliverFixedExtentList(
-                itemExtent: 350,
-                delegate: SliverChildBuilderDelegate((builder, index) {
-                  return buildEstateCard(rentEstates.elementAt(index));
-                }, childCount: rentEstates.length),
-              );
-            },
-          ),
-        ],
+              },
+            ),
+          ],
+        ),
       ),
       floatingActionButton: UserSharedPreferences.getAccessToken() != null
           ? Padding(
@@ -330,8 +346,9 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
             ) as RegionViewer;
             FocusScope.of(context).unfocus();
             if (selectedRegion != null) {
-              rentEstateFilter.locationId = selectedRegion!.id!;
+              rentEstateFilter.locationId = selectedRegion!.id;
               locationNameCubit.setState(selectedRegion!.getLocationName());
+              isPressSearchCubit.setState(true);
             }
             return;
           },
@@ -348,6 +365,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                 print("ghina1 : ${rentEstateFilter.price}\n"
                     "${rentEstateFilter.locationId}\n"
                     "${rentEstateFilter.estateTypeId}\n");
+                isPressSearchCubit.setState(false);
               }
               return BlocBuilder<ChannelCubit, dynamic>(
                   bloc: locationNameCubit,
@@ -497,7 +515,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
               Row(
                 children: [
                   Text(AppLocalizations.of(context)!.estate_price + " : "),
-                  Text(rentEstate.price.toString() +
+                  Text(NumbersHelper.getMoneyFormat(rentEstate.price) +
                       " " +
                       AppLocalizations.of(context)!.syrian_bound),
                 ],
@@ -547,14 +565,12 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
     );
   }
 
-  ChannelCubit patternCubit = ChannelCubit(null);
-
   Widget buildDialogBody() {
     return Wrap(
       alignment: WrapAlignment.center,
       direction: Axis.horizontal,
       spacing: 12.h,
-      runSpacing: 12.w,
+      //runSpacing: 12.w,
       children: [
         Container(
           width: inf,
@@ -570,26 +586,29 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
             ],
           ),
         ),
-        ElevatedButton(
-          child: Text(
-            AppLocalizations.of(context)!.ok,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 18.0),
+          child: ElevatedButton(
+            child: Text(
+              AppLocalizations.of(context)!.ok,
+            ),
+            onPressed: () async {
+              _rentEstateBloc.filterPage = 1;
+              // print(rentEstateFilter.estateTypeId);
+              // print(rentEstateFilter.periodTypeId);
+              // print(rentEstateFilter.locationId);
+              // print(rentEstateFilter.price);
+              _rentEstateBloc.isFilter = true;
+              isFilterCubit.setState(true);
+              _rentEstateBloc.add(FilterRentEstatesFetchStarted(
+                  rentEstateFilter: rentEstateFilter));
+              print("ghina2 : ${rentEstateFilter.price}\n"
+                  "${rentEstateFilter.locationId}\n"
+                  "${rentEstateFilter.estateTypeId}\n");
+              //_rentEstateBloc.isFilter = false;
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () async {
-            _rentEstateBloc.filterPage = 1;
-            // print(rentEstateFilter.estateTypeId);
-            // print(rentEstateFilter.periodTypeId);
-            // print(rentEstateFilter.locationId);
-            // print(rentEstateFilter.price);
-            _rentEstateBloc.isFilter = true;
-            isFilterCubit.setState(true);
-            _rentEstateBloc.add(FilterRentEstatesFetchStarted(
-                rentEstateFilter: rentEstateFilter));
-            print("ghina2 : ${rentEstateFilter.price}\n"
-                "${rentEstateFilter.locationId}\n"
-                "${rentEstateFilter.estateTypeId}\n");
-            //_rentEstateBloc.isFilter = false;
-            Navigator.pop(context);
-          },
         ),
         ElevatedButton(
           child: Text(
@@ -611,16 +630,18 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
       if (await canLaunch(whatappURLIos)) {
         await launch(whatappURLIos, forceSafariVC: false);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("whatsapp no installed")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text(AppLocalizations.of(context)!.whats_app_not_installed)));
       }
     } else {
       // android , web
       if (await canLaunch(whatsappURlAndroid)) {
         await launch(whatsappURlAndroid);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("whatsapp no installed")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text(AppLocalizations.of(context)!.whats_app_not_installed)));
       }
     }
   }
@@ -632,7 +653,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
           return InkWell(
             onTap: () {
               _priceSelected.setState(!isPriceSelected);
-              rentEstateFilter.price = _priceSelected.state ? "desc" : "asc";
+              rentEstateFilter.price = !_priceSelected.state ? "desc" : "asc";
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -676,44 +697,33 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
 
   Widget buildPeriodTypes() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //kHe12,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: Row(
-            children: [
-              Text(
-                AppLocalizations.of(context)!.estate_rent_period + " :",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
+          padding: EdgeInsets.symmetric(horizontal: 18.w),
+          child: Text(
+            AppLocalizations.of(context)!.estate_rent_period + " :",
+            style: Theme.of(context).textTheme.headline6,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: EdgeInsets.symmetric(vertical: 10.w, horizontal: 13.w),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.secondaryDark, width: 0.5),
-              borderRadius: const BorderRadius.all(
-                Radius.elliptical(8, 8),
-              ),
+              border: Border.all(color: Colors.black38, width: 1),
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 5),
-              child: MyDropdownList(
-                // isOnChangeNull: isKeyboardOpened,
-                elementsList:
-                    periodTypes.map((e) => e.name.split("|").first).toList(),
-                onSelect: (index) {
-                  rentEstateFilter.periodTypeId =
-                      periodTypes.elementAt(index).id;
-                },
-                validator: (value) => value == null
-                    ? AppLocalizations.of(context)!.this_field_is_required
-                    : null,
-                selectedItem: AppLocalizations.of(context)!.please_select_here,
-              ),
+            child: MyDropdownList(
+              elementsList:
+                  periodTypes.map((e) => e.name.split("|").first).toList(),
+              onSelect: (index) {
+                rentEstateFilter.periodTypeId = periodTypes.elementAt(index).id;
+              },
+              validator: (value) => value == null
+                  ? AppLocalizations.of(context)!.this_field_is_required
+                  : null,
+              selectedItem: AppLocalizations.of(context)!.please_select_here,
             ),
           ),
         ),
@@ -724,20 +734,17 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
 
   Widget buildEstateType() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18.0),
-              child: Text(
-                AppLocalizations.of(context)!.estate_type + " :",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ),
-          ],
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18.w),
+          child: Text(
+            AppLocalizations.of(context)!.estate_type + " :",
+            style: Theme.of(context).textTheme.headline6,
+          ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+          padding: EdgeInsets.symmetric(vertical: 10.w, horizontal: 13.w),
           child: Container(
             padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
             decoration: BoxDecoration(
@@ -745,12 +752,10 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
               borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),
             child: MyDropdownList(
-              elementsList: estateTypes.map((e) {
-                return e.name.split('|').first;
-              }).toList(),
+              elementsList:
+                  estateTypes.map((e) => e.name.split('|')[1]).toList(),
               onSelect: (index) {
-                // set search data estate type :
-                rentEstateFilter.estateTypeId = periodTypes.elementAt(index).id;
+                rentEstateFilter.estateTypeId = estateTypes.elementAt(index).id;
               },
               validator: (value) => value == null
                   ? AppLocalizations.of(context)!.this_field_is_required

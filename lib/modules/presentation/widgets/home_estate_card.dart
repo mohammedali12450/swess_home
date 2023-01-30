@@ -4,13 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
+import '../../../constants/api_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
 import '../../../constants/enums.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../../utils/helpers/date_helper.dart';
+import '../../../utils/helpers/numbers_helper.dart';
 import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_bloc.dart';
 import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_event.dart';
 import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_state.dart';
@@ -48,6 +51,7 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
 
   @override
   Widget build(BuildContext context) {
+    int intPrice = int.tryParse(widget.estate.price!)!;
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -83,6 +87,7 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
               ),
               child: Container(
                 height: 200,
+                width: 262,
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 1,
@@ -90,46 +95,59 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                   ),
                   color: Theme.of(context).colorScheme.background,
                 ),
-                child: CachedNetworkImage(
-                  imageUrl:
-                      "https://th.bing.com/th/id/OIP._ujqj0spkMxhIErSKifSfgHaFj?pid=ImgDet&rs=1",
-                  fit: BoxFit.cover,
-                ),
+                child: widget.estate.images!.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: imagesBaseUrl + widget.estate.images![1].url,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(swessHomeIconPath),
               ),
             ),
-            Padding(
+            Container(
+              width: 262,
               padding: kSmallSymWidth,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   kHe12,
-                  Text(
-                    "${widget.estate.estateType!.name.split("|")[1]} "
-                    "${widget.estate.estateOfferType!.name}"
-                    "${(widget.estate.periodType == null) ? " " : "/ ${widget.estate.periodType!.name}"}",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3!
-                        .copyWith(fontWeight: FontWeight.w700, fontSize: 25),
+                  Row(
+                    children: [
+                      Text(
+                        "${widget.estate.estateType!.name.split("|")[1]} "
+                        "${widget.estate.estateOfferType!.name}"
+                        "${(widget.estate.periodType == null) ? " " : "/ ${widget.estate.periodType!.name}"}",
+                        style: Theme.of(context).textTheme.headline3!.copyWith(
+                            fontWeight: FontWeight.w700, fontSize: 25),
+                      ),
+                    ],
                   ),
-                  Text(widget.estate.locationS!),
-                  SizedBox(
-                      width: 240,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Column(
                         children: [
-                          Text(
-                            DateHelper.getDateByFormat(
-                                DateTime.parse(widget.estate.publishedAt!),
-                                "yyyy/MM/dd"),
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6!
-                                .copyWith(color: AppColors.lastColor),
+                          Row(
+                            children: [
+                              Text(widget.estate.locationS!),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                DateHelper.getDateByFormat(
+                                    DateTime.parse(widget.estate.publishedAt!),
+                                    "yyyy/MM/dd"),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6!
+                                    .copyWith(color: AppColors.lastColor),
+                              ),
+                            ],
                           ),
                         ],
-                      )),
+                      ),
+                    ),
+                  ),
                   kHe20,
                   SizedBox(
                     width: 240,
@@ -139,7 +157,7 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            widget.estate.price! +
+                            NumbersHelper.getMoneyFormat(intPrice) +
                                 " " +
                                 AppLocalizations.of(context)!.syrian_bound,
                             style: Theme.of(context).textTheme.headline4,
@@ -172,6 +190,7 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                               height: 45,
                               width: 45,
                               child: FloatingActionButton(
+                                heroTag: widget.estate.id.toString(),
                                 elevation: 5,
                                 backgroundColor: AppColors.lastColor,
                                 onPressed: () async {

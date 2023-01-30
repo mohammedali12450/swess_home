@@ -33,6 +33,7 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+            centerTitle: true,
             title: Text(
               AppLocalizations.of(context)!.create_estate_order,
             ),

@@ -21,6 +21,7 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.candidate_estates,
         ),

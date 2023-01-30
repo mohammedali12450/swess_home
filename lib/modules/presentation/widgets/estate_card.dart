@@ -31,6 +31,7 @@ import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../constants/design_constants.dart';
 import '../../../constants/enums.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../screens/authentication_screen.dart';
@@ -441,7 +442,7 @@ class _EstateCardState extends State<EstateCard> {
                 ),
                 // Estate address and office logo
                 Container(
-                  height: 100.h,
+                  height: 120.h,
                   color: Colors.transparent,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -477,17 +478,53 @@ class _EstateCardState extends State<EstateCard> {
                       const Spacer(),
                       Expanded(
                         flex: 1,
-                        child: Container(
-                          height: 75.h,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            image: DecorationImage(
-                              image: CachedNetworkImageProvider(
-                                imagesBaseUrl +
-                                    widget.estate.estateOffice!.logo!,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 75.h,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                image: DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                    imagesBaseUrl +
+                                        widget.estate.estateOffice!.logo!,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            8.verticalSpace,
+                            if (widget.estate.visitCount != null)
+                              Directionality(
+                                textDirection: TextDirection.ltr,
+                                child: Container(
+                                  padding: const EdgeInsets.only(left: 17),
+                                  child: Row(
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(bottom: 3.0),
+                                        child: Icon(
+                                          Icons.remove_red_eye_outlined,
+                                          color: AppColors.lastColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      kWi8,
+                                      Text(
+                                        widget.estate.visitCount!.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5!
+                                            .copyWith(
+                                                color: AppColors.lastColor,
+                                                fontSize: 14,
+                                                height: 1.5),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                       8.horizontalSpace
@@ -605,20 +642,14 @@ class _EstateCardState extends State<EstateCard> {
                     await myCupertinoActionSheet(
                       context,
                       elementsList: [
-                        "ghina",
-                        "sharaf",
+                        isArabic ? widget.estate.estateOffice!.phone!.split("+")[1] + "+"
+                            : widget.estate.estateOffice!.phone!
                       ],
                       onPressed: [
                         () {
                           launch(
                             "tel://" +
-                                widget.estate.estateOffice!.mobile.toString(),
-                          );
-                        },
-                        () {
-                          launch(
-                            "tel://" +
-                                widget.estate.estateOffice!.mobile.toString(),
+                                widget.estate.estateOffice!.phone.toString(),
                           );
                         },
                       ],
@@ -718,11 +749,20 @@ class _EstateCardState extends State<EstateCard> {
                               color: Theme.of(context).colorScheme.primary,
                               size: 16.w,
                             )
-                          : Icon(
-                              (likeAndUnlikeState is Liked)
-                                  ? Icons.favorite
-                                  : Icons.favorite_outline,
-                              color: Theme.of(context).colorScheme.primary,
+                          : Row(
+                              children: [
+                                (likeAndUnlikeState is Liked)
+                                    ? Text(widget.estate.likesCount != null
+                                        ? "${widget.estate.likesCount! + 1}"
+                                        : "")
+                                    : Container(),
+                                Icon(
+                                  (likeAndUnlikeState is Liked)
+                                      ? Icons.favorite
+                                      : Icons.favorite_outline,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ],
                             ),
                     );
                   },
