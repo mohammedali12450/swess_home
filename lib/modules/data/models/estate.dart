@@ -191,7 +191,7 @@ class Estate {
       areaUnit: areaUnit == null ? null : areaUnit,
       estateImages: [],
       streetImages: [],
-      images: images == null ? null : images,
+      images: images,
       longitude: json["longitude"] == null ? null : json["longitude"],
       latitude: json["latitude"] == null ? null : json["latitude"],
       locationId: json["location_id"] == null ? null : json["location_id"],

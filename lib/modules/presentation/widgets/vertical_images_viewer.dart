@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:reorderables/reorderables.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
+import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/images_compressor.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -36,7 +37,6 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     imagesCardsCubit = ChannelCubit(widget.images);
   }
@@ -109,9 +109,9 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                 ),
               ),
               child: Center(
-                child: Text(
+                child: ResText(
                   index.toString(),
-                  style: Theme.of(context).textTheme.headline1!.copyWith(
+                  textStyle: Theme.of(context).textTheme.headline1!.copyWith(
                       color: AppColors.white.withOpacity(0.64), fontWeight: FontWeight.w600),
                 ),
               ),

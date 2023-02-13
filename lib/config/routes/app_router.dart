@@ -153,9 +153,19 @@ class AppRouter {
                   if (!isLanguageSelected) {
                     return const SelectLanguageScreen();
                   }
+                  bool isLogin = ApplicationSharedPreferences.getLoginPassed();
+                  int visitNum = ApplicationSharedPreferences.getVisitNumber();
+                  //print("before $visitNum");
+                  // every third skip login should to open AuthenticationScreen
+                  visitNum = visitNum % 3;
+                  //print("after $visitNum");
                   // Language has selected before:
                   return (isIntroductionScreenPassed)
-                      ? const NavigationBarScreen()
+                      ? !(isLogin)
+                          ? (visitNum == 0)
+                              ? const AuthenticationScreen()
+                              : const NavigationBarScreen()
+                          : const NavigationBarScreen()
                       : const IntroductionScreen1();
                 },
               );

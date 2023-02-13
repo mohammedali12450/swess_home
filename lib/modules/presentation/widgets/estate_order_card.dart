@@ -141,17 +141,14 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
             Text(AppLocalizations.of(context)!.price_domain + " : ",
                 style: Theme.of(context).textTheme.subtitle1),
           ],
-          if (widget.estateOrder.description != null) ...[
-            8.verticalSpace,
-            Text(
-              AppLocalizations.of(context)!.notes +
-                  " : " +
-                  widget.estateOrder.description,
-              maxLines: 50,
-              style:
-                  Theme.of(context).textTheme.subtitle2!.copyWith(height: 1.8),
-            ),
-          ],
+          8.verticalSpace,
+          Text(
+            AppLocalizations.of(context)!.notes +
+                " : " +
+                widget.estateOrder.description,
+            maxLines: 50,
+            style: Theme.of(context).textTheme.subtitle2!.copyWith(height: 1.8),
+          ),
           kHe24,
           Container(
             alignment: isArabic ? Alignment.centerLeft : Alignment.centerRight,

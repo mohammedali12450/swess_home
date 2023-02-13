@@ -36,7 +36,6 @@ class _MyDropdownListState extends State<MyDropdownList> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // initializing:
     _elementSelectCubit = ChannelCubit(

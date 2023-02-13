@@ -5,6 +5,8 @@ import 'package:swesshome/constants/api_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/data/models/estate_office.dart';
 
+import 'res_text.dart';
+
 class EstateOfficeCard extends StatelessWidget {
   final EstateOffice office;
   final Function() onTap;
@@ -42,15 +44,15 @@ class EstateOfficeCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  ResText(
                     office.name!,
-                    style: Theme.of(context).textTheme.headline5,
+                    textStyle: Theme.of(context).textTheme.headline5,
                   ),
                   kHe12,
-                  Text(
+                  ResText(
                    // office.location!.getLocationName(),
                     office.locationS!,
-                    style: Theme.of(context).textTheme.headline6,
+                    textStyle: Theme.of(context).textTheme.headline6,
                   ),
                 ],
               ),

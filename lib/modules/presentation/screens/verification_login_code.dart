@@ -95,7 +95,6 @@ class _VerificationLoginCodeScreenState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     resendVerificationCodeBloc =
         BlocProvider.of<ResendVerificationCodeBloc>(context);
@@ -375,6 +374,14 @@ class _VerificationLoginCodeScreenState
                                   }
                                 },
                               ),
+                              30.verticalSpace,
+                              Center(
+                                  child: Text(
+                                AppLocalizations.of(context)!
+                                    .time_of_receive_code,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodyText2,
+                              )),
                             ],
                           );
                   },

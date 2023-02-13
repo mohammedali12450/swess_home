@@ -18,6 +18,7 @@ import '../../business_logic_components/bloc/user_data_bloc/user_data_bloc.dart'
 import '../../business_logic_components/bloc/user_data_bloc/user_data_event.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_state.dart';
 import '../../data/models/user.dart';
+import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/user_authentication_repository.dart';
 import '../widgets/fetch_result.dart';
@@ -37,6 +38,8 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
   late UserDataBloc _userDataBloc;
   late MessageBloc _messageBloc;
   User? user;
+  late bool isArabic;
+  late bool isDark;
 
   @override
   void initState() {
@@ -52,7 +55,8 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -60,8 +64,8 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: (){
-            Navigator.pop(context,false);
+          onPressed: () {
+            Navigator.pop(context, false);
           },
         ),
       ),
@@ -154,19 +158,20 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
     return Column(
       children: [
         buildListTile(
-            AppLocalizations.of(context)!.name, user!.firstName, isDark),
-        buildListTile(AppLocalizations.of(context)!.email, user!.email, isDark),
+            AppLocalizations.of(context)!.name, user!.firstName!, isDark),
+        if (user!.email != null)
+          buildListTile(
+              AppLocalizations.of(context)!.email, user!.email!, isDark),
         buildListTile(AppLocalizations.of(context)!.telephone,
-            user!.authentication, isDark),
-        user!.country == null
-            ? Container()
-            : buildListTile(
-                AppLocalizations.of(context)!.country, user!.country, isDark),
+            user!.authentication!, isDark),
+        if (user!.country != null)
+          buildListTile(
+              AppLocalizations.of(context)!.country, user!.country!, isDark),
       ],
     );
   }
 
-  Widget buildListTile(leading, title, isDark) {
+  Widget buildListTile(leading, String title, isDark) {
     return Column(
       children: [
         Padding(
@@ -190,7 +195,11 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
               Expanded(
                 flex: 3,
                 child: Text(
-                  title,
+                  leading == AppLocalizations.of(context)!.telephone
+                      ? isArabic
+                          ? title.split("+")[1] + "+"
+                          : title
+                      : title,
                 ),
               ),
             ],

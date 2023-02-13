@@ -28,7 +28,6 @@ import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_repository.dart';
 import '../widgets/app_drawer.dart';
-import '../widgets/estate_card.dart';
 import '../widgets/home_estate_card.dart';
 import '../widgets/shimmer_widget.dart';
 import '../widgets/shimmers/estates_shimmer.dart';
@@ -212,7 +211,7 @@ class HomeScreenState extends State<HomeScreen> {
                 return Padding(
                   padding:
                   EdgeInsets.only(left: 18.w, right: 3.w, bottom: 20.h),
-                  child: HomeEstateCard(estate: estateNewest.elementAt(index)),
+                  child: HomeEstateCard(estate: estateMostView.elementAt(index)),
                 );
               },
             ),

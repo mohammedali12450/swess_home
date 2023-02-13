@@ -10,20 +10,16 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import '../../business_logic_components/bloc/location_bloc/locations_bloc.dart';
-import '../../business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/estate_type.dart';
-import '../../data/models/price_domain.dart';
 import '../../data/models/search_data.dart';
 import '../../data/models/user.dart';
 import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
-import '../../data/repositories/estate_types_repository.dart';
-import '../../data/repositories/price_domains_repository.dart';
 import '../widgets/choice_container.dart';
-import '../widgets/price_picker.dart';
+import '../widgets/price_domain.dart';
 import 'estates_screen.dart';
 import 'search_location_screen.dart';
 import 'search_region_screen.dart';
@@ -40,20 +36,19 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   ChannelCubit patternCubit = ChannelCubit(null);
   ChannelCubit locationIdCubit = ChannelCubit(0);
   ChannelCubit locationNameCubit = ChannelCubit("");
+
+  ChannelCubit isRentCubit = ChannelCubit(false);
+  ChannelCubit isAreaSearchCubit = ChannelCubit(false);
+  ChannelCubit isPressTypeCubit = ChannelCubit(0);
   ChannelCubit startPriceCubit = ChannelCubit(0);
   ChannelCubit endPriceCubit = ChannelCubit(0);
-  ChannelCubit isSellCubit = ChannelCubit(true);
-  ChannelCubit isAreaSearchCubit = ChannelCubit(true);
-  ChannelCubit isPressTypeCubit = ChannelCubit(5);
-
-  PriceDomainsBloc priceDomainsBloc =
-      PriceDomainsBloc(PriceDomainsRepository());
-  EstateTypesBloc estateTypesBloc = EstateTypesBloc(EstateTypesRepository());
 
   // others:
   List<EstateType>? estatesTypes;
-  PriceDomain? priceDomains;
-  SearchData searchData = SearchData();
+
+  SearchData searchData = SearchData(
+    estateTypeId: 1
+  );
   String? token;
   LocationViewer? selectedLocation;
   RegionViewer? selectedRegion;
@@ -79,9 +74,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     // // widget.searchData.ownershipId = null;
     // initializeEstateBooleanVariables();
     searchData.estateOfferTypeId = 1;
-    searchData.priceMin = int.tryParse(priceDomains!.sale.min[0]);
-    searchData.priceMax =
-        int.tryParse(priceDomains!.sale.max[priceDomains!.sale.max.length - 1]);
   }
 
   String? userToken;
@@ -93,12 +85,11 @@ class _SearchScreenState extends State<FilterSearchScreen> {
 
     // Fetch lists :
     estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
-    priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
 
     // Initialize search data :
     initializeOfferData();
 
-    for(int i = 0 ; i < estatesTypes!.length; i++){
+    for (int i = 0; i < estatesTypes!.length; i++) {
       print(estatesTypes!.elementAt(i).name);
     }
 
@@ -158,22 +149,31 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                     Expanded(
                       flex: 3,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: isDark ? AppColors.primaryColor : null,
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(20.w, 60.h),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
                               AppLocalizations.of(context)!.search,
+                              style: const TextStyle(color: AppColors.white),
                             ),
                             kWi16,
-                            Icon(
+                            const Icon(
                               Icons.search,
-                              color: Theme.of(context).colorScheme.background,
+                              color: AppColors.white,
                             ),
                           ],
                         ),
                         onPressed: () {
                           if (searchData.locationId == 0) {
                             searchData.locationId = null;
+                          }
+                          if (searchData.priceMin == 0) {
+                            searchData.priceMin = 1;
                           }
                           print("ghina : "
                               "${searchData.estateOfferTypeId}\n"
@@ -182,20 +182,14 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                               "${searchData.priceMin}\n"
                               "${searchData.priceMax}");
 
+                          searchData.sortType = "desc";
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => EstatesScreen(
                                 searchData: searchData,
                                 eventSearch: EstatesFetchStarted(
-                                  searchData: SearchData(
-                                      locationId: searchData.locationId,
-                                      estateTypeId: searchData.estateTypeId,
-                                      estateOfferTypeId:
-                                          searchData.estateOfferTypeId,
-                                      priceMin: searchData.priceMin,
-                                      priceMax: searchData.priceMax,
-                                      sortType: "desc"),
+                                  searchData: searchData,
                                   isAdvanced: false,
                                   token: UserSharedPreferences.getAccessToken(),
                                 ),
@@ -210,18 +204,19 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       flex: 1,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: isDark ? const Color(0xff90B8F8) : null,
+                          primary: isDark ? AppColors.primaryColor : null,
                           padding: EdgeInsets.zero,
                           minimumSize: Size(20.w, 60.h),
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.clear,
+                          style: const TextStyle(color: AppColors.white),
                         ),
                         onPressed: () {
                           locationNameCubit.setState(
                               AppLocalizations.of(context)!
                                   .enter_location_name);
-                          isSellCubit.setState(true);
+                          isRentCubit.setState(true);
                           isAreaSearchCubit.setState(true);
                           searchData = SearchData.init();
                         },
@@ -243,18 +238,23 @@ class _SearchScreenState extends State<FilterSearchScreen> {
       children: [
         buildChoiceContainer(
             context: context,
-            cubit: isSellCubit,
-            textLeft: AppLocalizations.of(context)!.sell,
-            textRight: AppLocalizations.of(context)!.rent,
-            onTapLeft: () {
+            cubit: isRentCubit,
+            textRight: AppLocalizations.of(context)!.sell,
+            textLeft: AppLocalizations.of(context)!.rent,
+            onTapRight: () {
               searchData.estateOfferTypeId = 1;
             },
-            onTapRight: () {
+            onTapLeft: () {
               searchData.estateOfferTypeId = 2;
             }),
         buildLocation(isDark),
         buildEstateType(isDark),
-        buildPriceDomain(isDark),
+        PriceDomainWidget(
+          isRentCubit: isRentCubit,
+          searchData: searchData,
+          startPriceCubit: startPriceCubit,
+          endPriceCubit: endPriceCubit,
+        ),
         kHe60,
       ],
     );
@@ -287,8 +287,9 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                     child: InkWell(
                       onTap: () {
                         if (pressState < 5 && pressState == 0) {
-                          isPressTypeCubit.setState(5);
-                          searchData.estateTypeId = null;
+                          isPressTypeCubit.setState(0);
+                          //searchData.estateTypeId = null;
+                          searchData.estateTypeId = 1;
                         } else {
                           isPressTypeCubit.setState(0);
                           searchData.estateTypeId = 1;
@@ -331,8 +332,9 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                     child: InkWell(
                       onTap: () {
                         if (pressState < 5 && pressState == 3) {
-                          isPressTypeCubit.setState(5);
-                          searchData.estateTypeId = null;
+                          isPressTypeCubit.setState(3);
+                          //searchData.estateTypeId = null;
+                          searchData.estateTypeId = 4;
                         } else {
                           isPressTypeCubit.setState(3);
                           searchData.estateTypeId = 4;
@@ -375,8 +377,9 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                     child: InkWell(
                       onTap: () {
                         if (pressState < 5 && pressState == 2) {
-                          isPressTypeCubit.setState(5);
-                          searchData.estateTypeId = null;
+                          isPressTypeCubit.setState(2);
+                          //searchData.estateTypeId = null;
+                          searchData.estateTypeId = 3;
                         } else {
                           isPressTypeCubit.setState(2);
                           searchData.estateTypeId = 3;
@@ -419,8 +422,9 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                     child: InkWell(
                       onTap: () {
                         if (pressState < 5 && pressState == 1) {
-                          isPressTypeCubit.setState(5);
-                          searchData.estateTypeId = null;
+                          isPressTypeCubit.setState(1);
+                          //searchData.estateTypeId = null;
+                          searchData.estateTypeId = 2;
                         } else {
                           isPressTypeCubit.setState(1);
                           searchData.estateTypeId = 2;
@@ -463,8 +467,9 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                     child: InkWell(
                       onTap: () {
                         if (pressState < 5 && pressState == 4) {
-                          isPressTypeCubit.setState(5);
-                          searchData.estateTypeId = null;
+                          isPressTypeCubit.setState(4);
+                          //searchData.estateTypeId = null;
+                          searchData.estateTypeId = 5;
                         } else {
                           isPressTypeCubit.setState(4);
                           searchData.estateTypeId = 5;
@@ -559,189 +564,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     );
   }
 
-  Widget buildPriceDomain(isDark) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              const Icon(Icons.price_change_outlined),
-              kWi8,
-              Text(
-                AppLocalizations.of(context)!.price_domain + " :",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
-          ),
-        ),
-        kHe12,
-        BlocBuilder<ChannelCubit, dynamic>(
-            bloc: isSellCubit,
-            builder: (_, priceState) {
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(AppLocalizations.of(context)!.min_price),
-                            ],
-                          ),
-                          Align(
-                            alignment: isArabic
-                                ? Alignment.centerRight
-                                : Alignment.centerLeft,
-                            child: GestureDetector(
-                              onTap: () async {
-                                List<dynamic> min = priceState
-                                    ? priceDomains!.sale.min
-                                    : priceDomains!.rent.min;
-                                await openPricePicker(
-                                  context,
-                                  isDark,
-                                  title: AppLocalizations.of(context)!
-                                      .title_min_price,
-                                  items: min
-                                      .map(
-                                        (names) => Text(
-                                          names,
-                                          // textScaleFactor: 1.2,
-                                          // textAlign: TextAlign.center,
-                                        ),
-                                      )
-                                      .toList(),
-                                  onSubmit: (data) {
-                                    startPriceCubit.setState(data);
-                                    //print(priceDomains!.sale.min[startPriceCubit.state]);
-                                    searchData.priceMin = priceState
-                                        ? int.tryParse(priceDomains!
-                                            .sale.min[startPriceCubit.state])
-                                        : int.tryParse(priceDomains!
-                                            .rent.min[startPriceCubit.state]);
-                                  },
-                                );
-                              },
-                              child: BlocBuilder<ChannelCubit, dynamic>(
-                                bloc: startPriceCubit,
-                                builder: (_, state) {
-                                  String textMin = priceState
-                                      ? priceDomains!.sale.min[state]
-                                      : priceDomains!.rent.min[state];
-                                  return Container(
-                                    alignment: isArabic
-                                        ? Alignment.centerRight
-                                        : Alignment.centerLeft,
-                                    height: 55.h,
-                                    width: 150.w,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.w),
-                                    decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(8)),
-                                        border: Border.all(
-                                          color: !isDark
-                                              ? Colors.black38
-                                              : AppColors.yellowDarkColor,
-                                          width: 1,
-                                        )),
-                                    child: Text(textMin),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    kWi24,
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(AppLocalizations.of(context)!.max_price),
-                            ],
-                          ),
-                          Align(
-                            alignment: isArabic
-                                ? Alignment.centerRight
-                                : Alignment.centerLeft,
-                            child: GestureDetector(
-                              onTap: () async {
-                                List<dynamic> max = isSellCubit.state
-                                    ? priceDomains!.sale.max
-                                    : priceDomains!.rent.max;
-                                await openPricePicker(
-                                  context,
-                                  isDark,
-                                  title: AppLocalizations.of(context)!
-                                      .title_max_price,
-                                  items: max
-                                      .map(
-                                        (names) => Text(
-                                          names,
-                                          // textScaleFactor: 1.2,
-                                          // textAlign: TextAlign.center,
-                                        ),
-                                      )
-                                      .toList(),
-                                  onSubmit: (data) {
-                                    endPriceCubit.setState(data);
-                                    searchData.priceMax = endPriceCubit.state;
-                                    searchData.priceMax = priceState
-                                        ? int.tryParse(priceDomains!
-                                            .sale.max[endPriceCubit.state])
-                                        : int.tryParse(priceDomains!
-                                            .rent.max[endPriceCubit.state]);
-                                  },
-                                );
-                              },
-                              child: BlocBuilder<ChannelCubit, dynamic>(
-                                  bloc: endPriceCubit,
-                                  builder: (_, state) {
-                                    String textMax = isSellCubit.state
-                                        ? priceDomains!.sale.max[state]
-                                        : priceDomains!.rent.max[state];
-                                    return Container(
-                                      alignment: isArabic
-                                          ? Alignment.centerRight
-                                          : Alignment.centerLeft,
-                                      height: 55.h,
-                                      width: 150.w,
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 8.w),
-                                      decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(8)),
-                                          border: Border.all(
-                                            color: !isDark
-                                                ? Colors.black38
-                                                : AppColors.yellowDarkColor,
-                                            width: 1,
-                                          )),
-                                      child: Text(textMax),
-                                    );
-                                  }),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-        kHe24,
-      ],
-    );
-  }
-
   Column buildLocation(isDark) {
     return Column(
       children: [
@@ -832,7 +654,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           children: [
                             Text(locationName == ""
                                 ? AppLocalizations.of(context)!
-                                    .enter_location_name
+                                    .enter_neighborhood_name
                                 : locationName),
                           ],
                         ),

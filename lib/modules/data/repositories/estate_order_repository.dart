@@ -6,10 +6,12 @@ import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/providers/estate_order_provider.dart';
 
+import '../models/search_data.dart';
+
 class EstateOrderRepository {
   EstateOrderProvider estateOrderProvider = EstateOrderProvider();
 
-  Future<void> sendEstateOrder(EstateOrder order, String? token) async {
+  Future<void> sendEstateOrder(SearchData order, String? token) async {
     Response response;
 
     try {

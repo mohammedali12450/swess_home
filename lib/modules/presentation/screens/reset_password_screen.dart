@@ -45,7 +45,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     resetPasswordBloc = BlocProvider.of<ResetPasswordBloc>(context);
     //TODO: edit is out of syria

@@ -157,7 +157,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                       if (userEditState is UserDataComplete) {
                         user = userEditState.user;
-                        if (user!.country == "Syrian Arab Republic") {
+                        if (user!.country != null &&
+                            user!.country == "Syrian Arab Republic") {
                           governoratesBloc.add(GovernoratesFetchStarted());
                         }
                         return buildUserProfile(isDark, isEnglish);
@@ -166,6 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     })
               ],
               //Spacer(),
+              kHe16,
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Text(
@@ -176,6 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       .copyWith(color: Colors.grey),
                 ),
               ),
+              kHe20,
               kHe36,
             ],
           ),
@@ -288,24 +291,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           isEnglish,
           icon: const Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.article_outlined),
-          ),
-          title: Text(AppLocalizations.of(context)!.recent_created_estates),
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => CreatedEstatesScreen()));
-          },
-        ),
-        buildListTile(
-          isEnglish,
-          icon: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: Icon(Icons.history),
           ),
           title: Text(AppLocalizations.of(context)!.recent_created_orders),
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (_) => RecentEstateOrdersScreen()));
+          },
+        ),
+        buildListTile(
+          isEnglish,
+          icon: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Icon(Icons.article_outlined),
+          ),
+          title: Text(AppLocalizations.of(context)!.recent_created_estates),
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => CreatedEstatesScreen()));
           },
         ),
 
@@ -409,7 +412,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 : AppColors.primaryDark),
                       ),
                       Text(
-                        user!.country! + " , ${user?.governorate ?? ""}",
+                        "${user!.country ?? ""} "
+                        "${user?.governorate == null ? " , ${user!.governorate}" : ""}",
                         style: Theme.of(context).textTheme.headline6!.copyWith(
                             color: !isDark
                                 ? AppColors.primaryColor
@@ -516,54 +520,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         onTap: () async {
           await showWonderfulAlertDialog(
-              context, "", AppLocalizations.of(context)!.are_you_sure,
-              bodyTextStyle: TextStyle(
-                  fontSize: 18, color: isDark ? Colors.white : Colors.black),
+              context,
+              AppLocalizations.of(context)!.caution,
+              AppLocalizations.of(context)!.are_you_sure,
+              // bodyTextStyle: TextStyle(
+              //     fontSize: 18, color: isDark ? Colors.white : Colors.black),
               removeDefaultButton: true,
               dialogButtons: [
-                InkWell(
-                  onTap: () async {
+                ElevatedButton(
+                  child: Text(
+                    AppLocalizations.of(context)!.yes,
+                  ),
+                  onPressed: () async {
                     isLogoutLoadingCubit.setState(true);
                     await _logoutAfterDelete();
                     isLogoutLoadingCubit.setState(false);
                     //UserSharedPreferences.clear();
                   },
-                  child: Container(
-                    alignment: Alignment.center,
-                    height: 50.h,
-                    width: 110.w,
-                    decoration: BoxDecoration(
-                        color: isDark ? Colors.grey : AppColors.primaryColor,
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Text(
-                      AppLocalizations.of(context)!.yes,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                    ),
-                  ),
                 ),
-                InkWell(
-                  onTap: () {
+                ElevatedButton(
+                  child: Text(
+                    AppLocalizations.of(context)!.cancel,
+                  ),
+                  onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Container(
-                    alignment: Alignment.center,
-                    height: 50.h,
-                    width: 110.w,
-                    decoration: BoxDecoration(
-                        color: isDark ? Colors.grey : AppColors.primaryColor,
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Text(
-                      AppLocalizations.of(context)!.cancel,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                    ),
-                  ),
-                ),
+                )
               ]);
         },
         title: Row(
@@ -574,9 +556,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const Spacer(),
           ],
         ),
-        trailing: Icon((isEnglish)
-            ? Icons.keyboard_arrow_right
-            : Icons.keyboard_arrow_left),
       ),
     );
   }
@@ -615,70 +594,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context, userLoginState) {
         if (UserSharedPreferences.getAccessToken() != null) {
           return SizedBox(
-            width: 1.sw,
-            height: 64.h,
-            child: ListTile(
-              leading: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                child: Icon(Icons.login),
-              ),
-              onTap: () async {
-                await showWonderfulAlertDialog(
-                  context,
-                  AppLocalizations.of(context)!.confirmation,
-                  AppLocalizations.of(context)!.logout_confirmation,
-                  removeDefaultButton: true,
-                  width: 450.w,
-                  dialogButtons: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          fixedSize: Size(140.w, 56.h),
-                          padding: EdgeInsets.zero),
-                      child: BlocBuilder<ChannelCubit, dynamic>(
-                        bloc: isLogoutLoadingCubit,
-                        builder: (_, isLogoutLoading) {
-                          return (isLogoutLoading)
-                              ? SpinKitWave(
-                                  color:
-                                      Theme.of(context).colorScheme.background,
-                                  size: 16.w,
-                                )
-                              : Text(
-                                  AppLocalizations.of(context)!.log_out,
-                                );
+              width: 1.sw,
+              height: 64.h,
+              child: ListTile(
+                leading: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Icon(Icons.login),
+                ),
+                onTap: () async {
+                  await showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.confirmation,
+                    AppLocalizations.of(context)!.logout_confirmation,
+                    removeDefaultButton: true,
+                    width: 450.w,
+                    dialogButtons: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(140.w, 56.h),
+                            padding: EdgeInsets.zero),
+                        child: BlocBuilder<ChannelCubit, dynamic>(
+                          bloc: isLogoutLoadingCubit,
+                          builder: (_, isLogoutLoading) {
+                            return (isLogoutLoading)
+                                ? SpinKitWave(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
+                                    size: 16.w,
+                                  )
+                                : Text(
+                                    AppLocalizations.of(context)!.log_out,
+                                  );
+                          },
+                        ),
+                        onPressed: () async {
+                          isLogoutLoadingCubit.setState(true);
+                          await _logout();
+                          isLogoutLoadingCubit.setState(false);
+                          //UserSharedPreferences.clear();
                         },
                       ),
-                      onPressed: () async {
-                        isLogoutLoadingCubit.setState(true);
-                        await _logout();
-                        isLogoutLoadingCubit.setState(false);
-                        //UserSharedPreferences.clear();
-                      },
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          fixedSize: Size(140.w, 56.h),
-                          padding: EdgeInsets.zero),
-                      child: Text(
-                        AppLocalizations.of(context)!.cancel,
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(140.w, 56.h),
+                            padding: EdgeInsets.zero),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
+                    ],
+                  );
+                },
+                title: Row(
+                  children: [
+                    Text(AppLocalizations.of(context)!.log_out),
                   ],
-                );
-              },
-              title: Row(
-                children: [
-                  Text(AppLocalizations.of(context)!.log_out),
-                ],
-              ),
-              trailing: Icon((isEnglish)
-                  ? Icons.keyboard_arrow_right
-                  : Icons.keyboard_arrow_left),
-            ),
-          );
+                ),
+              ));
         }
         return Container();
       },
@@ -710,6 +686,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     }
     UserSharedPreferences.removeAccessToken();
+    ApplicationSharedPreferences.setLoginPassed(false);
     //_userLoginBloc.user = null;
     Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (_) => const NavigationBarScreen()));

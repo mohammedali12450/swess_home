@@ -1,6 +1,5 @@
 import 'package:swesshome/modules/data/models/search_data.dart';
 
-import '../../../data/models/estate.dart';
 
 abstract class EstateEvent {}
 

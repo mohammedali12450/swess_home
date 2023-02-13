@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/walk_through/introduction_screen2.dart';
 import 'package:swesshome/core/walk_through/introduction_screen4.dart';
-import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/current_step_viewer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -103,7 +102,6 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
                     ),
                     onPressed: () {
                       Navigator.pushNamed(context, IntroductionScreen4.id);
-                      // TODO : Process this state.
                     },
                   ),
                   const Spacer(),

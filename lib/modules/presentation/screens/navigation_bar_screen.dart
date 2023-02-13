@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:spincircle_bottom_bar/modals.dart';
-import 'package:spincircle_bottom_bar/spincircle_bottom_bar.dart';
 import 'package:swesshome/constants/colors.dart' as colors;
-import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/chat_screen.dart';
@@ -16,7 +13,6 @@ import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/assets_paths.dart';
 import '../../../main.dart';
-import '../../data/providers/theme_provider.dart';
 import '../widgets/blur_create_estate.dart';
 
 class NavigationBarScreen extends StatefulWidget {
@@ -69,32 +65,35 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
         bottomNavigationBar: BlocBuilder<ChannelCubit, dynamic>(
             bloc: pageCubit,
             builder: (_, pageNum) {
-              return BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                showSelectedLabels: true,
-                showUnselectedLabels: true,
-                items: [
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.person_outline),
-                    label: AppLocalizations.of(context)!.profile,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.chat_outlined),
-                    label: AppLocalizations.of(context)!.chat,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.search),
-                    label: AppLocalizations.of(context)!.search,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.home_outlined),
-                    label: AppLocalizations.of(context)!.home,
-                  ),
-                ],
-                currentIndex: pageCubit.state,
-                onTap: (index) {
-                  pageCubit.setState(index);
-                },
+              return Directionality(
+                textDirection: TextDirection.ltr,
+                child: BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
+                  showSelectedLabels: true,
+                  showUnselectedLabels: true,
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.home_outlined),
+                      label: AppLocalizations.of(context)!.home,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.search),
+                      label: AppLocalizations.of(context)!.search,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.chat_outlined),
+                      label: AppLocalizations.of(context)!.chat,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.person_outline),
+                      label: AppLocalizations.of(context)!.profile,
+                    ),
+                  ],
+                  currentIndex: pageCubit.state,
+                  onTap: (index) {
+                    pageCubit.setState(index);
+                  },
+                ),
               );
             }),
       ),
@@ -103,7 +102,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
 
   Widget callPage(int _selectedBar) {
     switch (_selectedBar) {
-      case 3:
+      case 0:
         if (homeScreen == null) {
           homeScreen = const HomeScreen();
           homeScreenState = homeScreen!.createState();
@@ -111,11 +110,11 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
         } else {
           return homeScreenState!.build(context);
         }
-      case 2:
-        return const SearchScreen1();
       case 1:
+        return const SearchScreen1();
+      case 2:
         return const ChatScreen();
-      case 0:
+      case 3:
         return const ProfileScreen();
       default:
         return const HomeScreen();
@@ -124,86 +123,86 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
 
   // late ChannelCubit selectedLanguageCubit;
 
-  Widget buildNavigationBar() {
-    bool isArabic = ApplicationSharedPreferences.getLanguageCode() == "ar";
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return BlocBuilder<ChannelCubit, dynamic>(
-      bloc: ChannelCubit(
-          Provider.of<LocaleProvider>(context).getLocale().languageCode == "ar"
-              ? false
-              : true),
-      builder: (_, lang) {
-        return SpinCircleBottomBarHolder(
-          onPressedCenterButton: () {
-            showBlurScreen(context: context);
-          },
-          bottomNavigationBar: SCBottomBarDetails(
-            circleColors: [
-              colors.AppColors.primaryDark,
-              colors.AppColors.lastColor,
-              colors.AppColors.primaryColor,
-            ],
-            iconTheme: IconThemeData(
-                color: isDark ? Colors.white : Colors.black45, size: 17),
-            activeIconTheme: const IconThemeData(
-                color: colors.AppColors.lastColor, size: 22),
-            backgroundColor:
-                !isDark ? Colors.white : colors.AppColors.secondaryDark,
-            titleStyle: TextStyle(
-                color: isDark ? colors.AppColors.white : Colors.black45,
-                fontSize: 13),
-            activeTitleStyle: Theme.of(context).textTheme.headline5!.copyWith(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: colors.AppColors.lastColor),
-            actionButtonDetails: SCActionButtonDetails(
-              color: colors.AppColors.white,
-              icon: Image.asset(
-                swessHomeIconPath,
-                //color: Colors.white,
-              ),
-              elevation: 2,
-            ),
-            bnbHeight: 62,
-            elevation: 2.0,
-            items: [
-              SCBottomBarItem(
-                  icon: Icons.home_outlined,
-                  title: lang ? "home" : "الرئيسية",
-                  onPressed: () {
-                    pageCubit.setState(0);
-                  }),
-              SCBottomBarItem(
-                  icon: Icons.search,
-                  title: AppLocalizations.of(context)!.search,
-                  onPressed: () {
-                    pageCubit.setState(1);
-                  }),
-              SCBottomBarItem(
-                  icon: Icons.chat_outlined,
-                  title: AppLocalizations.of(context)!.chat,
-                  onPressed: () {
-                    pageCubit.setState(2);
-                  }),
-              SCBottomBarItem(
-                  icon: Icons.person_outline,
-                  title: AppLocalizations.of(context)!.profile,
-                  onPressed: () {
-                    pageCubit.setState(3);
-                  }),
-            ],
-          ),
-          child: BlocBuilder<ChannelCubit, dynamic>(
-            bloc: pageCubit,
-            builder: (_, pageNum) {
-              return Directionality(
-                  textDirection:
-                      isArabic ? TextDirection.rtl : TextDirection.ltr,
-                  child: callPage(pageNum));
-            },
-          ),
-        );
-      },
-    );
-  }
+  // Widget buildNavigationBar() {
+  //   bool isArabic = ApplicationSharedPreferences.getLanguageCode() == "ar";
+  //   bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+  //   return BlocBuilder<ChannelCubit, dynamic>(
+  //     bloc: ChannelCubit(
+  //         Provider.of<LocaleProvider>(context).getLocale().languageCode == "ar"
+  //             ? false
+  //             : true),
+  //     builder: (_, lang) {
+  //       return SpinCircleBottomBarHolder(
+  //         onPressedCenterButton: () {
+  //           showBlurScreen(context: context);
+  //         },
+  //         bottomNavigationBar: SCBottomBarDetails(
+  //           circleColors: [
+  //             colors.AppColors.primaryDark,
+  //             colors.AppColors.lastColor,
+  //             colors.AppColors.primaryColor,
+  //           ],
+  //           iconTheme: IconThemeData(
+  //               color: isDark ? Colors.white : Colors.black45, size: 17),
+  //           activeIconTheme: const IconThemeData(
+  //               color: colors.AppColors.lastColor, size: 22),
+  //           backgroundColor:
+  //               !isDark ? Colors.white : colors.AppColors.secondaryDark,
+  //           titleStyle: TextStyle(
+  //               color: isDark ? colors.AppColors.white : Colors.black45,
+  //               fontSize: 13),
+  //           activeTitleStyle: Theme.of(context).textTheme.headline5!.copyWith(
+  //               fontSize: 13,
+  //               fontWeight: FontWeight.w700,
+  //               color: colors.AppColors.lastColor),
+  //           actionButtonDetails: SCActionButtonDetails(
+  //             color: colors.AppColors.white,
+  //             icon: Image.asset(
+  //               swessHomeIconPath,
+  //               //color: Colors.white,
+  //             ),
+  //             elevation: 2,
+  //           ),
+  //           bnbHeight: 62,
+  //           elevation: 2.0,
+  //           items: [
+  //             SCBottomBarItem(
+  //                 icon: Icons.home_outlined,
+  //                 title: lang ? "home" : "الرئيسية",
+  //                 onPressed: () {
+  //                   pageCubit.setState(0);
+  //                 }),
+  //             SCBottomBarItem(
+  //                 icon: Icons.search,
+  //                 title: AppLocalizations.of(context)!.search,
+  //                 onPressed: () {
+  //                   pageCubit.setState(1);
+  //                 }),
+  //             SCBottomBarItem(
+  //                 icon: Icons.chat_outlined,
+  //                 title: AppLocalizations.of(context)!.chat,
+  //                 onPressed: () {
+  //                   pageCubit.setState(2);
+  //                 }),
+  //             SCBottomBarItem(
+  //                 icon: Icons.person_outline,
+  //                 title: AppLocalizations.of(context)!.profile,
+  //                 onPressed: () {
+  //                   pageCubit.setState(3);
+  //                 }),
+  //           ],
+  //         ),
+  //         child: BlocBuilder<ChannelCubit, dynamic>(
+  //           bloc: pageCubit,
+  //           builder: (_, pageNum) {
+  //             return Directionality(
+  //                 textDirection:
+  //                     isArabic ? TextDirection.rtl : TextDirection.ltr,
+  //                 child: callPage(pageNum));
+  //           },
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }

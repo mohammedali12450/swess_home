@@ -18,6 +18,7 @@ import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../widgets/res_text.dart';
 import 'created_estates_screen.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -61,7 +62,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(
+          title: ResText(
             AppLocalizations.of(context)!.notifications,
           ),
         ),

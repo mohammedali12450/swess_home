@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:introduction_screen/introduction_screen.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/walk_through/introduction_screen3.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
@@ -107,7 +106,6 @@ class _IntroductionScreen4State extends State<IntroductionScreen4> {
                           ),
                         ),
                       );
-                      // TODO : Process this state.
                     },
                   ),
                   const Spacer(),

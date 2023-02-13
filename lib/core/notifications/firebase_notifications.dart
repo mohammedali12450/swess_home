@@ -6,7 +6,9 @@ import 'local_notifications.dart';
 
 
 Future initializeFirebase()async{
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    //options: DefaultFirebaseOptions.currentPlatform,
+  );
   // background messages initializing:
   FirebaseMessaging.onBackgroundMessage(backgroundFirebaseMessagesHandler);
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(

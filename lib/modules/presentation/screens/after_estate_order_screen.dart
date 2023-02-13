@@ -23,7 +23,6 @@ class AfterEstateOrderScreen extends StatefulWidget {
 class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

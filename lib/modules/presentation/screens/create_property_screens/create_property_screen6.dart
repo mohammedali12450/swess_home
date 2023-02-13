@@ -26,7 +26,6 @@ class _CreatePropertyScreen6State extends State<CreatePropertyScreen6> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

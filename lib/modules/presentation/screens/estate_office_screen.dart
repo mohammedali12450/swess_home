@@ -92,6 +92,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
         title: Text(
           AppLocalizations.of(context)!.office_details,
         ),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+        ),
       ),
       body: RefreshIndicator(
         color: Theme.of(context).colorScheme.primary,

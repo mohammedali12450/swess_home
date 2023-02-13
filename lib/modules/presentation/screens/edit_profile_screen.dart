@@ -232,8 +232,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     controller: birthdateController,
                     decoration: InputDecoration(
                       errorText: errorMessage,
-                      hintText: DateHelper.getDateByFormat(
-                          DateTime.parse(widget.user.birthdate!), 'yyyy/MM/dd'),
+                      hintText: birthdateController.text.isEmpty
+                          ? ""
+                          : DateHelper.getDateByFormat(
+                              DateTime.parse(widget.user.birthdate!),
+                              'yyyy/MM/dd'),
                       isCollapsed: false,
                     ),
                   );

@@ -7,7 +7,6 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_estate_bloc/send_estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_estate_bloc/send_estate_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/send_estate_bloc/send_estate_state.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';

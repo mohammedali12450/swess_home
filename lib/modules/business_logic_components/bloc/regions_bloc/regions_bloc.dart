@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_state.dart';
 import 'package:swesshome/modules/data/models/location.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/data/repositories/regions_repository.dart';
 
 class RegionsBloc extends Bloc<RegionsEvent, RegionsState> {

@@ -47,7 +47,6 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isLands = widget.currentOffer.estateType!.id == landsPropertyTypeNumber;
     isShops = widget.currentOffer.estateType!.id == shopsPropertyTypeNumber;

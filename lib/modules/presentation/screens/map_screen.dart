@@ -53,7 +53,6 @@ class MapSampleState extends State<MapSample> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (!widget.isView) {
       showTutorial();

@@ -10,10 +10,8 @@ import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bl
 import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/models/estate_type.dart';
 import 'package:swesshome/modules/data/models/price_domain.dart';
-import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/after_estate_order_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,9 +19,10 @@ import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_order_bloc/estate_order_event.dart';
+import '../../data/models/search_data.dart';
 import '../../data/providers/theme_provider.dart';
 import '../widgets/choice_container.dart';
-import '../widgets/price_picker.dart';
+import '../widgets/price_domain.dart';
 import 'search_location_screen.dart';
 
 class CreateOrderScreen extends StatefulWidget {
@@ -41,7 +40,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   ChannelCubit noteErrorCubit = ChannelCubit(null);
   ChannelCubit startPriceCubit = ChannelCubit(0);
   ChannelCubit endPriceCubit = ChannelCubit(0);
-  ChannelCubit isSellCubit = ChannelCubit(true);
+  ChannelCubit isRentCubit = ChannelCubit(false);
   ChannelCubit isPressTypeCubit = ChannelCubit(0);
 
   // Controllers :
@@ -52,7 +51,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   // Others :
   List<EstateType>? estatesTypes;
   PriceDomain? priceDomains;
-  late EstateOrder estateOrder;
+  late SearchData estateOrder;
 
   LocationViewer? selectedLocation;
   final _formKey = GlobalKey<FormState>();
@@ -64,17 +63,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
     priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
 
-    estateOrder = EstateOrder(
-        estateOfferId: 1,
-        maxPrice: int.tryParse(priceDomains!.sale.max[0]),
-        minPrice: int.tryParse(priceDomains!.sale.min[0]),
-        description: "");
-    estateOrder.estateOfferId = 1;
+    estateOrder = SearchData(estateOfferTypeId: 1, description: "");
+    estateOrder.estateOfferTypeId = 1;
+    estateOrder.estateTypeId = 1;
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
 
     return BlocListener<EstateOrderBloc, EstateOrderState>(
@@ -116,21 +111,27 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       // kHe12,
                       buildChoiceContainer(
                           context: context,
-                          cubit: isSellCubit,
-                          textLeft: AppLocalizations.of(context)!.buy,
-                          textRight: AppLocalizations.of(context)!.rent,
-                          onTapLeft: () {
-                            estateOrder.estateOfferId = 1;
-                          },
+                          cubit: isRentCubit,
+                          textRight: AppLocalizations.of(context)!.buy,
+                          textLeft: AppLocalizations.of(context)!.rent,
                           onTapRight: () {
-                            estateOrder.estateOfferId = 2;
+                            estateOrder.estateOfferTypeId = 1;
+                          },
+                          onTapLeft: () {
+                            estateOrder.estateOfferTypeId = 2;
                           },
                           paddingVertical: 5,
                           paddingHorizontal: 0),
                       kHe36,
                       buildLocation(isDark),
                       buildEstateType(isDark),
-                      buildPriceDomain(isArabic, isDark),
+                      PriceDomainWidget(
+                        isRentCubit: isRentCubit,
+                        searchData: estateOrder,
+                        startPriceCubit: startPriceCubit,
+                        endPriceCubit: endPriceCubit,
+                      ),
+                      //buildPriceDomain(isArabic, isDark),
                       buildNote(isDark),
                       buildButton(),
                       kHe32,
@@ -434,185 +435,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     );
   }
 
-  Widget buildPriceDomain(isArabic, isDark) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            const Icon(Icons.price_change_outlined),
-            kWi8,
-            Text(
-              AppLocalizations.of(context)!.price_domain + " :",
-              style: Theme.of(context).textTheme.headline6,
-            ),
-          ],
-        ),
-        kHe12,
-        BlocBuilder<ChannelCubit, dynamic>(
-          bloc: isSellCubit,
-          builder: (_, priceState) {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.w),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(AppLocalizations.of(context)!.min_price),
-                          ],
-                        ),
-                        Align(
-                          alignment: isArabic
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: GestureDetector(
-                            onTap: () async {
-                              List<dynamic> min = priceState
-                                  ? priceDomains!.sale.min
-                                  : priceDomains!.rent.min;
-                              await openPricePicker(
-                                context,
-                                isDark,
-                                title: AppLocalizations.of(context)!
-                                    .title_min_price,
-                                items: min
-                                    .map(
-                                      (names) => Text(
-                                        names,
-                                        // textScaleFactor: 1.2,
-                                        // textAlign: TextAlign.center,
-                                      ),
-                                    )
-                                    .toList(),
-                                onSubmit: (data) {
-                                  startPriceCubit.setState(data);
-                                  estateOrder.minPrice = priceState
-                                      ? int.tryParse(priceDomains!
-                                          .sale.min[startPriceCubit.state])
-                                      : int.tryParse(priceDomains!
-                                          .rent.min[startPriceCubit.state]);
-                                },
-                              );
-                            },
-                            child: BlocBuilder<ChannelCubit, dynamic>(
-                              bloc: startPriceCubit,
-                              builder: (_, state) {
-                                String textMin = priceState
-                                    ? priceDomains!.sale.min[state]
-                                    : priceDomains!.rent.min[state];
-                                return Container(
-                                  alignment: isArabic
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                                  height: 55.h,
-                                  width: 150.w,
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 8.w),
-                                  decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(8)),
-                                      border: Border.all(
-                                        color: !isDark
-                                            ? AppColors.primaryColor
-                                            : AppColors.yellowDarkColor,
-                                        width: 1,
-                                      )),
-                                  child: Text(textMin),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  kWi24,
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(AppLocalizations.of(context)!.max_price),
-                          ],
-                        ),
-                        Align(
-                          alignment: isArabic
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: GestureDetector(
-                            onTap: () async {
-                              List<dynamic> max = isSellCubit.state
-                                  ? priceDomains!.sale.max
-                                  : priceDomains!.rent.max;
-                              await openPricePicker(
-                                context,
-                                isDark,
-                                title: AppLocalizations.of(context)!
-                                    .title_max_price,
-                                items: max
-                                    .map(
-                                      (names) => Text(
-                                        names,
-                                        // textScaleFactor: 1.2,
-                                        // textAlign: TextAlign.center,
-                                      ),
-                                    )
-                                    .toList(),
-                                onSubmit: (data) {
-                                  endPriceCubit.setState(data);
-                                  estateOrder.maxPrice = priceState
-                                      ? int.tryParse(priceDomains!
-                                          .sale.max[endPriceCubit.state])
-                                      : int.tryParse(priceDomains!
-                                          .rent.max[endPriceCubit.state]);
-                                },
-                              );
-                            },
-                            child: BlocBuilder<ChannelCubit, dynamic>(
-                                bloc: endPriceCubit,
-                                builder: (_, state) {
-                                  String textMax = isSellCubit.state
-                                      ? priceDomains!.sale.max[state]
-                                      : priceDomains!.rent.max[state];
-                                  return Container(
-                                    alignment: isArabic
-                                        ? Alignment.centerRight
-                                        : Alignment.centerLeft,
-                                    height: 55.h,
-                                    width: 150.w,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.w),
-                                    decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(8)),
-                                        border: Border.all(
-                                          color: !isDark
-                                              ? AppColors.primaryColor
-                                              : AppColors.yellowDarkColor,
-                                          width: 1,
-                                        )),
-                                    child: Text(textMax),
-                                  );
-                                }),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-        kHe36,
-      ],
-    );
-  }
-
   Widget buildNote(isDark) {
     return Column(
       children: [
@@ -688,9 +510,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           if (validFields()) {
             print("ghina : ${estateOrder.locationId}\n"
                 "${estateOrder.estateTypeId}\n"
-                "${estateOrder.estateOfferId}\n"
-                "${estateOrder.minPrice}\n"
-                "${estateOrder.maxPrice}");
+                "${estateOrder.estateOfferTypeId}\n"
+                "${estateOrder.priceMin}\n"
+                "${estateOrder.priceMax}");
 
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
@@ -707,7 +529,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   }
 
   bool validFields() {
-    if (selectedLocation == null) {
+    if (estateOrder.locationId == null) {
       locationErrorCubit
           .setState(AppLocalizations.of(context)!.this_field_is_required);
       scrollController.animateTo(0,

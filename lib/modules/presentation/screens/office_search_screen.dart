@@ -171,9 +171,9 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                         return;
                       } else if (searchType == OfficeSearchType.name) {
                         searchOfficesBloc.pageName = 1;
-                        searchOfficesBloc.add(
-                          SearchOfficesByNameStarted(name: null, token: token),
-                        );
+                        // searchOfficesBloc.add(
+                        //   SearchOfficesByNameStarted(name: null, token: token),
+                        // );
                       }
                     },
                     onChanged: (newValue) {
@@ -346,8 +346,8 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                   itemBuilder: (_, index) {
                     return EstateOfficeCard(
                       office: results.elementAt(index),
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        final bool value = await Navigator.push(
                           context,
                           PageRouteBuilder(
                               pageBuilder: (_, __, ___) => EstateOfficeScreen(
@@ -355,6 +355,9 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                                   ),
                               transitionDuration: const Duration(seconds: 1)),
                         );
+                        if (value) {
+                          results.clear();
+                        }
                       },
                     );
                   },

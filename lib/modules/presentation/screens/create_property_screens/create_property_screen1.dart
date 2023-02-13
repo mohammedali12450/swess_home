@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/estate_type.dart';
-import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_screen2.dart';
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
@@ -37,7 +35,6 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _currentOffer = Estate.init();
     _currentOffer.officeId = widget.officeId;
@@ -50,7 +47,6 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
 
   @override
   Widget build(BuildContext context) {
-    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return CreatePropertyTemplate(
       headerIconPath: homeOutlineIconPath,
       headerText: AppLocalizations.of(context)!.step_1,

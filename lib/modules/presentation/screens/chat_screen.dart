@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
@@ -129,7 +128,6 @@ class _ChatScreenState extends State<ChatScreen> {
         if (messages.isEmpty) {
           return Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.search,
@@ -162,45 +160,31 @@ class _ChatScreenState extends State<ChatScreen> {
           );
         }
 
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          controller: _scrollController
-            ..addListener(
-              () {
-                if (_scrollController.offset ==
-                        _scrollController.position.maxScrollExtent &&
-                    !_messageBloc.isFetching &&
-                    !isEstatesFinished) {
-                  _messageBloc
-                    ..isFetching = true
-                    ..add(GetMessagesFetchStarted(
-                        token: UserSharedPreferences.getAccessToken()));
-                }
-              },
-            ),
-          child: Column(
-            children: [
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: messages.length,
-                itemBuilder: (_, index) {
-                  return MessageCard(
-                    message: messages.elementAt(index),
-                  );
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: ListView.builder(
+            controller: _scrollController
+              ..addListener(
+                () {
+                  if (_scrollController.offset ==
+                          _scrollController.position.maxScrollExtent &&
+                      !_messageBloc.isFetching &&
+                      !isEstatesFinished) {
+                    _messageBloc
+                      ..isFetching = true
+                      ..add(GetMessagesFetchStarted(
+                          token: UserSharedPreferences.getAccessToken()));
+                  }
                 },
               ),
-              if (_messageBloc.isFetching)
-                Container(
-                  margin: EdgeInsets.only(
-                    top: 12.h,
-                  ),
-                  child: SpinKitWave(
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 50,
-                  ),
-                ),
-            ],
+            shrinkWrap: true,
+            reverse: true,
+            itemCount: messages.length,
+            itemBuilder: (_, index) {
+              return MessageCard(
+                message: messages.elementAt(index),
+              );
+            },
           ),
         );
       },

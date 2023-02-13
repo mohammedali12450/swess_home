@@ -1,10 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_event.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/created_estates_bloc/created_estates_state.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
-import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 
 import '../../../data/repositories/last_visited_repository.dart';
 import 'last_visited_estates_event.dart';

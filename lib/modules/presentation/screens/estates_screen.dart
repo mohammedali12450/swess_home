@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_state.dart';
@@ -20,6 +22,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/search_data.dart';
+import '../../data/providers/theme_provider.dart';
 import '../widgets/report_estate.dart';
 
 class EstatesScreen extends StatefulWidget {
@@ -50,6 +53,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
   bool isIdenticalEstatesFinished = false;
   bool isSimilarEstatesFinished = false;
   String? userToken;
+  late bool isDark;
 
   @override
   void initState() {
@@ -63,13 +67,14 @@ class _EstatesScreenState extends State<EstatesScreen> {
 
   @override
   Widget build(BuildContext context) {
+     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           centerTitle: true,
-          title: Text(
+          title: ResText(
             AppLocalizations.of(context)!.search_results,
           ),
           actions: [
@@ -398,10 +403,20 @@ class _EstatesScreenState extends State<EstatesScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text(AppLocalizations.of(context)!.identical_estates),
-            ],
+          child: Container(
+            alignment: Alignment.center,
+            height: 50,
+            width: getScreenWidth(context),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              border: Border.all(color: AppColors.yellowDarkColor),
+            ),
+            child: Text(
+              AppLocalizations.of(context)!.identical_estates,
+              style: Theme.of(context).textTheme.headline4!.copyWith(
+                fontWeight: FontWeight.w700
+              ),
+            ),
           ),
         ),
         ListView.builder(
@@ -437,12 +452,23 @@ class _EstatesScreenState extends State<EstatesScreen> {
   Widget buildSimilarEstates() {
     return Column(
       children: [
+        kHe44,
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text(AppLocalizations.of(context)!.similar_estates),
-            ],
+          child: Container(
+            alignment: Alignment.center,
+            height: 50,
+            width: getScreenWidth(context),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              border: Border.all(color: AppColors.yellowDarkColor),
+            ),
+            child: Text(
+              AppLocalizations.of(context)!.similar_estates,
+              style: Theme.of(context).textTheme.headline4!.copyWith(
+                  fontWeight: FontWeight.w700
+              ),
+            ),
           ),
         ),
         ListView.builder(
@@ -498,7 +524,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
             child: ResText(
               AppLocalizations.of(context)!.no_more_results,
               textAlign: TextAlign.center,
-              textStyle: textStyling(S.s18, W.w5, C.bl),
+              textStyle: textStyling(S.s18, W.w5, isDark ? C.c1 : C.bl),
             ),
           ),
           Expanded(

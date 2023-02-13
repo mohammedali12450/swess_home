@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 
 import '../../data/providers/locale_provider.dart';
+import '../widgets/res_text.dart';
 
 class FAQScreen extends StatefulWidget {
   static const String id = "FAQScreen";
@@ -37,7 +38,7 @@ class _FAQScreenState extends State<FAQScreen> {
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           centerTitle: true,
-          title: Text(
+          title: ResText(
             AppLocalizations.of(context)!.faq,
           ),
         ),

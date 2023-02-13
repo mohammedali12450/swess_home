@@ -72,7 +72,6 @@ class _EstateCardState extends State<EstateCard> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     _likeAndUnlikeBloc = LikeAndUnlikeBloc(
@@ -102,7 +101,9 @@ class _EstateCardState extends State<EstateCard> {
       currency = AppLocalizations.of(context)!.lebanon_currency;
     }
 
-    int intPrice = int.tryParse(widget.estate.price!)!;
+    // to remove comma in price string
+    String price =  widget.estate.price!.replaceAll(RegExp(r'[^0-9]'), '');
+    int intPrice = int.tryParse(price)!;
     String estatePrice = NumbersHelper.getMoneyFormat(intPrice);
 
     String estateType = widget.estate.estateType!.name.split('|').elementAt(1);
@@ -501,11 +502,14 @@ class _EstateCardState extends State<EstateCard> {
                                   padding: const EdgeInsets.only(left: 17),
                                   child: Row(
                                     children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(bottom: 3.0),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 3.0),
                                         child: Icon(
                                           Icons.remove_red_eye_outlined,
-                                          color: AppColors.lastColor,
+                                          color: !isDarkMode
+                                              ? AppColors.lastColor
+                                              : AppColors.yellowDarkColor,
                                           size: 20,
                                         ),
                                       ),
@@ -516,7 +520,9 @@ class _EstateCardState extends State<EstateCard> {
                                             .textTheme
                                             .headline5!
                                             .copyWith(
-                                                color: AppColors.lastColor,
+                                                color: !isDarkMode
+                                                    ? AppColors.lastColor
+                                                    : AppColors.yellowDarkColor,
                                                 fontSize: 14,
                                                 height: 1.5),
                                       ),
@@ -642,7 +648,9 @@ class _EstateCardState extends State<EstateCard> {
                     await myCupertinoActionSheet(
                       context,
                       elementsList: [
-                        isArabic ? widget.estate.estateOffice!.phone!.split("+")[1] + "+"
+                        isArabic
+                            ? widget.estate.estateOffice!.phone!.split("+")[1] +
+                                "+"
                             : widget.estate.estateOffice!.phone!
                       ],
                       onPressed: [

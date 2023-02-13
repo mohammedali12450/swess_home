@@ -14,6 +14,7 @@ import 'package:swesshome/modules/presentation/screens/filter_search_screen.dart
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import '../../../constants/assets_paths.dart';
+import '../../../core/functions/screen_informations.dart';
 import '../../business_logic_components/bloc/last_visited_estates_bloc/last_visited_estates_state.dart';
 import '../widgets/shimmers/estates_shimmer.dart';
 import 'office_search_screen.dart';
@@ -42,29 +43,16 @@ class _SearchScreen1State extends State<SearchScreen1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          AppLocalizations.of(context)!.search,
+        ),
+      ),
       body: Center(
           child: UserSharedPreferences.getAccessToken() == null
               ? buildEmptyScreen()
-              : Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Text(
-                              AppLocalizations.of(context)!.have_recent_search +
-                                  " :"),
-                        ],
-                      ),
-                    ),
-                    kHe24,
-                    Padding(
-                      padding: EdgeInsets.only(top: 50.h),
-                      child: buildEstateList(),
-                    ),
-                  ],
-                )),
+              : buildEstateList()),
       floatingActionButton: Padding(
         padding: EdgeInsets.symmetric(vertical: 5.w),
         child: Directionality(
@@ -185,29 +173,60 @@ class _SearchScreen1State extends State<SearchScreen1> {
   }
 
   Widget buildEstateList() {
-    return BlocBuilder<LastVisitedEstatesBloc, LastVisitedEstatesState>(
-        bloc: lastVisitedEstatesBloc,
-        builder: (_, estateState) {
-          if (estateState is LastVisitedEstatesFetchComplete) {
-            estateSearch = estateState.lastVisitedEstates;
-          }
-          if (estateState is LastVisitedEstatesFetchProgress) {
-            return const PropertyShimmer();
-          }
-          if (estateSearch.isEmpty) {
-            return buildEmptyScreen();
-          }
-          return ListView.builder(
-            itemBuilder: (_, index) {
-              return EstateCard(
-                estate: estateSearch.elementAt(index),
-                removeCloseButton: true,
-                color: Theme.of(context).colorScheme.background,
-              );
-            },
-            itemCount: estateSearch.length,
-          );
-        });
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+          child: Container(
+            alignment: Alignment.center,
+            height: 50,
+            width: getScreenWidth(context),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              border: Border.all(color: AppColors.yellowDarkColor),
+            ),
+            child: Text(
+              AppLocalizations.of(context)!.has_recent_search,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline4!
+                  .copyWith(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 70),
+          child: BlocBuilder<LastVisitedEstatesBloc, LastVisitedEstatesState>(
+              bloc: lastVisitedEstatesBloc,
+              builder: (_, estateState) {
+                if (estateState is LastVisitedEstatesFetchComplete) {
+                  estateSearch = estateState.lastVisitedEstates;
+                }
+                if (estateState is LastVisitedEstatesFetchProgress) {
+                  return const PropertyShimmer();
+                }
+                if (estateSearch.isEmpty) {
+                  return buildEmptyScreen();
+                }
+                return Stack(
+                  children: [
+                    kHe24,
+                    ListView.builder(
+                      itemBuilder: (_, index) {
+                        return EstateCard(
+                          estate: estateSearch.elementAt(index),
+                          removeCloseButton: true,
+                          color: Theme.of(context).colorScheme.background,
+                        );
+                      },
+                      itemCount: estateSearch.length,
+                    ),
+                  ],
+                );
+              }),
+        ),
+      ],
+    );
   }
 
   Widget buildEmptyScreen() {

@@ -15,6 +15,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  permission_handler: ^9.0.2
+  contacts_service: ^0.6.2
   cupertino_icons: ^1.0.2
   google_fonts: ^2.1.0
   bloc: ^8.0.1
@@ -53,7 +55,6 @@ dependencies:
   provider: ^6.0.2
   intl_phone_field: ^3.1.0
   rxdart: ^0.27.5
-
   new_version: ^0.3.1
   scrollable_positioned_list: 0.2.2
   #package_info_plus: ^1.0.6
@@ -71,6 +72,8 @@ dependencies:
   carousel_slider: ^4.2.1
   lottie: ^1.2.1
   youtube_player_iframe: ^2.0.0
+  email_validator: ^2.1.17
+
   #flutter_windowmanager: ^0.2.0
 #-------------------------------
 

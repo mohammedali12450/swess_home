@@ -51,7 +51,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     forgetPasswordBloc = BlocProvider.of<ForgetPasswordBloc>(context);
     //TODO: edit is out of syria

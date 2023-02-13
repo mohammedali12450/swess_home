@@ -46,7 +46,6 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> with Widg
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     maximumCountOfNearbyPlaces =
@@ -55,7 +54,6 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> with Widg
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     mapButtonStateCubit = ChannelCubit(AppLocalizations.of(context)!.press_to_detect_position);
   }

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/modules/data/models/my_notification.dart';
-import 'package:swesshome/modules/data/models/notification_type.dart';
 import 'package:swesshome/modules/data/providers/notifications_provider.dart';
 
 class NotificationRepository {
@@ -21,7 +20,7 @@ class NotificationRepository {
       throw GeneralException(errorMessage: "حدث أثناء الاتصال بالسيرفر");
     }
 
-    var jsonNotifications = jsonDecode(response.toString())["data"] as List;
+    var jsonNotifications = jsonDecode(response.toString())["data"]["data"] as List;
 
     List<MyNotification> notifications =
         jsonNotifications.map((e) => MyNotification.fromJson(e)).toList();

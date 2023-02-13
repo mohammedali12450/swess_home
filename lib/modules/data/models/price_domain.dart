@@ -47,29 +47,51 @@ class PriceDomain {
 }
 
 class Rent {
-  List<dynamic> min;
-  List<dynamic> max;
+  List<dynamic> min1;
+  List<dynamic> max1;
+  List<int> min = [];
+  List<int> max = [];
 
-  Rent({required this.min, required this.max});
+  Rent({required this.min1, required this.max1}) {
+    for (int i = 0; i < min1.length; i++) {
+      min.add(int.parse(min1.elementAt(i)));
+     // print(min.elementAt(i));
+    }
+    for (int i = 0; i < max1.length; i++) {
+      max.add(int.parse(max1.elementAt(i)));
+     // print(max.elementAt(i));
+    }
+  }
 
   factory Rent.fromJson(json) {
     return Rent(
-      min: json['min'],
-      max: json['max'],
+      min1: json['min'],
+      max1: json['max'],
     );
   }
 }
 
 class Sale {
-  List<dynamic> min;
-  List<dynamic> max;
+  List<dynamic> min1;
+  List<dynamic> max1;
+  List<int> min = [];
+  List<int> max = [];
 
-  Sale({required this.min, required this.max});
+  Sale({required this.min1, required this.max1}) {
+    for (int i = 0; i < min1.length; i++) {
+      min.add(int.parse(min1.elementAt(i)));
+      //print(min.elementAt(i));
+    }
+    for (int i = 0; i < max1.length; i++) {
+      max.add(int.parse(max1.elementAt(i)));
+      //print(max.elementAt(i));
+    }
+  }
 
   factory Sale.fromJson(json) {
     return Sale(
-      min: json['min'],
-      max: json['max'],
+      min1: json['min'],
+      max1: json['max'],
     );
   }
 }

@@ -120,7 +120,6 @@ class _IntroductionScreen1State extends State<IntroductionScreen1> {
                     ),
                     onPressed: () {
                       Navigator.pushNamed(context, IntroductionScreen2.id);
-                      // TODO : Process this state.
                     },
                   ),
                   const Spacer(),

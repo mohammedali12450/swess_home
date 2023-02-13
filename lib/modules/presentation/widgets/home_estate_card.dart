@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
@@ -18,6 +19,7 @@ import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlik
 import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_event.dart';
 import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_state.dart';
 import '../../data/models/estate.dart';
+import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_repository.dart';
 import '../screens/authentication_screen.dart';
 import '../screens/estate_details_screen.dart';
@@ -52,6 +54,7 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
   @override
   Widget build(BuildContext context) {
     int intPrice = int.tryParse(widget.estate.price!)!;
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -97,7 +100,7 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                 ),
                 child: widget.estate.images!.isNotEmpty
                     ? CachedNetworkImage(
-                        imageUrl: imagesBaseUrl + widget.estate.images![1].url,
+                        imageUrl: imagesBaseUrl + widget.estate.images![0].url,
                         fit: BoxFit.cover,
                       )
                     : Image.asset(swessHomeIconPath),
@@ -112,9 +115,10 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                   Row(
                     children: [
                       Text(
-                        "${widget.estate.estateType!.name.split("|")[1]} "
+                        "${widget.estate.estateType!.name.split("|").first}"
+                        " - "
                         "${widget.estate.estateOfferType!.name}"
-                        "${(widget.estate.periodType == null) ? " " : "/ ${widget.estate.periodType!.name}"}",
+                        "${(widget.estate.periodType == null) ? " " : "/ ${widget.estate.periodType!.name.split("|").first}"}",
                         style: Theme.of(context).textTheme.headline3!.copyWith(
                             fontWeight: FontWeight.w700, fontSize: 25),
                       ),
@@ -140,7 +144,10 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6!
-                                    .copyWith(color: AppColors.lastColor),
+                                    .copyWith(
+                                        color: isDark
+                                            ? AppColors.yellowDarkColor
+                                            : AppColors.lastColor),
                               ),
                             ],
                           ),

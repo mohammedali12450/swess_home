@@ -15,9 +15,9 @@ class ResendConfirmationCodeBloc
       try {
         await _userAuthenticationRepository.resendVerificationCode(event.phoneNumber);
         emit(ResendConfirmationCodeComplete());
-      } on ConnectionException catch (e) {
+      } on ConnectionException {
         emit(ResendConfirmationCodeError(message: "Error", isConnectionException: true));
-      } catch (e, stack) {
+      } catch (e) {
         emit(ResendConfirmationCodeError(message: "حدث خطأ غير معروف"));
       }
     });

@@ -3,7 +3,7 @@ import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/rating_bloc/rating_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/rating_bloc/rating_state.dart';
-import 'package:swesshome/modules/data/repositories/rating_repository%7B.dart';
+import 'package:swesshome/modules/data/repositories/rating_repository.dart';
 
 class RatingBloc extends Bloc<RatingEvent, RatingState> {
   RatingRepository ratingRepository;

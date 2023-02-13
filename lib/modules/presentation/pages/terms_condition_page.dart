@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 
 import '../../business_logic_components/bloc/terms_condition_bloc/terms_condition_bloc.dart';
 import '../../business_logic_components/bloc/terms_condition_bloc/terms_condition_event.dart';
@@ -50,17 +51,20 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
                         child: CircularProgressIndicator()));
               }
               if (propertiesFetchState is TermsConditionFetchComplete) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    22.verticalSpace,
-                    Text(
-                      _termsConditionBloc.termsCondition!.title,
-                      style: Theme.of(context).textTheme.headline3,
-                    ),
-                    22.verticalSpace,
-                    Text(_termsConditionBloc.termsCondition!.body),
-                  ],
+                return SizedBox(
+                  width: getScreenWidth(context),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      22.verticalSpace,
+                      Text(
+                        _termsConditionBloc.termsCondition!.title,
+                        style: Theme.of(context).textTheme.headline3,
+                      ),
+                      22.verticalSpace,
+                      Text(_termsConditionBloc.termsCondition!.body),
+                    ],
+                  ),
                 );
               } else {
 

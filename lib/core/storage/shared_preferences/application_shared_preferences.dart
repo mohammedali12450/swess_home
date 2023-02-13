@@ -6,17 +6,25 @@ class ApplicationSharedPreferences {
 
   static const String isWalkThroughPassed = "walk_through_passed";
   static const String isMapTutorialPassed = "map_tutorial_passed";
+  static const String loginPassed = "login_passed";
   static const String isDarkMode = "is_dark_mode";
   static const String languageCode = "language_code";
   static const String isLanguageSelected = "is_language_selected";
   static const String versionKey = "version_Key";
   static const String downloadKey = "Download_Key";
+  static const String visitNumKey = "visit_num_Key";
 
   static init() async {
     _preferences = await SharedPreferences.getInstance();
     // Initializing:
     if (_preferences.getBool(isWalkThroughPassed) == null) {
       await _preferences.setBool(isWalkThroughPassed, false);
+    }
+    if (_preferences.getInt(visitNumKey) == null) {
+      await _preferences.setInt(versionKey, 1);
+    }
+    if (_preferences.getBool(loginPassed) == null) {
+      await _preferences.setBool(loginPassed, false);
     }
 
     if (_preferences.getBool(isMapTutorialPassed) == null) {
@@ -56,6 +64,22 @@ class ApplicationSharedPreferences {
 
   static String getDownloadUrl() {
     return _preferences.getString(downloadKey)!;
+  }
+
+  static setLoginPassed(bool pass) async {
+    await _preferences.setBool(loginPassed, pass);
+  }
+
+  static bool getLoginPassed() {
+    return _preferences.getBool(loginPassed)!;
+  }
+
+  static setVisitNumber(int num) async {
+    await _preferences.setInt(visitNumKey, num);
+  }
+
+  static int getVisitNumber() {
+    return _preferences.getInt(visitNumKey) ?? 1;
   }
 
   static setVersionAppState(String isPassed) async {

@@ -333,6 +333,13 @@ class _VerificationCodeScreenResetState
                 );
               }
             }),
+        30.verticalSpace,
+        Center(
+            child: Text(
+          AppLocalizations.of(context)!.time_of_receive_code,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyText2,
+        )),
       ],
     );
   }

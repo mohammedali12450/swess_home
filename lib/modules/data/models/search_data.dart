@@ -21,6 +21,8 @@ class SearchData {
   String? sortBy;
   String? sortType;
 
+  String? description;
+
   SearchData(
       {this.estateOfferTypeId,
       this.locationId,
@@ -30,7 +32,8 @@ class SearchData {
       this.priceMin,
       this.priceMax,
       this.sortBy,
-      this.sortType});
+      this.sortType,
+      this.description});
 
   factory SearchData.init() {
     return SearchData(locationId: 0, estateTypeId: 0, estateOfferTypeId: 1);

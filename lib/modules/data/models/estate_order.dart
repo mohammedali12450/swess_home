@@ -29,9 +29,9 @@ class EstateOrder {
 
   int? estateOfferId;
 
-  int? minPrice;
+  int? priceMin;
 
-  int? maxPrice;
+  int? priceMax;
 
   // Both states:
 
@@ -49,8 +49,8 @@ class EstateOrder {
       this.estateTypeId,
       this.estateOfferId,
       this.locationId,
-      this.maxPrice,
-      this.minPrice});
+      this.priceMax,
+      this.priceMin});
 
   factory EstateOrder.fromJson(json) {
     List<Estate>? candidatesEstates;
@@ -83,8 +83,8 @@ class EstateOrder {
     map["estate_type_id"] = estateTypeId;
     map["estate_offer_type_id"] = estateOfferId;
     map["location_id"] = locationId;
-    map["min_price"] = minPrice;
-    map["max_price"] = maxPrice;
+    map["min_price"] = priceMin;
+    map["max_price"] = priceMax;
     map["notes"] = description;
     return map;
   }

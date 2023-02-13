@@ -34,7 +34,6 @@ class _RowInformationSwitcherState extends State<RowInformationSwitcher> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     pressButtonCubit = ChannelCubit(widget.initialState);
   }

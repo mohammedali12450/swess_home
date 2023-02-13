@@ -15,16 +15,12 @@ import 'package:swesshome/modules/business_logic_components/bloc/system_variable
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/pages/terms_of_use_page.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
-import 'package:swesshome/modules/presentation/screens/created_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
-import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
-import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -360,6 +356,7 @@ class _MyDrawerState extends State<MyDrawer> {
     _userLoginBloc.user = null;
     Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (_) => const NavigationBarScreen()));
+    ApplicationSharedPreferences.setLoginPassed(false);
     // Navigator.pushNamedAndRemoveUntil(
     //     context, NavigationBarScreen.id, ModalRoute.withName('/'));
     return;

@@ -13,7 +13,6 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/reports_bloc/reports_bloc.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import '../../data/models/report.dart';
-import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/reports_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -22,8 +21,6 @@ import '../screens/authentication_screen.dart';
 
 void showReportModalBottomSheet(context, int estateId) {
   List<Report> reports = BlocProvider.of<ReportBloc>(context).reports!;
-  bool isArabic =
-      Provider.of<LocaleProvider>(context, listen: false).isArabic();
   bool isDark =
       Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
   String? userToken;

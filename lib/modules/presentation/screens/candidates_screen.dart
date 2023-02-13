@@ -5,6 +5,8 @@ import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../widgets/res_text.dart';
+
 class CandidatesScreen extends StatefulWidget {
   static const String id = "CandidatesScreen";
 
@@ -22,7 +24,7 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: ResText(
           AppLocalizations.of(context)!.candidate_estates,
         ),
       ),
@@ -42,10 +44,10 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
                           .withOpacity(0.64),
                     ),
                     kHe24,
-                    Text(
+                    ResText(
                       AppLocalizations.of(context)!
                           .no_candidates_for_this_order,
-                      style: Theme.of(context).textTheme.bodyText1,
+                      textStyle: Theme.of(context).textTheme.bodyText1,
                     ),
                   ],
                 ),

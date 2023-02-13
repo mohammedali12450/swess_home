@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/area_units_bloc/area_units_bloc.dart';
@@ -14,7 +13,6 @@ import 'package:swesshome/modules/data/models/area_unit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/ownership_type.dart';
 import 'package:swesshome/modules/data/models/period_type.dart';
-import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
@@ -62,7 +60,6 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     // initializing :
@@ -87,7 +84,6 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
   @override
   Widget build(BuildContext context) {
     bool isKeyboardOpened = MediaQuery.of(context).viewInsets.bottom != 0;
-    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
 
     isForStore = BlocProvider.of<SystemVariablesBloc>(context)
         .systemVariables!

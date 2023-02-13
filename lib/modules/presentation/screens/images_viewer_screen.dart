@@ -27,7 +27,7 @@ class ImagesViewerScreen extends StatefulWidget {
 
 class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
   ChannelCubit currentImageCubit = ChannelCubit(0);
-  late YoutubePlayerController _ytbPlayerController;
+  YoutubePlayerController? _ytbPlayerController;
 
   // Future<void> secureScreen() async {
   //   await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);

@@ -28,6 +28,7 @@ import '../../data/models/user.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../data/providers/theme_provider.dart';
+import '../widgets/res_text.dart';
 
 class RecentEstateOrdersScreen extends StatefulWidget {
   static const String id = "RecentEstateOrdersScreen";
@@ -122,7 +123,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(
+          title: ResText(
             AppLocalizations.of(context)!.recent_created_orders,
           ),
         ),

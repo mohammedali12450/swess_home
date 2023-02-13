@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 
 class RentEstate {
   int id;
@@ -56,7 +55,7 @@ class RentEstate {
 }
 
 class RentEstateRequest {
-  int locationId;
+  int? locationId;
   int estateTypeId;
   int periodTypeId;
   int interiorStatusesId;

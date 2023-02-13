@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,6 +20,7 @@ import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_event.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_state.dart';
+import '../../business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/estate_type.dart';
 import '../../data/models/interior_status.dart';
@@ -77,6 +77,7 @@ class _CreateEstateImmediatelyScreenState
 
   RentEstateRequest rentEstate = RentEstateRequest.init();
   RegionViewer? selectedRegion;
+  late bool isForStore;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -96,6 +97,14 @@ class _CreateEstateImmediatelyScreenState
 
     _rentEstateBloc = RentEstateBloc(RentEstateRepository());
 
+    isForStore = BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore;
+    if (isForStore) {
+      phoneDialCode = "+961";
+    } else {
+      phoneDialCode = "+963";
+    }
     super.initState();
   }
 
@@ -151,7 +160,7 @@ class _CreateEstateImmediatelyScreenState
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(AppLocalizations.of(context)!.rent),
+        title: Text(AppLocalizations.of(context)!.estate_immediately),
       ),
       body: Stack(
         children: [
@@ -259,6 +268,13 @@ class _CreateEstateImmediatelyScreenState
                       textColor: AppColors.primaryColor,
                       toastLength: Toast.LENGTH_LONG);
                   return;
+                }
+                if (authenticationController.text.startsWith("0")) {
+                  rentEstate.whatsAppNumber = phoneDialCode +
+                      authenticationController.text.substring(1);
+                } else if (authenticationController.text != "") {
+                  rentEstate.whatsAppNumber =
+                      phoneDialCode + authenticationController.text;
                 }
                 _rentEstateBloc.add(SendRentEstatesFetchStarted(
                     rentEstate: rentEstate,
@@ -549,8 +565,10 @@ class _CreateEstateImmediatelyScreenState
                         controller: priceController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!
-                              .estate_rent_price_hint_syrian,
+                          hintText: isForStore
+                              ? ""
+                              : AppLocalizations.of(context)!
+                                  .estate_rent_price_hint_syrian,
                           errorText: errorMessage,
                           isDense: true,
                           focusedBorder: UnderlineInputBorder(
@@ -577,7 +595,9 @@ class _CreateEstateImmediatelyScreenState
                 Expanded(
                     flex: 1,
                     child: Text(
-                      AppLocalizations.of(context)!.syrian_bound,
+                      isForStore
+                          ? "L.L"
+                          : AppLocalizations.of(context)!.syrian_bound,
                       textAlign: TextAlign.center,
                     )),
               ],
@@ -814,24 +834,27 @@ class _CreateEstateImmediatelyScreenState
                 ),
                 child: Directionality(
                   textDirection: TextDirection.ltr,
-                  child: IntlPhoneField(
+                  child: TextField(
                     controller: authenticationController,
-                    showDropdownIcon: false,
                     style: Theme.of(context).textTheme.headline5!.copyWith(
                         height: 1.6, fontWeight: FontWeight.w400, fontSize: 16),
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       errorText: errorMessage,
                       errorMaxLines: 2,
+                      prefixIcon: Text(
+                        isForStore ? "+961" : "+963",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline5!
+                            .copyWith(height: 2.5),
+                      ),
                     ),
-                    initialCountryCode: 'SY',
                     onChanged: (phone) {
-                      phoneDialCode = phone.countryCode;
                       authenticationError.setState(null);
-                      // rentEstate.whatsAppNumber =
-                      //     phoneDialCode + authenticationController.text;
+                      rentEstate.whatsAppNumber =
+                          phoneDialCode + authenticationController.text;
                     },
-                    disableLengthCheck: true,
-                    autovalidateMode: AutovalidateMode.disabled,
                   ),
                 ),
               ),
@@ -1037,7 +1060,7 @@ class _CreateEstateImmediatelyScreenState
                     ) as RegionViewer;
                     FocusScope.of(context).unfocus();
                     if (selectedRegion != null) {
-                      rentEstate.locationId = selectedRegion!.id!;
+                      rentEstate.locationId = selectedRegion!.id;
                       locationNameCubit
                           .setState(selectedRegion!.getLocationName());
                       locationController.text = locationNameCubit.state;
@@ -1078,7 +1101,7 @@ class _CreateEstateImmediatelyScreenState
     bool isValidationSuccess = true;
 
     // location verification
-    if (selectedRegion == null) {
+    if (selectedRegion == null || selectedRegion!.id == null) {
       locationErrorCubit
           .setState(AppLocalizations.of(context)!.this_field_is_required);
       scrollController.animateTo(0,

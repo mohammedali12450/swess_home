@@ -1,6 +1,5 @@
 import 'package:swesshome/modules/data/models/register.dart';
 
-import '../../../data/models/user.dart';
 
 abstract class UserEditDataEvent {}
 

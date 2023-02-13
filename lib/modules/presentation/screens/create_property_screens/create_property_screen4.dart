@@ -65,7 +65,6 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // initializing :
     int estateTypeId = widget.currentOffer.estateType!.id;

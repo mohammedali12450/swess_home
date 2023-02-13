@@ -29,6 +29,7 @@ import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/share_estate_bloc/share_bloc.dart';
+import '../../data/providers/theme_provider.dart';
 import '../widgets/cupertino_action_sheet.dart';
 import '../widgets/report_estate.dart';
 import 'images_viewer_screen.dart';
@@ -90,6 +91,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     currency = AppLocalizations.of(context)!.syrian_currency;
 
     int intPrice = int.parse(widget.estate.price!);
@@ -432,16 +434,18 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                               // Estate Viewer
                               if (widget.estate.visitCount != null)
                                 Container(
-                                  padding:
-                                      const EdgeInsets.only(top: 5),
+                                  padding: const EdgeInsets.only(top: 5),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(bottom: 3.0),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 3.0),
                                         child: Icon(
                                           Icons.remove_red_eye_outlined,
-                                          color: AppColors.lastColor,
+                                          color: !isDark
+                                              ? AppColors.lastColor
+                                              : AppColors.yellowDarkColor,
                                           size: 20,
                                         ),
                                       ),
@@ -452,7 +456,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                             .textTheme
                                             .headline5!
                                             .copyWith(
-                                                color: AppColors.lastColor,
+                                                color: !isDark
+                                                    ? AppColors.lastColor
+                                                    : AppColors.yellowDarkColor,
                                                 fontSize: 14,
                                                 height: 1.5),
                                       ),

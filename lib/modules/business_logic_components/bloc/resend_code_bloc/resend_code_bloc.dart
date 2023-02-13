@@ -4,8 +4,6 @@ import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_state.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/verification_bloc/verifiaction_event.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/verification_bloc/verification_state.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 

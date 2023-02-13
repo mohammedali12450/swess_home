@@ -15,7 +15,7 @@ class RecentEstatesOrdersBloc extends Bloc<RecentEstatesOrdersEvent, RecentEstat
       try {
         List<EstateOrder> orders = await estateOrderRepository.getRecentEstateOrders(event.token);
         emit(RecentEstatesOrdersFetchComplete(estateOrders: orders));
-      } on ConnectionException catch (e, stack) {
+      } on ConnectionException catch (e) {
         emit(RecentEstatesOrdersFetchError(error: e.errorMessage, isConnectionError: true));
       } catch (e, stack) {
         if (e is GeneralException) {

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -27,6 +26,7 @@ import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/rent_estate_repository.dart';
 import '../widgets/my_dropdown_list.dart';
 import '../widgets/res_text.dart';
+import '../widgets/shimmers/immediate_shimmer.dart';
 import 'create_estate_immediately_screen.dart';
 import 'search_region_screen.dart';
 
@@ -123,10 +123,9 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
               floating: true,
               pinned: true,
               snap: false,
-              centerTitle: false,
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.estate_immediately),
               bottom: AppBar(
-                centerTitle: true,
                 automaticallyImplyLeading: false,
                 toolbarHeight: 60,
                 title: Row(
@@ -134,7 +133,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                     Expanded(
                         flex: 1,
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border.all(
@@ -146,6 +145,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                               ),
                             ),
                             child: IconButton(
+                              padding: const EdgeInsets.all(8),
                               onPressed: () {
                                 showDialog(
                                     context: context,
@@ -198,8 +198,9 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
             BlocBuilder<RentEstateBloc, RentEstateState>(
               bloc: _rentEstateBloc,
               builder: (_, getRentState) {
-                if (getRentState is GetRentEstateFetchProgress) {
-                  // return const SliverToBoxAdapter(child: ImmediateShimmer());
+                if (getRentState is GetRentEstateFetchProgress &&
+                    rentEstates.isEmpty) {
+                  return const ImmediateShimmer();
                 }
                 if (getRentState is GetRentEstateFetchComplete) {
                   rentEstates.addAll(getRentState.rentEstates);
@@ -253,7 +254,8 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                 return SliverFixedExtentList(
                   itemExtent: 350,
                   delegate: SliverChildBuilderDelegate((builder, index) {
-                    return buildEstateCard(rentEstates.elementAt(index));
+                    return buildEstateCard(
+                        rentEstates.elementAt(index), isDark);
                   }, childCount: rentEstates.length),
                 );
               },
@@ -322,7 +324,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
 
   Widget buildLocation(isDark) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 5),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Container(
         height: 40,
         decoration: BoxDecoration(
@@ -359,7 +361,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                 _rentEstateBloc.isFilter = true;
                 isFilterCubit.setState(true);
                 _rentEstateBloc.filterPage = 1;
-
+                rentEstates.clear();
                 _rentEstateBloc.add(FilterRentEstatesFetchStarted(
                     rentEstateFilter: rentEstateFilter));
                 print("ghina1 : ${rentEstateFilter.price}\n"
@@ -394,7 +396,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
     );
   }
 
-  Widget buildEstateCard(RentEstate rentEstate) {
+  Widget buildEstateCard(RentEstate rentEstate, isDark) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -410,7 +412,9 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                   Text(
                     rentEstate.publishedAt,
                     style: Theme.of(context).textTheme.headline6!.copyWith(
-                        color: AppColors.lastColor,
+                        color: isDark
+                            ? AppColors.yellowDarkColor
+                            : AppColors.lastColor,
                         fontWeight: FontWeight.w300),
                   ),
                 ],
@@ -529,9 +533,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                       if (rentEstate.whatsAppNumber != null) {
                         openWhatsApp(rentEstate.whatsAppNumber);
                       } else {
-                        Fluttertoast.showToast(
-                            msg: AppLocalizations.of(context)!
-                                .no_whatsapp_number);
+                        openWhatsApp(rentEstate.phoneNumber);
                       }
                     },
                     icon: const Icon(
@@ -575,13 +577,13 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
         Container(
           width: inf,
           padding: kSmallSymWidth,
-          height: 400.h,
+          height: 250.h,
           child: Column(
             children: [
               buildPriceFilter(),
               kHe24,
-              buildEstateType(),
-              kHe24,
+              // buildEstateType(),
+              // kHe24,
               buildPeriodTypes()
             ],
           ),
@@ -600,11 +602,14 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
               // print(rentEstateFilter.price);
               _rentEstateBloc.isFilter = true;
               isFilterCubit.setState(true);
+              rentEstates.clear();
               _rentEstateBloc.add(FilterRentEstatesFetchStarted(
                   rentEstateFilter: rentEstateFilter));
+
               print("ghina2 : ${rentEstateFilter.price}\n"
                   "${rentEstateFilter.locationId}\n"
-                  "${rentEstateFilter.estateTypeId}\n");
+                  "${rentEstateFilter.estateTypeId}\n"
+                  "${rentEstateFilter.periodTypeId}");
               //_rentEstateBloc.isFilter = false;
               Navigator.pop(context);
             },

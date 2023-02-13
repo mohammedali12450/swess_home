@@ -31,7 +31,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
     _savedEstatesBloc = SavedEstatesBloc(EstateRepository());
     User? user = BlocProvider.of<UserLoginBloc>(context).user;

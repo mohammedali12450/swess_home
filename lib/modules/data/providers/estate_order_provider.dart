@@ -1,15 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:swesshome/constants/api_paths.dart';
-import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/utils/services/network_helper.dart';
 
+import '../models/search_data.dart';
+
 class EstateOrderProvider {
-  Future<Response> sendEstateOrder(EstateOrder order, String? token) async {
+  Future<Response> sendEstateOrder(SearchData order, String? token) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
     try {
       response =
-          await helper.post(createEstateOrderURL, order.toJson(), token: token);
+          await helper.post(createEstateOrderURL, order.toJson(false), token: token);
     } catch (e) {
       rethrow;
     }
