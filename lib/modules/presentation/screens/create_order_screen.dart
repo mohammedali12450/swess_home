@@ -22,7 +22,9 @@ import '../../business_logic_components/bloc/estate_order_bloc/estate_order_even
 import '../../data/models/search_data.dart';
 import '../../data/providers/theme_provider.dart';
 import '../widgets/choice_container.dart';
+import '../widgets/estate_type.dart';
 import '../widgets/price_domain.dart';
+import '../widgets/res_text.dart';
 import 'search_location_screen.dart';
 
 class CreateOrderScreen extends StatefulWidget {
@@ -52,6 +54,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   List<EstateType>? estatesTypes;
   PriceDomain? priceDomains;
   late SearchData estateOrder;
+  late bool isDark;
 
   LocationViewer? selectedLocation;
   final _formKey = GlobalKey<FormState>();
@@ -70,7 +73,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
 
     return BlocListener<EstateOrderBloc, EstateOrderState>(
       listener: (_, estateOrderState) async {
@@ -100,7 +103,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               child: SingleChildScrollView(
                 controller: scrollController,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 5.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -120,11 +123,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           onTapLeft: () {
                             estateOrder.estateOfferTypeId = 2;
                           },
-                          paddingVertical: 5,
+                          paddingVertical: 5.h,
                           paddingHorizontal: 0),
                       kHe36,
-                      buildLocation(isDark),
-                      buildEstateType(isDark),
+                      buildLocation(),
+                      EstateTypeWidget(
+                        searchData: estateOrder,
+                        isPressTypeCubit: isPressTypeCubit,
+                        removeSelect: false,
+                      ),
                       PriceDomainWidget(
                         isRentCubit: isRentCubit,
                         searchData: estateOrder,
@@ -132,7 +139,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                         endPriceCubit: endPriceCubit,
                       ),
                       //buildPriceDomain(isArabic, isDark),
-                      buildNote(isDark),
+                      buildNote(),
                       buildButton(),
                       kHe32,
                     ],
@@ -146,16 +153,16 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     );
   }
 
-  Widget buildLocation(isDark) {
+  Widget buildLocation() {
     return Column(
       children: [
         Row(
           children: [
             const Icon(Icons.location_on_outlined),
             kWi8,
-            Text(
+            ResText(
               AppLocalizations.of(context)!.estate_location + " :",
-              style: Theme.of(context).textTheme.headline6,
+              textStyle: Theme.of(context).textTheme.headline6,
             ),
           ],
         ),
@@ -165,7 +172,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           builder: (_, errorMessage) {
             return Container(
               decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(11)),
+                  borderRadius: smallBorderRadius,
                   border: Border.all(
                     color: !isDark
                         ? AppColors.primaryColor
@@ -195,7 +202,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   contentPadding: kSmallSymWidth,
                   errorBorder: kOutlinedBorderRed,
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    borderRadius: smallBorderRadius,
                     borderSide: BorderSide(
                       color: Theme.of(context)
                           .colorScheme
@@ -213,238 +220,16 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     );
   }
 
-  Widget buildEstateType(isDark) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            const Icon(Icons.home_outlined),
-            kWi8,
-            Text(
-              AppLocalizations.of(context)!.estate_type + " :",
-              style: Theme.of(context).textTheme.headline6,
-            ),
-          ],
-        ),
-        kHe12,
-        BlocBuilder<ChannelCubit, dynamic>(
-          bloc: isPressTypeCubit,
-          builder: (_, pressState) {
-            return Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      isPressTypeCubit.setState(0);
-                      estateOrder.estateTypeId = 1;
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 60,
-                          padding: kSmallAllPadding,
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(100)),
-                            border: Border.all(
-                                color: pressState == 0
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.primaryColor),
-                          ),
-                          child: Image.asset(buildIconPath,
-                              color: AppColors.primaryColor),
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.house,
-                          style: TextStyle(
-                              color: !isDark
-                                  ? pressState == 0
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.primaryColor
-                                  : pressState == 0
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                kWi16,
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      isPressTypeCubit.setState(3);
-                      estateOrder.estateTypeId = 4;
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 60,
-                          padding: kSmallAllPadding,
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(100)),
-                            border: Border.all(
-                                color: pressState == 3
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.primaryColor),
-                          ),
-                          child: Image.asset(farmIconPath,
-                              color: AppColors.primaryColor),
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.farm,
-                          style: TextStyle(
-                              color: !isDark
-                                  ? pressState == 3
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.primaryColor
-                                  : pressState == 3
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                kWi16,
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      isPressTypeCubit.setState(2);
-                      estateOrder.estateTypeId = 3;
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 60,
-                          padding: kTinyAllPadding,
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(100)),
-                            border: Border.all(
-                                color: pressState == 2
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.primaryColor),
-                          ),
-                          child: Image.asset(landIconPath,
-                              color: AppColors.primaryColor),
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.land,
-                          style: TextStyle(
-                              color: !isDark
-                                  ? pressState == 2
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.primaryColor
-                                  : pressState == 2
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                kWi16,
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      isPressTypeCubit.setState(1);
-                      estateOrder.estateTypeId = 2;
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 60,
-                          padding: kTinyAllPadding,
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(100)),
-                            border: Border.all(
-                                color: pressState == 1
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.primaryColor),
-                          ),
-                          child: Image.asset(shopIconPath,
-                              color: AppColors.primaryColor),
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.shop,
-                          style: TextStyle(
-                              color: !isDark
-                                  ? pressState == 1
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.primaryColor
-                                  : pressState == 1
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                kWi16,
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      isPressTypeCubit.setState(4);
-                      estateOrder.estateTypeId = 5;
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 60,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(100)),
-                            border: Border.all(
-                                color: pressState == 4
-                                    ? AppColors.yellowDarkColor
-                                    : AppColors.primaryColor),
-                          ),
-                          child: Image.asset(villaIconPath,
-                              color: AppColors.primaryColor),
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.villa,
-                          style: TextStyle(
-                              color: !isDark
-                                  ? pressState == 4
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.primaryColor
-                                  : pressState == 4
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-        kHe36,
-      ],
-    );
-  }
-
-  Widget buildNote(isDark) {
+  Widget buildNote() {
     return Column(
       children: [
         Row(
           children: [
             const Icon(Icons.speaker_notes_outlined),
             kWi8,
-            Text(
+            ResText(
               AppLocalizations.of(context)!.notes + " :",
-              style: Theme.of(context).textTheme.headline6,
+              textStyle: Theme.of(context).textTheme.headline6,
             ),
           ],
         ),
@@ -457,7 +242,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               padding: kSmallSymWidth,
               height: 250.h,
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                borderRadius: smallBorderRadius,
                 border: Border.all(
                   color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,
                 ),

@@ -61,5 +61,19 @@ class RentEstateBloc extends Bloc<RentEstatesEvent, RentEstateState> {
         print(stack);
       }
     });
+    on<GetMyRentEstatesFetchStarted>((event, emit) async {
+      emit(GetMyRentEstateFetchProgress());
+      try {
+        rentEstates = await _messageRepository.getMyRentEstates(
+            event.token);
+        emit(GetMyRentEstateFetchComplete(rentEstates: rentEstates!));
+      } catch (e, stack) {
+        if (e is GeneralException) {
+          emit(RentEstateFetchError(error: e.errorMessage!));
+        }
+        print(e);
+        print(stack);
+      }
+    });
   }
 }

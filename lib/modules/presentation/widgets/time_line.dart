@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:timelines/timelines.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/design_constants.dart';
@@ -60,7 +61,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                 style: TextStyle(
                   //fontWeight: FontWeight.bold,
                   color: getColor(index + 1),
-                  fontSize: 12,
+                  fontSize: 12.sp,
                 ),
               ),
               kWi20,
@@ -72,19 +73,19 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
           Widget? child;
           if (index + 1 == widget.estateStatusId) {
             color = inProgressColor;
-            child = const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(
+            child = Padding(
+              padding: kTinyAllPadding,
+              child: const CircularProgressIndicator(
                 strokeWidth: 3.0,
                 valueColor: AlwaysStoppedAnimation(Colors.white),
               ),
             );
           } else if (index + 1 < widget.estateStatusId) {
             color = completeColor;
-            child = const Icon(
+            child = Icon(
               Icons.check,
               color: Colors.white,
-              size: 15.0,
+              size: 15.w,
             );
           } else {
             color = todoColor;
@@ -102,7 +103,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                   ),
                 ),
                 DotIndicator(
-                  size: 30.0,
+                  size: 30.w,
                   color: color,
                   child: child,
                 ),
@@ -119,7 +120,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                   ),
                 ),
                 OutlinedDotIndicator(
-                  borderWidth: 4.0,
+                  borderWidth: 4.w,
                   color: color,
                 ),
               ],
@@ -163,7 +164,6 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
 }
 
 /// hardcoded bezier painter
-/// TODO: Bezier curve into package component
 class BezierPainter extends CustomPainter {
   const BezierPainter({
     required this.color,

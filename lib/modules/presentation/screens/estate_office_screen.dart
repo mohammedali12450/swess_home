@@ -34,6 +34,7 @@ import '../../data/models/estate.dart';
 import '../../data/models/estate_office.dart';
 import '../widgets/cupertino_action_sheet.dart';
 import '../widgets/report_estate.dart';
+import '../widgets/res_text.dart';
 import 'authentication_screen.dart';
 
 class EstateOfficeScreen extends StatefulWidget {
@@ -181,7 +182,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       Container(
                         padding: EdgeInsets.only(
                             left: (results!.communicationMedias == null)
-                                ? 20
+                                ? 10.w
                                 : 0),
                         width: getScreenWidth(context),
                         child: (results!.communicationMedias != null)
@@ -199,7 +200,29 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                   ),
                                 ],
                               )
-                            : buildImage(),
+                            : Column(
+                                children: [
+                                  buildImage(),
+                                  34.verticalSpace,
+                                  ResText(
+                                    results!.estateOffice.name!,
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .headline4!
+                                        .copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          //fontSize: 24.sp
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  12.verticalSpace,
+                                  ResText(
+                                    results!.estateOffice.locationS!,
+                                    textStyle:
+                                        Theme.of(context).textTheme.headline6,
+                                  ),
+                                ],
+                              ),
                       ),
                       8.verticalSpace,
                       // Account name and rate :
@@ -212,11 +235,9 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                             decoration: BoxDecoration(
                               border: Border.all(
                                 width: 1,
-                                color: Colors.green,
+                                color: AppColors.yellowDarkColor,
                               ),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8),
-                              ),
+                              borderRadius: lowBorderRadius,
                             ),
                             child: Text(
                               results!.estateOffice.workHours!,
@@ -226,7 +247,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         ),
                       kHe32,
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -257,9 +278,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(Icons.add),
-                                    Text(
+                                    ResText(
                                       AppLocalizations.of(context)!.post_estate,
-                                      style: const TextStyle(fontSize: 14),
+                                      textStyle: TextStyle(
+                                          fontSize: 18.sp,
+                                          color: isDark
+                                              ? AppColors.black
+                                              : AppColors.white),
                                     )
                                   ],
                                 ),
@@ -338,7 +363,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                                   : Icons
                                                       .thumb_up_alt_outlined),
                                               kWi12,
-                                              Text(
+                                              ResText(
                                                 (likeAndUnlikeState is Liked)
                                                     ? AppLocalizations.of(
                                                             context)!
@@ -346,6 +371,11 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                                     : AppLocalizations.of(
                                                             context)!
                                                         .like,
+                                                textStyle: TextStyle(
+                                                    fontSize: 18.sp,
+                                                    color: isDark
+                                                        ? AppColors.black
+                                                        : AppColors.white),
                                               )
                                             ],
                                           ),
@@ -372,18 +402,18 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         ),
                         child: Row(
                           children: [
-                            Text(
+                            ResText(
                               AppLocalizations.of(context)!.estate_offers,
-                              style: Theme.of(context)
+                              textStyle: Theme.of(context)
                                   .textTheme
                                   .subtitle2!
                                   .copyWith(
                                     color: AppColors.black,
                                   ),
                             ),
-                            Text(
+                            ResText(
                               "  ${results!.estateOffice.estateLength!} : ",
-                              style: Theme.of(context)
+                              textStyle: Theme.of(context)
                                   .textTheme
                                   .subtitle2!
                                   .copyWith(
@@ -439,7 +469,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(90.w),
+                borderRadius: circularBorderRadius,
               ),
               child: CachedNetworkImage(
                   imageUrl: imagesBaseUrl + results!.estateOffice.logo!),
@@ -462,15 +492,15 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Text(
+        ResText(
           results!.estateOffice.name!,
-          style: Theme.of(context).textTheme.headline5,
+          textStyle: Theme.of(context).textTheme.headline5,
           textAlign: TextAlign.center,
         ),
         12.verticalSpace,
-        Text(
+        ResText(
           results!.estateOffice.locationS!,
-          style: Theme.of(context).textTheme.headline6,
+          textStyle: Theme.of(context).textTheme.headline6,
         ),
         12.verticalSpace,
         SizedBox(
@@ -480,21 +510,24 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
             children: [
               InkWell(
                 onTap: () async {
-                  // _visitBloc.add(
-                  //   VisitStarted(
-                  //       visitId: results!.id,
-                  //       token: userToken,
-                  //       visitType: VisitType.officeCall),
-                  // );
+                  _visitBloc.add(
+                    VisitStarted(
+                        visitId: results!.estateOffice.id,
+                        token: userToken,
+                        visitType: VisitType.officeCall),
+                  );
                   await myCupertinoActionSheet(
                     context,
                     elementsList: results!.communicationMedias!.phone!
                         .map((e) => e.value)
                         .toList(),
-                    onPressed: [
-                      () {},
-                      () {},
-                    ],
+                    onPressed: results!.communicationMedias!.phone!
+                        .map((e) => () {
+                              launch(
+                                "tel://" + e.value!,
+                              );
+                            })
+                        .toList(),
                   );
                   // launch(
                   //   "tel://" + results!.mobile!,
@@ -504,12 +537,12 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
               ),
               InkWell(
                 onTap: () async {
-                  // _visitBloc.add(
-                  //   VisitStarted(
-                  //       visitId: results!.id,
-                  //       token: userToken,
-                  //       visitType: VisitType.officeCall),
-                  // );
+                  _visitBloc.add(
+                    VisitStarted(
+                        visitId: results!.estateOffice.id,
+                        token: userToken,
+                        visitType: VisitType.officeCall),
+                  );
                   // launch(
                   //   "tel://" + results!.mobile!,
                   // );
@@ -518,29 +551,22 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
               ),
               InkWell(
                 onTap: () async {
-                  // _visitBloc.add(
-                  //   VisitStarted(
-                  //       visitId: results!.id,
-                  //       token: userToken,
-                  //       visitType: VisitType.officeCall),
-                  // );
+                  _visitBloc.add(
+                    VisitStarted(
+                        visitId: results!.estateOffice.id,
+                        token: userToken,
+                        visitType: VisitType.officeCall),
+                  );
                   await myCupertinoActionSheet(
                     context,
                     elementsList: results!.communicationMedias!.whatsApp!
                         .map((e) => e.value)
                         .toList(),
-                    onPressed: [
-                      () {
-                        launch(
-                          "tel://" + results!.estateOffice.mobile!,
-                        );
-                      },
-                      () {
-                        launch(
-                          "tel://" + results!.estateOffice.mobile!,
-                        );
-                      },
-                    ],
+                    onPressed: results!.communicationMedias!.whatsApp!
+                        .map((e) => () {
+                              launch("tel://" + e.value!);
+                            })
+                        .toList(),
                   );
                 },
                 child: const Icon(Icons.whatsapp_outlined),

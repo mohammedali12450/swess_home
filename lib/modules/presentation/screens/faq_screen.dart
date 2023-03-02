@@ -38,7 +38,7 @@ class _FAQScreenState extends State<FAQScreen> {
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           centerTitle: true,
-          title: ResText(
+          title: Text(
             AppLocalizations.of(context)!.faq,
           ),
         ),

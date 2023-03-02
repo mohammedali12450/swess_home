@@ -62,7 +62,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: ResText(
+          title: Text(
             AppLocalizations.of(context)!.notifications,
           ),
         ),
@@ -151,11 +151,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               .elementAt(index)
                               .body
                               .contains("(")) {
-                            notification.title == "العروض العقارية"
+                            notification.title ==
+                                    AppLocalizations.of(context)!.estate_offers
                                 ? navigatorCreateEstate(getId)
                                 : navigatorEstateOrder(getId);
                           } else {
-                            notification.title == "العروض العقارية"
+                            notification.title ==
+                                    AppLocalizations.of(context)!.estate_offers
                                 ? navigatorCreateEstate(null)
                                 : navigatorEstateOrder(null);
                           }

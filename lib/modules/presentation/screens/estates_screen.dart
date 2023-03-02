@@ -47,8 +47,6 @@ class _EstatesScreenState extends State<EstatesScreen> {
   EstateBloc estateBloc = EstateBloc(EstateRepository());
 
   EstateSearch estateSearch = EstateSearch.init();
-  final List<Estate> identicalEstates = [];
-  final List<Estate> similarEstates = [];
   final ScrollController _scrollController = ScrollController();
   bool isIdenticalEstatesFinished = false;
   bool isSimilarEstatesFinished = false;
@@ -67,14 +65,14 @@ class _EstatesScreenState extends State<EstatesScreen> {
 
   @override
   Widget build(BuildContext context) {
-     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           centerTitle: true,
-          title: ResText(
+          title: Text(
             AppLocalizations.of(context)!.search_results,
           ),
           actions: [
@@ -171,7 +169,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                             .colorScheme
                             .primary
                             .withOpacity(0.24),
-                        size: 120,
+                        size: 120.w,
                       ),
                       kHe24,
                       Text(
@@ -278,21 +276,20 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       );
                     },
                     child: Container(
-                      height: 30,
+                      height: 30.h,
                       decoration: BoxDecoration(
                         color: isPriceSelected
                             ? AppColors.primaryColor
                             : AppColors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
+                        borderRadius: smallBorderRadius,
                         border: Border.all(color: AppColors.primaryColor),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
+                          ResText(
                             AppLocalizations.of(context)!.by_price,
-                            style: Theme.of(context)
+                            textStyle: Theme.of(context)
                                 .textTheme
                                 .headline6!
                                 .copyWith(
@@ -301,15 +298,15 @@ class _EstatesScreenState extends State<EstatesScreen> {
                                         : AppColors.primaryColor),
                           ),
                           !isPriceSelected
-                              ? const Icon(
+                              ? Icon(
                                   Icons.arrow_upward,
                                   color: AppColors.primaryColor,
-                                  size: 16,
+                                  size: 16.w,
                                 )
-                              : const Icon(
+                              : Icon(
                                   Icons.arrow_downward,
                                   color: AppColors.white,
-                                  size: 16,
+                                  size: 16.w,
                                 )
                         ],
                       ),
@@ -354,13 +351,12 @@ class _EstatesScreenState extends State<EstatesScreen> {
                           "$isDateSelected");
                     },
                     child: Container(
-                      height: 30,
+                      height: 30.h,
                       decoration: BoxDecoration(
                         color: isDateSelected
                             ? AppColors.primaryColor
                             : AppColors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
+                        borderRadius: smallBorderRadius,
                         border: Border.all(color: AppColors.primaryColor),
                       ),
                       child: Row(
@@ -377,15 +373,15 @@ class _EstatesScreenState extends State<EstatesScreen> {
                                         : AppColors.primaryColor),
                           ),
                           !isDateSelected
-                              ? const Icon(
+                              ? Icon(
                                   Icons.arrow_upward,
                                   color: AppColors.primaryColor,
-                                  size: 16,
+                                  size: 16.w,
                                 )
-                              : const Icon(
+                              : Icon(
                                   Icons.arrow_downward,
                                   color: AppColors.white,
-                                  size: 16,
+                                  size: 16.w,
                                 )
                         ],
                       ),
@@ -402,20 +398,21 @@ class _EstatesScreenState extends State<EstatesScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: kTinyAllPadding,
           child: Container(
             alignment: Alignment.center,
-            height: 50,
+            height: 60.h,
             width: getScreenWidth(context),
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              borderRadius: lowBorderRadius,
               border: Border.all(color: AppColors.yellowDarkColor),
             ),
-            child: Text(
+            child: ResText(
               AppLocalizations.of(context)!.identical_estates,
-              style: Theme.of(context).textTheme.headline4!.copyWith(
-                fontWeight: FontWeight.w700
-              ),
+              textStyle: Theme.of(context)
+                  .textTheme
+                  .headline4!
+                  .copyWith(fontWeight: FontWeight.w700),
             ),
           ),
         ),
@@ -442,7 +439,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
             ),
             child: SpinKitWave(
               color: Theme.of(context).colorScheme.primary,
-              size: 50,
+              size: 50.w,
             ),
           ),
       ],
@@ -454,20 +451,21 @@ class _EstatesScreenState extends State<EstatesScreen> {
       children: [
         kHe44,
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: kTinyAllPadding,
           child: Container(
             alignment: Alignment.center,
-            height: 50,
+            height: 60.h,
             width: getScreenWidth(context),
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              borderRadius: lowBorderRadius,
               border: Border.all(color: AppColors.yellowDarkColor),
             ),
-            child: Text(
+            child: ResText(
               AppLocalizations.of(context)!.similar_estates,
-              style: Theme.of(context).textTheme.headline4!.copyWith(
-                  fontWeight: FontWeight.w700
-              ),
+              textStyle: Theme.of(context)
+                  .textTheme
+                  .headline4!
+                  .copyWith(fontWeight: FontWeight.w700),
             ),
           ),
         ),
@@ -494,7 +492,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
             ),
             child: SpinKitWave(
               color: Theme.of(context).colorScheme.primary,
-              size: 50,
+              size: 50.w,
             ),
           ),
       ],

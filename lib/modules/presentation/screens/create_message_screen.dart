@@ -22,6 +22,7 @@ import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/user_authentication_repository.dart';
 import '../widgets/fetch_result.dart';
+import '../widgets/res_text.dart';
 import '../widgets/shimmers/details_shimmer.dart';
 
 class CreateMessageScreen extends StatefulWidget {
@@ -74,13 +75,13 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
           children: [
             kHe24,
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: kTinyAllPadding,
               child: Row(
                 children: [
-                  Text(
+                  ResText(
                     AppLocalizations.of(context)!.your_contact_details,
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          fontSize: 16,
+                    textStyle: Theme.of(context).textTheme.headline6!.copyWith(
+                          fontSize: 16.sp,
                           color: isDark
                               ? AppColors.primaryDark
                               : AppColors.primaryColor,
@@ -175,16 +176,16 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8),
+          padding: kSmallSymHeight,
           child: Row(
             children: [
               Expanded(
                 flex: 1,
-                child: Text(
+                child: ResText(
                   leading,
-                  style: Theme.of(context).textTheme.headline5!.copyWith(
-                        height: 2,
-                        fontSize: 18,
+                  textStyle: Theme.of(context).textTheme.headline5!.copyWith(
+                        height: 2.h,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w500,
                         color:
                             !isDark ? AppColors.primaryColor : AppColors.white,
@@ -194,7 +195,7 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
               kWi16,
               Expanded(
                 flex: 3,
-                child: Text(
+                child: ResText(
                   leading == AppLocalizations.of(context)!.telephone
                       ? isArabic
                           ? title.split("+")[1] + "+"
@@ -215,14 +216,14 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
       children: [
         kHe24,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
           child: Row(
             children: [
-              Text(
+              ResText(
                 AppLocalizations.of(context)!.your_message + " :",
-                style: Theme.of(context).textTheme.headline5!.copyWith(
-                      height: 2,
-                      fontSize: 18,
+                textStyle: Theme.of(context).textTheme.headline5!.copyWith(
+                      height: 2.h,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.w500,
                       color: isDark
                           ? AppColors.primaryDark
@@ -234,13 +235,13 @@ class _CreateMessageScreenState extends State<CreateMessageScreen> {
         ),
         kHe16,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
           child: Container(
             width: inf,
             padding: kSmallSymWidth,
             height: 250.h,
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
+              borderRadius: smallBorderRadius,
               border: Border.all(color: Colors.black),
             ),
             child: TextField(

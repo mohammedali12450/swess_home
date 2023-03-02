@@ -41,8 +41,8 @@ class _UpdateVersionScreenState extends State<UpdateVersionScreen> {
   Widget buildDialog() {
     return AlertDialog(
       title: Text(AppLocalizations.of(context)!.caution),
-      titleTextStyle: const TextStyle(
-          fontWeight: FontWeight.bold, color: Colors.red, fontSize: 20),
+      titleTextStyle: TextStyle(
+          fontWeight: FontWeight.bold, color: Colors.red, fontSize: 20.sp),
       actionsOverflowButtonSpacing: 20,
       actions: [
         /* ElevatedButton(
@@ -82,7 +82,7 @@ class _UpdateVersionScreenState extends State<UpdateVersionScreen> {
         ),
       ],
       content: Text(AppLocalizations.of(context)!.has_update),
-      contentTextStyle: const TextStyle(color: Colors.black, fontSize: 16),
+      contentTextStyle: TextStyle(color: Colors.black, fontSize: 16.sp),
     );
   }
 }

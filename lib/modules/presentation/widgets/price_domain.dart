@@ -18,12 +18,12 @@ import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 
 class PriceDomainWidget extends StatefulWidget {
-  SearchData searchData;
-  ChannelCubit startPriceCubit;
-  ChannelCubit endPriceCubit;
-  ChannelCubit isRentCubit;
+  final SearchData searchData;
+  final ChannelCubit startPriceCubit;
+  final ChannelCubit endPriceCubit;
+  final ChannelCubit isRentCubit;
 
-  PriceDomainWidget(
+  const PriceDomainWidget(
       {required this.searchData,
       required this.isRentCubit,
       required this.endPriceCubit,
@@ -54,8 +54,9 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
     minPrice = PriceDomainSearch.getPriceListFormat(priceDomains!.sale.min);
     maxPrice = PriceDomainSearch.getPriceListFormat(priceDomains!.sale.max);
 
-    widget.searchData.priceMax =  priceDomains!.sale.max[priceDomains!.sale.max.length - 1];
-    widget.searchData.priceMin =  priceDomains!.sale.min[0];
+    widget.searchData.priceMax =
+        priceDomains!.sale.max[priceDomains!.sale.max.length - 1];
+    widget.searchData.priceMin = priceDomains!.sale.min[0];
   }
 
   @override
@@ -65,7 +66,7 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: kTinyAllPadding,
           child: Row(
             children: [
               const Icon(Icons.price_change_outlined),
@@ -171,8 +172,7 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 8.w),
                                       decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(8)),
+                                          borderRadius: lowBorderRadius,
                                           border: Border.all(
                                             color: !isDark
                                                 ? Colors.black38
@@ -257,9 +257,7 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 8.w),
                                         decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(8)),
+                                            borderRadius: lowBorderRadius,
                                             border: Border.all(
                                               color: !isDark
                                                   ? Colors.black38

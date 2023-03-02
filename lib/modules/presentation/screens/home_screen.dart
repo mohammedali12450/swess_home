@@ -1,42 +1,25 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/screen_informations.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/estate_spacial_bloc/estate_spacial_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:swesshome/modules/data/models/estate.dart';
-import '../../../constants/application_constants.dart';
-import '../../../core/storage/shared_preferences/application_shared_preferences.dart';
-import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
-import '../../business_logic_components/bloc/estate_bloc/estate_bloc.dart';
-import '../../business_logic_components/bloc/estate_newest_bloc/estate_newest_bloc.dart';
-import '../../business_logic_components/bloc/estate_newest_bloc/estate_newest_event.dart';
-import '../../business_logic_components/bloc/estate_newest_bloc/estate_newest_state.dart';
-import '../../business_logic_components/bloc/estate_spacial_bloc/estate_spacial_event.dart';
-import '../../business_logic_components/bloc/estate_spacial_bloc/estate_spacial_state.dart';
-import '../../business_logic_components/bloc/estate_view_bloc/estate_view_bloc.dart';
-import '../../business_logic_components/bloc/estate_view_bloc/estate_view_event.dart';
-import '../../business_logic_components/bloc/estate_view_bloc/estate_view_state.dart';
-import '../../business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
-import '../../business_logic_components/bloc/fcm_bloc/fcm_event.dart';
-import '../../data/providers/locale_provider.dart';
-import '../../data/providers/theme_provider.dart';
-import '../../data/repositories/estate_repository.dart';
-import '../widgets/app_drawer.dart';
-import '../widgets/home_estate_card.dart';
-import '../widgets/shimmer_widget.dart';
-import '../widgets/shimmers/estates_shimmer.dart';
-import 'estate_details_screen.dart';
 
-late EstateBloc estateBloc;
-late EstateViewBloc estateViewBloc;
-late EstateNewestBloc estateNewestBloc;
-late EstateSpacialBloc estateSpacialBloc;
+import '../../../constants/assets_paths.dart';
+import '../../../constants/colors.dart';
+import '../../../constants/design_constants.dart';
+import '../../../core/functions/screen_informations.dart';
+import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../../business_logic_components/bloc/last_visited_estates_bloc/last_visited_estates_bloc.dart';
+import '../../business_logic_components/bloc/last_visited_estates_bloc/last_visited_estates_state.dart';
+import '../../data/models/estate.dart';
+import '../../data/repositories/last_visited_repository.dart';
+import '../widgets/app_drawer.dart';
+import '../widgets/estate_card.dart';
+import '../widgets/shimmers/estates_shimmer.dart';
+import 'filter_search_screen.dart';
+import 'office_search_screen.dart';
+
+late LastVisitedEstatesBloc lastVisitedEstatesBloc;
 
 class HomeScreen extends StatefulWidget {
   static const String id = "HomeScreen";
@@ -48,289 +31,267 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  late bool isArabic;
-  late bool isDark;
-  List<Estate> estateNewest = [];
-  List<SpecialEstate> estateSpacial = [];
-  List<Estate> estateMostView = [];
+  List<Estate> estateSearch = [];
 
   @override
   void initState() {
     super.initState();
-    estateNewestBloc = EstateNewestBloc(EstateRepository());
-    estateViewBloc = EstateViewBloc(EstateRepository());
-    estateSpacialBloc = EstateSpacialBloc(EstateRepository());
-    estateBloc = EstateBloc(EstateRepository());
-    ApplicationSharedPreferences.setWalkThroughPassState(true);
-    _onRefresh();
-    if (UserSharedPreferences.getAccessToken() != null) {
-      sendFcmToken(0);
-    }
-  }
-
-  _onRefresh() async {
-    estateNewestBloc.add(NewestEstatesFetchStarted());
-    estateViewBloc.add(MostViewEstatesFetchStarted());
-    estateSpacialBloc.add(SpacialEstatesFetchStarted());
-  }
-
-  Future sendFcmToken(int attempt) async {
-    if (attempt == 5) return;
-    if (firebaseToken == null) {
-      await Future.delayed(const Duration(seconds: 3));
-      sendFcmToken(attempt + 1);
-    }
-    BlocProvider.of<FcmBloc>(context).add(
-      SendFcmTokenProcessStarted(
-          userToken: UserSharedPreferences.getAccessToken()!),
-    );
+    lastVisitedEstatesBloc = LastVisitedEstatesBloc(LastVisitedRepository());
   }
 
   @override
   Widget build(BuildContext context) {
-    //super.build(context);
-    isArabic = Provider.of<LocaleProvider>(context).isArabic();
-    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          AppLocalizations.of(context)!.application_name,
-        ),
-        leading: Builder(
-          builder: (context) {
-            return Container(
-              margin: EdgeInsets.only(
-                right: isArabic ? 8.w : 0,
-                left: !isArabic ? 8.w : 0,
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              ),
-            );
-          },
-        ),
-      ),
-      body: RefreshIndicator(
-        color: Theme.of(context).colorScheme.primary,
-        onRefresh: () {
-          return _onRefresh();
-        },
-        child: ListView(
-          children: [
-            const AdvertisementsEstate(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-              child: Text(
-                AppLocalizations.of(context)!.new_estate + " :",
-                style: Theme.of(context)
-                    .textTheme
-                    .headline5!
-                    .copyWith(fontWeight: FontWeight.w600, fontSize: 20),
-              ),
-            ),
-            buildNewEstate(),
-            kHe16,
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-              child: Text(
-                AppLocalizations.of(context)!.most_common + " :",
-                style: Theme.of(context)
-                    .textTheme
-                    .headline5!
-                    .copyWith(fontWeight: FontWeight.w600, fontSize: 20),
-              ),
-            ),
-            buildMostViewEstate(),
-          ],
-        ),
-      ),
-      drawer: const Drawer(
-        child: MyDrawer(),
-      ),
-    );
-  }
-
-  Widget buildNewEstate() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: BlocBuilder<EstateNewestBloc, EstateNewestState>(
-        bloc: estateNewestBloc,
-        builder: (_, estateState) {
-          if (estateState is EstateNewestFetchProgress) {
-            return const PropertyShimmer();
-          }
-          if (estateState is EstateNewestFetchComplete) {
-            if (estateNewest.isEmpty) {
-              estateNewest = estateState.estates;
-            }
-          }
-          return SizedBox(
-            height: !isDark ? 475.h : 485.h,
-            child: ListView.builder(
-              itemCount: estateNewest.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding:
-                      EdgeInsets.only(left: 18.w, right: 3.w, bottom: 20.h),
-                  child: HomeEstateCard(estate: estateNewest.elementAt(index)),
-                );
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget buildMostViewEstate() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: BlocBuilder<EstateViewBloc, EstateViewState>(
-        bloc: estateViewBloc,
-        builder: (_, estateState) {
-          if (estateState is EstateMostViewFetchProgress) {
-            return const PropertyShimmer();
-          }
-          if (estateState is EstateMostViewFetchComplete) {
-            if (estateMostView.isEmpty) {
-              estateMostView = estateState.estates;
-            }
-          }
-          return SizedBox(
-            height: !isDark ? 475.h : 485.h,
-            child: ListView.builder(
-              itemCount: estateMostView.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding:
-                  EdgeInsets.only(left: 18.w, right: 3.w, bottom: 20.h),
-                  child: HomeEstateCard(estate: estateMostView.elementAt(index)),
-                );
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-List<SpecialEstate> imgList = [];
-
-List<Widget> imageSliders = [];
-
-class AdvertisementsEstate extends StatefulWidget {
-  const AdvertisementsEstate({Key? key}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return _AdvertisementsEstateState();
-  }
-}
-
-class _AdvertisementsEstateState extends State<AdvertisementsEstate> {
-  ChannelCubit currentCubit = ChannelCubit(0);
-  final CarouselController _controller = CarouselController();
-
-  @override
-  Widget build(BuildContext context) {
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return BlocBuilder<EstateSpacialBloc, EstateSpacialState>(
-      bloc: estateSpacialBloc,
-      builder: (_, spacialState) {
-        if (spacialState is EstateSpacialFetchProgress) {
-          return ShimmerWidget.rectangular(
-            baseColor: isDark ? Colors.grey[400] : Colors.grey[300],
-            highlightColor: isDark ? Colors.grey[300] : Colors.grey[200],
-            height: 300.h,
-          );
-        }
-        if (spacialState is EstateSpacialFetchComplete) {
-          imgList = spacialState.estates;
-          imageSliders = imgList
-              .map((item) => InkWell(
-                    child: Container(
-                      margin: const EdgeInsets.all(5.0),
-                      child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(12.0)),
-                          child: CachedNetworkImage(
-                              imageUrl: item.imageUrl!,
-                              fit: BoxFit.cover,
-                              width: 1000.0)),
-                    ),
-                    onTap: () async {
-                      EstateRepository estateRepository = EstateRepository();
-                      Estate estate =
-                          await estateRepository.getEstate(item.estateId!);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => EstateDetailsScreen(
-                            estate: estate,
-                          ),
-                        ),
-                      );
-                    },
-                  ))
-              .toList();
-        }
-        return BlocBuilder<ChannelCubit, dynamic>(
-          bloc: currentCubit,
-          builder: (_, current) {
-            return Column(
-              children: [
-                SizedBox(
-                  width: getScreenWidth(context),
-                  child: CarouselSlider(
-                    items: imageSliders,
-                    carouselController: _controller,
-                    options: CarouselOptions(
-                        //height: 230,
-                        autoPlay: true,
-                        viewportFraction: 1.0,
-                        //enlargeCenterPage: true,
-                        // aspectRatio: 1.7,
-                        onPageChanged: (index, _) {
-                          currentCubit.setState(index);
-                        }),
+      appBar: AppBar(),
+      body: Center(
+          child: UserSharedPreferences.getAccessToken() == null
+              ? buildEmptyScreen(context)
+              : buildEstateList(context)),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.symmetric(vertical: 5.w),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: GestureDetector(
+              child: Card(
+                color: AppColors.primaryColor,
+                elevation: 4,
+                shape: StadiumBorder(
+                  side: BorderSide(
+                    color: AppColors.yellowColor,
+                    width: 2,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: imgList.asMap().entries.map((entry) {
-                    return GestureDetector(
-                      onTap: () => _controller.animateToPage(entry.key),
-                      child: Container(
-                        width: 8.0,
-                        height: 8.0,
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 4.0),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color:
-                                (Theme.of(context).brightness == Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black)
-                                    .withOpacity(currentCubit.state == entry.key
-                                        ? 0.9
-                                        : 0.4)),
-                      ),
-                    );
-                  }).toList(),
+                child: Container(
+                  width: 100.w,
+                  alignment: Alignment.center,
+                  height: 72.h,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 2.h),
+                    child: Text(
+                      AppLocalizations.of(context)!.search,
+                      style: TextStyle(color: AppColors.white, fontSize: 20.sp),
+                    ),
+                  ),
                 ),
-              ],
-            );
-          },
-        );
-      },
+              ),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                    elevation: 2,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.h, horizontal: 12.w),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.background,
+                        borderRadius: lowBorderRadius,
+                      ),
+                      child: Padding(
+                        padding: kTinyAllPadding,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            15.verticalSpace,
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const FilterSearchScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.home_work_outlined),
+                                    kWi16,
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                          .estate_search,
+                                      style:
+                                          Theme.of(context).textTheme.headline5,
+                                    ),
+                                  ],
+                                )),
+                            const Divider(
+                              indent: 20,
+                              thickness: 0.1,
+                              endIndent: 20,
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const OfficeSearchScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.house_outlined),
+                                    kWi16,
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                          .search_for_estate_agent,
+                                      style:
+                                          Theme.of(context).textTheme.headline5,
+                                    ),
+                                  ],
+                                )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+      drawer: SizedBox(
+        width: getScreenWidth(context) * (75 / 100),
+        child: const Drawer(
+          child: MyDrawer(),
+        ),
+      ),
+    );
+  }
+
+  Widget buildEstateList(context) {
+    return Stack(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+          child: Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: kTinyAllPadding,
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: 70.h,
+                    //width: getScreenWidth(context),
+                    decoration: BoxDecoration(
+                      borderRadius: lowBorderRadius,
+                      border: Border.all(color: AppColors.yellowDarkColor),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.location,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline4!
+                          .copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ), Expanded(
+                child: Padding(
+                  padding: kTinyAllPadding,
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: 70.h,
+                    //width: getScreenWidth(context),
+                    decoration: BoxDecoration(
+                      borderRadius: lowBorderRadius,
+                      border: Border.all(color: AppColors.yellowDarkColor),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.estate_type,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline4!
+                          .copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: kTinyAllPadding,
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: 70.h,
+                    //width: getScreenWidth(context),
+                    decoration: BoxDecoration(
+                      borderRadius: lowBorderRadius,
+                      border: Border.all(color: AppColors.yellowDarkColor),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.by_price,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline4!
+                          .copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 70.h),
+          child: BlocBuilder<LastVisitedEstatesBloc, LastVisitedEstatesState>(
+              bloc: lastVisitedEstatesBloc,
+              builder: (_, estateState) {
+                if (estateState is LastVisitedEstatesFetchComplete) {
+                  estateSearch = estateState.lastVisitedEstates;
+                }
+                if (estateState is LastVisitedEstatesFetchProgress) {
+                  return const PropertyShimmer();
+                }
+                if (estateSearch.isEmpty) {
+                  return buildEmptyScreen(context);
+                }
+                return Stack(
+                  children: [
+                    kHe24,
+                    ListView.builder(
+                      itemBuilder: (_, index) {
+                        return EstateCard(
+                          estate: estateSearch.elementAt(index),
+                          removeCloseButton: true,
+                          color: Theme.of(context).colorScheme.background,
+                        );
+                      },
+                      itemCount: estateSearch.length,
+                    ),
+                  ],
+                );
+              }),
+        ),
+      ],
+    );
+  }
+
+  Widget buildEmptyScreen(context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            documentOutlineIconPath,
+            width: 0.5.sw,
+            height: 0.5.sw,
+            color: Theme.of(context).colorScheme.onBackground.withOpacity(0.42),
+          ),
+          48.verticalSpace,
+          Text(
+            AppLocalizations.of(context)!.have_not_recent_search,
+            style: Theme.of(context).textTheme.headline4,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

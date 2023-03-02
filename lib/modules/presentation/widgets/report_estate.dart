@@ -64,10 +64,10 @@ void showReportModalBottomSheet(context, int estateId) {
                             context,
                             AppLocalizations.of(context)!.caution,
                             AppLocalizations.of(context)!.question_reporting,
-                            titleTextStyle: const TextStyle(
+                            titleTextStyle: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.red,
-                                fontSize: 20),
+                                fontSize: 20.sp),
                             removeDefaultButton: true,
                             dialogButtons: [
                                 ElevatedButton(
@@ -157,10 +157,10 @@ void showReportModalBottomSheet(context, int estateId) {
                                       children: [
                                         Text(
                                           AppLocalizations.of(context)!.caution,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.red,
-                                              fontSize: 20),
+                                              fontSize: 20.sp),
                                         ),
                                         24.verticalSpace,
                                         Wrap(

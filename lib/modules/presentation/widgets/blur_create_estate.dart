@@ -2,9 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
+import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 
 import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
@@ -21,13 +23,9 @@ void showBlurScreen({context}) {
             elevation: 0,
             backgroundColor: Colors.transparent,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               height: getScreenHeight(context) / 1.5,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8),
-                ),
-              ),
+              decoration: const BoxDecoration(borderRadius: lowBorderRadius),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.min,
@@ -38,13 +36,13 @@ void showBlurScreen({context}) {
                         children: [
                           Icon(
                             Icons.home_outlined,
-                            size: 50,
+                            size: 50.w,
                             color: AppColors.yellowColor,
                           ),
                           kHe12,
-                          Text(
+                          ResText(
                             AppLocalizations.of(context)!.create_estate_order,
-                            style: Theme.of(context)
+                            textStyle: Theme.of(context)
                                 .textTheme
                                 .headline5!
                                 .copyWith(color: AppColors.white),
@@ -95,13 +93,13 @@ void showBlurScreen({context}) {
                       children: [
                         Icon(
                           Icons.house_outlined,
-                          size: 50,
+                          size: 50.w,
                           color: AppColors.yellowColor,
                         ),
                         kHe12,
-                        Text(
+                        ResText(
                           AppLocalizations.of(context)!.estate_immediately,
-                          style: Theme.of(context)
+                          textStyle: Theme.of(context)
                               .textTheme
                               .headline5!
                               .copyWith(color: AppColors.white),
@@ -119,7 +117,7 @@ void showBlurScreen({context}) {
                   ),
                   if (UserSharedPreferences.getAccessToken() == null)
                     SizedBox(
-                      width: 150,
+                      width: 150.w,
                       child: Center(
                         child: Text(
                           AppLocalizations.of(context)!.login_new_features,

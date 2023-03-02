@@ -55,10 +55,13 @@ class _MyDropdownListState extends State<MyDropdownList> {
         return DropdownButtonFormField(
           validator: widget.validator,
           decoration: InputDecoration(
+              errorStyle: TextStyle(
+                height: 0.1.h
+              ),
               hintText: widget.selectedItem,
               hintStyle: TextStyle(
                 color: isDark ? Colors.white : Colors.black,
-                fontSize: 12,
+                fontSize: 15.sp,
               )),
           isExpanded: true,
           items: widget.elementsList.map(
@@ -77,6 +80,9 @@ class _MyDropdownListState extends State<MyDropdownList> {
                   ),
                   child: Text(
                     element.toString(),
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                      height: 0.5.h
+                    ),
                   ),
                 ),
               );

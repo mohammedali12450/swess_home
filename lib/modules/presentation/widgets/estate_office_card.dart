@@ -30,9 +30,7 @@ class EstateOfficeCard extends StatelessWidget {
       //   },
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(8),
-          ),
+          borderRadius: lowBorderRadius,
           color: Theme.of(context).colorScheme.background,
         ),
         height: 120.h,

@@ -34,8 +34,7 @@ class UserAuthenticationProvider {
     NetworkHelper helper = NetworkHelper();
     Response response;
     try {
-      response =
-          await helper.post(sendCodeURL, {"authentication": mobile});
+      response = await helper.post(sendCodeURL, {"authentication": mobile});
     } catch (e) {
       rethrow;
     }
@@ -64,6 +63,24 @@ class UserAuthenticationProvider {
         "password": password,
         "password_confirmation": confirmPassword
       });
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+
+  Future changePassword(
+      String oldPassword, String newPassword, String token) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+    try {
+      response = await helper.post(
+          changePasswordURL,
+          {
+            "old_password": oldPassword,
+            "new_password": newPassword,
+          },
+          token: token);
     } catch (e) {
       rethrow;
     }

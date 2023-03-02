@@ -12,10 +12,8 @@ import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/re
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/search_office_results_bloc/search_offices_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate_office.dart';
-import 'package:swesshome/modules/data/models/location.dart';
 import 'package:swesshome/modules/data/repositories/estate_offices_repository.dart';
 import 'package:swesshome/modules/presentation/screens/estate_office_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';
@@ -28,6 +26,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
+import '../widgets/res_text.dart';
 
 class OfficeSearchScreen extends StatefulWidget {
   static const String id = 'OfficeSearchScreen';
@@ -50,8 +49,6 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
   final ScrollController _scrollController = ScrollController();
 
   // Others :
-
-  late List<Location> locations;
   List<OfficeSearchType> searchTypes = [
     OfficeSearchType.name,
     OfficeSearchType.area,
@@ -67,11 +64,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
   @override
   void initState() {
     super.initState();
-    locations = BlocProvider.of<LocationsBloc>(context).locations ?? [];
-
-    if (BlocProvider.of<UserLoginBloc>(context).user != null) {
-      token = UserSharedPreferences.getAccessToken();
-    }
+    token = UserSharedPreferences.getAccessToken();
   }
 
   @override
@@ -86,7 +79,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
             children: [
               Text(
                 AppLocalizations.of(context)!.search_for_estate_agent,
-                style: const TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: 17.sp),
               ),
               const Spacer(),
               BlocBuilder<ChannelCubit, dynamic>(
@@ -98,13 +91,13 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                     padding: EdgeInsets.only(left: 10.w, top: 8.w, right: 10.w),
                     child: Container(
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: lowBorderRadius,
                           border: Border.all(
                             color: Colors.white,
                             width: 1.5,
                           )),
                       padding:
-                          EdgeInsets.only(right: 8.w, bottom: 3.w, left: 8.w),
+                          EdgeInsets.only(right: 8.w, bottom: 3.h, left: 8.w),
                       height: 48.h,
                       width: 160.w,
                       child: buildDropDown(isDark),
@@ -334,7 +327,7 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
               if (searchTypeCubit.state == OfficeSearchType.area) ...[
                 SizedBox(
                   width: inf,
-                  child: Text(
+                  child: ResText(
                     AppLocalizations.of(context)!.offices_in_this_area + " :",
                   ),
                 ),
@@ -374,9 +367,9 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
 
   DropdownButtonFormField buildDropDown(isDark) {
     return DropdownButtonFormField(
-      icon: const Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Icon(
+      icon: Padding(
+        padding: EdgeInsets.only(left: 8.w),
+        child: const Icon(
           Icons.arrow_drop_down_sharp,
           color: Colors.white,
         ),
@@ -385,9 +378,9 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
       decoration: InputDecoration(
           contentPadding: EdgeInsets.only(bottom: 8.w),
           hintText: AppLocalizations.of(context)!.search_by_name,
-          hintStyle: const TextStyle(
+          hintStyle: TextStyle(
             color: Colors.white,
-            fontSize: 13,
+            fontSize: 15.sp,
           )),
       isExpanded: true,
       items: searchTypes.map(
@@ -402,15 +395,15 @@ class _OfficeSearchScreenState extends State<OfficeSearchScreen> {
                 left:
                     Provider.of<LocaleProvider>(context).isArabic() ? 0 : 16.w,
               ),
-              child: Text(
+              child: ResText(
                 (element.name == "area")
                     ? AppLocalizations.of(context)!.search_by_area
                     : (element.name == "neighborhood")
                         ? AppLocalizations.of(context)!.search_neighborhood
                         : AppLocalizations.of(context)!.search_by_name,
-                style: const TextStyle(
+                textStyle: TextStyle(
                   color: Colors.white,
-                  fontSize: 13,
+                  fontSize: 15.sp,
                 ),
               ),
             ),

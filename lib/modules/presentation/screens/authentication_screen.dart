@@ -1,11 +1,9 @@
 import 'package:contacts_service/contacts_service.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:intl/intl.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
@@ -43,11 +41,11 @@ import '../../data/models/governorates.dart';
 import '../../data/providers/theme_provider.dart';
 import '../pages/contact_list_page.dart';
 import '../pages/terms_condition_page.dart';
-import '../widgets/date_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../widgets/res_text.dart';
 import 'navigation_bar_screen.dart';
+import 'dart:ui' as ui;
 
 class AuthenticationScreen extends StatefulWidget {
   static const String id = "AuthenticationScreen";
@@ -74,16 +72,16 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   ChannelCubit repeatPasswordError = ChannelCubit(null);
   ChannelCubit firstNameError = ChannelCubit(null);
   ChannelCubit lastNameError = ChannelCubit(null);
-  ChannelCubit emailError = ChannelCubit(null);
+  //ChannelCubit emailError = ChannelCubit(null);
   ChannelCubit countryError = ChannelCubit(null);
-  ChannelCubit birthdateError = ChannelCubit(null);
+ // ChannelCubit birthdateError = ChannelCubit(null);
   ChannelCubit userCountry = ChannelCubit(null);
   late UserRegisterBloc userRegisterBloc;
   late UserLoginBloc userLoginBloc;
   late GovernoratesBloc governoratesBloc;
   late String phoneDialCode;
   int selectedGovernorateId = 0;
-  DateTime? birthDate;
+  //DateTime? birthDate;
   late String phoneDialCodeLogin;
   String phoneNumber = "";
   bool isCheck = false;
@@ -97,7 +95,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  TextEditingController birthdateController = TextEditingController();
+  //TextEditingController birthdateController = TextEditingController();
 
   // Others :
   bool isForStore = false;
@@ -124,7 +122,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     }
     userCountry.setState("Syrian Arab Republic");
     getCurrentPosition();
-    //_askPermissions();
+    _askPermissions();
     //getContact();
   }
 
@@ -145,12 +143,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     if (errorResponseMap.containsKey("password")) {
       passwordError.setState(errorResponseMap["password"].first);
     }
-    if (errorResponseMap.containsKey("email")) {
-      emailError.setState(errorResponseMap["email"].first);
-    }
-    if (errorResponseMap.containsKey("birthOfDate")) {
-      birthdateError.setState(errorResponseMap["birthOfDate"].first);
-    }
+    // if (errorResponseMap.containsKey("email")) {
+    //   emailError.setState(errorResponseMap["email"].first);
+    // }
+    // if (errorResponseMap.containsKey("birthOfDate")) {
+    //   birthdateError.setState(errorResponseMap["birthOfDate"].first);
+    // }
   }
 
   void loginErrorHandling(errorResponseMap) {
@@ -423,21 +421,24 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             textStyle: Theme.of(context).textTheme.headline6,
           ),
           kHe8,
-          BlocBuilder<ChannelCubit, dynamic>(
-            bloc: authenticationErrorLogin,
-            builder: (_, errorMessage) {
-              return IntlPhoneField(
-                controller: authenticationControllerLogin,
-                decoration: InputDecoration(errorText: errorMessage),
-                initialCountryCode: isForStore ? 'LB' : 'SY',
-                onChanged: (phone) {
-                  phoneDialCodeLogin = phone.countryCode;
-                  authenticationErrorLogin.setState(null);
-                },
-                disableLengthCheck: true,
-                autovalidateMode: AutovalidateMode.disabled,
-              );
-            },
+          Directionality(
+            textDirection: ui.TextDirection.ltr,
+            child: BlocBuilder<ChannelCubit, dynamic>(
+              bloc: authenticationErrorLogin,
+              builder: (_, errorMessage) {
+                return IntlPhoneField(
+                  controller: authenticationControllerLogin,
+                  decoration: InputDecoration(errorText: errorMessage),
+                  initialCountryCode: isForStore ? 'LB' : 'SY',
+                  onChanged: (phone) {
+                    phoneDialCodeLogin = phone.countryCode;
+                    authenticationErrorLogin.setState(null);
+                  },
+                  disableLengthCheck: true,
+                  autovalidateMode: AutovalidateMode.disabled,
+                );
+              },
+            ),
           ),
           kHe16,
           ResText(
@@ -455,7 +456,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     style: Theme.of(context)
                         .textTheme
                         .subtitle1!
-                        .copyWith(height: 2),
+                        .copyWith(height: 2.h),
                     onChanged: (_) {
                       passwordErrorLogin.setState(null);
                     },
@@ -607,25 +608,28 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             textStyle: Theme.of(context).textTheme.headline6,
           ),
           kHe8,
-          BlocBuilder<ChannelCubit, dynamic>(
-            bloc: authenticationError,
-            builder: (_, errorMessage) {
-              return IntlPhoneField(
-                onCountryChanged: (country) {
-                  userCountry.setState(country.name);
-                },
-                controller: authenticationController,
-                decoration:
-                    InputDecoration(errorText: errorMessage, errorMaxLines: 2),
-                initialCountryCode: isForStore ? 'LB' : 'SY',
-                onChanged: (phone) {
-                  phoneDialCode = phone.countryCode;
-                  authenticationError.setState(null);
-                },
-                disableLengthCheck: true,
-                autovalidateMode: AutovalidateMode.disabled,
-              );
-            },
+          Directionality(
+            textDirection: ui.TextDirection.ltr,
+            child: BlocBuilder<ChannelCubit, dynamic>(
+              bloc: authenticationError,
+              builder: (_, errorMessage) {
+                return IntlPhoneField(
+                  onCountryChanged: (country) {
+                    userCountry.setState(country.name);
+                  },
+                  controller: authenticationController,
+                  decoration:
+                      InputDecoration(errorText: errorMessage, errorMaxLines: 2),
+                  initialCountryCode: isForStore ? 'LB' : 'SY',
+                  onChanged: (phone) {
+                    phoneDialCode = phone.countryCode;
+                    authenticationError.setState(null);
+                  },
+                  disableLengthCheck: true,
+                  autovalidateMode: AutovalidateMode.disabled,
+                );
+              },
+            ),
           ),
           kHe24,
           ResText(
@@ -758,28 +762,31 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               );
             },
           ),
-          kHe24,
-          ResText(
-            AppLocalizations.of(context)!.email + " :",
-            textStyle: Theme.of(context).textTheme.headline6,
-          ),
-          kHe8,
-          BlocBuilder<ChannelCubit, dynamic>(
-            bloc: emailError,
-            builder: (_, errorMessage) {
-              return TextField(
-                onChanged: (_) {
-                  emailError.setState(null);
-                },
-                controller: emailController,
-                decoration: InputDecoration(
-                  errorText: errorMessage,
-                  hintText: AppLocalizations.of(context)!.enter_your_email,
-                  isCollapsed: false,
-                ),
-              );
-            },
-          ),
+
+          //buildEmailField
+          // kHe24,
+          // ResText(
+          //   AppLocalizations.of(context)!.email + " :",
+          //   textStyle: Theme.of(context).textTheme.headline6,
+          // ),
+          // kHe8,
+          // BlocBuilder<ChannelCubit, dynamic>(
+          //   bloc: emailError,
+          //   builder: (_, errorMessage) {
+          //     return TextField(
+          //       onChanged: (_) {
+          //         emailError.setState(null);
+          //       },
+          //       controller: emailController,
+          //       decoration: InputDecoration(
+          //         errorText: errorMessage,
+          //         hintText: AppLocalizations.of(context)!.enter_your_email,
+          //         isCollapsed: false,
+          //       ),
+          //     );
+          //   },
+          // ),
+
           BlocBuilder<ChannelCubit, dynamic>(
             bloc: userCountry,
             builder: (_, state) {
@@ -846,46 +853,47 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             },
           ),
           kHe24,
-          ResText(
-            AppLocalizations.of(context)!.date_of_birth + " :",
-            textStyle: Theme.of(context).textTheme.headline6,
-          ),
-          kHe8,
-          BlocBuilder<ChannelCubit, dynamic>(
-            bloc: birthdateError,
-            builder: (_, errorMessage) {
-              return TextField(
-                onTap: () async {
-                  await myDatePicker(
-                    context,
-                    showTitleActions: true,
-                    minTime: DateTime(1900, 1, 1),
-                    maxTime: DateTime.now(),
-                    onConfirm: (birthdate) {
-                      birthDate = birthdate;
-                      birthdateController.text =
-                          DateFormat('yyyy/MM/dd').format(birthdate);
-                      print(birthDate);
-                      print(birthdateController.text);
-                      // birthDate = DateTime.parse(birthdateController.text);
-                      // print(birthDate);
-                    },
-                    currentTime: DateTime.now(),
-                    editingController: birthdateController,
-                  );
-                },
-                readOnly: true,
-                controller: birthdateController,
-                decoration: InputDecoration(
-                  errorText: errorMessage,
-                  hintText: AppLocalizations.of(context)!.enter_your_birth_date,
-                  isCollapsed: false,
-                ),
-              );
-            },
-          ),
 
-          kHe24,
+          //build date of birth field
+          // ResText(
+          //   AppLocalizations.of(context)!.date_of_birth + " :",
+          //   textStyle: Theme.of(context).textTheme.headline6,
+          // ),
+          // kHe8,
+          // BlocBuilder<ChannelCubit, dynamic>(
+          //   bloc: birthdateError,
+          //   builder: (_, errorMessage) {
+          //     return TextField(
+          //       onTap: () async {
+          //         await myDatePicker(
+          //           context,
+          //           showTitleActions: true,
+          //           minTime: DateTime(1900, 1, 1),
+          //           maxTime: DateTime.now(),
+          //           onConfirm: (birthdate) {
+          //             birthDate = birthdate;
+          //             birthdateController.text =
+          //                 DateFormat('yyyy/MM/dd').format(birthdate);
+          //             print(birthDate);
+          //             print(birthdateController.text);
+          //             // birthDate = DateTime.parse(birthdateController.text);
+          //             // print(birthDate);
+          //           },
+          //           currentTime: DateTime.now(),
+          //           editingController: birthdateController,
+          //         );
+          //       },
+          //       readOnly: true,
+          //       controller: birthdateController,
+          //       decoration: InputDecoration(
+          //         errorText: errorMessage,
+          //         hintText: AppLocalizations.of(context)!.enter_your_birth_date,
+          //         isCollapsed: false,
+          //       ),
+          //     );
+          //   },
+          // ),
+          //kHe24,
           BlocBuilder<ChannelCubit, dynamic>(
               bloc: _termsIsCheckedCubit,
               builder: (_, isChecked) {
@@ -969,11 +977,11 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         password: passwordController.text,
                         firstName: firstNameController.text,
                         lastName: lastNameController.text,
-                        birthdate: birthdateController.text,
-                        //birthDate!,
-                        email: emailController.text == ""
-                            ? null
-                            : emailController.text,
+                        // birthdate: birthdateController.text,
+                        // //birthDate!,
+                        // email: emailController.text == ""
+                        //     ? "ghinasharaf@gmail.com"
+                        //     : emailController.text,
                         country: userCountry.state.toString(),
                         governorate: selectedGovernorateId,
                         latitude: latitude,
@@ -1048,12 +1056,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     repeatPasswordError.setState(null);
 
     // email verification
-    print(EmailValidator.validate(emailController.text));
-    if (!EmailValidator.validate(emailController.text)) {
-      emailError.setState(emailValidator(emailController.text, context));
-      return false;
-    }
-    emailError.setState(null);
+    // print(EmailValidator.validate(emailController.text));
+    // if (!EmailValidator.validate(emailController.text)) {
+    //   emailError.setState(emailValidator(emailController.text, context));
+    //   return false;
+    // }
+    // emailError.setState(null);
 
     // terms_conditions verification
     if (!isCheck) {
@@ -1063,11 +1071,11 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     }
 
     // birthdate verification
-    if (birthdateController.text == "") {
-      birthdateError.setState(AppLocalizations.of(context)!.invalid_birth_date);
-      return false;
-    }
-    birthdateError.setState(null);
+    // if (birthdateController.text == "") {
+    //   birthdateError.setState(AppLocalizations.of(context)!.invalid_birth_date);
+    //   return false;
+    // }
+    // birthdateError.setState(null);
 
     return isValidationSuccess;
   }

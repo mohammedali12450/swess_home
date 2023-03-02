@@ -6,14 +6,17 @@ import 'package:swesshome/constants/colors.dart' as colors;
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/chat_screen.dart';
+import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_screen1.dart';
 import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/assets_paths.dart';
+import '../../../core/functions/screen_informations.dart';
 import '../../../main.dart';
 import '../widgets/blur_create_estate.dart';
+import 'home_screen_old.dart';
 
 class NavigationBarScreen extends StatefulWidget {
   static const String id = "NavigationBarScreen";
@@ -34,8 +37,11 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        drawer: const Drawer(
-          child: MyDrawer(),
+        drawer: SizedBox(
+          width: getScreenWidth(context) * (75/100),
+          child: const Drawer(
+            child: MyDrawer(),
+          ),
         ),
         body: BlocBuilder<ChannelCubit, dynamic>(
           bloc: pageCubit,
@@ -73,12 +79,12 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                   showUnselectedLabels: true,
                   items: [
                     BottomNavigationBarItem(
-                      icon: const Icon(Icons.home_outlined),
-                      label: AppLocalizations.of(context)!.home,
+                      icon: const Icon(Icons.search_outlined),
+                      label: AppLocalizations.of(context)!.search,
                     ),
                     BottomNavigationBarItem(
-                      icon: const Icon(Icons.search),
-                      label: AppLocalizations.of(context)!.search,
+                      icon: const Icon(Icons.house_outlined),
+                      label: AppLocalizations.of(context)!.estate_immediately,
                     ),
                     BottomNavigationBarItem(
                       icon: const Icon(Icons.chat_outlined),
@@ -111,7 +117,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
           return homeScreenState!.build(context);
         }
       case 1:
-        return const SearchScreen1();
+        return const EstateImmediatelyScreen();
       case 2:
         return const ChatScreen();
       case 3:

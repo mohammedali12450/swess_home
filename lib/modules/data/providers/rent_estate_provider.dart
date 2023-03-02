@@ -26,4 +26,13 @@ class RentEstateProviders {
     Response response = await helper.post(addRentEstateURL, data, token: token);
     return response;
   }
+
+  Future getMyRentEstates(
+    String token,
+  ) async {
+    NetworkHelper helper = NetworkHelper();
+
+    Response response = await helper.get(getMyRentEstatesURL, token: token);
+    return response;
+  }
 }

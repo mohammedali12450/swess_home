@@ -21,6 +21,7 @@ import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_snack_bar.dart';
 import '../../../constants/assets_paths.dart';
+import '../../../core/functions/screen_informations.dart';
 import '../../business_logic_components/bloc/governorates_bloc/governorates_bloc.dart';
 import '../../business_logic_components/bloc/governorates_bloc/governorates_event.dart';
 import '../../business_logic_components/bloc/user_data_bloc/user_data_bloc.dart';
@@ -33,10 +34,13 @@ import '../../data/models/user.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/icone_badge.dart';
+import '../widgets/res_text.dart';
 import '../widgets/shimmers/profile_shimmer.dart';
+import 'change_password_screen.dart';
 import 'created_estates_screen.dart';
 import 'edit_profile_screen.dart';
 import 'languages_screen.dart';
+import 'my_immediately_rent_screen.dart';
 import 'navigation_bar_screen.dart';
 import 'notifications_screen.dart';
 
@@ -58,6 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final ChannelCubit isLogoutLoadingCubit = ChannelCubit(false);
   List<Governorate>? governorates;
   User? user;
+  late bool isEnglish, isDark;
 
   @override
   void initState() {
@@ -79,29 +84,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isEnglish = ApplicationSharedPreferences.getLanguageCode() == "en";
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    isEnglish = ApplicationSharedPreferences.getLanguageCode() == "en";
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.settings,
-        ),
-        leading: Builder(
-          builder: (context) {
-            return Container(
-              margin: EdgeInsets.only(
-                right: !isEnglish ? 8.w : 0,
-                left: isEnglish ? 8.w : 0,
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              ),
-            );
-          },
         ),
       ),
       body: RefreshIndicator(
@@ -116,16 +105,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               if (UserSharedPreferences.getAccessToken() == null) ...[
                 // buildLanguageSetting,
                 buildListTile(
-                  isEnglish,
-                  icon: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Icon(Icons.language_outlined),
+                  icon: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: const Icon(Icons.language_outlined),
                   ),
                   title: Row(
                     children: [
-                      Text(AppLocalizations.of(context)!.language_word),
+                      ResText(
+                        AppLocalizations.of(context)!.language_word,
+                        textAlign: TextAlign.start,
+                        textStyle: Theme.of(context).textTheme.headline6,
+                      ),
                       const Spacer(),
-                      Text(AppLocalizations.of(context)!.language),
+                      ResText(
+                        AppLocalizations.of(context)!.language,
+                        textAlign: TextAlign.start,
+                        textStyle: Theme.of(context).textTheme.headline6,
+                      ),
                     ],
                   ),
                   onTap: () {
@@ -161,7 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             user!.country == "Syrian Arab Republic") {
                           governoratesBloc.add(GovernoratesFetchStarted());
                         }
-                        return buildUserProfile(isDark, isEnglish);
+                        return buildUserProfile();
                       }
                       return Container();
                     })
@@ -170,9 +166,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               kHe16,
               Align(
                 alignment: Alignment.bottomCenter,
-                child: Text(
+                child: ResText(
                   "version ${ApplicationSharedPreferences.getVersionAppState()}",
-                  style: Theme.of(context)
+                  textAlign: TextAlign.center,
+                  textStyle: Theme.of(context)
                       .textTheme
                       .headline6!
                       .copyWith(color: Colors.grey),
@@ -184,20 +181,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-      drawer: const Drawer(
-        child: MyDrawer(),
+      drawer: SizedBox(
+        width: getScreenWidth(context) * (75 / 100),
+        child: const Drawer(
+          child: MyDrawer(),
+        ),
       ),
     );
   }
 
-  Widget buildUserProfile(isDark, isEnglish) {
+  Widget buildUserProfile() {
     return Column(
       children: [
-        buildProfileImage(isDark),
+        buildProfileImage(),
 
         // buildNotification
         buildListTile(
-          isEnglish,
           icon: BlocBuilder<NotificationsCubit, int>(
               builder: (_, notificationsCount) {
             return IconBadge(
@@ -210,7 +209,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               hideZero: true,
             );
           }),
-          title: Text(AppLocalizations.of(context)!.notifications),
+          title: ResText(
+            AppLocalizations.of(context)!.notifications,
+            textAlign: TextAlign.start,
+            textStyle: Theme.of(context).textTheme.headline6,
+          ),
           onTap: () async {
             if (BlocProvider.of<UserLoginBloc>(context).user == null) {
               await showWonderfulAlertDialog(
@@ -250,16 +253,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         // buildLanguageSetting,
         buildListTile(
-          isEnglish,
-          icon: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.language_outlined),
+          icon: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: const Icon(Icons.language_outlined),
           ),
           title: Row(
             children: [
-              Text(AppLocalizations.of(context)!.language_word),
+              ResText(
+                AppLocalizations.of(context)!.language_word,
+                textAlign: TextAlign.start,
+                textStyle: Theme.of(context).textTheme.headline6,
+              ),
               const Spacer(),
-              Text(AppLocalizations.of(context)!.language),
+              ResText(
+                AppLocalizations.of(context)!.language,
+                textAlign: TextAlign.start,
+                textStyle: Theme.of(context).textTheme.headline6,
+              ),
             ],
           ),
           onTap: () {
@@ -272,64 +282,105 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         buildThemeModeSetting(),
 
+        // buildChangePassword,
+        buildListTile(
+          icon: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: const Icon(Icons.password_outlined),
+          ),
+          title: Row(
+            children: [
+              ResText(
+                AppLocalizations.of(context)!.change_password,
+                textAlign: TextAlign.start,
+                textStyle: Theme.of(context).textTheme.headline6,
+              ),
+            ],
+          ),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const ChangePasswordScreen()));
+          },
+          trailing: Icon((isEnglish)
+              ? Icons.keyboard_arrow_right
+              : Icons.keyboard_arrow_left),
+        ),
+
         6.verticalSpace,
         const Divider(thickness: 0.2),
         6.verticalSpace,
         buildListTile(
-          isEnglish,
-          icon: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.bookmark_border_outlined),
+          icon: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: const Icon(Icons.bookmark_border_outlined),
           ),
-          title: Text(AppLocalizations.of(context)!.saved_estates),
+          title: ResText(
+            AppLocalizations.of(context)!.saved_estates,
+            textAlign: TextAlign.start,
+            textStyle: Theme.of(context).textTheme.headline6,
+          ),
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const SavedEstatesScreen()));
           },
         ),
         buildListTile(
-          isEnglish,
-          icon: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.history),
+          icon: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: const Icon(Icons.history),
           ),
-          title: Text(AppLocalizations.of(context)!.recent_created_orders),
+          title: ResText(
+            AppLocalizations.of(context)!.recent_created_orders,
+            textAlign: TextAlign.start,
+            textStyle: Theme.of(context).textTheme.headline6,
+          ),
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (_) => RecentEstateOrdersScreen()));
           },
         ),
         buildListTile(
-          isEnglish,
-          icon: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.article_outlined),
+          icon: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: const Icon(Icons.article_outlined),
           ),
-          title: Text(AppLocalizations.of(context)!.recent_created_estates),
+          title: ResText(
+            AppLocalizations.of(context)!.recent_created_estates,
+            textAlign: TextAlign.start,
+            textStyle: Theme.of(context).textTheme.headline6,
+          ),
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (_) => CreatedEstatesScreen()));
+                MaterialPageRoute(builder: (_) => const CreatedEstatesScreen()));
           },
         ),
 
-        //buildChangePassword,
-        // buildListTile(
-        //   isEnglish,
-        //   icon: const Padding(
-        //     padding: EdgeInsets.symmetric(horizontal: 10.0),
-        //     child: Icon(Icons.key_outlined),
-        //   ),
-        //   title: Text(AppLocalizations.of(context)!.change_password),
-        //   onTap: () {},
-        // ),
+        //buildImmediatelyRent,
+        buildListTile(
+          icon: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: const Icon(Icons.house_outlined),
+          ),
+          title: ResText(
+            AppLocalizations.of(context)!.my_estate_immediately,
+            textAlign: TextAlign.start,
+            textStyle: Theme.of(context).textTheme.headline6,
+          ),
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const MyImmediatelyRentScreen()));
+          },
+        ),
 
-        buildDeleteMyAccount(isDark, isEnglish),
-        buildLogout(isEnglish),
+        buildDeleteMyAccount(),
+        buildLogout(),
       ],
     );
   }
 
-  SizedBox buildProfileImage(isDark) {
+  SizedBox buildProfileImage() {
     return SizedBox(
       height: 320.h,
       child: Column(
@@ -383,41 +434,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           SizedBox(
-            height: 115.h,
+            height: 100.h,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                ResText(
                   user!.firstName! + " " + user!.lastName!,
-                  style: Theme.of(context).textTheme.headline3!.copyWith(
+                  textStyle: Theme.of(context).textTheme.headline3!.copyWith(
                       color: !isDark ? AppColors.black : AppColors.white),
                 ),
-                Text(
-                  user?.email ?? "",
-                  style: Theme.of(context).textTheme.headline6!.copyWith(
-                      color: !isDark
-                          ? AppColors.hintColor
-                          : AppColors.white.withOpacity(0.48)),
-                ),
+                // ResText(
+                //   user?.email ?? "",
+                //   textStyle: Theme.of(context).textTheme.headline6!.copyWith(
+                //       color: !isDark
+                //           ? AppColors.hintColor
+                //           : AppColors.white.withOpacity(0.48)),
+                // ),
                 Directionality(
                   textDirection: TextDirection.ltr,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(
+                      ResText(
                         user!.authentication!,
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                            color: !isDark
-                                ? AppColors.primaryColor
-                                : AppColors.primaryDark),
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .headline6!
+                            .copyWith(
+                                color: !isDark
+                                    ? AppColors.primaryColor
+                                    : AppColors.primaryDark),
                       ),
-                      Text(
+                      ResText(
                         "${user!.country ?? ""} "
                         "${user?.governorate == null ? " , ${user!.governorate}" : ""}",
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                            color: !isDark
-                                ? AppColors.primaryColor
-                                : AppColors.primaryDark),
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .headline6!
+                            .copyWith(
+                                color: !isDark
+                                    ? AppColors.primaryColor
+                                    : AppColors.primaryDark),
                       ),
                     ],
                   ),
@@ -431,7 +488,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  SizedBox buildThemeModeSetting() {
+  Widget buildThemeModeSetting() {
     ThemeProvider themeProvider =
         Provider.of<ThemeProvider>(context, listen: false);
 
@@ -447,114 +504,130 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
 
-    return SizedBox(
-      child: ListTile(
-        leading: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
-          child: Icon(Icons.invert_colors),
-        ),
-        title: Text(AppLocalizations.of(context)!.dark_mode_text),
-        trailing: BlocBuilder(
-          bloc: selectedThemeCubit,
-          builder: (_, selectedTheme) {
-            return SizedBox(
-              width: 100.w,
-              height: 64.h,
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: selectedTheme as String,
-                items: themes.map(
-                  (String element) {
-                    return DropdownMenuItem<String>(
-                      value: element,
-                      child: Container(
-                        width: 1.sw,
-                        margin: EdgeInsets.only(
-                          right: Provider.of<LocaleProvider>(context).isArabic()
-                              ? 16.w
-                              : 0,
-                          left: Provider.of<LocaleProvider>(context).isArabic()
-                              ? 0
-                              : 16.w,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      child: SizedBox(
+        child: ListTile(
+          leading: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: const Icon(Icons.invert_colors),
+          ),
+          title: ResText(
+            AppLocalizations.of(context)!.dark_mode_text,
+            textAlign: TextAlign.start,
+            textStyle: Theme.of(context).textTheme.headline6,
+          ),
+          trailing: BlocBuilder(
+            bloc: selectedThemeCubit,
+            builder: (_, selectedTheme) {
+              return SizedBox(
+                width: 100.w,
+                height: 64.h,
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  value: selectedTheme as String,
+                  items: themes.map(
+                    (String element) {
+                      return DropdownMenuItem<String>(
+                        value: element,
+                        child: Container(
+                          width: 1.sw,
+                          margin: EdgeInsets.only(
+                            right:
+                                Provider.of<LocaleProvider>(context).isArabic()
+                                    ? 16.w
+                                    : 0,
+                            left:
+                                Provider.of<LocaleProvider>(context).isArabic()
+                                    ? 0
+                                    : 16.w,
+                          ),
+                          child: ResText(
+                            element.toString(),
+                            textAlign: TextAlign.start,
+                            textStyle: Theme.of(context).textTheme.headline6,
+                          ),
                         ),
-                        child: Text(
-                          element.toString(),
-                        ),
+                      );
+                    },
+                  ).toList(),
+                  onChanged: (selectedElement) async {
+                    int index = themes.indexOf(selectedElement!);
+                    ThemeMode themeMode =
+                        themeProvider.getThemeModeViaIndex(index);
+                    bool? isDarkMode;
+                    if (themeMode == ThemeMode.light) isDarkMode = false;
+                    if (themeMode == ThemeMode.dark) isDarkMode = true;
+                    await ApplicationSharedPreferences.setIsDarkMode(
+                      isDarkMode,
+                    );
+                    themeProvider.setTheme(themeMode);
+                    selectedThemeCubit.setState(
+                      themes.elementAt(
+                        themeProvider.getModeIndex(),
                       ),
                     );
                   },
-                ).toList(),
-                onChanged: (selectedElement) async {
-                  int index = themes.indexOf(selectedElement!);
-                  ThemeMode themeMode =
-                      themeProvider.getThemeModeViaIndex(index);
-                  bool? isDarkMode;
-                  if (themeMode == ThemeMode.light) isDarkMode = false;
-                  if (themeMode == ThemeMode.dark) isDarkMode = true;
-                  await ApplicationSharedPreferences.setIsDarkMode(
-                    isDarkMode,
-                  );
-                  themeProvider.setTheme(themeMode);
-                  selectedThemeCubit.setState(
-                    themes.elementAt(
-                      themeProvider.getModeIndex(),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  SizedBox buildDeleteMyAccount(isDark, isEnglish) {
-    return SizedBox(
-      width: 1.sw,
-      height: 64.h,
-      child: ListTile(
-        leading: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
-          child: Icon(Icons.account_circle_outlined),
-        ),
-        onTap: () async {
-          await showWonderfulAlertDialog(
-              context,
-              AppLocalizations.of(context)!.caution,
-              AppLocalizations.of(context)!.are_you_sure,
-              // bodyTextStyle: TextStyle(
-              //     fontSize: 18, color: isDark ? Colors.white : Colors.black),
-              removeDefaultButton: true,
-              dialogButtons: [
-                ElevatedButton(
-                  child: Text(
-                    AppLocalizations.of(context)!.yes,
+  Widget buildDeleteMyAccount() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      child: SizedBox(
+        width: 1.sw,
+        height: 64.h,
+        child: ListTile(
+          leading: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: const Icon(Icons.account_circle_outlined),
+          ),
+          onTap: () async {
+            await showWonderfulAlertDialog(
+                context,
+                AppLocalizations.of(context)!.caution,
+                AppLocalizations.of(context)!.are_you_sure,
+                // bodyTextStyle: TextStyle(
+                //     fontSize: 18, color: isDark ? Colors.white : Colors.black),
+                removeDefaultButton: true,
+                dialogButtons: [
+                  ElevatedButton(
+                    child: Text(
+                      AppLocalizations.of(context)!.yes,
+                    ),
+                    onPressed: () async {
+                      isLogoutLoadingCubit.setState(true);
+                      await _logoutAfterDelete();
+                      isLogoutLoadingCubit.setState(false);
+                      //UserSharedPreferences.clear();
+                    },
                   ),
-                  onPressed: () async {
-                    isLogoutLoadingCubit.setState(true);
-                    await _logoutAfterDelete();
-                    isLogoutLoadingCubit.setState(false);
-                    //UserSharedPreferences.clear();
-                  },
-                ),
-                ElevatedButton(
-                  child: Text(
-                    AppLocalizations.of(context)!.cancel,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                )
-              ]);
-        },
-        title: Row(
-          children: [
-            Text(
-              AppLocalizations.of(context)!.delete_my_account,
-            ),
-            const Spacer(),
-          ],
+                  ElevatedButton(
+                    child: Text(
+                      AppLocalizations.of(context)!.cancel,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ]);
+          },
+          title: Row(
+            children: [
+              ResText(
+                AppLocalizations.of(context)!.delete_my_account,
+                textAlign: TextAlign.start,
+                textStyle: Theme.of(context).textTheme.headline6,
+              ),
+              const Spacer(),
+            ],
+          ),
         ),
       ),
     );
@@ -589,72 +662,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return;
   }
 
-  Widget buildLogout(isEnglish) {
+  Widget buildLogout() {
     return BlocBuilder<UserLoginBloc, UserLoginState>(
       builder: (context, userLoginState) {
         if (UserSharedPreferences.getAccessToken() != null) {
-          return SizedBox(
-              width: 1.sw,
-              height: 64.h,
-              child: ListTile(
-                leading: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Icon(Icons.login),
-                ),
-                onTap: () async {
-                  await showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.confirmation,
-                    AppLocalizations.of(context)!.logout_confirmation,
-                    removeDefaultButton: true,
-                    width: 450.w,
-                    dialogButtons: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(140.w, 56.h),
-                            padding: EdgeInsets.zero),
-                        child: BlocBuilder<ChannelCubit, dynamic>(
-                          bloc: isLogoutLoadingCubit,
-                          builder: (_, isLogoutLoading) {
-                            return (isLogoutLoading)
-                                ? SpinKitWave(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .background,
-                                    size: 16.w,
-                                  )
-                                : Text(
-                                    AppLocalizations.of(context)!.log_out,
-                                  );
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: SizedBox(
+                width: 1.sw,
+                height: 64.h,
+                child: ListTile(
+                  leading: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: const Icon(Icons.login),
+                  ),
+                  onTap: () async {
+                    await showWonderfulAlertDialog(
+                      context,
+                      AppLocalizations.of(context)!.confirmation,
+                      AppLocalizations.of(context)!.logout_confirmation,
+                      removeDefaultButton: true,
+                      width: 450.w,
+                      dialogButtons: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              fixedSize: Size(140.w, 56.h),
+                              padding: EdgeInsets.zero),
+                          child: BlocBuilder<ChannelCubit, dynamic>(
+                            bloc: isLogoutLoadingCubit,
+                            builder: (_, isLogoutLoading) {
+                              return (isLogoutLoading)
+                                  ? SpinKitWave(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      size: 16.w,
+                                    )
+                                  : Text(
+                                      AppLocalizations.of(context)!.log_out,
+                                    );
+                            },
+                          ),
+                          onPressed: () async {
+                            isLogoutLoadingCubit.setState(true);
+                            await _logout();
+                            isLogoutLoadingCubit.setState(false);
+                            //UserSharedPreferences.clear();
                           },
                         ),
-                        onPressed: () async {
-                          isLogoutLoadingCubit.setState(true);
-                          await _logout();
-                          isLogoutLoadingCubit.setState(false);
-                          //UserSharedPreferences.clear();
-                        },
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(140.w, 56.h),
-                            padding: EdgeInsets.zero),
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              fixedSize: Size(140.w, 56.h),
+                              padding: EdgeInsets.zero),
+                          child: Text(
+                            AppLocalizations.of(context)!.cancel,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
+                      ],
+                    );
+                  },
+                  title: Row(
+                    children: [
+                      ResText(
+                        AppLocalizations.of(context)!.log_out,
+                        textAlign: TextAlign.start,
+                        textStyle: Theme.of(context).textTheme.headline6,
                       ),
                     ],
-                  );
-                },
-                title: Row(
-                  children: [
-                    Text(AppLocalizations.of(context)!.log_out),
-                  ],
-                ),
-              ));
+                  ),
+                )),
+          );
         }
         return Container();
       },
@@ -694,15 +774,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return;
   }
 
-  SizedBox buildListTile(isEnglish, {icon, onTap, title, trailing}) {
-    return SizedBox(
-      width: 1.sw,
-      height: 64.h,
-      child: ListTile(
-        leading: icon,
-        onTap: onTap,
-        title: title,
-        trailing: trailing,
+  Widget buildListTile({icon, onTap, title, trailing}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      child: SizedBox(
+        width: 1.sw,
+        height: 64.h,
+        child: ListTile(
+          leading: icon,
+          onTap: onTap,
+          title: title,
+          trailing: trailing,
+        ),
       ),
     );
   }

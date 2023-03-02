@@ -23,7 +23,8 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
   @override
   void initState() {
     _termsConditionBloc = TermsConditionBloc(TermsAndConditionsRepository());
-    _termsConditionBloc.add(TermsConditionFetchStarted(termsType: "terms-home"));
+    _termsConditionBloc
+        .add(TermsConditionFetchStarted(termsType: "terms-home"));
     super.initState();
   }
 
@@ -46,9 +47,8 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
               }
               if (propertiesFetchState is TermsConditionFetchProgress) {
                 return SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: const Center(
-                        child: CircularProgressIndicator()));
+                    height: getScreenHeight(context),
+                    child: const Center(child: CircularProgressIndicator()));
               }
               if (propertiesFetchState is TermsConditionFetchComplete) {
                 return SizedBox(
@@ -67,7 +67,6 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
                   ),
                 );
               } else {
-
                 return Container();
               }
             }),

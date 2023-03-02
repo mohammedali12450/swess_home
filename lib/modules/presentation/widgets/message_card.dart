@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
@@ -40,14 +41,13 @@ class _MessageCardState extends State<MessageCard> {
                   children: [
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 8, 70, 8),
+                        padding: EdgeInsets.fromLTRB(8.w, 8.h, 70.w, 8.h),
                         child: Container(
-                          padding: const EdgeInsets.fromLTRB(8, 8, 5, 0),
+                          padding: EdgeInsets.fromLTRB(8.w, 8.h, 5.w, 0),
                           decoration: BoxDecoration(
-                            color:
-                            AppColors.secondaryColor.withOpacity(0.4),
-                            border: Border.all(
-                                color: AppColors.yellowDarkColor),
+                            color: AppColors.secondaryColor.withOpacity(0.4),
+                            border:
+                                Border.all(color: AppColors.yellowDarkColor),
                             borderRadius: const BorderRadius.only(
                               topRight: Radius.circular(20),
                               topLeft: Radius.circular(20),
@@ -86,7 +86,7 @@ class _MessageCardState extends State<MessageCard> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
+                                    padding: EdgeInsets.only(right: 8.w),
                                     child: Text(message.sendDate),
                                   ),
                                 ],
@@ -113,9 +113,9 @@ class _MessageCardState extends State<MessageCard> {
                       children: [
                         Flexible(
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(70, 8, 8, 8),
+                            padding: EdgeInsets.fromLTRB(70.w, 8.h, 8.w, 8.h),
                             child: Container(
-                              padding: const EdgeInsets.fromLTRB(8, 8, 5, 0),
+                              padding: EdgeInsets.fromLTRB(8.w, 8.h, 5.w, 0),
                               decoration: BoxDecoration(
                                 color:
                                     AppColors.secondaryColor.withOpacity(0.8),
@@ -166,8 +166,7 @@ class _MessageCardState extends State<MessageCard> {
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8.0),
+                                          padding: EdgeInsets.only(right: 8.w),
                                           child: Text(message.replayDate!),
                                         ),
                                       ],
@@ -193,7 +192,7 @@ class _MessageCardState extends State<MessageCard> {
     final lines = isReadMore ? null : 3;
     return Text(
       text,
-      style: const TextStyle(fontSize: 16),
+      style: TextStyle(fontSize: 16.sp),
       maxLines: lines,
       overflow: isReadMore ? TextOverflow.visible : TextOverflow.ellipsis,
     );

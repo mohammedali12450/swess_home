@@ -51,7 +51,7 @@ class MapPopupMessageTutorial extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: !isDark ? AppColors.black : AppColors.white,
-                fontSize: 17),
+                fontSize: 17.sp),
           ),
           24.verticalSpace,
           ElevatedButton(

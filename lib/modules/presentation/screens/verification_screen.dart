@@ -130,270 +130,272 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                             color: Theme.of(context).colorScheme.primary,
                             size: 0.2.sw,
                           )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 300.w,
-                                child: Text(
-                                  AppLocalizations.of(context)!
-                                      .confirmation_code_sent,
-                                  maxLines: 5,
-                                  textAlign: TextAlign.center,
+                        : SingleChildScrollView(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 300.w,
+                                  child: Text(
+                                    AppLocalizations.of(context)!
+                                        .confirmation_code_sent,
+                                    maxLines: 5,
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                widget.phoneNumber,
-                                textAlign: TextAlign.center,
-                                textDirection: TextDirection.ltr,
-                              ),
-                              kHe40,
-                              TextField(
-                                controller: confirmationCodeController,
-                                textDirection: TextDirection.ltr,
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.headline3,
-                                onChanged: (text) {
-                                  if (NumbersHelper.isNumeric(text) &&
-                                      text.length == 6) {
-                                    isVerificationButtonActiveCubit
-                                        .setState(true);
-                                  } else {
-                                    isVerificationButtonActiveCubit
-                                        .setState(false);
-                                  }
-                                },
-                              ),
-                              SizedBox(
-                                height: 64.h,
-                              ),
-                              BlocProvider(
-                                create: (context) => SendVerificationCodeBloc(),
-                                child: BlocConsumer<SendVerificationCodeBloc,
-                                    SendVerificationCodeState>(
-                                  listener: (context, sendCodeState) async {
-                                    if (sendCodeState
-                                        is SendVerificationCodeComplete) {
-                                      if (UserSharedPreferences
-                                              .getAccessToken() ==
-                                          null) {
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (_) =>
-                                                    const AuthenticationScreen()));
-                                      }
-                                      if (UserSharedPreferences
-                                              .getAccessToken() !=
-                                          null) {
-                                        // save user token in shared preferences :
-                                        UserSharedPreferences.setAccessToken(
-                                            UserSharedPreferences
-                                                .getAccessToken()!);
-                                        // Send user fcm token to server :
-                                        BlocProvider.of<FcmBloc>(context).add(
-                                          SendFcmTokenProcessStarted(
-                                              userToken: UserSharedPreferences
-                                                  .getAccessToken()!),
-                                        );
-                                        BlocProvider.of<UserLoginBloc>(context)
-                                            .user = sendCodeState.user;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const NavigationBarScreen(),
-                                          ),
-                                        );
-                                      }
-                                    }
-                                    if (sendCodeState
-                                        is SendVerificationCodeError) {
-                                      if (sendCodeState.isConnectionError !=
-                                          null) {
-                                        showWonderfulAlertDialog(
-                                          context,
-                                          AppLocalizations.of(context)!.error,
-                                          AppLocalizations.of(context)!
-                                              .no_internet_connection,
-                                        );
-                                        return;
-                                      }
-                                      await showWonderfulAlertDialog(
-                                          context,
-                                          AppLocalizations.of(context)!.error,
-                                          sendCodeState.errorMessage!);
+                                Text(
+                                  widget.phoneNumber,
+                                  textAlign: TextAlign.center,
+                                  textDirection: TextDirection.ltr,
+                                ),
+                                kHe40,
+                                TextField(
+                                  controller: confirmationCodeController,
+                                  textDirection: TextDirection.ltr,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.headline3,
+                                  onChanged: (text) {
+                                    if (NumbersHelper.isNumeric(text) &&
+                                        text.length == 6) {
+                                      isVerificationButtonActiveCubit
+                                          .setState(true);
+                                    } else {
+                                      isVerificationButtonActiveCubit
+                                          .setState(false);
                                     }
                                   },
-                                  builder: (context, sendCodeState) {
-                                    return BlocBuilder<ChannelCubit, dynamic>(
-                                      bloc: isVerificationButtonActiveCubit,
-                                      builder: (context, isActive) {
-                                        return ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            fixedSize: Size(220.w, 64.h),
-                                          ),
-                                          child: (sendCodeState
-                                                  is! SendVerificationCodeProgress)
-                                              ? Text(
-                                                  AppLocalizations.of(context)!
-                                                      .send,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText2!
-                                                      .copyWith(
-                                                          color: isActive
-                                                              ? AppColors.white
-                                                              : AppColors.white
-                                                                  .withOpacity(
-                                                                      0.64)),
-                                                )
-                                              : SpinKitWave(
-                                                  size: 24.w,
-                                                  color: Colors.white,
-                                                ),
-                                          onPressed: () async {
-                                            if (!isActive) return;
-                                            if (sendCodeState
-                                                is SendVerificationCodeProgress) {
-                                              return;
-                                            }
-                                            // Syria state :
-                                            if (!BlocProvider.of<
-                                                        SystemVariablesBloc>(
-                                                    context)
-                                                .systemVariables!
-                                                .isForStore) {
-                                              BlocProvider.of<
-                                                          SendVerificationCodeBloc>(
+                                ),
+                                SizedBox(
+                                  height: 64.h,
+                                ),
+                                BlocProvider(
+                                  create: (context) => SendVerificationCodeBloc(),
+                                  child: BlocConsumer<SendVerificationCodeBloc,
+                                      SendVerificationCodeState>(
+                                    listener: (context, sendCodeState) async {
+                                      if (sendCodeState
+                                          is SendVerificationCodeComplete) {
+                                        if (UserSharedPreferences
+                                                .getAccessToken() ==
+                                            null) {
+                                          Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      const AuthenticationScreen()));
+                                        }
+                                        if (UserSharedPreferences
+                                                .getAccessToken() !=
+                                            null) {
+                                          // save user token in shared preferences :
+                                          UserSharedPreferences.setAccessToken(
+                                              UserSharedPreferences
+                                                  .getAccessToken()!);
+                                          // Send user fcm token to server :
+                                          BlocProvider.of<FcmBloc>(context).add(
+                                            SendFcmTokenProcessStarted(
+                                                userToken: UserSharedPreferences
+                                                    .getAccessToken()!),
+                                          );
+                                          BlocProvider.of<UserLoginBloc>(context)
+                                              .user = sendCodeState.user;
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const NavigationBarScreen(),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                      if (sendCodeState
+                                          is SendVerificationCodeError) {
+                                        if (sendCodeState.isConnectionError !=
+                                            null) {
+                                          showWonderfulAlertDialog(
+                                            context,
+                                            AppLocalizations.of(context)!.error,
+                                            AppLocalizations.of(context)!
+                                                .no_internet_connection,
+                                          );
+                                          return;
+                                        }
+                                        await showWonderfulAlertDialog(
+                                            context,
+                                            AppLocalizations.of(context)!.error,
+                                            sendCodeState.errorMessage!);
+                                      }
+                                    },
+                                    builder: (context, sendCodeState) {
+                                      return BlocBuilder<ChannelCubit, dynamic>(
+                                        bloc: isVerificationButtonActiveCubit,
+                                        builder: (context, isActive) {
+                                          return ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              fixedSize: Size(220.w, 64.h),
+                                            ),
+                                            child: (sendCodeState
+                                                    is! SendVerificationCodeProgress)
+                                                ? Text(
+                                                    AppLocalizations.of(context)!
+                                                        .send,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText2!
+                                                        .copyWith(
+                                                            color: isActive
+                                                                ? AppColors.white
+                                                                : AppColors.white
+                                                                    .withOpacity(
+                                                                        0.64)),
+                                                  )
+                                                : SpinKitWave(
+                                                    size: 24.w,
+                                                    color: Colors.white,
+                                                  ),
+                                            onPressed: () async {
+                                              if (!isActive) return;
+                                              if (sendCodeState
+                                                  is SendVerificationCodeProgress) {
+                                                return;
+                                              }
+                                              // Syria state :
+                                              if (!BlocProvider.of<
+                                                          SystemVariablesBloc>(
                                                       context)
-                                                  .add(
-                                                VerificationCodeSendingStarted(
-                                                    phone: widget.phoneNumber,
-                                                    code:
-                                                        confirmationCodeController
-                                                            .text),
-                                              );
-                                            } else {
-                                              // Firebase state :
-                                              if (isActive &&
-                                                  verificationId != null) {
-                                                // Create a PhoneAuthCredential with the code
-                                                firebase_auth
-                                                        .PhoneAuthCredential
-                                                    credential = firebase_auth
-                                                            .PhoneAuthProvider
-                                                        .credential(
-                                                            verificationId:
-                                                                verificationId!,
-                                                            smsCode:
-                                                                confirmationCodeController
-                                                                    .text);
-                                                try {
-                                                  await auth
-                                                      .signInWithCredential(
-                                                          credential);
-                                                  if (widget.user != null) {
-                                                    // save user token in shared preferences :
-                                                    UserSharedPreferences
-                                                        .setAccessToken(
-                                                            UserSharedPreferences
-                                                                .getAccessToken()!);
-                                                    // Send user fcm token to server :
-                                                    BlocProvider.of<FcmBloc>(
-                                                            context)
-                                                        .add(
-                                                      SendFcmTokenProcessStarted(
-                                                          userToken:
+                                                  .systemVariables!
+                                                  .isForStore) {
+                                                BlocProvider.of<
+                                                            SendVerificationCodeBloc>(
+                                                        context)
+                                                    .add(
+                                                  VerificationCodeSendingStarted(
+                                                      phone: widget.phoneNumber,
+                                                      code:
+                                                          confirmationCodeController
+                                                              .text),
+                                                );
+                                              } else {
+                                                // Firebase state :
+                                                if (isActive &&
+                                                    verificationId != null) {
+                                                  // Create a PhoneAuthCredential with the code
+                                                  firebase_auth
+                                                          .PhoneAuthCredential
+                                                      credential = firebase_auth
+                                                              .PhoneAuthProvider
+                                                          .credential(
+                                                              verificationId:
+                                                                  verificationId!,
+                                                              smsCode:
+                                                                  confirmationCodeController
+                                                                      .text);
+                                                  try {
+                                                    await auth
+                                                        .signInWithCredential(
+                                                            credential);
+                                                    if (widget.user != null) {
+                                                      // save user token in shared preferences :
+                                                      UserSharedPreferences
+                                                          .setAccessToken(
                                                               UserSharedPreferences
-                                                                  .getAccessToken()!),
-                                                    );
-                                                    BlocProvider.of<
-                                                                UserLoginBloc>(
-                                                            context)
-                                                        .user = widget.user;
-                                                    Navigator.push(
+                                                                  .getAccessToken()!);
+                                                      // Send user fcm token to server :
+                                                      BlocProvider.of<FcmBloc>(
+                                                              context)
+                                                          .add(
+                                                        SendFcmTokenProcessStarted(
+                                                            userToken:
+                                                                UserSharedPreferences
+                                                                    .getAccessToken()!),
+                                                      );
+                                                      BlocProvider.of<
+                                                                  UserLoginBloc>(
+                                                              context)
+                                                          .user = widget.user;
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (_) =>
+                                                                  const NavigationBarScreen()));
+                                                    }
+                                                  } on ConnectionException catch (_) {
+                                                    showWonderfulAlertDialog(
                                                         context,
-                                                        MaterialPageRoute(
-                                                            builder: (_) =>
-                                                                const NavigationBarScreen()));
-                                                  }
-                                                } on ConnectionException catch (_) {
-                                                  showWonderfulAlertDialog(
+                                                        AppLocalizations.of(
+                                                                context)!
+                                                            .error,
+                                                        AppLocalizations.of(
+                                                                context)!
+                                                            .check_your_internet_connection);
+                                                  } catch (e) {
+                                                    showWonderfulAlertDialog(
                                                       context,
                                                       AppLocalizations.of(
                                                               context)!
                                                           .error,
                                                       AppLocalizations.of(
                                                               context)!
-                                                          .check_your_internet_connection);
-                                                } catch (e) {
-                                                  showWonderfulAlertDialog(
-                                                    context,
-                                                    AppLocalizations.of(
-                                                            context)!
-                                                        .error,
-                                                    AppLocalizations.of(
-                                                            context)!
-                                                        .error_happened_when_executing_operation,
-                                                  );
+                                                          .error_happened_when_executing_operation,
+                                                    );
+                                                  }
                                                 }
                                               }
-                                            }
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                              62.verticalSpace,
-                              Center(
-                                  child: Text(
-                                AppLocalizations.of(context)!.did_code,
-                                style: Theme.of(context).textTheme.bodyText2,
-                              )),
-                              6.verticalSpace,
-                              StreamBuilder<int>(
-                                  stream: _waitingTime.stream,
-                                  builder: (context, snapshot) {
-                                    if (waitingTimeValue > 0) {
-                                      return _timerCountDown();
-                                    } else {
-                                      return InkWell(
-                                        onTap: () {
-                                          resendVerificationCodeBloc.add(
-                                            ResendVerificationCodeStarted(
-                                                mobile: widget.phoneNumber,
-                                                verificationCode:
-                                                    confirmationCodeController
-                                                        .text),
+                                            },
                                           );
-                                          startWaitingTimer(59);
-                                          FocusScope.of(context).unfocus();
                                         },
-                                        child: Center(
-                                          child: Text(
-                                            AppLocalizations.of(context)!
-                                                .resend_code,
-                                            style: const TextStyle(
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
                                       );
-                                    }
-                                  }),
-                              30.verticalSpace,
-                              Center(
-                                  child: Text(
-                                    AppLocalizations.of(context)!.time_of_receive_code,
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.bodyText2,
-                                  )),
-                            ],
-                          );
+                                    },
+                                  ),
+                                ),
+                                62.verticalSpace,
+                                Center(
+                                    child: Text(
+                                  AppLocalizations.of(context)!.did_code,
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                )),
+                                6.verticalSpace,
+                                StreamBuilder<int>(
+                                    stream: _waitingTime.stream,
+                                    builder: (context, snapshot) {
+                                      if (waitingTimeValue > 0) {
+                                        return _timerCountDown();
+                                      } else {
+                                        return InkWell(
+                                          onTap: () {
+                                            resendVerificationCodeBloc.add(
+                                              ResendVerificationCodeStarted(
+                                                  mobile: widget.phoneNumber,
+                                                  verificationCode:
+                                                      confirmationCodeController
+                                                          .text),
+                                            );
+                                            startWaitingTimer(59);
+                                            FocusScope.of(context).unfocus();
+                                          },
+                                          child: Center(
+                                            child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .resend_code,
+                                              style: const TextStyle(
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  color: Colors.blueAccent),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }),
+                                30.verticalSpace,
+                                Center(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.time_of_receive_code,
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context).textTheme.bodyText2,
+                                    )),
+                              ],
+                            ),
+                        );
                   },
                 ),
               ),

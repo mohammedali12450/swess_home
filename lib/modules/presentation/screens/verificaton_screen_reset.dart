@@ -364,7 +364,7 @@ class _VerificationCodeScreenResetState
             return Center(
               child: Text(
                 '00:${waitingTimeSnapshot.data}',
-                style: const TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20.sp),
               ),
             );
           } else {

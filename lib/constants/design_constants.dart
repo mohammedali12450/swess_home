@@ -101,6 +101,8 @@ EdgeInsets kXXLargeAllPadding = EdgeInsets.all(kXXLargePadding.w);
 EdgeInsets kHugeAllPadding = EdgeInsets.all(kHugePadding.w);
 EdgeInsets kSmallSymWidth =
     EdgeInsets.symmetric(horizontal: kSmallPadding.w, vertical: kTinyPadding.h);
+EdgeInsets kSmallMedWidth =
+    EdgeInsets.symmetric(horizontal: kSmallPadding.w, vertical: kMediumPadding.h);
 EdgeInsets kMediumSymWidth =
     EdgeInsets.symmetric(horizontal: kMediumPadding.w, vertical: kTinyPadding.h);
 EdgeInsets kLargeSymWidth =
@@ -109,6 +111,8 @@ EdgeInsets kSmallSymHeight =
     EdgeInsets.symmetric(horizontal: kTinyPadding.w, vertical: kSmallPadding.h);
 EdgeInsets kMediumSymHeight =
     EdgeInsets.symmetric(horizontal: kTinyPadding.w, vertical: kMediumPadding.h);
+EdgeInsets kMediumLarHeight =
+    EdgeInsets.symmetric(horizontal: kTinyPadding.w, vertical: kLargePadding.h);
 EdgeInsets kLargeSymHeight =
     EdgeInsets.symmetric(horizontal: kSmallPadding.w, vertical: kLargePadding.h);
 
@@ -229,5 +233,7 @@ BoxShadow lowWhiteElevation = BoxShadow(
     spreadRadius: 2);
 
 const BorderRadius lowBorderRadius = BorderRadius.all(Radius.circular(8));
+const BorderRadius smallBorderRadius = BorderRadius.all(Radius.circular(12));
 const BorderRadius medBorderRadius = BorderRadius.all(Radius.circular(16));
 const BorderRadius highBorderRadius = BorderRadius.all(Radius.circular(24));
+BorderRadius circularBorderRadius = BorderRadius.circular(100);

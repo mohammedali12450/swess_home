@@ -56,7 +56,7 @@ class RentEstate {
 
 class RentEstateRequest {
   int? locationId;
-  int estateTypeId;
+  //int estateTypeId;
   int periodTypeId;
   int interiorStatusesId;
   int floor;
@@ -70,7 +70,7 @@ class RentEstateRequest {
 
   RentEstateRequest(
       {required this.locationId,
-      required this.estateTypeId,
+      //required this.estateTypeId,
       required this.periodTypeId,
       required this.interiorStatusesId,
       required this.floor,
@@ -85,7 +85,7 @@ class RentEstateRequest {
   factory RentEstateRequest.init() {
     return RentEstateRequest(
         locationId: 0,
-        estateTypeId: 0,
+        //estateTypeId: 0,
         periodTypeId: 0,
         interiorStatusesId: 0,
         floor: 0,
@@ -100,7 +100,7 @@ class RentEstateRequest {
   Future<Map<String, dynamic>> toJson() async {
     Map<String, dynamic> map = {};
     map["location"] = locationId;
-    map["estate_type"] = estateTypeId;
+    //map["estate_type"] = estateTypeId;
     map["period_type"] = periodTypeId;
     map["interior_status"] = interiorStatusesId;
     map["floors"] = floor;
@@ -117,13 +117,13 @@ class RentEstateRequest {
 
 class RentEstateFilter {
   int? locationId;
-  int? estateTypeId;
+ // int? estateTypeId;
   int? periodTypeId;
   String? price;
 
   RentEstateFilter({
     this.locationId,
-    this.estateTypeId,
+    //this.estateTypeId,
     this.periodTypeId,
     this.price,
   });
@@ -131,7 +131,7 @@ class RentEstateFilter {
   Future<Map<String, dynamic>> toJson() async {
     Map<String, dynamic> map = {};
     map["location_id"] = locationId;
-    map["estate_type_id"] = estateTypeId;
+    //map["estate_type_id"] = estateTypeId;
     map["period_type_id"] = periodTypeId;
     map["price"] = price;
     return map;
@@ -140,7 +140,7 @@ class RentEstateFilter {
   factory RentEstateFilter.init() {
     return RentEstateFilter(
         locationId: null,
-        estateTypeId: null,
+        //estateTypeId: null,
         periodTypeId: null,
         price: "desc",);
   }

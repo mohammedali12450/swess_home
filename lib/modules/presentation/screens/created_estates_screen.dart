@@ -28,9 +28,9 @@ import '../widgets/time_line.dart';
 class CreatedEstatesScreen extends StatefulWidget {
   static const String id = "CreatedEstatesScreen";
 
-  String? estateId;
+  final String? estateId;
 
-  CreatedEstatesScreen({Key? key, this.estateId}) : super(key: key);
+  const CreatedEstatesScreen({Key? key, this.estateId}) : super(key: key);
 
   @override
   _CreatedEstatesScreenState createState() => _CreatedEstatesScreenState();
@@ -236,10 +236,10 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                                       removeBottomBar: true,
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 8.0, left: 8, right: 8),
+                                      padding: EdgeInsets.only(
+                                          bottom: 8.h, left: 8.w, right: 8.w),
                                       child: SizedBox(
-                                          height: 63,
+                                          height: 63.h,
                                           width: getScreenWidth(context),
                                           child: ProcessTimelinePage(
                                               estateStatusId: estateStatusId)),
@@ -264,10 +264,10 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                                     removeBottomBar: true,
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(
-                                        bottom: 8.0, left: 8, right: 8),
+                                    padding: EdgeInsets.only(
+                                        bottom: 8.h, left: 8.w, right: 8.w),
                                     child: SizedBox(
-                                        height: 63,
+                                        height: 75.h,
                                         width: getScreenWidth(context),
                                         child: ProcessTimelinePage(
                                           estateStatusId: estateStatusId,
@@ -290,8 +290,8 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
   onClosePressed(index) async {
     showWonderfulAlertDialog(context, AppLocalizations.of(context)!.caution,
         AppLocalizations.of(context)!.confirm_delete,
-        titleTextStyle: const TextStyle(
-            fontWeight: FontWeight.bold, color: Colors.red, fontSize: 20),
+        titleTextStyle: TextStyle(
+            fontWeight: FontWeight.bold, color: Colors.red, fontSize: 20.sp),
         removeDefaultButton: true,
         dialogButtons: [
           ElevatedButton(

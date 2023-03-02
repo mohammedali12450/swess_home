@@ -30,3 +30,11 @@ class FilterRentEstateFetchComplete extends RentEstateState {
 }
 
 class FilterRentEstateFetchProgress extends RentEstateState {}
+
+class GetMyRentEstateFetchComplete extends RentEstateState {
+  List<RentEstate> rentEstates;
+
+  GetMyRentEstateFetchComplete({required this.rentEstates});
+}
+
+class GetMyRentEstateFetchProgress extends RentEstateState {}

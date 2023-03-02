@@ -7,18 +7,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_state.dart';
 import 'package:swesshome/modules/data/models/register.dart';
-import 'package:swesshome/modules/presentation/widgets/date_picker.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
-import '../../../utils/helpers/date_helper.dart';
 import '../../business_logic_components/bloc/user_edit_data_bloc/edit_user_data_event.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/governorates.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/user_authentication_repository.dart';
 import '../widgets/my_dropdown_list.dart';
+import '../widgets/res_text.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key, required this.user, this.governorates})
@@ -39,19 +38,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   ChannelCubit authenticationError = ChannelCubit(null);
   ChannelCubit firstNameError = ChannelCubit(null);
   ChannelCubit lastNameError = ChannelCubit(null);
-  ChannelCubit emailError = ChannelCubit(null);
+
+  //ChannelCubit emailError = ChannelCubit(null);
   ChannelCubit countryError = ChannelCubit(null);
-  ChannelCubit birthdateError = ChannelCubit(null);
+
+  //ChannelCubit birthdateError = ChannelCubit(null);
   ChannelCubit isEditCubit = ChannelCubit(false);
 
   // controllers:
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController birthdateController = TextEditingController();
+
+  //TextEditingController emailController = TextEditingController();
+  //TextEditingController birthdateController = TextEditingController();
 
   int? selectedGovernorateId;
-  DateTime? birthDate;
+
+  //DateTime? birthDate;
   late String phoneDialCodeLogin;
   String phoneNumber = "";
   String? token;
@@ -60,6 +63,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     _userEditDataBloc = UserEditDataBloc(UserAuthenticationRepository());
     token = UserSharedPreferences.getAccessToken()!;
+    // birthdateController.text =
+    //     birthdateController.text.isEmpty ? "" : birthdateController.text;
     super.initState();
   }
 
@@ -77,15 +82,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
+        padding: kSmallMedWidth,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
+              ResText(
                 AppLocalizations.of(context)!.first_name + " :",
-                style: Theme.of(context).textTheme.headline6,
+                textStyle: Theme.of(context).textTheme.headline6,
               ),
               kHe8,
               BlocBuilder<ChannelCubit, dynamic>(
@@ -109,9 +114,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
               kHe24,
-              Text(
+              ResText(
                 AppLocalizations.of(context)!.last_name + " :",
-                style: Theme.of(context).textTheme.headline6,
+                textStyle: Theme.of(context).textTheme.headline6,
               ),
               kHe8,
               BlocBuilder<ChannelCubit, dynamic>(
@@ -132,39 +137,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   );
                 },
               ),
-              kHe24,
-              Text(
-                AppLocalizations.of(context)!.email + " :",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              kHe8,
-              BlocBuilder<ChannelCubit, dynamic>(
-                bloc: emailError,
-                builder: (_, errorMessage) {
-                  return TextField(
-                    onChanged: (_) {
-                      emailError.setState(null);
-                      widget.user.email = emailController.text;
-                      isEditCubit.setState(true);
-                    },
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      errorText: errorMessage,
-                      hintText: widget.user.email,
-                      isCollapsed: false,
-                    ),
-                  );
-                },
-              ),
+              // kHe24,
+              // ResText(
+              //   AppLocalizations.of(context)!.email + " :",
+              //   textStyle: Theme.of(context).textTheme.headline6,
+              // ),
+              // kHe8,
+              // BlocBuilder<ChannelCubit, dynamic>(
+              //   bloc: emailError,
+              //   builder: (_, errorMessage) {
+              //     return TextField(
+              //       onChanged: (_) {
+              //         emailError.setState(null);
+              //         widget.user.email = emailController.text;
+              //         isEditCubit.setState(true);
+              //       },
+              //       controller: emailController,
+              //       decoration: InputDecoration(
+              //         errorText: errorMessage,
+              //         hintText: widget.user.email,
+              //         isCollapsed: false,
+              //       ),
+              //     );
+              //   },
+              // ),
               if (widget.governorates != null)
                 Column(
                   children: [
                     kHe24,
                     Row(
                       children: [
-                        Text(
+                        ResText(
                           AppLocalizations.of(context)!.governorate + " :",
-                          style: Theme.of(context).textTheme.headline6,
+                          textStyle: Theme.of(context).textTheme.headline6,
                         ),
                       ],
                     ),
@@ -201,47 +206,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ],
                 ),
-              kHe24,
-              Text(
-                AppLocalizations.of(context)!.date_of_birth + " :",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              kHe8,
-              BlocBuilder<ChannelCubit, dynamic>(
-                bloc: birthdateError,
-                builder: (_, errorMessage) {
-                  return TextField(
-                    onTap: () async {
-                      await myDatePicker(
-                        context,
-                        showTitleActions: true,
-                        minTime: DateTime(1900, 1, 1),
-                        maxTime: DateTime.now(),
-                        onConfirm: (date) {
-                          birthDate = date;
-                          birthdateController.text =
-                              DateHelper.getDateByFormat(date, 'yyyy/MM/dd');
-                          widget.user.birthdate = birthdateController.text;
-                          isEditCubit.setState(true);
-                        },
-                        currentTime: DateTime.now(),
-                        editingController: birthdateController,
-                      );
-                    },
-                    readOnly: true,
-                    controller: birthdateController,
-                    decoration: InputDecoration(
-                      errorText: errorMessage,
-                      hintText: birthdateController.text.isEmpty
-                          ? ""
-                          : DateHelper.getDateByFormat(
-                              DateTime.parse(widget.user.birthdate!),
-                              'yyyy/MM/dd'),
-                      isCollapsed: false,
-                    ),
-                  );
-                },
-              ),
+              // kHe24,
+              // ResText(
+              //   AppLocalizations.of(context)!.date_of_birth + " :",
+              //   textStyle: Theme.of(context).textTheme.headline6,
+              // ),
+              // kHe8,
+              // BlocBuilder<ChannelCubit, dynamic>(
+              //   bloc: birthdateError,
+              //   builder: (_, errorMessage) {
+              //     return TextField(
+              //       onTap: () async {
+              //         await myDatePicker(
+              //           context,
+              //           showTitleActions: true,
+              //           minTime: DateTime(1900, 1, 1),
+              //           maxTime: DateTime.now(),
+              //           onConfirm: (date) {
+              //             birthDate = date;
+              //             birthdateController.text =
+              //                 DateHelper.getDateByFormat(date, 'yyyy/MM/dd');
+              //             widget.user.birthdate = birthdateController.text;
+              //             isEditCubit.setState(true);
+              //           },
+              //           currentTime: DateTime.now(),
+              //           editingController: birthdateController,
+              //         );
+              //       },
+              //       readOnly: true,
+              //       controller: birthdateController,
+              //       decoration: InputDecoration(
+              //         errorText: errorMessage,
+              //         hintText: birthdateController.text.isEmpty
+              //             ? ""
+              //             : DateHelper.getDateByFormat(
+              //                 DateTime.parse(widget.user.birthdate!),
+              //                 'yyyy/MM/dd'),
+              //         isCollapsed: false,
+              //       ),
+              //     );
+              //   },
+              // ),
               kHe32,
               BlocBuilder<ChannelCubit, dynamic>(
                 bloc: isEditCubit,
@@ -278,9 +283,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         user: Register(
                                             firstName: widget.user.firstName!,
                                             lastName: widget.user.lastName!,
-                                            email: widget.user.email!,
+                                            //email: widget.user.email!,
                                             governorate: selectedGovernorateId,
-                                            birthdate: widget.user.birthdate!,
+                                            //birthdate: widget.user.birthdate!,
                                             authentication:
                                                 widget.user.authentication!),
                                         token: token),

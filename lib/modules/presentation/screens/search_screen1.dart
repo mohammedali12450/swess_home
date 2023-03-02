@@ -166,8 +166,11 @@ class _SearchScreen1State extends State<SearchScreen1> {
           ),
         ),
       ),
-      drawer: const Drawer(
-        child: MyDrawer(),
+      drawer: SizedBox(
+        width: getScreenWidth(context) * (75/100),
+        child: const Drawer(
+          child: MyDrawer(),
+        ),
       ),
     );
   }

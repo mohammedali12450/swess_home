@@ -180,9 +180,7 @@ class _EstateCardState extends State<EstateCard> {
           color: AppColors.white,
         ),
         color: widget.color,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(8),
-        ),
+        borderRadius: lowBorderRadius,
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.shadow,
@@ -325,9 +323,9 @@ class _EstateCardState extends State<EstateCard> {
                             child: IconButton(
                               constraints: const BoxConstraints(),
                               padding: EdgeInsets.zero,
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.close,
-                                size: 22,
+                                size: 22.w,
                                 color: AppColors.white,
                               ),
                               onPressed: () {
@@ -367,7 +365,7 @@ class _EstateCardState extends State<EstateCard> {
                                       color: estatePriceColor,
                                       fontSize: 24.sp,
                                       fontWeight: FontWeight.w400,
-                                      height: 1.5),
+                                      height: 1.5.h),
                                 ),
                               ),
                               if (widget.estate.estateOfferType!.id !=
@@ -383,7 +381,7 @@ class _EstateCardState extends State<EstateCard> {
                                         .textTheme
                                         .bodyText1!
                                         .copyWith(
-                                            height: 1.8,
+                                            height: 1.8.h,
                                             fontSize: 22.sp,
                                             fontWeight: FontWeight.w400,
                                             color: estatePriceColor),
@@ -410,7 +408,7 @@ class _EstateCardState extends State<EstateCard> {
                                         .textTheme
                                         .bodyText1!
                                         .copyWith(
-                                            height: 1.8,
+                                            height: 1.8.h,
                                             fontSize: 22.sp,
                                             fontWeight: FontWeight.w400,
                                             color: estatePriceColor),
@@ -482,54 +480,57 @@ class _EstateCardState extends State<EstateCard> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              height: 75.h,
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                image: DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                    imagesBaseUrl +
-                                        widget.estate.estateOffice!.logo!,
+                            Expanded(
+                              flex:4,
+                              child: Container(
+                               // height: 75.h,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  image: DecorationImage(
+                                    image: CachedNetworkImageProvider(
+                                      imagesBaseUrl +
+                                          widget.estate.estateOffice!.logo!,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                            8.verticalSpace,
+                            4.verticalSpace,
                             if (widget.estate.visitCount != null)
-                              Directionality(
-                                textDirection: TextDirection.ltr,
-                                child: Container(
-                                  padding: const EdgeInsets.only(left: 17),
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 3.0),
-                                        child: Icon(
+                              Expanded(
+                                flex:1,
+                                child: Directionality(
+                                  textDirection: TextDirection.ltr,
+                                  child: Container(
+                                    padding: EdgeInsets.only(left: 17.w),
+                                    child: Row(
+                                      children: [
+                                        Icon(
                                           Icons.remove_red_eye_outlined,
                                           color: !isDarkMode
                                               ? AppColors.lastColor
                                               : AppColors.yellowDarkColor,
-                                          size: 20,
+                                         // size: 20,
                                         ),
-                                      ),
-                                      kWi8,
-                                      Text(
-                                        widget.estate.visitCount!.toString(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline5!
-                                            .copyWith(
-                                                color: !isDarkMode
-                                                    ? AppColors.lastColor
-                                                    : AppColors.yellowDarkColor,
-                                                fontSize: 14,
-                                                height: 1.5),
-                                      ),
-                                    ],
+                                        kWi8,
+                                        Text(
+                                          widget.estate.visitCount!.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline5!
+                                              .copyWith(
+                                                  color: !isDarkMode
+                                                      ? AppColors.lastColor
+                                                      : AppColors.yellowDarkColor,
+                                                  //fontSize: 14.sp,
+                                                  height: 1.5.h),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
+                            4.verticalSpace,
                           ],
                         ),
                       ),
@@ -544,236 +545,255 @@ class _EstateCardState extends State<EstateCard> {
           if (!widget.removeBottomBar) ...[
             const Divider(),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                BlocConsumer<SaveAndUnSaveEstateBloc, SaveAndUnSaveEstateState>(
-                  bloc: _saveAndUnSaveEstateBloc,
-                  listener: (_, saveAndUnSaveState) async {
-                    if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
-                      var error = saveAndUnSaveState.isConnectionError
-                          ? AppLocalizations.of(context)!.no_internet_connection
-                          : saveAndUnSaveState.error;
-                      await showWonderfulAlertDialog(
-                          context, AppLocalizations.of(context)!.error, error);
-                      _saveAndUnSaveEstateBloc.add(
-                        ReInitializeSaveState(isSaved: widget.estate.isSaved!),
-                      );
-                    }
-                    if (saveAndUnSaveState is EstateSaved) {
-                      widget.estate.isSaved = true;
-                    }
-                    if (saveAndUnSaveState is EstateUnSaved) {
-                      widget.estate.isSaved = false;
-                    }
-                  },
-                  builder: (_, saveAndUnSaveState) {
-                    return IconButton(
-                      onPressed: () {
-                        if (userToken == null) {
-                          showWonderfulAlertDialog(
-                            context,
-                            AppLocalizations.of(context)!.confirmation,
-                            AppLocalizations.of(context)!
-                                .this_features_require_login,
-                            removeDefaultButton: true,
-                            width: 400.w,
-                            dialogButtons: [
-                              ElevatedButton(
-                                child: Text(
-                                  AppLocalizations.of(context)!.cancel,
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              ElevatedButton(
-                                child: Text(
-                                  AppLocalizations.of(context)!.sign_in,
-                                ),
-                                onPressed: () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const AuthenticationScreen(
-                                        popAfterFinish: true,
-                                      ),
+                Expanded(
+                  flex: 1,
+                  child: BlocConsumer<SaveAndUnSaveEstateBloc, SaveAndUnSaveEstateState>(
+                    bloc: _saveAndUnSaveEstateBloc,
+                    listener: (_, saveAndUnSaveState) async {
+                      if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
+                        var error = saveAndUnSaveState.isConnectionError
+                            ? AppLocalizations.of(context)!.no_internet_connection
+                            : saveAndUnSaveState.error;
+                        await showWonderfulAlertDialog(
+                            context, AppLocalizations.of(context)!.error, error);
+                        _saveAndUnSaveEstateBloc.add(
+                          ReInitializeSaveState(isSaved: widget.estate.isSaved!),
+                        );
+                      }
+                      if (saveAndUnSaveState is EstateSaved) {
+                        widget.estate.isSaved = true;
+                      }
+                      if (saveAndUnSaveState is EstateUnSaved) {
+                        widget.estate.isSaved = false;
+                      }
+                    },
+                    builder: (_, saveAndUnSaveState) {
+                      return Center(
+                        child: IconButton(
+                          onPressed: () {
+                            if (userToken == null) {
+                              showWonderfulAlertDialog(
+                                context,
+                                AppLocalizations.of(context)!.confirmation,
+                                AppLocalizations.of(context)!
+                                    .this_features_require_login,
+                                removeDefaultButton: true,
+                                width: 400.w,
+                                dialogButtons: [
+                                  ElevatedButton(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.cancel,
                                     ),
-                                  );
-                                  Navigator.pop(context);
-                                  User? user =
-                                      BlocProvider.of<UserLoginBloc>(context)
-                                          .user;
-                                  if (user != null) {
-                                    userToken =
-                                        UserSharedPreferences.getAccessToken();
-                                  }
-                                  return;
-                                },
-                              ),
-                            ],
-                          );
-                          return;
-                        }
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ElevatedButton(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.sign_in,
+                                    ),
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const AuthenticationScreen(
+                                            popAfterFinish: true,
+                                          ),
+                                        ),
+                                      );
+                                      Navigator.pop(context);
+                                      User? user =
+                                          BlocProvider.of<UserLoginBloc>(context)
+                                              .user;
+                                      if (user != null) {
+                                        userToken =
+                                            UserSharedPreferences.getAccessToken();
+                                      }
+                                      return;
+                                    },
+                                  ),
+                                ],
+                              );
+                              return;
+                            }
 
-                        if (saveAndUnSaveState is EstateSaved) {
-                          _saveAndUnSaveEstateBloc.add(UnSaveEventStarted(
-                              token: userToken, estateId: widget.estate.id!));
-                        }
-                        if (saveAndUnSaveState is EstateUnSaved) {
-                          _saveAndUnSaveEstateBloc.add(EstateSaveStarted(
-                              token: userToken, estateId: widget.estate.id!));
-                        }
-                      },
-                      icon: (saveAndUnSaveState is EstateSaveAndUnSaveProgress)
-                          ? SpinKitWave(
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 16.w,
-                            )
-                          : Icon((saveAndUnSaveState is EstateSaved)
-                              ? Icons.bookmark
-                              : Icons.bookmark_border_outlined),
-                      color: Theme.of(context).colorScheme.primary,
-                    );
-                  },
-                ),
-                IconButton(
-                  onPressed: () async {
-                    visitBloc.add(
-                      VisitStarted(
-                          visitId: widget.estate.id!,
-                          token: userToken,
-                          visitType: VisitType.officeCall),
-                    );
-                    await myCupertinoActionSheet(
-                      context,
-                      elementsList: [
-                        isArabic
-                            ? widget.estate.estateOffice!.phone!.split("+")[1] +
-                                "+"
-                            : widget.estate.estateOffice!.phone!
-                      ],
-                      onPressed: [
-                        () {
-                          launch(
-                            "tel://" +
-                                widget.estate.estateOffice!.phone.toString(),
-                          );
-                        },
-                      ],
-                    );
-                  },
-                  icon: const Icon(Icons.call),
-                ),
-                BlocConsumer<LikeAndUnlikeBloc, LikeAndUnlikeState>(
-                  bloc: _likeAndUnlikeBloc,
-                  listener: (_, likeAndUnlikeState) async {
-                    if (likeAndUnlikeState is LikeAndUnlikeError) {
-                      var error = likeAndUnlikeState.isConnectionError
-                          ? AppLocalizations.of(context)!.no_internet_connection
-                          : likeAndUnlikeState.error;
-                      await showWonderfulAlertDialog(
-                          context, AppLocalizations.of(context)!.error, error);
-                      _likeAndUnlikeBloc.add(
-                        ReInitializeLikeState(isLike: widget.estate.isLiked!),
-                      );
-                    }
-                    if (likeAndUnlikeState is Liked) {
-                      widget.estate.isLiked = true;
-                    }
-                    if (likeAndUnlikeState is Unliked) {
-                      widget.estate.isLiked = false;
-                    }
-                  },
-                  builder: (_, likeAndUnlikeState) {
-                    return IconButton(
-                      onPressed: () async {
-                        if (userToken == null) {
-                          showWonderfulAlertDialog(
-                            context,
-                            AppLocalizations.of(context)!.confirmation,
-                            AppLocalizations.of(context)!
-                                .this_features_require_login,
-                            removeDefaultButton: true,
-                            width: 400.w,
-                            dialogButtons: [
-                              ElevatedButton(
-                                child: Text(
-                                  AppLocalizations.of(context)!.cancel,
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              ElevatedButton(
-                                child: Text(
-                                  AppLocalizations.of(context)!.sign_in,
-                                ),
-                                onPressed: () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const AuthenticationScreen(
-                                        popAfterFinish: true,
-                                      ),
-                                    ),
-                                  );
-                                  Navigator.pop(context);
-                                  User? user =
-                                      BlocProvider.of<UserLoginBloc>(context)
-                                          .user;
-                                  if (user != null) {
-                                    userToken =
-                                        UserSharedPreferences.getAccessToken();
-                                  }
-                                  return;
-                                },
-                              ),
-                            ],
-                          );
-                          return;
-                        }
-                        if (likeAndUnlikeState is Liked) {
-                          _likeAndUnlikeBloc.add(
-                            UnlikeStarted(
-                              token: userToken,
-                              unlikedObjectId: widget.estate.id!,
-                              likeType: LikeType.estate,
-                            ),
-                          );
-                        }
-                        if (likeAndUnlikeState is Unliked) {
-                          _likeAndUnlikeBloc.add(
-                            LikeStarted(
-                                token: userToken,
-                                likedObjectId: widget.estate.id!,
-                                likeType: LikeType.estate),
-                          );
-                        }
-                      },
-                      icon: (likeAndUnlikeState is LikeAndUnlikeProgress)
-                          ? SpinKitWave(
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 16.w,
-                            )
-                          : Row(
-                              children: [
-                                (likeAndUnlikeState is Liked)
-                                    ? Text(widget.estate.likesCount != null
-                                        ? "${widget.estate.likesCount! + 1}"
-                                        : "")
-                                    : Container(),
-                                Icon(
-                                  (likeAndUnlikeState is Liked)
-                                      ? Icons.favorite
-                                      : Icons.favorite_outline,
+                            if (saveAndUnSaveState is EstateSaved) {
+                              _saveAndUnSaveEstateBloc.add(UnSaveEventStarted(
+                                  token: userToken, estateId: widget.estate.id!));
+                            }
+                            if (saveAndUnSaveState is EstateUnSaved) {
+                              _saveAndUnSaveEstateBloc.add(EstateSaveStarted(
+                                  token: userToken, estateId: widget.estate.id!));
+                            }
+                          },
+                          icon: (saveAndUnSaveState is EstateSaveAndUnSaveProgress)
+                              ? SpinKitWave(
                                   color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ],
-                            ),
-                    );
-                  },
+                                  size: 16.w,
+                                )
+                              : Icon((saveAndUnSaveState is EstateSaved)
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border_outlined),
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: IconButton(
+                      onPressed: () async {
+                        visitBloc.add(
+                          VisitStarted(
+                              visitId: widget.estate.id!,
+                              token: userToken,
+                              visitType: VisitType.officeCall),
+                        );
+                        await myCupertinoActionSheet(
+                          context,
+                          elementsList: [
+                            isArabic
+                                ? widget.estate.estateOffice!.phone!.split("+")[1] +
+                                    "+"
+                                : widget.estate.estateOffice!.phone!
+                          ],
+                          onPressed: [
+                            () {
+                              launch(
+                                "tel://" +
+                                    widget.estate.estateOffice!.phone.toString(),
+                              );
+                            },
+                          ],
+                        );
+                      },
+                      icon: const Icon(Icons.call),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: BlocConsumer<LikeAndUnlikeBloc, LikeAndUnlikeState>(
+                    bloc: _likeAndUnlikeBloc,
+                    listener: (_, likeAndUnlikeState) async {
+                      if (likeAndUnlikeState is LikeAndUnlikeError) {
+                        var error = likeAndUnlikeState.isConnectionError
+                            ? AppLocalizations.of(context)!.no_internet_connection
+                            : likeAndUnlikeState.error;
+                        await showWonderfulAlertDialog(
+                            context, AppLocalizations.of(context)!.error, error);
+                        _likeAndUnlikeBloc.add(
+                          ReInitializeLikeState(isLike: widget.estate.isLiked!),
+                        );
+                      }
+                      if (likeAndUnlikeState is Liked) {
+                        widget.estate.isLiked = true;
+                      }
+                      if (likeAndUnlikeState is Unliked) {
+                        widget.estate.isLiked = false;
+                      }
+                    },
+                    builder: (_, likeAndUnlikeState) {
+                      return SizedBox(
+                        width: inf,
+                        child: Center(
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () async {
+                              if (userToken == null) {
+                                showWonderfulAlertDialog(
+                                  context,
+                                  AppLocalizations.of(context)!.confirmation,
+                                  AppLocalizations.of(context)!
+                                      .this_features_require_login,
+                                  removeDefaultButton: true,
+                                  width: 400.w,
+                                  dialogButtons: [
+                                    ElevatedButton(
+                                      child: Text(
+                                        AppLocalizations.of(context)!.cancel,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    ElevatedButton(
+                                      child: Text(
+                                        AppLocalizations.of(context)!.sign_in,
+                                      ),
+                                      onPressed: () async {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const AuthenticationScreen(
+                                              popAfterFinish: true,
+                                            ),
+                                          ),
+                                        );
+                                        Navigator.pop(context);
+                                        User? user =
+                                            BlocProvider.of<UserLoginBloc>(context)
+                                                .user;
+                                        if (user != null) {
+                                          userToken =
+                                              UserSharedPreferences.getAccessToken();
+                                        }
+                                        return;
+                                      },
+                                    ),
+                                  ],
+                                );
+                                return;
+                              }
+                              if (likeAndUnlikeState is Liked) {
+                                _likeAndUnlikeBloc.add(
+                                  UnlikeStarted(
+                                    token: userToken,
+                                    unlikedObjectId: widget.estate.id!,
+                                    likeType: LikeType.estate,
+                                  ),
+                                );
+                              }
+                              if (likeAndUnlikeState is Unliked) {
+                                _likeAndUnlikeBloc.add(
+                                  LikeStarted(
+                                      token: userToken,
+                                      likedObjectId: widget.estate.id!,
+                                      likeType: LikeType.estate),
+                                );
+                              }
+                            },
+                            icon: (likeAndUnlikeState is LikeAndUnlikeProgress)
+                                ? SpinKitWave(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    size: 16.w,
+                                  )
+                                : Row(
+                                    children: [
+                                      (likeAndUnlikeState is Liked)
+                                          ? Text(widget.estate.likesCount != null
+                                              ? "${widget.estate.likesCount! + 1}"
+                                              : "")
+                                          : Container(),
+                                      Icon(
+                                        (likeAndUnlikeState is Liked)
+                                            ? Icons.favorite
+                                            : Icons.favorite_outline,
+                                        color: Theme.of(context).colorScheme.primary,
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

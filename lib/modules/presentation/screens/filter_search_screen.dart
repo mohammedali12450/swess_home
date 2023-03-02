@@ -19,7 +19,9 @@ import '../../data/models/user.dart';
 import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../widgets/choice_container.dart';
+import '../widgets/estate_type.dart';
 import '../widgets/price_domain.dart';
+import '../widgets/res_text.dart';
 import 'estates_screen.dart';
 import 'search_location_screen.dart';
 import 'search_region_screen.dart';
@@ -46,9 +48,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   // others:
   List<EstateType>? estatesTypes;
 
-  SearchData searchData = SearchData(
-    estateTypeId: 1
-  );
+  SearchData searchData = SearchData(estateTypeId: 1);
   String? token;
   LocationViewer? selectedLocation;
   RegionViewer? selectedRegion;
@@ -78,6 +78,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
 
   String? userToken;
   late bool isArabic;
+  late bool isDark;
 
   @override
   void initState() {
@@ -101,13 +102,12 @@ class _SearchScreenState extends State<FilterSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: isDark ? const Color(0xff26282B) : null,
         title: Text(AppLocalizations.of(context)!.search),
       ),
       body: SingleChildScrollView(
@@ -118,7 +118,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
               children: [
                 Container(
                   padding: kMediumSymHeight,
-                  child: buildSearchWidgets(isDark),
+                  child: buildSearchWidgets(),
                 ),
               ],
             );
@@ -157,9 +157,10 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            ResText(
                               AppLocalizations.of(context)!.search,
-                              style: const TextStyle(color: AppColors.white),
+                              textStyle:
+                                  const TextStyle(color: AppColors.white),
                             ),
                             kWi16,
                             const Icon(
@@ -233,349 +234,52 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     );
   }
 
-  Widget buildSearchWidgets(isDark) {
-    return Column(
-      children: [
-        buildChoiceContainer(
-            context: context,
-            cubit: isRentCubit,
-            textRight: AppLocalizations.of(context)!.sell,
-            textLeft: AppLocalizations.of(context)!.rent,
-            onTapRight: () {
-              searchData.estateOfferTypeId = 1;
-            },
-            onTapLeft: () {
-              searchData.estateOfferTypeId = 2;
-            }),
-        buildLocation(isDark),
-        buildEstateType(isDark),
-        PriceDomainWidget(
-          isRentCubit: isRentCubit,
-          searchData: searchData,
-          startPriceCubit: startPriceCubit,
-          endPriceCubit: endPriceCubit,
-        ),
-        kHe60,
-      ],
-    );
-  }
-
-  Widget buildEstateType(isDark) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              const Icon(Icons.home_outlined),
-              kWi8,
-              Text(
-                AppLocalizations.of(context)!.estate_type + " :",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
+  Widget buildSearchWidgets() {
+    return Padding(
+      padding: kMediumSymWidth,
+      child: Column(
+        children: [
+          buildChoiceContainer(
+              context: context,
+              cubit: isRentCubit,
+              textRight: AppLocalizations.of(context)!.sell,
+              textLeft: AppLocalizations.of(context)!.rent,
+              onTapRight: () {
+                searchData.estateOfferTypeId = 1;
+              },
+              onTapLeft: () {
+                searchData.estateOfferTypeId = 2;
+              }),
+          buildLocation(),
+          EstateTypeWidget(
+            searchData: searchData,
+            isPressTypeCubit: isPressTypeCubit,
+            removeSelect: true,
           ),
-        ),
-        BlocBuilder<ChannelCubit, dynamic>(
-          bloc: isPressTypeCubit,
-          builder: (_, pressState) {
-            return Padding(
-              padding: kTinyAllPadding,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        if (pressState < 5 && pressState == 0) {
-                          isPressTypeCubit.setState(0);
-                          //searchData.estateTypeId = null;
-                          searchData.estateTypeId = 1;
-                        } else {
-                          isPressTypeCubit.setState(0);
-                          searchData.estateTypeId = 1;
-                        }
-                      },
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 60,
-                            padding: kSmallAllPadding,
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(100)),
-                              border: Border.all(
-                                  color: pressState == 0
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.primaryColor),
-                            ),
-                            child: Image.asset(buildIconPath,
-                                color: AppColors.primaryColor),
-                          ),
-                          Text(
-                            AppLocalizations.of(context)!.house,
-                            style: TextStyle(
-                                color: !isDark
-                                    ? pressState == 0
-                                        ? AppColors.yellowDarkColor
-                                        : AppColors.primaryColor
-                                    : pressState == 0
-                                        ? AppColors.yellowDarkColor
-                                        : AppColors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  kWi16,
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        if (pressState < 5 && pressState == 3) {
-                          isPressTypeCubit.setState(3);
-                          //searchData.estateTypeId = null;
-                          searchData.estateTypeId = 4;
-                        } else {
-                          isPressTypeCubit.setState(3);
-                          searchData.estateTypeId = 4;
-                        }
-                      },
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 60,
-                            padding: kSmallAllPadding,
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(100)),
-                              border: Border.all(
-                                  color: pressState == 3
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.primaryColor),
-                            ),
-                            child: Image.asset(farmIconPath,
-                                color: AppColors.primaryColor),
-                          ),
-                          Text(
-                            AppLocalizations.of(context)!.farm,
-                            style: TextStyle(
-                                color: !isDark
-                                    ? pressState == 3
-                                        ? AppColors.yellowDarkColor
-                                        : AppColors.primaryColor
-                                    : pressState == 3
-                                        ? AppColors.yellowDarkColor
-                                        : AppColors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  kWi16,
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        if (pressState < 5 && pressState == 2) {
-                          isPressTypeCubit.setState(2);
-                          //searchData.estateTypeId = null;
-                          searchData.estateTypeId = 3;
-                        } else {
-                          isPressTypeCubit.setState(2);
-                          searchData.estateTypeId = 3;
-                        }
-                      },
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 60,
-                            padding: kTinyAllPadding,
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(100)),
-                              border: Border.all(
-                                  color: pressState == 2
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.primaryColor),
-                            ),
-                            child: Image.asset(landIconPath,
-                                color: AppColors.primaryColor),
-                          ),
-                          Text(
-                            AppLocalizations.of(context)!.land,
-                            style: TextStyle(
-                                color: !isDark
-                                    ? pressState == 2
-                                        ? AppColors.yellowDarkColor
-                                        : AppColors.primaryColor
-                                    : pressState == 2
-                                        ? AppColors.yellowDarkColor
-                                        : AppColors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  kWi16,
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        if (pressState < 5 && pressState == 1) {
-                          isPressTypeCubit.setState(1);
-                          //searchData.estateTypeId = null;
-                          searchData.estateTypeId = 2;
-                        } else {
-                          isPressTypeCubit.setState(1);
-                          searchData.estateTypeId = 2;
-                        }
-                      },
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 60,
-                            padding: kTinyAllPadding,
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(100)),
-                              border: Border.all(
-                                  color: pressState == 1
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.primaryColor),
-                            ),
-                            child: Image.asset(shopIconPath,
-                                color: AppColors.primaryColor),
-                          ),
-                          Text(
-                            AppLocalizations.of(context)!.shop,
-                            style: TextStyle(
-                                color: !isDark
-                                    ? pressState == 1
-                                        ? AppColors.yellowDarkColor
-                                        : AppColors.primaryColor
-                                    : pressState == 1
-                                        ? AppColors.yellowDarkColor
-                                        : AppColors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  kWi16,
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        if (pressState < 5 && pressState == 4) {
-                          isPressTypeCubit.setState(4);
-                          //searchData.estateTypeId = null;
-                          searchData.estateTypeId = 5;
-                        } else {
-                          isPressTypeCubit.setState(4);
-                          searchData.estateTypeId = 5;
-                        }
-                      },
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 60,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(100)),
-                              border: Border.all(
-                                  color: pressState == 4
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.primaryColor),
-                            ),
-                            child: Image.asset(villaIconPath,
-                                color: AppColors.primaryColor),
-                          ),
-                          Text(
-                            AppLocalizations.of(context)!.villa,
-                            style: TextStyle(
-                                color: !isDark
-                                    ? pressState == 4
-                                        ? AppColors.yellowDarkColor
-                                        : AppColors.primaryColor
-                                    : pressState == 4
-                                        ? AppColors.yellowDarkColor
-                                        : AppColors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-        /* BlocBuilder<EstateTypesBloc, EstateTypesState>(
-          bloc: estateTypesBloc,
-          builder: (_, estateTypesState) {
-            if (estateTypesState is EstateTypesFetchError) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: SizedBox(
-                    width: 1.sw,
-                    height: 1.sh - 75.h,
-                    child: FetchResult(
-                        content: AppLocalizations.of(context)!
-                            .error_happened_when_executing_operation)),
-              );
-            }
-            if (estateTypesState is EstateTypesFetchProgress) {
-              return SpinKitWave(
-                color: Theme.of(context).colorScheme.background,
-                size: 24.w,
-              );
-            } else if (estateTypesState is EstateTypesFetchComplete) {
-              estatesTypes = estateTypesState.estateTypes!;
-            }
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black38, width: 1),
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                ),
-                child: MyDropdownList(
-                  elementsList: estatesTypes!
-                      .map((e) => e.name.split('|').first)
-                      .toList(),
-                  onSelect: (index) {
-                    // set search data estate type :
-                    searchData.estateTypeId = estatesTypes!.elementAt(index).id;
-                  },
-                  validator: (value) => value == null
-                      ? AppLocalizations.of(context)!.this_field_is_required
-                      : null,
-                  selectedItem: AppLocalizations.of(context)!.please_select,
-                ),
-              ),
-            );
-          },
-        ),*/
-        kHe12,
-      ],
+          PriceDomainWidget(
+            isRentCubit: isRentCubit,
+            searchData: searchData,
+            startPriceCubit: startPriceCubit,
+            endPriceCubit: endPriceCubit,
+          ),
+          kHe60,
+        ],
+      ),
     );
   }
 
-  Column buildLocation(isDark) {
+  Column buildLocation() {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: kTinyAllPadding,
           child: Row(
             children: [
               const Icon(Icons.location_on_outlined),
               kWi8,
-              Text(
+              ResText(
                 AppLocalizations.of(context)!.location + " :",
-                style: Theme.of(context).textTheme.headline6,
+                textStyle: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
@@ -597,15 +301,15 @@ class _SearchScreenState extends State<FilterSearchScreen> {
           bloc: isAreaSearchCubit,
           builder: (_, isArea) {
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              padding: kSmallAllPadding,
               child: Container(
-                height: 50,
+                height: 55.h,
                 decoration: BoxDecoration(
                   border: Border.all(
                       color:
                           !isDark ? Colors.black38 : AppColors.yellowDarkColor,
                       width: 1),
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  borderRadius: lowBorderRadius,
                 ),
                 margin: EdgeInsets.only(
                   bottom: 8.h,
@@ -652,10 +356,13 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       return Center(
                         child: Row(
                           children: [
-                            Text(locationName == ""
-                                ? AppLocalizations.of(context)!
-                                    .enter_neighborhood_name
-                                : locationName),
+                            ResText(
+                              locationName == ""
+                                  ? AppLocalizations.of(context)!
+                                      .enter_neighborhood_name
+                                  : locationName,
+                              textStyle: Theme.of(context).textTheme.headline6,
+                            ),
                           ],
                         ),
                       );

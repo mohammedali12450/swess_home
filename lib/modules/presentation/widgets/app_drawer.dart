@@ -8,7 +8,6 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
-import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
@@ -61,130 +60,127 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 
   buildUserDrawer(isDark) {
-    return SizedBox(
-      height: getScreenHeight(context) / 1.1,
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 36.h, horizontal: 12.w),
-            alignment: Alignment.topCenter,
-            decoration: BoxDecoration(
-              color: !isDark
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.secondary,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              //crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    kHe24,
-                    Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                      ),
-                      child: Image.asset(
-                        swessHomeIconPath,
-                        width: 100.w,
-                        height: 100.w,
-                      ),
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 36.h, horizontal: 12.w),
+          alignment: Alignment.topCenter,
+          decoration: BoxDecoration(
+            color: !isDark
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.secondary,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            //crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  kHe24,
+                  Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
                     ),
-                    kHe24,
-                    // Text(
-                    //   user.userName + " " + user.lastName,
-                    //   style: Theme.of(context)
-                    //       .textTheme
-                    //       .headline4!
-                    //       .copyWith(
-                    //       color: Colors.white,
-                    //       fontWeight: FontWeight.w500),
-                    // ),
-                    kHe4,
-                    // Text(
-                    //   user.authentication,
-                    //   textDirection: TextDirection.ltr,
-                    //   style: Theme.of(context)
-                    //       .textTheme
-                    //       .bodyText2!
-                    //       .copyWith(
-                    //       color: Colors.white,
-                    //       fontWeight: FontWeight.w500),
-                    // )
+                    child: Image.asset(
+                      swessHomeIconPath,
+                      width: 100.w,
+                      height: 100.w,
+                    ),
+                  ),
+                  kHe24,
+                  // Text(
+                  //   user.userName + " " + user.lastName,
+                  //   style: Theme.of(context)
+                  //       .textTheme
+                  //       .headline4!
+                  //       .copyWith(
+                  //       color: Colors.white,
+                  //       fontWeight: FontWeight.w500),
+                  // ),
+                  kHe4,
+                  // Text(
+                  //   user.authentication,
+                  //   textDirection: TextDirection.ltr,
+                  //   style: Theme.of(context)
+                  //       .textTheme
+                  //       .bodyText2!
+                  //       .copyWith(
+                  //       color: Colors.white,
+                  //       fontWeight: FontWeight.w500),
+                  // )
+                ],
+              ),
+            ],
+          ),
+        ),
+        kHe16,
+        RowInformation(
+          content: AppLocalizations.of(context)!.rate_us,
+          iconData: Icons.star_rate_outlined,
+          onTap: () {
+            Navigator.pushNamed(context, RatingScreen.id);
+          },
+        ),
+        buildMainDrawer(isDark),
+        BlocBuilder<UserLoginBloc, UserLoginState>(
+          builder: (context, userLoginState) {
+            return RowInformation(
+              content: AppLocalizations.of(context)!.log_out,
+              iconData: Icons.logout,
+              onTap: () async {
+                await showWonderfulAlertDialog(
+                  context,
+                  AppLocalizations.of(context)!.confirmation,
+                  AppLocalizations.of(context)!.logout_confirmation,
+                  removeDefaultButton: true,
+                  width: 450.w,
+                  dialogButtons: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          fixedSize: Size(140.w, 56.h),
+                          padding: EdgeInsets.zero),
+                      child: BlocBuilder<ChannelCubit, dynamic>(
+                        bloc: isLogoutLoadingCubit,
+                        builder: (_, isLogoutLoading) {
+                          return (isLogoutLoading)
+                              ? SpinKitWave(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .background,
+                                  size: 16.w,
+                                )
+                              : Text(
+                                  AppLocalizations.of(context)!.log_out,
+                                );
+                        },
+                      ),
+                      onPressed: () async {
+                        isLogoutLoadingCubit.setState(true);
+                        await _logout();
+                        isLogoutLoadingCubit.setState(false);
+                        UserSharedPreferences.clear();
+                      },
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          fixedSize: Size(140.w, 56.h),
+                          padding: EdgeInsets.zero),
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ],
-                ),
-              ],
-            ),
-          ),
-          kHe16,
-          RowInformation(
-            content: AppLocalizations.of(context)!.rate_us,
-            iconData: Icons.star_rate_outlined,
-            onTap: () {
-              Navigator.pushNamed(context, RatingScreen.id);
-            },
-          ),
-          buildMainDrawer(isDark),
-          BlocBuilder<UserLoginBloc, UserLoginState>(
-            builder: (context, userLoginState) {
-              return RowInformation(
-                content: AppLocalizations.of(context)!.log_out,
-                iconData: Icons.logout,
-                onTap: () async {
-                  await showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.confirmation,
-                    AppLocalizations.of(context)!.logout_confirmation,
-                    removeDefaultButton: true,
-                    width: 450.w,
-                    dialogButtons: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(140.w, 56.h),
-                            padding: EdgeInsets.zero),
-                        child: BlocBuilder<ChannelCubit, dynamic>(
-                          bloc: isLogoutLoadingCubit,
-                          builder: (_, isLogoutLoading) {
-                            return (isLogoutLoading)
-                                ? SpinKitWave(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .background,
-                                    size: 16.w,
-                                  )
-                                : Text(
-                                    AppLocalizations.of(context)!.log_out,
-                                  );
-                          },
-                        ),
-                        onPressed: () async {
-                          isLogoutLoadingCubit.setState(true);
-                          await _logout();
-                          isLogoutLoadingCubit.setState(false);
-                          UserSharedPreferences.clear();
-                        },
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(140.w, 56.h),
-                            padding: EdgeInsets.zero),
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
+                );
+              },
+            );
+          },
+        ),
+      ],
     );
   }
 

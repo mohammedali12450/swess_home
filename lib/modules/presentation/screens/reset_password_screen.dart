@@ -19,7 +19,8 @@ class ResetPasswordScreen extends StatefulWidget {
   static const String id = 'ResetPasswordScreen';
   final String phoneNumber;
 
-  const ResetPasswordScreen({Key? key, required this.phoneNumber}) : super(key: key);
+  const ResetPasswordScreen({Key? key, required this.phoneNumber})
+      : super(key: key);
 
   @override
   _ResetPasswordScreenState createState() => _ResetPasswordScreenState();
@@ -38,6 +39,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   TextEditingController confirmPasswordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
   // Other:
   late String phoneDialCode;
   PhoneNumber? phoneNumber;
@@ -49,7 +51,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     resetPasswordBloc = BlocProvider.of<ResetPasswordBloc>(context);
     //TODO: edit is out of syria
     // Dial code initializing:
-    if (BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore) {
+    if (BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore) {
       phoneDialCode = "+961";
     } else {
       phoneDialCode = "+963";
@@ -65,7 +69,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ResetPasswordBloc, ResetPasswordState>(
-      listener: (_, resetState)  {
+      listener: (_, resetState) {
         if (resetState is ResetPasswordError) {
           if (resetState.isConnectionError) {
             showWonderfulAlertDialog(
@@ -79,7 +83,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           if (resetState.errorResponse != null) {
             loginErrorHandling(resetState.errorResponse);
           } else if (resetState.errorMessage != null) {
-             showWonderfulAlertDialog(
+            showWonderfulAlertDialog(
               context,
               AppLocalizations.of(context)!.error,
               resetState.errorMessage!,
@@ -95,7 +99,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   popAfterFinish: false,
                 ),
               ),
-                  (route) => false);
+              (route) => false);
         }
       },
       child: Scaffold(
@@ -142,11 +146,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.reset_password,),
+        Text(
+          AppLocalizations.of(context)!.reset_password,
+        ),
         8.verticalSpace,
         TextFormField(
           validator: (value) {
-            return passwordValidator1(value, context  );
+            return passwordValidator1(value, context);
           },
           textDirection: TextDirection.ltr,
           cursorColor: Theme.of(context).colorScheme.onBackground,
@@ -159,7 +165,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         16.verticalSpace,
         TextFormField(
           validator: (value) {
-            return confirmPasswordValidator1(value!, context, confirmPasswordController.text);
+            return confirmPasswordValidator1(
+                value!, context, confirmPasswordController.text);
           },
           textDirection: TextDirection.ltr,
           cursorColor: Theme.of(context).colorScheme.onBackground,
@@ -169,20 +176,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             hintText: AppLocalizations.of(context)!.confirm_your_new_password,
           ),
         ),
-
         56.verticalSpace,
         Center(
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               minimumSize: Size(180.w, 60.h),
             ),
-            onPressed: ()  {
+            onPressed: () {
               // validators :
               // if (!await signInFieldsValidation()) {
               //   return;
               // }
               if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
+                _formKey.currentState!.save();
                 resetPasswordBloc.add(
                   ResetPasswordStarted(
                       mobile: widget.phoneNumber,
@@ -224,7 +230,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     );
   }
 
-
   // Future<bool> signInFieldsValidation() async {
   //   bool isValidationSuccess = true;
   //   // phone number validate :
@@ -240,7 +245,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   //   }
   //   return isValidationSuccess;
   // }
-
 
   getButtonsBorderRadius(bool isLeft) {
     Radius radius = const Radius.circular(12);

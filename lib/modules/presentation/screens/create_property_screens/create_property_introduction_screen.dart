@@ -8,6 +8,8 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_screen1.dart';
 
+import '../../widgets/res_text.dart';
+
 class CreatePropertyIntroductionScreen extends StatefulWidget {
   static const String id = "CreatePropertyIntroductionScreen";
   final int officeId;
@@ -62,9 +64,9 @@ class _CreatePropertyIntroductionScreenState
                   ),
                 ),
                 40.verticalSpace,
-                Text(
+                ResText(
                   AppLocalizations.of(context)!.estate_offer_creating,
-                  style: Theme.of(context).textTheme.headline4!.copyWith(
+                  textStyle: Theme.of(context).textTheme.headline4!.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
@@ -73,11 +75,11 @@ class _CreatePropertyIntroductionScreenState
                 16.verticalSpace,
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Text(
+                  child: ResText(
                     AppLocalizations.of(context)!.create_estate_introduction,
                     maxLines: 10,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context)
+                    textStyle: Theme.of(context)
                         .textTheme
                         .bodyText2!
                         .copyWith(color: Colors.white),
@@ -89,9 +91,9 @@ class _CreatePropertyIntroductionScreenState
                     fixedSize: Size(220.w, 64.h),
                     primary: AppColors.secondaryColor,
                   ),
-                  child: Text(
+                  child: ResText(
                     AppLocalizations.of(context)!.start_now,
-                    style: Theme.of(context)
+                    textStyle: Theme.of(context)
                         .textTheme
                         .bodyText1!
                         .copyWith(color: Colors.black),

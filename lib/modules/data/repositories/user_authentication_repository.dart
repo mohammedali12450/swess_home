@@ -44,7 +44,8 @@ class UserAuthenticationRepository {
       rethrow;
     }
     if (response.statusCode == 422) {
-      throw FieldsException(jsonErrorFields: jsonDecode(response.toString())["message"]);
+      throw FieldsException(
+          jsonErrorFields: jsonDecode(response.toString())["message"]);
     }
     if (response.statusCode != 200) {
       throw GeneralException(
@@ -76,6 +77,28 @@ class UserAuthenticationRepository {
     // return user;
   }
 
+  Future changePassword(
+      String oldPassword, String newPassword, String token) async {
+    Response response;
+
+    try {
+      response = await userAuthenticationProvider.changePassword(
+          oldPassword, newPassword, token);
+    } catch (e) {
+      rethrow;
+    }
+
+    if (response.statusCode == 422) {
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+    }
+    if (response.statusCode != 200) {
+      throw GeneralException(
+          errorMessage: jsonDecode(response.toString())["message"]);
+    }
+    // User user = User.fromJson(jsonDecode(response.toString())["data"]);
+    // return user;
+  }
+
   Future login(String authentication, String password) async {
     Response response;
 
@@ -91,7 +114,8 @@ class UserAuthenticationRepository {
     }
 
     if (response.statusCode == 403) {
-      throw UnauthorizedException(message: jsonDecode(response.toString())["message"]);
+      throw UnauthorizedException(
+          message: jsonDecode(response.toString())["message"]);
     }
 
     if (response.statusCode == 400) {
@@ -105,7 +129,8 @@ class UserAuthenticationRepository {
 
     User user = User.fromJson(jsonDecode(response.toString())["data"]["user"]);
 
-    UserSharedPreferences.setAccessToken(jsonDecode(response.toString())["data"]["token"]);
+    UserSharedPreferences.setAccessToken(
+        jsonDecode(response.toString())["data"]["token"]);
 
     return user;
   }
@@ -121,8 +146,7 @@ class UserAuthenticationRepository {
       throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
     if (response.statusCode != 200) {
-      throw GeneralException(
-          errorMessage: jsonDecode(response.toString()));
+      throw GeneralException(errorMessage: jsonDecode(response.toString()));
     }
     // User user = User.fromJson(jsonDecode(response.toString())["data"]);
     // return user;
@@ -150,8 +174,7 @@ class UserAuthenticationRepository {
       rethrow;
     }
     if (response.statusCode == 403) {
-      throw FieldsException(
-          jsonErrorFields: jsonDecode(response.toString()));
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
     User user = User.fromJson(jsonDecode(response.toString())["data"]);
 

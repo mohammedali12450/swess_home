@@ -24,7 +24,7 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: ResText(
+        title: Text(
           AppLocalizations.of(context)!.candidate_estates,
         ),
       ),

@@ -9,11 +9,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/data/repositories/rent_estate_repository.dart';
-import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
 import '../../../utils/helpers/numbers_helper.dart';
-import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import '../../business_logic_components/bloc/interior_statuses_bloc/interior_statuses_bloc.dart';
 import '../../business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
@@ -22,13 +20,13 @@ import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_event.
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_state.dart';
 import '../../business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
-import '../../data/models/estate_type.dart';
 import '../../data/models/interior_status.dart';
 import '../../data/models/period_type.dart';
 import '../../data/models/rent_estate.dart';
 import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../widgets/my_dropdown_list.dart';
+import '../widgets/res_text.dart';
 import 'search_region_screen.dart';
 
 class CreateEstateImmediatelyScreen extends StatefulWidget {
@@ -51,8 +49,8 @@ class _CreateEstateImmediatelyScreenState
   TextEditingController locationController = TextEditingController();
   ScrollController scrollController = ScrollController();
 
-  List<EstateType>? estatesTypes;
-  List<EstateType> estateTypes = [];
+  // List<EstateType>? estatesTypes;
+  // List<EstateType> estateTypes = [];
   late List<InteriorStatus> interiorStatuses;
   late List<PeriodType> periodTypes;
   String phoneDialCode = "+963";
@@ -70,7 +68,8 @@ class _CreateEstateImmediatelyScreenState
   ChannelCubit salonCubit = ChannelCubit(0);
   ChannelCubit bathroomCubit = ChannelCubit(0);
   ChannelCubit checkFurnishedStateCubit = ChannelCubit(false);
-  ChannelCubit isPressTypeCubit = ChannelCubit(0);
+
+  //ChannelCubit isPressTypeCubit = ChannelCubit(0);
   ChannelCubit locationNameCubit = ChannelCubit("");
 
   late RentEstateBloc _rentEstateBloc;
@@ -83,14 +82,14 @@ class _CreateEstateImmediatelyScreenState
 
   @override
   void initState() {
-    estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
-
-    for (int i = 0; i < estatesTypes!.length; i++) {
-      if (estatesTypes!.elementAt(i).id == 3) {
-        continue;
-      }
-      estateTypes.add(estatesTypes!.elementAt(i));
-    }
+    // estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
+    //
+    // for (int i = 0; i < estatesTypes!.length; i++) {
+    //   if (estatesTypes!.elementAt(i).id == 3) {
+    //     continue;
+    //   }
+    //   estateTypes.add(estatesTypes!.elementAt(i));
+    // }
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
     interiorStatuses =
         BlocProvider.of<InteriorStatusesBloc>(context).interiorStatuses!;
@@ -151,9 +150,10 @@ class _CreateEstateImmediatelyScreenState
       12.horizontalSpace,
       Expanded(
           flex: 1,
-          child: Text(
+          child: ResText(
             AppLocalizations.of(context)!.meter,
             textAlign: TextAlign.center,
+            textStyle: Theme.of(context).textTheme.headline6,
           )),
     ];
 
@@ -183,7 +183,7 @@ class _CreateEstateImmediatelyScreenState
       child: Column(
         children: [
           buildLocation(isDark),
-          buildEstateType(isDark),
+          //buildEstateType(isDark),
           buildSpaceEstate(areaWidget),
           buildPeriodTypes(),
           buildPriceNum(),
@@ -233,7 +233,7 @@ class _CreateEstateImmediatelyScreenState
           buildPhoneNumber(),
           kHe36,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 35.0),
+            padding: EdgeInsets.symmetric(horizontal: 35.w),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(fixedSize: Size(220.w, 64.h)),
               child: BlocConsumer<RentEstateBloc, RentEstateState>(
@@ -287,204 +287,83 @@ class _CreateEstateImmediatelyScreenState
     );
   }
 
-  Widget buildChooseNum(
-      {required TextEditingController textController,
-      required ChannelCubit textCubit,
-      required IconData icon,
-      required String label,
-      required String hint,
-      required ChannelCubit errorCubit,
-      required Function() onTap}) {
+  Widget buildLocation(isDark) {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: kTinyAllPadding,
           child: Row(
             children: [
-              Icon(icon),
+              const Icon(Icons.location_on_outlined),
               kWi8,
-              Text(
-                label + " :",
-                style: Theme.of(context).textTheme.headline6,
+              ResText(
+                AppLocalizations.of(context)!.estate_location + " :",
+                textStyle: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
         ),
+        kHe12,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: InkWell(
-                  onTap: () {
-                    if (textCubit.state > 0) {
-                      textCubit.setState(textCubit.state - 1);
-                      textController.text = textCubit.state.toString();
-                    } else if (label == AppLocalizations.of(context)!.floor &&
-                        textCubit.state > -2) {
-                      textCubit.setState(textCubit.state - 1);
-                      textController.text = textCubit.state.toString();
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: BlocBuilder<ChannelCubit, dynamic>(
+            bloc: locationErrorCubit,
+            builder: (_, errorMessage) {
+              return Container(
+                height: 55.h,
+                decoration: BoxDecoration(
+                    borderRadius: smallBorderRadius,
+                    border: Border.all(
+                      color: !isDark
+                          ? AppColors.primaryColor
+                          : AppColors.yellowDarkColor,
+                      width: 0.3,
+                    )),
+                child: TextField(
+                  textDirection: TextDirection.rtl,
+                  onTap: () async {
+                    selectedRegion = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SearchRegionScreen(),
+                      ),
+                    ) as RegionViewer;
+                    FocusScope.of(context).unfocus();
+                    if (selectedRegion != null) {
+                      rentEstate.locationId = selectedRegion!.id;
+                      locationNameCubit
+                          .setState(selectedRegion!.getLocationName());
+                      locationController.text = locationNameCubit.state;
+                      locationErrorCubit.setState(null);
                     }
+                    return;
                   },
-                  child: const SizedBox(
-                    height: 40,
-                    child: Icon(Icons.minimize_outlined),
+                  controller: locationController,
+                  keyboardType: TextInputType.text,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(bottom: 27.h, right: 8.w),
+                    errorText: errorMessage,
+                    hintText:
+                        AppLocalizations.of(context)!.estate_location_hint,
+                    //contentPadding: kSmallSymWidth,
+                    // errorBorder: kOutlinedBorderRed,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: smallBorderRadius,
+                      borderSide: BorderSide(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onBackground
+                            .withOpacity(0.4),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 2,
-                child: BlocBuilder<ChannelCubit, dynamic>(
-                  bloc: textCubit,
-                  builder: (_, state) {
-                    return BlocBuilder<ChannelCubit, dynamic>(
-                      bloc: errorCubit,
-                      builder: (_, errorMessage) {
-                        return TextField(
-                          readOnly: true,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1!
-                              .copyWith(height: 2),
-                          onChanged: (String text) {
-                            textController.text = text;
-                            textCubit.setState(int.tryParse(text) ?? 0);
-                          },
-                          controller: textController,
-                          // keyboardType: TextInputType.number,
-                          // inputFormatters: <TextInputFormatter>[
-                          //   FilteringTextInputFormatter.digitsOnly,
-                          // ],
-                          decoration: InputDecoration(
-                            // errorText: AppLocalizations.of(context)!.this_field_is_required,
-                            hintText: hint,
-                            errorText: errorMessage,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: InkWell(
-                  onTap: () {
-                    textCubit.setState(textCubit.state + 1);
-                    textController.text = textCubit.state.toString();
-                    onTap();
-                  },
-                  child: const SizedBox(
-                    height: 40,
-                    child: Icon(Icons.add),
-                  ),
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
-        24.verticalSpace,
-      ],
-    );
-  }
-
-  Widget buildPeriodTypes() {
-    return Column(
-      children: [
-        //kHe12,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
-          child: Row(
-            children: [
-              const Icon(Icons.repeat),
-              kWi8,
-              Text(
-                AppLocalizations.of(context)!.estate_rent_period + " :",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
-          ),
-        ),
-        kHe12,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.secondaryDark, width: 0.5),
-              borderRadius: const BorderRadius.all(
-                Radius.elliptical(8, 8),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 5),
-              child: MyDropdownList(
-                elementsList:
-                    periodTypes.map((e) => e.name.split("|").first).toList(),
-                onSelect: (index) {
-                  // set search data estate type :
-                  rentEstate.periodTypeId = estateTypes.elementAt(index).id;
-                },
-                validator: (value) => value == null
-                    ? AppLocalizations.of(context)!.this_field_is_required
-                    : null,
-                selectedItem: AppLocalizations.of(context)!.please_select_here,
-              ),
-            ),
-          ),
-        ),
-        24.verticalSpace,
-      ],
-    );
-  }
-
-  Widget buildInteriorStatuses() {
-    return Column(
-      children: [
-        //kHe12,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
-          child: Row(
-            children: [
-              const Icon(Icons.chair_outlined),
-              kWi8,
-              Text(
-                AppLocalizations.of(context)!.interior_status + " :",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
-          ),
-        ),
-        kHe12,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.secondaryDark, width: 0.5),
-              borderRadius: const BorderRadius.all(
-                Radius.elliptical(8, 8),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 5),
-              child: MyDropdownList(
-                elementsList: interiorStatuses.map((e) => e.name).toList(),
-                onSelect: (index) {
-                  rentEstate.interiorStatusesId =
-                      interiorStatuses.elementAt(index).id;
-                },
-                validator: (value) => value == null
-                    ? AppLocalizations.of(context)!.this_field_is_required
-                    : null,
-                selectedItem: AppLocalizations.of(context)!.please_select,
-              ),
-            ),
-          ),
-        ),
-        24.verticalSpace,
+        kHe36,
       ],
     );
   }
@@ -493,24 +372,24 @@ class _CreateEstateImmediatelyScreenState
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
+          padding: kSmallAllPadding,
           child: Row(
             children: [
               const Icon(Icons.view_in_ar_outlined),
               kWi8,
-              Text(
+              ResText(
                 AppLocalizations.of(context)!.estate_space + " :",
-                style: Theme.of(context).textTheme.headline6,
+                textStyle: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
         ),
         kHe12,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Container(
-            height: 53,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 55.h,
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
             decoration: BoxDecoration(
               border: Border.all(color: AppColors.secondaryDark, width: 0.5),
               borderRadius: const BorderRadius.all(
@@ -525,28 +404,80 @@ class _CreateEstateImmediatelyScreenState
     );
   }
 
-  Widget buildPriceNum() {
+  Widget buildPeriodTypes() {
     return Column(
       children: [
+        //kHe12,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
+          padding: kSmallAllPadding,
           child: Row(
             children: [
-              const Icon(Icons.price_change_outlined),
+              const Icon(Icons.repeat),
               kWi8,
-              Text(
-                AppLocalizations.of(context)!.estate_price + " :",
-                style: Theme.of(context).textTheme.headline6,
+              ResText(
+                AppLocalizations.of(context)!.estate_rent_period + " :",
+                textStyle: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
         ),
         kHe12,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Container(
-            height: 53,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            alignment: Alignment.center,
+            height: 55.h,
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.secondaryDark, width: 0.5),
+              borderRadius: const BorderRadius.all(
+                Radius.elliptical(8, 8),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 5.h),
+              child: MyDropdownList(
+                elementsList:
+                    periodTypes.map((e) => e.name.split("|").first).toList(),
+                onSelect: (index) {
+                  // set search data estate type :
+                  rentEstate.periodTypeId = periodTypes.elementAt(index).id;
+                },
+                validator: (value) => value == null
+                    ? AppLocalizations.of(context)!.this_field_is_required
+                    : null,
+                selectedItem: AppLocalizations.of(context)!.please_select,
+              ),
+            ),
+          ),
+        ),
+        24.verticalSpace,
+      ],
+    );
+  }
+
+  Widget buildPriceNum() {
+    return Column(
+      children: [
+        Padding(
+          padding: kSmallAllPadding,
+          child: Row(
+            children: [
+              const Icon(Icons.price_change_outlined),
+              kWi8,
+              ResText(
+                AppLocalizations.of(context)!.estate_price + " :",
+                textStyle: Theme.of(context).textTheme.headline6,
+              ),
+            ],
+          ),
+        ),
+        kHe12,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: Container(
+            height: 55.h,
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
             decoration: BoxDecoration(
               border: Border.all(color: AppColors.secondaryDark, width: 0.5),
               borderRadius: const BorderRadius.all(
@@ -594,11 +525,12 @@ class _CreateEstateImmediatelyScreenState
                 12.horizontalSpace,
                 Expanded(
                     flex: 1,
-                    child: Text(
+                    child: ResText(
                       isForStore
                           ? "L.L"
                           : AppLocalizations.of(context)!.syrian_bound,
                       textAlign: TextAlign.center,
+                      textStyle: Theme.of(context).textTheme.headline6,
                     )),
               ],
             ),
@@ -609,19 +541,285 @@ class _CreateEstateImmediatelyScreenState
     );
   }
 
-  Widget buildEstateType(isDark) {
+  Widget buildInteriorStatuses() {
+    return Column(
+      children: [
+        //kHe12,
+        Padding(
+          padding: kSmallAllPadding,
+          child: Row(
+            children: [
+              const Icon(Icons.chair_outlined),
+              kWi8,
+              ResText(
+                AppLocalizations.of(context)!.interior_status + " :",
+                textStyle: Theme.of(context).textTheme.headline6,
+              ),
+            ],
+          ),
+        ),
+        kHe12,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: Container(
+            height: 55.h,
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.secondaryDark, width: 0.5),
+              borderRadius: const BorderRadius.all(
+                Radius.elliptical(8, 8),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 5.h),
+              child: MyDropdownList(
+                elementsList: interiorStatuses.map((e) => e.name).toList(),
+                onSelect: (index) {
+                  rentEstate.interiorStatusesId =
+                      interiorStatuses.elementAt(index).id;
+                },
+                validator: (value) => value == null
+                    ? AppLocalizations.of(context)!.this_field_is_required
+                    : null,
+                selectedItem: AppLocalizations.of(context)!.please_select,
+              ),
+            ),
+          ),
+        ),
+        24.verticalSpace,
+      ],
+    );
+  }
+
+  Widget buildFurnishedEstate(isArabic, isDark) {
+    return Padding(
+      padding: kMediumLarHeight,
+      child: Column(
+        children: [
+          BlocBuilder<ChannelCubit, dynamic>(
+              bloc: checkFurnishedStateCubit,
+              builder: (_, isYes) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        padding: EdgeInsets.only(
+                          left: (isArabic) ? 18.w : 0,
+                          right: (isArabic) ? 0 : 18.w,
+                        ),
+                        child: ResText(
+                          AppLocalizations.of(context)!.is_the_estate_furnished,
+                          textStyle: Theme.of(context).textTheme.headline6,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 14.h),
+                          decoration: BoxDecoration(
+                            color: !isDark
+                                ? isYes
+                                    ? AppColors.primaryColor
+                                    : Colors.white
+                                : isYes
+                                    ? Colors.white
+                                    : AppColors.secondaryDark,
+                            border: Border.all(
+                              color: AppColors.primaryColor,
+                              width: 1.5,
+                            ),
+                            borderRadius: medBorderRadius,
+                          ),
+                          child: ResText(
+                            AppLocalizations.of(context)!.yes,
+                            textAlign: TextAlign.center,
+                            textStyle: TextStyle(
+                              color: !isDark
+                                  ? !isYes
+                                      ? AppColors.primaryColor
+                                      : Colors.white
+                                  : isYes
+                                      ? AppColors.secondaryDark
+                                      : Colors.white,
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          checkFurnishedStateCubit.setState(true);
+                          rentEstate.isFurnished =
+                              checkFurnishedStateCubit.state ? 1 : 0;
+                        },
+                      ),
+                    ),
+                    kWi12,
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 14.h),
+                          decoration: BoxDecoration(
+                            color: !isDark
+                                ? !isYes
+                                    ? AppColors.primaryColor
+                                    : Colors.white
+                                : !isYes
+                                    ? Colors.white
+                                    : AppColors.secondaryDark,
+                            border: Border.all(
+                              color: AppColors.primaryColor,
+                              width: 1.5,
+                            ),
+                            borderRadius: medBorderRadius,
+                          ),
+                          child: ResText(
+                            AppLocalizations.of(context)!.no,
+                            textAlign: TextAlign.center,
+                            textStyle: TextStyle(
+                              color: !isDark
+                                  ? isYes
+                                      ? AppColors.primaryColor
+                                      : Colors.white
+                                  : !isYes
+                                      ? AppColors.secondaryDark
+                                      : Colors.white,
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          checkFurnishedStateCubit.setState(false);
+                        },
+                      ),
+                    ),
+                    kWi12
+                  ],
+                );
+              }),
+        ],
+      ),
+    );
+  }
+
+  Widget buildChooseNum(
+      {required TextEditingController textController,
+      required ChannelCubit textCubit,
+      required IconData icon,
+      required String label,
+      required String hint,
+      required ChannelCubit errorCubit,
+      required Function() onTap}) {
+    return Column(
+      children: [
+        Padding(
+          padding: kTinyAllPadding,
+          child: Row(
+            children: [
+              Icon(icon),
+              kWi8,
+              ResText(
+                label + " :",
+                textStyle: Theme.of(context).textTheme.headline6,
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: 55.h,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: InkWell(
+                  onTap: () {
+                    if (textCubit.state > 0) {
+                      textCubit.setState(textCubit.state - 1);
+                      textController.text = textCubit.state.toString();
+                    } else if (label == AppLocalizations.of(context)!.floor &&
+                        textCubit.state > -2) {
+                      textCubit.setState(textCubit.state - 1);
+                      textController.text = textCubit.state.toString();
+                    }
+                  },
+                  child: SizedBox(
+                    height: 40.h,
+                    child: const Icon(Icons.minimize_outlined),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: BlocBuilder<ChannelCubit, dynamic>(
+                  bloc: textCubit,
+                  builder: (_, state) {
+                    return BlocBuilder<ChannelCubit, dynamic>(
+                      bloc: errorCubit,
+                      builder: (_, errorMessage) {
+                        return TextField(
+                          readOnly: true,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(height: 2.h),
+                          onChanged: (String text) {
+                            textController.text = text;
+                            textCubit.setState(int.tryParse(text) ?? 0);
+                          },
+                          controller: textController,
+                          // keyboardType: TextInputType.number,
+                          // inputFormatters: <TextInputFormatter>[
+                          //   FilteringTextInputFormatter.digitsOnly,
+                          // ],
+                          decoration: InputDecoration(
+                            // errorText: AppLocalizations.of(context)!.this_field_is_required,
+                            hintText: hint,
+                            errorText: errorMessage,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: InkWell(
+                  onTap: () {
+                    textCubit.setState(textCubit.state + 1);
+                    textController.text = textCubit.state.toString();
+                    onTap();
+                  },
+                  child: SizedBox(
+                    height: 40.h,
+                    child: const Icon(Icons.add),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        24.verticalSpace,
+      ],
+    );
+  }
+
+  /*Widget buildEstateType(isDark) {
     return Column(
       children: [
         kHe12,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Row(
             children: [
               const Icon(Icons.home_outlined),
               kWi8,
-              Text(
+              ResText(
                 AppLocalizations.of(context)!.estate_type + " :",
-                style: Theme.of(context).textTheme.headline6,
+                textStyle: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
@@ -657,9 +855,9 @@ class _CreateEstateImmediatelyScreenState
                             child: Image.asset(buildIconPath,
                                 color: AppColors.primaryColor),
                           ),
-                          Text(
+                          ResText(
                             AppLocalizations.of(context)!.house,
-                            style: TextStyle(
+                            textStyle: TextStyle(
                                 color: !isDark
                                     ? pressState == 0
                                         ? AppColors.yellowDarkColor
@@ -696,9 +894,9 @@ class _CreateEstateImmediatelyScreenState
                             child: Image.asset(farmIconPath,
                                 color: AppColors.primaryColor),
                           ),
-                          Text(
+                          ResText(
                             AppLocalizations.of(context)!.farm,
-                            style: TextStyle(
+                            textStyle: TextStyle(
                                 color: !isDark
                                     ? pressState == 3
                                         ? AppColors.yellowDarkColor
@@ -735,9 +933,9 @@ class _CreateEstateImmediatelyScreenState
                             child: Image.asset(shopIconPath,
                                 color: AppColors.primaryColor),
                           ),
-                          Text(
+                          ResText(
                             AppLocalizations.of(context)!.shop,
-                            style: TextStyle(
+                            textStyle: TextStyle(
                                 color: !isDark
                                     ? pressState == 1
                                         ? AppColors.yellowDarkColor
@@ -774,9 +972,9 @@ class _CreateEstateImmediatelyScreenState
                             child: Image.asset(villaIconPath,
                                 color: AppColors.primaryColor),
                           ),
-                          Text(
+                          ResText(
                             AppLocalizations.of(context)!.villa,
-                            style: TextStyle(
+                            textStyle: TextStyle(
                                 color: !isDark
                                     ? pressState == 4
                                         ? AppColors.yellowDarkColor
@@ -797,21 +995,21 @@ class _CreateEstateImmediatelyScreenState
         24.verticalSpace,
       ],
     );
-  }
+  }*/
 
   Widget buildPhoneNumber() {
     return Column(
       children: [
         kHe12,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Row(
             children: [
               const Icon(Icons.whatsapp_outlined),
               kWi8,
-              Text(
+              ResText(
                 AppLocalizations.of(context)!.whatsapp_number + " :",
-                style: Theme.of(context).textTheme.headline6,
+                textStyle: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
@@ -821,10 +1019,10 @@ class _CreateEstateImmediatelyScreenState
           bloc: authenticationError,
           builder: (_, errorMessage) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Container(
-                height: 53,
-                padding: const EdgeInsets.symmetric(horizontal: 18),
+                height: 55.h,
+                padding: EdgeInsets.symmetric(horizontal: 18.w),
                 decoration: BoxDecoration(
                   border:
                       Border.all(color: AppColors.secondaryDark, width: 0.5),
@@ -837,7 +1035,9 @@ class _CreateEstateImmediatelyScreenState
                   child: TextField(
                     controller: authenticationController,
                     style: Theme.of(context).textTheme.headline5!.copyWith(
-                        height: 1.6, fontWeight: FontWeight.w400, fontSize: 16),
+                        height: 1.6.h,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       errorText: errorMessage,
@@ -847,7 +1047,7 @@ class _CreateEstateImmediatelyScreenState
                         style: Theme.of(context)
                             .textTheme
                             .headline5!
-                            .copyWith(height: 2.5),
+                            .copyWith(height: 2.5.h),
                       ),
                     ),
                     onChanged: (phone) {
@@ -863,28 +1063,28 @@ class _CreateEstateImmediatelyScreenState
         ),
         kHe32,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Row(
             children: [
               const Icon(Icons.phone_outlined),
               kWi8,
-              Text(
+              ResText(
                 AppLocalizations.of(context)!.phone_communicate + " :",
-                style: Theme.of(context).textTheme.headline6,
+                textStyle: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
         ),
         kHe12,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Container(
             alignment: Alignment.center,
             width: getScreenWidth(context),
-            height: 53,
-            padding: const EdgeInsets.symmetric(horizontal: 18),
+            height: 55.h,
+            padding: EdgeInsets.symmetric(horizontal: 18.w),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.secondaryDark, width: 0.5),
+              border: Border.all(color: AppColors.secondaryDark, width: 0.5.w),
               borderRadius: const BorderRadius.all(
                 Radius.elliptical(8, 8),
               ),
@@ -893,10 +1093,10 @@ class _CreateEstateImmediatelyScreenState
               textDirection: TextDirection.ltr,
               child: Row(
                 children: [
-                  Text(
+                  ResText(
                     UserSharedPreferences.getPhoneNumber()!,
-                    style: Theme.of(context).textTheme.headline5!.copyWith(
-                          height: 1,
+                    textStyle: Theme.of(context).textTheme.headline5!.copyWith(
+                          height: 1.h,
                         ),
                   ),
                 ],
@@ -904,195 +1104,6 @@ class _CreateEstateImmediatelyScreenState
             ),
           ),
         )
-      ],
-    );
-  }
-
-  Widget buildFurnishedEstate(isArabic, isDark) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20),
-      child: Column(
-        children: [
-          BlocBuilder<ChannelCubit, dynamic>(
-              bloc: checkFurnishedStateCubit,
-              builder: (_, isYes) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: EdgeInsets.only(
-                          left: (isArabic) ? 8.w : 0,
-                          right: (isArabic) ? 0 : 8.w,
-                        ),
-                        child: Text(AppLocalizations.of(context)!
-                            .is_the_estate_furnished),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: InkWell(
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 14.h),
-                          decoration: BoxDecoration(
-                            color: !isDark
-                                ? isYes
-                                    ? AppColors.primaryColor
-                                    : Colors.white
-                                : isYes
-                                    ? Colors.white
-                                    : AppColors.secondaryDark,
-                            border: Border.all(
-                              color: AppColors.primaryColor,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.yes,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: !isDark
-                                  ? !isYes
-                                      ? AppColors.primaryColor
-                                      : Colors.white
-                                  : isYes
-                                      ? AppColors.secondaryDark
-                                      : Colors.white,
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          checkFurnishedStateCubit.setState(true);
-                          rentEstate.isFurnished =
-                              checkFurnishedStateCubit.state ? 1 : 0;
-                        },
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      flex: 1,
-                      child: InkWell(
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 14.h),
-                          decoration: BoxDecoration(
-                            color: !isDark
-                                ? !isYes
-                                    ? AppColors.primaryColor
-                                    : Colors.white
-                                : !isYes
-                                    ? Colors.white
-                                    : AppColors.secondaryDark,
-                            border: Border.all(
-                              color: AppColors.primaryColor,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.no,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: !isDark
-                                  ? isYes
-                                      ? AppColors.primaryColor
-                                      : Colors.white
-                                  : !isYes
-                                      ? AppColors.secondaryDark
-                                      : Colors.white,
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          checkFurnishedStateCubit.setState(false);
-                        },
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                  ],
-                );
-              }),
-        ],
-      ),
-    );
-  }
-
-  Widget buildLocation(isDark) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              const Icon(Icons.location_on_outlined),
-              kWi8,
-              Text(
-                AppLocalizations.of(context)!.estate_location + " :",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
-          ),
-        ),
-        kHe12,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: BlocBuilder<ChannelCubit, dynamic>(
-            bloc: locationErrorCubit,
-            builder: (_, errorMessage) {
-              return Container(
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(11)),
-                    border: Border.all(
-                      color: !isDark
-                          ? AppColors.primaryColor
-                          : AppColors.yellowDarkColor,
-                      width: 0.3,
-                    )),
-                child: TextField(
-                  textDirection: TextDirection.rtl,
-                  onTap: () async {
-                    selectedRegion = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const SearchRegionScreen(),
-                      ),
-                    ) as RegionViewer;
-                    FocusScope.of(context).unfocus();
-                    if (selectedRegion != null) {
-                      rentEstate.locationId = selectedRegion!.id;
-                      locationNameCubit
-                          .setState(selectedRegion!.getLocationName());
-                      locationController.text = locationNameCubit.state;
-                      locationErrorCubit.setState(null);
-                    }
-                    return;
-                  },
-                  controller: locationController,
-                  keyboardType: TextInputType.text,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    errorText: errorMessage,
-                    hintText:
-                        AppLocalizations.of(context)!.estate_location_hint,
-                    contentPadding: kSmallSymWidth,
-                    // errorBorder: kOutlinedBorderRed,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onBackground
-                            .withOpacity(0.4),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        kHe36,
       ],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class IconBadge extends StatelessWidget {
   final Icon icon;
@@ -74,14 +75,14 @@ class IconBadge extends StatelessWidget {
                   '$maxCount+',
                   style: TextStyle(
                     color: itemColor,
-                    fontSize: 12.0,
+                    fontSize: 12.sp,
                   ),
                 )
                     : Text(
                   '$itemCount',
                   style: TextStyle(
                     color: itemColor,
-                    fontSize: 12.0,
+                    fontSize: 12.sp,
                   ),
                 ),
               ),

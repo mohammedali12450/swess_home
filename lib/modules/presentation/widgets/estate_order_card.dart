@@ -59,9 +59,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
           width: 1,
           color: AppColors.white,
         ),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(8),
-        ),
+        borderRadius: lowBorderRadius,
         boxShadow: [
           BoxShadow(
               color:
@@ -83,10 +81,10 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                     context,
                     AppLocalizations.of(context)!.caution,
                     AppLocalizations.of(context)!.confirm_delete,
-                    titleTextStyle: const TextStyle(
+                    titleTextStyle: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.red,
-                        fontSize: 20),
+                        fontSize: 20.sp),
                     removeDefaultButton: true,
                     dialogButtons: [
                       Row(
@@ -117,7 +115,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
               ),
             ),
           ),
-          SizedBox(height: 8.h),
+          kHe8,
           Row(
             children: <Widget>[
               Text(estateHeader, style: Theme.of(context).textTheme.headline5),
@@ -166,7 +164,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                 style: Theme.of(context)
                     .textTheme
                     .bodyText2!
-                    .copyWith(color: AppColors.black, height: 1.4),
+                    .copyWith(color: AppColors.black, height: 1.4.h),
               ),
               onPressed: () {
                 Navigator.push(

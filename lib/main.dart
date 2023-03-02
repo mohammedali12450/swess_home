@@ -43,6 +43,7 @@ import 'modules/business_logic_components/bloc/estate_types_bloc/estate_types_bl
 import 'modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
 import 'modules/business_logic_components/bloc/governorates_bloc/governorates_bloc.dart';
 import 'modules/business_logic_components/bloc/interior_statuses_bloc/interior_statuses_bloc.dart';
+import 'modules/business_logic_components/bloc/last_visited_estates_bloc/last_visited_estates_bloc.dart';
 import 'modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';
 import 'modules/business_logic_components/bloc/notifications_bloc/notifications_bloc.dart';
 import 'modules/business_logic_components/bloc/ownership_type_bloc/ownership_type_bloc.dart';
@@ -60,6 +61,7 @@ import 'modules/data/repositories/estate_offer_types_repository.dart';
 import 'modules/data/repositories/estate_types_repository.dart';
 import 'modules/data/repositories/fcm_token_repository.dart';
 import 'modules/data/repositories/interior_statuses_repository.dart';
+import 'modules/data/repositories/last_visited_repository.dart';
 import 'modules/data/repositories/notifications_repository.dart';
 import 'modules/data/repositories/ownership_type_repository.dart';
 import 'modules/data/repositories/period_types_repository.dart';
@@ -266,6 +268,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider<EstateSpacialBloc>(
           create: (_) => EstateSpacialBloc(
             EstateRepository(),
+          ),
+        ),
+        BlocProvider<LastVisitedEstatesBloc>(
+          create: (_) => LastVisitedEstatesBloc(
+            LastVisitedRepository(),
           ),
         ),
         BlocProvider(

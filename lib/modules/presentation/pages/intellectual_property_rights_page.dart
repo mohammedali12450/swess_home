@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 
 import '../../business_logic_components/bloc/terms_condition_bloc/terms_condition_bloc.dart';
 import '../../business_logic_components/bloc/terms_condition_bloc/terms_condition_event.dart';
@@ -48,7 +49,7 @@ class _IntellectualPropertyRightsPageState
               }
               if (propertiesFetchState is TermsConditionFetchProgress) {
                 return SizedBox(
-                    height: MediaQuery.of(context).size.height,
+                    height: getScreenHeight(context),
                     child: const Center(child: CircularProgressIndicator()));
               }
               if (propertiesFetchState is TermsConditionFetchComplete) {

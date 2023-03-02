@@ -13,9 +13,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/notifications_shimmer.dart';
 import '../../../constants/assets_paths.dart';
 import '../../../constants/design_constants.dart';
+import '../../../core/functions/screen_informations.dart';
 import '../../business_logic_components/bloc/message_bloc/message_bloc.dart';
 import '../../data/repositories/send_message_repository.dart';
 import '../widgets/message_card.dart';
+import '../widgets/res_text.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -67,7 +69,7 @@ class _ChatScreenState extends State<ChatScreen> {
       floatingActionButton: UserSharedPreferences.getAccessToken() == null
           ? Container()
           : Padding(
-              padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 5.w),
+              padding: kTinyAllPadding,
               child: GestureDetector(
                 child: Card(
                   color: AppColors.primaryColor,
@@ -75,16 +77,16 @@ class _ChatScreenState extends State<ChatScreen> {
                   shape: CircleBorder(
                     side: BorderSide(
                       color: AppColors.yellowColor,
-                      width: 2,
+                      width: 2.w,
                     ),
                   ),
                   child: Container(
                     width: 75.w,
                     alignment: Alignment.center,
                     height: 75.h,
-                    child: const Padding(
-                      padding: EdgeInsets.only(top: 2.0),
-                      child: Icon(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 2.h),
+                      child: const Icon(
                         Icons.add,
                         color: AppColors.white,
                       ),
@@ -105,7 +107,12 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
       //floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      drawer: const Drawer(child: MyDrawer()),
+      drawer: SizedBox(
+        width: getScreenWidth(context) * (75/100),
+        child: const Drawer(
+          child: MyDrawer(),
+        ),
+      ),
     );
   }
 
@@ -128,17 +135,20 @@ class _ChatScreenState extends State<ChatScreen> {
         if (messages.isEmpty) {
           return Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.search,
+                  Icons.chat_outlined,
                   color:
                       Theme.of(context).colorScheme.primary.withOpacity(0.24),
-                  size: 120,
+                  size: 120.w,
                 ),
                 kHe24,
-                Text(
+                ResText(
                   AppLocalizations.of(context)!.no_message,
-                  style: Theme.of(context).textTheme.headline5,
+                  textStyle: Theme.of(context).textTheme.headline5!.copyWith(
+                    color: AppColors.primaryColor
+                  ),
                 ),
                 kHe40,
                 ElevatedButton(

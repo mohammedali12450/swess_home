@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 
 import '../../business_logic_components/bloc/terms_condition_bloc/terms_condition_bloc.dart';
 import '../../business_logic_components/bloc/terms_condition_bloc/terms_condition_event.dart';
@@ -22,7 +23,8 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
   @override
   void initState() {
     _termsConditionBloc = TermsConditionBloc(TermsAndConditionsRepository());
-    _termsConditionBloc.add(TermsConditionFetchStarted(termsType: "home-terms-use"));
+    _termsConditionBloc
+        .add(TermsConditionFetchStarted(termsType: "home-terms-use"));
     super.initState();
   }
 
@@ -45,9 +47,8 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
               }
               if (propertiesFetchState is TermsConditionFetchProgress) {
                 return SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: const Center(
-                        child: CircularProgressIndicator()));
+                    height: getScreenHeight(context),
+                    child: const Center(child: CircularProgressIndicator()));
               }
               if (propertiesFetchState is TermsConditionFetchComplete) {
                 return Column(
@@ -63,7 +64,6 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
                   ],
                 );
               } else {
-
                 return Container();
               }
             }),

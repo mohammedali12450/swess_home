@@ -123,7 +123,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: ResText(
+          title: Text(
             AppLocalizations.of(context)!.recent_created_orders,
           ),
         ),
