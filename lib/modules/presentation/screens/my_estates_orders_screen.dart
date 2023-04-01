@@ -28,14 +28,13 @@ import '../../data/models/user.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../data/providers/theme_provider.dart';
-import '../widgets/res_text.dart';
 
 class RecentEstateOrdersScreen extends StatefulWidget {
   static const String id = "RecentEstateOrdersScreen";
 
-  String? estateId;
+  final String? estateId;
 
-  RecentEstateOrdersScreen({Key? key, this.estateId}) : super(key: key);
+  const RecentEstateOrdersScreen({Key? key, this.estateId}) : super(key: key);
 
   @override
   _RecentEstateOrdersScreenState createState() =>

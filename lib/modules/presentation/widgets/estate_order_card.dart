@@ -148,36 +148,56 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
             style: Theme.of(context).textTheme.subtitle2!.copyWith(height: 1.8),
           ),
           kHe24,
-          Container(
-            alignment: isArabic ? Alignment.centerLeft : Alignment.centerRight,
-            width: 1.sw,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                //splashFactory: NoSplash.splashFactory,
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-                primary: (isDark)
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  //splashFactory: NoSplash.splashFactory,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                  primary: (isDark)
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.secondary,
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.view_candidates,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText2!
+                      .copyWith(color: AppColors.black, height: 1.4.h),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CandidatesScreen(
+                          estates: widget.estateOrder.candidatesEstates ?? []),
+                    ),
+                  );
+                },
               ),
-              child: Text(
-                AppLocalizations.of(context)!.view_candidates,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText2!
-                    .copyWith(color: AppColors.black, height: 1.4.h),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CandidatesScreen(
-                        estates: widget.estateOrder.candidatesEstates ?? []),
-                  ),
-                );
-              },
-            ),
+              buildEstateStatus(),
+            ],
           )
         ],
+      ),
+    );
+  }
+
+  Widget buildEstateStatus() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        widget.estateOrder.orderStatus!,
+        style: TextStyle(
+            color: (widget.estateOrder.orderStatus ==
+                    AppLocalizations.of(context)!.pending)
+                ? AppColors.yellowDarkColor
+                : (widget.estateOrder.orderStatus ==
+                        AppLocalizations.of(context)!.rejected)
+                    ? Colors.red
+                    : Colors.green),
       ),
     );
   }

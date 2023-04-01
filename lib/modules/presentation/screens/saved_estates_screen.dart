@@ -5,9 +5,7 @@ import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_state.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
-import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
@@ -15,7 +13,11 @@ import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../widgets/estate_card.dart';
+import '../widgets/estate_horizon_card.dart';
+import '../widgets/res_text.dart';
 
 class SavedEstatesScreen extends StatefulWidget {
   static const String id = "SavedEstatesScreen";
@@ -28,14 +30,13 @@ class SavedEstatesScreen extends StatefulWidget {
 
 class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
   late SavedEstatesBloc _savedEstatesBloc;
+  List<Estate> estates = [];
 
   @override
   void initState() {
-
     super.initState();
     _savedEstatesBloc = SavedEstatesBloc(EstateRepository());
-    User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null) {
+    if (UserSharedPreferences.getAccessToken() != null) {
       _savedEstatesBloc.add(
         SavedEstatesFetchStarted(
             token: UserSharedPreferences.getAccessToken()!),
@@ -59,8 +60,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
             if (UserSharedPreferences.getAccessToken() != null) {
               _savedEstatesBloc.add(
                 SavedEstatesFetchStarted(
-                    token:
-                    UserSharedPreferences.getAccessToken()!),
+                    token: UserSharedPreferences.getAccessToken()!),
               );
             }
           },
@@ -97,7 +97,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                             .error_happened_when_executing_operation);
                   }
 
-                  List<Estate> estates = savedEstatesState.savedEstates;
+                  estates = savedEstatesState.savedEstates;
 
                   if (estates.isEmpty) {
                     return Center(
@@ -122,16 +122,33 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                       ),
                     );
                   }
-                  return ListView.builder(
-                    physics: const ClampingScrollPhysics(),
-                    itemCount: estates.length,
-                    itemBuilder: (_, index) {
-                      return EstateCard(
-                        color: Theme.of(context).colorScheme.background,
-                        estate: estates.elementAt(index),
-                        removeCloseButton: true,
-                      );
-                    },
+                  return Column(
+                    children: [
+                      kHe12,
+                      buildSavedList(),
+                      kHe44,
+                      Padding(
+                        padding: kTinyAllPadding,
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 60.h,
+                          width: 1.sw,
+                          decoration: BoxDecoration(
+                            borderRadius: lowBorderRadius,
+                            border:
+                                Border.all(color: AppColors.yellowDarkColor),
+                          ),
+                          child: ResText(
+                            AppLocalizations.of(context)!.nearby,
+                            textStyle: Theme.of(context)
+                                .textTheme
+                                .headline4!
+                                .copyWith(fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ),
+                      buildSavedList(),
+                    ],
                   );
                 },
               ),
@@ -139,6 +156,20 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildSavedList() {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: estates.length,
+      itemBuilder: (_, index) {
+        return EstateHorizonCard(
+          estate: estates.elementAt(index),
+          closeButton: false,
+        );
+      },
     );
   }
 }

@@ -27,164 +27,161 @@ class _MessageCardState extends State<MessageCard> {
   }
 
   Widget buildMessageCard(Message message) {
-    return Card(
-      elevation: 5,
-      child: Column(
-        children: [
-          BlocBuilder<ChannelCubit, dynamic>(
-            bloc: isReadMoreUserCubit,
-            builder: (_, isReadMoreUser) {
-              return Directionality(
-                textDirection: TextDirection.ltr,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Flexible(
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(8.w, 8.h, 70.w, 8.h),
-                        child: Container(
-                          padding: EdgeInsets.fromLTRB(8.w, 8.h, 5.w, 0),
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryColor.withOpacity(0.4),
-                            border:
-                                Border.all(color: AppColors.yellowDarkColor),
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(20),
-                              topLeft: Radius.circular(20),
-                              bottomRight: Radius.circular(20),
+    return Column(
+      children: [
+        BlocBuilder<ChannelCubit, dynamic>(
+          bloc: isReadMoreUserCubit,
+          builder: (_, isReadMoreUser) {
+            return Directionality(
+              textDirection: TextDirection.ltr,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(8.w, 8.h, 70.w, 8.h),
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(8.w, 8.h, 5.w, 0),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryColor.withOpacity(0.4),
+                          border:
+                              Border.all(color: AppColors.yellowDarkColor),
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(20),
+                            topLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            buildText(message.message, isReadMoreUser),
+                            Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Visibility(
+                                  visible: message.message.length > 164,
+                                  child: Row(
+                                    children: [
+                                      InkWell(
+                                          onTap: () {
+                                            isReadMoreUserCubit.setState(
+                                                !isReadMoreUserCubit.state);
+                                          },
+                                          child: Text(
+                                            (isReadMoreUser
+                                                ? AppLocalizations.of(
+                                                        context)!
+                                                    .read_less
+                                                : AppLocalizations.of(
+                                                        context)!
+                                                    .read_more),
+                                            style: const TextStyle(
+                                                color:
+                                                    AppColors.primaryColor),
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(right: 8.w),
+                                  child: Text(message.sendDate),
+                                ),
+                              ],
                             ),
-                          ),
-                          child: Column(
-                            children: [
-                              buildText(message.message, isReadMoreUser),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Visibility(
-                                    visible: message.message.length > 164,
-                                    child: Row(
-                                      children: [
-                                        InkWell(
-                                            onTap: () {
-                                              isReadMoreUserCubit.setState(
-                                                  !isReadMoreUserCubit.state);
-                                            },
-                                            child: Text(
-                                              (isReadMoreUser
-                                                  ? AppLocalizations.of(
-                                                          context)!
-                                                      .read_less
-                                                  : AppLocalizations.of(
-                                                          context)!
-                                                      .read_more),
-                                              style: const TextStyle(
-                                                  color:
-                                                      AppColors.primaryColor),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 8.w),
-                                    child: Text(message.sendDate),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
-          kHe12,
-          if (message.replayMessage != null) ...[
-            BlocBuilder<ChannelCubit, dynamic>(
-                bloc: isReadMoreAdminCubit,
-                builder: (_, isReadMoreAdmin) {
-                  return Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(70.w, 8.h, 8.w, 8.h),
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(8.w, 8.h, 5.w, 0),
-                              decoration: BoxDecoration(
-                                color:
-                                    AppColors.secondaryColor.withOpacity(0.8),
-                                border: Border.all(
-                                    color: AppColors.yellowDarkColor),
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(20),
-                                  topLeft: Radius.circular(20),
-                                  bottomLeft: Radius.circular(20),
-                                ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        kHe12,
+        if (message.replayMessage != null) ...[
+          BlocBuilder<ChannelCubit, dynamic>(
+              bloc: isReadMoreAdminCubit,
+              builder: (_, isReadMoreAdmin) {
+                return Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(70.w, 8.h, 8.w, 8.h),
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(8.w, 8.h, 5.w, 0),
+                            decoration: BoxDecoration(
+                              color:
+                                  AppColors.secondaryColor.withOpacity(0.8),
+                              border: Border.all(
+                                  color: AppColors.yellowDarkColor),
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(20),
+                                topLeft: Radius.circular(20),
+                                bottomLeft: Radius.circular(20),
                               ),
-                              child: Directionality(
-                                textDirection: TextDirection.ltr,
-                                child: Column(
-                                  children: [
-                                    buildText(message.replayMessage!,
-                                        isReadMoreAdmin),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Visibility(
-                                          visible:
-                                              message.replayMessage!.length >
-                                                  164,
-                                          child: Row(
-                                            children: [
-                                              InkWell(
-                                                  onTap: () {
-                                                    isReadMoreAdminCubit
-                                                        .setState(
-                                                            !isReadMoreAdminCubit
-                                                                .state);
-                                                  },
-                                                  child: Text(
-                                                    (isReadMoreAdmin!
-                                                        ? AppLocalizations.of(
-                                                                context)!
-                                                            .read_less
-                                                        : AppLocalizations.of(
-                                                                context)!
-                                                            .read_more),
-                                                    style: const TextStyle(
-                                                        color: AppColors
-                                                            .primaryColor),
-                                                  )),
-                                            ],
-                                          ),
+                            ),
+                            child: Directionality(
+                              textDirection: TextDirection.ltr,
+                              child: Column(
+                                children: [
+                                  buildText(message.replayMessage!,
+                                      isReadMoreAdmin),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Visibility(
+                                        visible:
+                                            message.replayMessage!.length >
+                                                164,
+                                        child: Row(
+                                          children: [
+                                            InkWell(
+                                                onTap: () {
+                                                  isReadMoreAdminCubit
+                                                      .setState(
+                                                          !isReadMoreAdminCubit
+                                                              .state);
+                                                },
+                                                child: Text(
+                                                  (isReadMoreAdmin!
+                                                      ? AppLocalizations.of(
+                                                              context)!
+                                                          .read_less
+                                                      : AppLocalizations.of(
+                                                              context)!
+                                                          .read_more),
+                                                  style: const TextStyle(
+                                                      color: AppColors
+                                                          .primaryColor),
+                                                )),
+                                          ],
                                         ),
-                                        Padding(
-                                          padding: EdgeInsets.only(right: 8.w),
-                                          child: Text(message.replayDate!),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 8.w),
+                                        child: Text(message.replayDate!),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                }),
-          ],
-          kHe12,
+                      ),
+                    ],
+                  ),
+                );
+              }),
         ],
-      ),
+        kHe12,
+      ],
     );
   }
 

@@ -104,16 +104,31 @@ class _MyImmediatelyRentScreenState extends State<MyImmediatelyRentScreen> {
                           ],
                         );
                       }
-                      return ListView.builder(
-                        physics: const ClampingScrollPhysics(),
-                        itemCount: rentEstates.length,
-                        itemBuilder: (_, index) {
-                          return ImmediatelyCard(
-                            rentEstate: rentEstates.elementAt(index),
-                            isForCommunicate: false,
-                          );
-                        },
-                      );
+                      return BlocBuilder<RentEstateBloc, RentEstateState>(
+                          bloc: rentEstateBloc,
+                          builder: (_, deleteState) {
+                            if (deleteState
+                                is DeleteMyRentEstateFetchProgress) {}
+                            if (deleteState
+                                is DeleteMyRentEstateFetchComplete) {}
+                            return ListView.builder(
+                              physics: const ClampingScrollPhysics(),
+                              itemCount: rentEstates.length,
+                              itemBuilder: (_, index) {
+                                return ImmediatelyCard(
+                                    rentEstate: rentEstates.elementAt(index),
+                                    isForCommunicate: false,
+                                    isForDelete: true,
+                                    onDeletedPressed: () {
+                                      rentEstateBloc.add(
+                                          DeleteMyRentEstatesFetchStarted(
+                                              token: UserSharedPreferences
+                                                  .getAccessToken()!));
+                                      _onRefresh();
+                                    });
+                              },
+                            );
+                          });
                     }
                     return FetchResult(
                         content: AppLocalizations.of(context)!

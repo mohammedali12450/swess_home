@@ -9,7 +9,7 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'navigation_bar_screen.dart';
-import 'recent_estates_orders_screen.dart';
+import 'my_estates_orders_screen.dart';
 
 class AfterEstateOrderScreen extends StatefulWidget {
   static const String id = "AfterEstateOrderScreen";

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:swesshome/modules/data/models/area_unit.dart';
@@ -54,11 +55,18 @@ class Estate {
   String? phone;
   String? viewer;
 
+  String? firstImage;
+  String? estateTypeName;
+  String? estateOfferTypeName;
+  String? periodTypeName;
+  String? areaUnitName;
+  String? ownershipTypeName;
+
   Estate(
       {this.price,
       this.estateImages,
-      required this.estateOfferType,
-      required this.estateType,
+      this.estateOfferType,
+      this.estateType,
       this.location,
       this.area,
       this.areaUnit,
@@ -93,6 +101,12 @@ class Estate {
       this.videoUrl,
       this.phone,
       this.viewer,
+      this.firstImage,
+      this.estateOfferTypeName,
+      this.areaUnitName,
+      this.estateTypeName,
+      this.ownershipTypeName,
+      this.periodTypeName,
       this.estateStatus,
       this.officeStatus});
 
@@ -110,6 +124,20 @@ class Estate {
       estateImages: [],
       images: [],
     );
+  }
+
+  factory Estate.fromJsonS(Map<String, dynamic> json) {
+    return Estate(
+        id: json["id"],
+        firstImage: json["images"],
+        isSaved: json["isSaved"],
+        estateTypeName: json["estateType"],
+        estateOfferTypeName: json["estateOfferType"],
+        periodTypeName: json["periodType"],
+        area: json['area'],
+        areaUnitName: json["areaUnit"],
+        ownershipTypeName: json["ownershipType"],
+        price: json["price"]);
   }
 
   factory Estate.fromJson(Map<String, dynamic> json) {
@@ -284,6 +312,34 @@ class Estate {
     map["street_images[]"] = streetImages;
     return map;
   }
+
+  static Map<String, dynamic> toMap(Estate estate) {
+    return {
+      'id': estate.id,
+      'images': estate.images!.isEmpty ? "" : estate.images!.elementAt(0).url,
+      'isSaved': estate.isSaved,
+      'estateType': estate.estateType!.name.split("|").first,
+      'estateOfferType': estate.estateOfferType!.name,
+      'periodType':
+          estate.periodType?.name == null ? "" : estate.periodType!.name.split("|").first,
+      'area': estate.area,
+      'areaUnit': estate.areaUnit!.name,
+      'ownershipType':
+          estate.ownershipType?.name == null ? "" : estate.ownershipType!.name,
+      'price': estate.price
+    };
+  }
+
+  static String encode(List<Estate> estates) => json.encode(
+        estates
+            .map<Map<String, dynamic>>((estate) => Estate.toMap(estate))
+            .toList(),
+      );
+
+  static List<Estate> decode(String estate) =>
+      (json.decode(estate) as List<dynamic>)
+          .map<Estate>((item) => Estate.fromJsonS(item))
+          .toList();
 
   Future<List<MultipartFile>> createImagesList(List<File>? files) async {
     if (files == null) return [];

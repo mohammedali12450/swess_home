@@ -34,16 +34,22 @@ class RentEstateRepository {
     return true;
   }
 
-  Future<List<RentEstate>> getMyRentEstates(
-     String token) async {
-    Response response =
-    await _estateProviders.getMyRentEstates(token);
+  Future<List<RentEstate>> getMyRentEstates(String token) async {
+    Response response = await _estateProviders.getMyRentEstates(token);
     if (response.statusCode != 200) {
       throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر");
     }
     var jsonReports = jsonDecode(response.toString())["data"] as List;
     List<RentEstate> reports =
-    jsonReports.map((e) => RentEstate.fromJson(e)).toList();
+        jsonReports.map((e) => RentEstate.fromJson(e)).toList();
     return reports;
+  }
+
+  Future deleteMyRentEstates(String token) async {
+    Response response = await _estateProviders.deleteMyRentEstates(token);
+    if (response.statusCode != 200) {
+      throw GeneralException(errorMessage: "حدث خطأ أثناء الاتصال بالسيرفر");
+    }
+    return response;
   }
 }

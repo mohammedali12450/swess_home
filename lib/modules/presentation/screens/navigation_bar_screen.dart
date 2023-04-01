@@ -8,15 +8,13 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/chat_screen.dart';
 import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
-import 'package:swesshome/modules/presentation/screens/search_screen1.dart';
 import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/assets_paths.dart';
 import '../../../core/functions/screen_informations.dart';
-import '../../../main.dart';
 import '../widgets/blur_create_estate.dart';
-import 'home_screen_old.dart';
+import 'create_order_screen.dart';
 
 class NavigationBarScreen extends StatefulWidget {
   static const String id = "NavigationBarScreen";
@@ -51,23 +49,23 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                 child: callPage(pageNum));
           },
         ),
-        floatingActionButton: Padding(
-          padding: EdgeInsets.only(bottom: 20.w),
-          child: FloatingActionButton(
-            elevation: 2,
-            backgroundColor: colors.AppColors.white,
-            shape: StadiumBorder(
-                side: BorderSide(color: Colors.yellow.shade700, width: 1)),
-            onPressed: () {
-              showBlurScreen(context: context);
-            },
-            child: Image.asset(
-              swessHomeIconPath,
-              //color: Colors.white,
-            ),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // floatingActionButton: Padding(
+        //   padding: EdgeInsets.only(bottom: 20.w),
+        //   child: FloatingActionButton(
+        //     elevation: 2,
+        //     backgroundColor: colors.AppColors.white,
+        //     shape: StadiumBorder(
+        //         side: BorderSide(color: Colors.yellow.shade700, width: 1)),
+        //     onPressed: () {
+        //       showBlurScreen(context: context);
+        //     },
+        //     child: Image.asset(
+        //       swessHomeIconPath,
+        //       //color: Colors.white,
+        //     ),
+        //   ),
+        // ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: BlocBuilder<ChannelCubit, dynamic>(
             bloc: pageCubit,
             builder: (_, pageNum) {
@@ -85,6 +83,10 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                     BottomNavigationBarItem(
                       icon: const Icon(Icons.house_outlined),
                       label: AppLocalizations.of(context)!.estate_immediately,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.home_outlined),
+                      label: AppLocalizations.of(context)!.estate_order,
                     ),
                     BottomNavigationBarItem(
                       icon: const Icon(Icons.chat_outlined),
@@ -109,18 +111,21 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
   Widget callPage(int _selectedBar) {
     switch (_selectedBar) {
       case 0:
-        if (homeScreen == null) {
-          homeScreen = const HomeScreen();
-          homeScreenState = homeScreen!.createState();
-          return homeScreen!;
-        } else {
-          return homeScreenState!.build(context);
-        }
+        return const HomeScreen();
+        // if (homeScreen == null) {
+        //   homeScreen = const HomeScreen();
+        //   homeScreenState = homeScreen!.createState();
+        //   return homeScreen!;
+        // } else {
+        //   return homeScreenState!.build(context);
+        // }
       case 1:
         return const EstateImmediatelyScreen();
       case 2:
-        return const ChatScreen();
+        return const CreateOrderScreen();
       case 3:
+        return const ChatScreen();
+      case 4:
         return const ProfileScreen();
       default:
         return const HomeScreen();

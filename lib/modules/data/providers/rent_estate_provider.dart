@@ -27,12 +27,18 @@ class RentEstateProviders {
     return response;
   }
 
-  Future getMyRentEstates(
-    String token,
-  ) async {
+  Future getMyRentEstates(String token) async {
     NetworkHelper helper = NetworkHelper();
 
     Response response = await helper.get(getMyRentEstatesURL, token: token);
+    return response;
+  }
+
+  Future deleteMyRentEstates(String token) async {
+    NetworkHelper helper = NetworkHelper();
+
+    Response response =
+        await helper.delete(deleteMyRentEstatesURL, token: token);
     return response;
   }
 }

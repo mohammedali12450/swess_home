@@ -16,9 +16,15 @@ import '../../data/providers/theme_provider.dart';
 class ImmediatelyCard extends StatefulWidget {
   final RentEstate rentEstate;
   final bool isForCommunicate;
+  final bool isForDelete;
+  final Function? onDeletedPressed;
 
   const ImmediatelyCard(
-      {required this.rentEstate, required this.isForCommunicate, Key? key})
+      {required this.rentEstate,
+      required this.isForCommunicate,
+      required this.isForDelete,
+      this.onDeletedPressed,
+      Key? key})
       : super(key: key);
 
   @override
@@ -41,7 +47,7 @@ class _ImmediatelyCardState extends State<ImmediatelyCard> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ResText(
                     widget.rentEstate.publishedAt,
@@ -52,6 +58,19 @@ class _ImmediatelyCardState extends State<ImmediatelyCard> {
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w300),
                   ),
+                  if (widget.isForDelete)
+                    IconButton(
+                      onPressed: () {
+                        if (widget.onDeletedPressed != null) {
+                          widget.onDeletedPressed!();
+                        }
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        size: 22.w,
+                        color: AppColors.white,
+                      ),
+                    ),
                 ],
               ),
               buildType(AppLocalizations.of(context)!.address,
@@ -117,6 +136,9 @@ class _ImmediatelyCardState extends State<ImmediatelyCard> {
                   NumbersHelper.getMoneyFormat(widget.rentEstate.price) +
                       " " +
                       AppLocalizations.of(context)!.syrian_bound),
+              if(widget.isForDelete)...[
+                buildEstateStatus(),
+              ],
               if (widget.isForCommunicate) ...[
                 const Divider(),
                 SizedBox(
@@ -204,5 +226,22 @@ class _ImmediatelyCardState extends State<ImmediatelyCard> {
                 Text(AppLocalizations.of(context)!.whats_app_not_installed)));
       }
     }
+  }
+
+  Widget buildEstateStatus() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        widget.rentEstate.estateStatus!,
+        style: TextStyle(
+            color: (widget.rentEstate.estateStatus! ==
+                AppLocalizations.of(context)!.pending)
+                ? AppColors.yellowDarkColor
+                : (widget.rentEstate.estateStatus! ==
+                AppLocalizations.of(context)!.rejected)
+                ? Colors.red
+                : Colors.green),
+      ),
+    );
   }
 }

@@ -5,7 +5,7 @@ class RatingStarted extends RatingEvent {
 
   String rate;
 
-  String notes;
+  String? notes;
 
-  RatingStarted({required this.token, required this.rate, required this.notes});
+  RatingStarted({required this.token, required this.rate, this.notes});
 }

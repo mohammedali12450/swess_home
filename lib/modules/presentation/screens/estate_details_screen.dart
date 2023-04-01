@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -373,7 +374,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           left: (isArabic) ? 8.w : 0,
                           right: (!isArabic) ? 8.w : 0,
                         ),
-                        child: ResText(
+                        child: (widget.estate.publishedAt != null) ? ResText(
                           DateHelper.getDateByFormat(
                               DateTime.parse(
                                 widget.estate.publishedAt.toString(),
@@ -381,7 +382,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                               "yyyy/MM/dd"),
                           textAlign: TextAlign.start,
                           textStyle: Theme.of(context).textTheme.subtitle2,
-                        ),
+                        ) : const SizedBox.shrink(),
                       ),
                     ],
                   ),

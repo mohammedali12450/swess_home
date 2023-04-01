@@ -38,3 +38,10 @@ class GetMyRentEstateFetchComplete extends RentEstateState {
 }
 
 class GetMyRentEstateFetchProgress extends RentEstateState {}
+
+class DeleteMyRentEstateFetchProgress extends RentEstateState {}
+
+class DeleteMyRentEstateFetchComplete extends RentEstateState {
+
+  DeleteMyRentEstateFetchComplete();
+}

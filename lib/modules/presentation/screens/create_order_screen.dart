@@ -17,10 +17,12 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
+import '../../../core/functions/screen_informations.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_order_bloc/estate_order_event.dart';
 import '../../data/models/search_data.dart';
 import '../../data/providers/theme_provider.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/choice_container.dart';
 import '../widgets/estate_type.dart';
 import '../widgets/price_domain.dart';
@@ -146,6 +148,12 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   ),
                 ),
               ),
+            ),
+          ),
+          drawer: SizedBox(
+            width: getScreenWidth(context) * (75/100),
+            child: const Drawer(
+              child: MyDrawer(),
             ),
           ),
         ),

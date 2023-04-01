@@ -60,7 +60,7 @@ class HomeScreenState extends State<HomeScreen1> {
     estateViewBloc = EstateViewBloc(EstateRepository());
     estateSpacialBloc = EstateSpacialBloc(EstateRepository());
     //estateBloc = EstateBloc(EstateRepository());
-    ApplicationSharedPreferences.setWalkThroughPassState(true);
+
     _onRefresh();
     if (UserSharedPreferences.getAccessToken() != null) {
       sendFcmToken(0);

@@ -142,13 +142,17 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                     isDark,
                                     title: AppLocalizations.of(context)!
                                         .title_min_price,
-                                    items: min.values
-                                        .map(
-                                          (names) => Text(
-                                            names.toString(),
-                                          ),
-                                        )
-                                        .toList(),
+                                    items: min.values.map(
+                                      (names) {
+                                        if (names == "0") {
+                                          names = AppLocalizations.of(context)!
+                                              .min_price;
+                                        }
+                                        return Text(
+                                          names.toString(),
+                                        );
+                                      },
+                                    ).toList(),
                                     onSubmit: (data) {
                                       widget.startPriceCubit
                                           .setState(min.keys.toList()[data]);
@@ -179,8 +183,12 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                                 : AppColors.yellowDarkColor,
                                             width: 1,
                                           )),
-                                      child: Text(
-                                          min[widget.startPriceCubit.state]!),
+                                      child: Text(min[widget
+                                                  .startPriceCubit.state]! !=
+                                              "0"
+                                          ? min[widget.startPriceCubit.state]!
+                                          : AppLocalizations.of(context)!
+                                              .min_price),
                                     );
                                   },
                                 ),
@@ -227,13 +235,18 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                     isDark,
                                     title: AppLocalizations.of(context)!
                                         .title_max_price,
-                                    items: max.values
-                                        .map(
-                                          (names) => Text(
-                                            names.toString(),
-                                          ),
-                                        )
-                                        .toList(),
+                                    items: max.values.map(
+                                      (names) {
+                                        if (names ==
+                                            "999,999,999,999,999,999") {
+                                          names = AppLocalizations.of(context)!
+                                              .max_price;
+                                        }
+                                        return Text(
+                                          names.toString(),
+                                        );
+                                      },
+                                    ).toList(),
                                     onSubmit: (data) {
                                       widget.endPriceCubit
                                           .setState(max.keys.toList()[data]);
@@ -264,8 +277,12 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                                   : AppColors.yellowDarkColor,
                                               width: 1,
                                             )),
-                                        child: Text(
-                                            max[widget.endPriceCubit.state]!),
+                                        child: Text(max[widget
+                                                    .endPriceCubit.state]! !=
+                                                "999,999,999,999,999,999"
+                                            ? max[widget.endPriceCubit.state]!
+                                            : AppLocalizations.of(context)!
+                                                .max_price),
                                       );
                                     }),
                               ),

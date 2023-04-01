@@ -23,6 +23,7 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_bloc.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_event.dart';
 import '../../data/providers/theme_provider.dart';
+import '../widgets/estate_horizon_card.dart';
 import '../widgets/time_line.dart';
 
 class CreatedEstatesScreen extends StatefulWidget {
@@ -221,7 +222,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                                 elevation: 5,
                                 child: Column(
                                   children: [
-                                    EstateCard(
+                                    EstateHorizonCard(
                                       color: (int.parse(widget.estateId!) ==
                                               estates.elementAt(index).id)
                                           ? _colorTween.value
@@ -232,18 +233,9 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                                       onClosePressed: () async {
                                         await onClosePressed(index);
                                       },
-                                      removeCloseButton: false,
-                                      removeBottomBar: true,
+                                      closeButton: true,
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          bottom: 8.h, left: 8.w, right: 8.w),
-                                      child: SizedBox(
-                                          height: 63.h,
-                                          width: getScreenWidth(context),
-                                          child: ProcessTimelinePage(
-                                              estateStatusId: estateStatusId)),
-                                    ),
+                                    buildEstateStatus(index),
                                   ],
                                 ),
                               ),
@@ -252,7 +244,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                               elevation: 5,
                               child: Column(
                                 children: [
-                                  EstateCard(
+                                  EstateHorizonCard(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .background,
@@ -260,19 +252,19 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                                     onClosePressed: () async {
                                       await onClosePressed(index);
                                     },
-                                    removeCloseButton: false,
-                                    removeBottomBar: true,
+                                    closeButton: true,
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom: 8.h, left: 8.w, right: 8.w),
-                                    child: SizedBox(
-                                        height: 75.h,
-                                        width: getScreenWidth(context),
-                                        child: ProcessTimelinePage(
-                                          estateStatusId: estateStatusId,
-                                        )),
-                                  ),
+                                  buildEstateStatus(index),
+                                  // Padding(
+                                  //   padding: EdgeInsets.only(
+                                  //       bottom: 8.h, left: 8.w, right: 8.w),
+                                  //   child: SizedBox(
+                                  //       height: 70.h,
+                                  //       width: getScreenWidth(context),
+                                  //       child: ProcessTimelinePage(
+                                  //         estateStatusId: estateStatusId,
+                                  //       )),
+                                  // ),
                                 ],
                               ),
                             );
@@ -283,6 +275,51 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildEstateStatus(index) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: estates.elementAt(index).estateStatus! == 1
+                ? Text(
+                    AppLocalizations.of(context)!.accepted_from_company,
+                    style: const TextStyle(color: Colors.green),
+                  )
+                : estates.elementAt(index).estateStatus! == 2
+                    ? Text(
+                        AppLocalizations.of(context)!.rejected_from_company,
+                        style: const TextStyle(color: Colors.red),
+                      )
+                    : Text(
+                        AppLocalizations.of(context)!.on_progress_from_company,
+                        style: TextStyle(color: AppColors.yellowDarkColor),
+                      ),
+          ),
+          const Text(" , "),
+          Expanded(
+            flex: 1,
+            child: estates.elementAt(index).officeStatus! == 1
+                ? Text(
+                    AppLocalizations.of(context)!.accepted_from_office,
+                    style: const TextStyle(color: Colors.green),
+                  )
+                : estates.elementAt(index).officeStatus! == 2
+                    ? Text(
+                        AppLocalizations.of(context)!.rejected_from_office,
+                        style: const TextStyle(color: Colors.red),
+                      )
+                    : Text(
+                        AppLocalizations.of(context)!.on_progress_from_office,
+                        style: TextStyle(color: AppColors.yellowDarkColor),
+                      ),
+          ),
+        ],
       ),
     );
   }

@@ -20,7 +20,11 @@ import '../../../utils/helpers/numbers_helper.dart';
 import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_bloc.dart';
 import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_event.dart';
 import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_state.dart';
+import '../../business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_bloc.dart';
+import '../../business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_event.dart';
+import '../../business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_state.dart';
 import '../../data/models/estate.dart';
+import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_repository.dart';
 import '../screens/authentication_screen.dart';
@@ -36,15 +40,17 @@ class HomeEstateCard extends StatefulWidget {
 }
 
 class _HomeEstateCardState extends State<HomeEstateCard> {
-  late LikeAndUnlikeBloc _likeAndUnlikeBloc;
+  late SaveAndUnSaveEstateBloc _saveAndUnSaveEstateBloc;
   String? userToken;
+  late bool isArabic;
+  late bool isDark;
 
   @override
   void initState() {
     super.initState();
 
-    _likeAndUnlikeBloc = LikeAndUnlikeBloc(
-      (widget.estate.isLiked!) ? Liked() : Unliked(),
+    _saveAndUnSaveEstateBloc = SaveAndUnSaveEstateBloc(
+      (widget.estate.isSaved!) ? EstateSaved() : EstateUnSaved(),
       EstateRepository(),
     );
 
@@ -55,8 +61,9 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
 
   @override
   Widget build(BuildContext context) {
+    isArabic = Provider.of<LocaleProvider>(context).isArabic();
     int intPrice = int.tryParse(widget.estate.price!)!;
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -77,36 +84,150 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).colorScheme.shadow,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 2),
               blurRadius: 4,
             )
           ],
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               flex: 3,
-              child: ClipRRect(
-                borderRadius: medBorderRadius,
-                child: Container(
-                  width: getScreenWidth(context) * (65 / 100),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1,
-                      color: AppColors.white,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: medBorderRadius,
+                    child: Container(
+                      width: getScreenWidth(context) * (65 / 100),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 1,
+                          color: AppColors.white,
+                        ),
+                        color: Theme.of(context).colorScheme.background,
+                      ),
+                      child: widget.estate.firstImage!.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl:
+                                  imagesBaseUrl + widget.estate.firstImage!,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(swessHomeIconPath),
                     ),
-                    color: Theme.of(context).colorScheme.background,
                   ),
-                  child: widget.estate.images!.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl:
-                              imagesBaseUrl + widget.estate.images![0].url,
-                          fit: BoxFit.cover,
-                        )
-                      : Image.asset(swessHomeIconPath),
-                ),
+                  Positioned(
+                    right: 10.w,
+                    top: 10.h,
+                    child: BlocConsumer<SaveAndUnSaveEstateBloc,
+                        SaveAndUnSaveEstateState>(
+                      bloc: _saveAndUnSaveEstateBloc,
+                      listener: (_, saveAndUnSaveState) async {
+                        if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
+                          var error = saveAndUnSaveState.isConnectionError
+                              ? AppLocalizations.of(context)!
+                                  .no_internet_connection
+                              : saveAndUnSaveState.error;
+                          await showWonderfulAlertDialog(context,
+                              AppLocalizations.of(context)!.error, error);
+                          _saveAndUnSaveEstateBloc.add(
+                            ReInitializeSaveState(
+                                isSaved: widget.estate.isSaved!),
+                          );
+                        }
+                        if (saveAndUnSaveState is EstateSaved) {
+                          widget.estate.isSaved = true;
+                        }
+                        if (saveAndUnSaveState is EstateUnSaved) {
+                          widget.estate.isSaved = false;
+                        }
+                      },
+                      builder: (_, saveAndUnSaveState) {
+                        return SizedBox(
+                          height: 35.h,
+                          width: 35.w,
+                          child: FloatingActionButton(
+                            heroTag: widget.estate.id.toString(),
+                            elevation: 5,
+                            backgroundColor: AppColors.white,
+                            shape: const BeveledRectangleBorder(
+                                borderRadius: BorderRadius.zero),
+                            onPressed: () {
+                              if (userToken == null) {
+                                showWonderfulAlertDialog(
+                                  context,
+                                  AppLocalizations.of(context)!.confirmation,
+                                  AppLocalizations.of(context)!
+                                      .this_features_require_login,
+                                  removeDefaultButton: true,
+                                  width: 400.w,
+                                  dialogButtons: [
+                                    ElevatedButton(
+                                      child: Text(
+                                        AppLocalizations.of(context)!.cancel,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    ElevatedButton(
+                                      child: Text(
+                                        AppLocalizations.of(context)!.sign_in,
+                                      ),
+                                      onPressed: () async {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const AuthenticationScreen(
+                                              popAfterFinish: true,
+                                            ),
+                                          ),
+                                        );
+                                        Navigator.pop(context);
+                                        if (UserSharedPreferences
+                                                .getAccessToken() !=
+                                            null) {
+                                          userToken = UserSharedPreferences
+                                              .getAccessToken();
+                                        }
+                                        return;
+                                      },
+                                    ),
+                                  ],
+                                );
+                                return;
+                              }
+                              if (saveAndUnSaveState is EstateSaved) {
+                                _saveAndUnSaveEstateBloc.add(UnSaveEventStarted(
+                                    token: userToken,
+                                    estateId: widget.estate.id!));
+                              }
+                              if (saveAndUnSaveState is EstateUnSaved) {
+                                _saveAndUnSaveEstateBloc.add(EstateSaveStarted(
+                                    token: userToken,
+                                    estateId: widget.estate.id!));
+                              }
+                            },
+                            child: (saveAndUnSaveState
+                                    is EstateSaveAndUnSaveProgress)
+                                ? SpinKitWave(
+                                    color: AppColors.primaryColor,
+                                    size: 16.w,
+                                  )
+                                : Icon(
+                                    (saveAndUnSaveState is EstateSaved)
+                                        ? Icons.bookmark
+                                        : Icons.bookmark_border_outlined,
+                                    color: AppColors.primaryColor,
+                                  ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -124,10 +245,10 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                       child: Row(
                         children: [
                           ResText(
-                            "${widget.estate.estateType!.name.split("|").first}"
-                            " - "
-                            "${widget.estate.estateOfferType!.name}"
-                            "${(widget.estate.periodType == null) ? " " : "/ ${widget.estate.periodType!.name.split("|").first}"}",
+                            "${widget.estate.estateTypeName!}"
+                            " ${isArabic ? "لل" : "for "}"
+                            "${widget.estate.estateOfferTypeName}"
+                            "${(widget.estate.periodTypeName!.isEmpty) ? " " : "/ ${widget.estate.periodTypeName!}"}",
                             textStyle: Theme.of(context)
                                 .textTheme
                                 .headline3!
@@ -140,31 +261,29 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                     ),
                     Expanded(
                       flex: 6,
-                      child: Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: Column(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Row(
-                                children: [
-                                  ResText(
-                                    widget.estate.locationS!,
-                                    textStyle:
-                                        Theme.of(context).textTheme.headline6,
-                                  ),
-                                ],
-                              ),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Row(
+                              children: [
+                                ResText(
+                                  widget.estate.area! +
+                                      " " +
+                                      widget.estate.areaUnitName!,
+                                  textStyle:
+                                      Theme.of(context).textTheme.headline6,
+                                ),
+                              ],
                             ),
+                          ),
+                          if (widget.estate.periodType == null)
                             Expanded(
                               flex: 2,
                               child: Row(
                                 children: [
                                   ResText(
-                                    DateHelper.getDateByFormat(
-                                        DateTime.parse(
-                                            widget.estate.publishedAt!),
-                                        "yyyy/MM/dd"),
+                                    widget.estate.ownershipTypeName!,
                                     textStyle: Theme.of(context)
                                         .textTheme
                                         .headline6!
@@ -176,8 +295,7 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                                 ],
                               ),
                             ),
-                          ],
-                        ),
+                        ],
                       ),
                     ),
                     kHe20,
@@ -197,123 +315,6 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                                 textStyle:
                                     Theme.of(context).textTheme.headline4,
                               ),
-                            ),
-                            BlocConsumer<LikeAndUnlikeBloc, LikeAndUnlikeState>(
-                              bloc: _likeAndUnlikeBloc,
-                              listener: (_, likeAndUnlikeState) async {
-                                if (likeAndUnlikeState is LikeAndUnlikeError) {
-                                  var error =
-                                      likeAndUnlikeState.isConnectionError
-                                          ? AppLocalizations.of(context)!
-                                              .no_internet_connection
-                                          : likeAndUnlikeState.error;
-                                  await showWonderfulAlertDialog(
-                                      context,
-                                      AppLocalizations.of(context)!.error,
-                                      error);
-                                  _likeAndUnlikeBloc.add(
-                                    ReInitializeLikeState(
-                                        isLike: widget.estate.isLiked!),
-                                  );
-                                }
-                                if (likeAndUnlikeState is Liked) {
-                                  widget.estate.isLiked = true;
-                                }
-                                if (likeAndUnlikeState is Unliked) {
-                                  widget.estate.isLiked = false;
-                                }
-                              },
-                              builder: (_, likeAndUnlikeState) {
-                                return SizedBox(
-                                  height: 45.h,
-                                  width: 45.w,
-                                  child: FloatingActionButton(
-                                    heroTag: widget.estate.id.toString(),
-                                    elevation: 5,
-                                    backgroundColor: AppColors.lastColor,
-                                    onPressed: () async {
-                                      if (userToken == null) {
-                                        showWonderfulAlertDialog(
-                                          context,
-                                          AppLocalizations.of(context)!
-                                              .confirmation,
-                                          AppLocalizations.of(context)!
-                                              .this_features_require_login,
-                                          removeDefaultButton: true,
-                                          width: 400.w,
-                                          dialogButtons: [
-                                            ElevatedButton(
-                                              child: Text(
-                                                AppLocalizations.of(context)!
-                                                    .cancel,
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                            ElevatedButton(
-                                              child: Text(
-                                                AppLocalizations.of(context)!
-                                                    .sign_in,
-                                              ),
-                                              onPressed: () async {
-                                                await Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        const AuthenticationScreen(
-                                                      popAfterFinish: true,
-                                                    ),
-                                                  ),
-                                                );
-                                                Navigator.pop(context);
-                                                if (UserSharedPreferences
-                                                        .getAccessToken() !=
-                                                    null) {
-                                                  userToken =
-                                                      UserSharedPreferences
-                                                          .getAccessToken();
-                                                }
-                                                return;
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                        return;
-                                      }
-                                      if (likeAndUnlikeState is Liked) {
-                                        _likeAndUnlikeBloc.add(
-                                          UnlikeStarted(
-                                            token: userToken,
-                                            unlikedObjectId: widget.estate.id!,
-                                            likeType: LikeType.estate,
-                                          ),
-                                        );
-                                      }
-                                      if (likeAndUnlikeState is Unliked) {
-                                        _likeAndUnlikeBloc.add(
-                                          LikeStarted(
-                                              token: userToken,
-                                              likedObjectId: widget.estate.id!,
-                                              likeType: LikeType.estate),
-                                        );
-                                      }
-                                    },
-                                    child: (likeAndUnlikeState
-                                            is LikeAndUnlikeProgress)
-                                        ? SpinKitWave(
-                                            color: AppColors.white,
-                                            size: 16.w,
-                                          )
-                                        : Icon(
-                                            (likeAndUnlikeState is Liked)
-                                                ? Icons.favorite
-                                                : Icons.favorite_outline,
-                                            color: AppColors.white,
-                                          ),
-                                  ),
-                                );
-                              },
                             ),
                           ],
                         ),

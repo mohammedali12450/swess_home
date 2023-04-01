@@ -37,6 +37,8 @@ class EstateOrder {
 
   String description;
 
+  String? orderStatus;
+
   EstateOrder(
       {this.id,
       this.estateType,
@@ -50,7 +52,8 @@ class EstateOrder {
       this.estateOfferId,
       this.locationId,
       this.priceMax,
-      this.priceMin});
+      this.priceMin,
+      this.orderStatus});
 
   factory EstateOrder.fromJson(json) {
     List<Estate>? candidatesEstates;
@@ -71,9 +74,10 @@ class EstateOrder {
       priceDomain: (json["price_domain"] != null)
           ? PriceDomain.fromJson(json["price_domain"])
           : null,
-      description: json["notes"],
+      description: json["notes"] ?? "",
       createdAt: json["created_at"],
       location: Location.fromJson(json["location"]),
+      orderStatus: json["order_status"]["name"],
       candidatesEstates: candidatesEstates,
     );
   }

@@ -21,6 +21,12 @@ class GetMyRentEstatesFetchStarted extends RentEstatesEvent {
   GetMyRentEstatesFetchStarted({required this.token});
 }
 
+class DeleteMyRentEstatesFetchStarted extends RentEstatesEvent {
+  String token;
+
+  DeleteMyRentEstatesFetchStarted({required this.token});
+}
+
 class FilterRentEstatesFetchStarted extends RentEstatesEvent {
   RentEstateFilter rentEstateFilter;
 

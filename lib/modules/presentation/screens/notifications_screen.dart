@@ -9,7 +9,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/notifications_b
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/my_notification.dart';
-import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
+import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/notification_card.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/notifications_shimmer.dart';
@@ -19,7 +19,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../widgets/res_text.dart';
-import 'created_estates_screen.dart';
+import 'my_created_estates_screen.dart';
 
 class NotificationScreen extends StatefulWidget {
   static const String id = "NotificationScreen";

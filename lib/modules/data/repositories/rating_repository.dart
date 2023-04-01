@@ -5,7 +5,7 @@ import 'package:swesshome/modules/data/providers/rating_provider.dart';
 class RatingRepository {
   final RatingProvider _ratingProvider = RatingProvider();
 
-  Future sendRate(String? token, String notes, String rate) async {
+  Future sendRate(String? token, String? notes, String rate) async {
     Response response;
 
     try {

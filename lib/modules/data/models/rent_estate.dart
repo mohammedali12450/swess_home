@@ -15,6 +15,7 @@ class RentEstate {
   String? whatsAppNumber;
   String phoneNumber;
   String publishedAt;
+  String? estateStatus;
 
   RentEstate(
       {required this.id,
@@ -31,7 +32,9 @@ class RentEstate {
       required this.isFurnished,
       this.whatsAppNumber,
       required this.phoneNumber,
-      required this.publishedAt});
+      required this.publishedAt,
+        this.estateStatus
+      });
 
   factory RentEstate.fromJson(Map<String, dynamic> json) {
     return RentEstate(
@@ -47,6 +50,7 @@ class RentEstate {
         price: json["price"],
         space: json["area"],
         isFurnished: json["is_furnished"],
+        estateStatus: json["estate_status_id"],
         whatsAppNumber:
             json["whatsapp_number"] == null ? null : json["whatsapp_number"],
         phoneNumber: json["customer_phone"] == null ? "" : json["customer_phone"],

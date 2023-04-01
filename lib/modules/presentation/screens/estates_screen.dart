@@ -12,6 +12,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/est
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_state.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
+import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
@@ -19,6 +20,7 @@ import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../core/storage/shared_preferences/recent_searches_shared_preferences.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/search_data.dart';
@@ -30,9 +32,13 @@ class EstatesScreen extends StatefulWidget {
 
   final SearchData searchData;
   final EstateEvent eventSearch;
+  final String locationName;
 
   const EstatesScreen(
-      {Key? key, required this.eventSearch, required this.searchData})
+      {Key? key,
+      required this.eventSearch,
+      required this.searchData,
+      required this.locationName})
       : super(key: key);
 
   @override
@@ -53,6 +59,8 @@ class _EstatesScreenState extends State<EstatesScreen> {
   String? userToken;
   late bool isDark;
 
+  List<Estate> allEstates = [];
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +69,13 @@ class _EstatesScreenState extends State<EstatesScreen> {
     if (UserSharedPreferences.getAccessToken() != null) {
       userToken = UserSharedPreferences.getAccessToken();
     }
+  }
+
+  getEstateSearch() async {
+    estateSearchCubit
+        .setState(await RecentSearchesSharedPreferences.getSearches());
+    estateSearchFilterCubit
+        .setState(RecentSearchesSharedPreferences.getRecentSearchesFilter());
   }
 
   @override
@@ -98,6 +113,27 @@ class _EstatesScreenState extends State<EstatesScreen> {
                     estateSearch.similarEstates.isNotEmpty) {
                   isSimilarEstatesFinished = true;
                 }
+                allEstates =
+                    List.from(estateFetchState.estateSearch.similarEstates)
+                      ..addAll(estateFetchState.estateSearch.identicalEstates);
+
+                if (!estateBloc.isFetching) {
+                  await RecentSearchesSharedPreferences.removeSearches();
+                  RecentSearchesSharedPreferences.setSearches(
+                      allEstates.take(5).toList());
+
+                  await RecentSearchesSharedPreferences
+                      .removeRecentSearchesFilter();
+                  RecentSearchesSharedPreferences.setRecentSearchesFilter([
+                    widget.locationName,
+                    widget.searchData.priceMax.toString(),
+                    widget.searchData.priceMin.toString(),
+                    widget.searchData.estateTypeId.toString(),
+                    widget.searchData.estateOfferTypeId.toString(),
+                    widget.searchData.locationId.toString(),
+                  ]);
+                  getEstateSearch();
+                }
               }
               if (estateFetchState is EstateFetchError) {
                 var error = estateFetchState.isConnectionError
@@ -110,7 +146,8 @@ class _EstatesScreenState extends State<EstatesScreen> {
             builder: (context, EstateState estatesFetchState) {
               if (estatesFetchState is EstateFetchNone ||
                   (estatesFetchState is EstatesFetchProgress &&
-                      estateSearch.identicalEstates.isEmpty)) {
+                      (estateSearch.identicalEstates.isEmpty &&
+                          estateSearch.similarEstates.isEmpty))) {
                 return const PropertyShimmer();
               } else if (estatesFetchState is EstatesFetchComplete) {
                 if (estatesFetchState
@@ -158,7 +195,8 @@ class _EstatesScreenState extends State<EstatesScreen> {
                 );
               }
 
-              if (estateSearch.identicalEstates.isEmpty) {
+              if (estateSearch.identicalEstates.isEmpty &&
+                  estateSearch.similarEstates.isEmpty) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -176,21 +214,21 @@ class _EstatesScreenState extends State<EstatesScreen> {
                         AppLocalizations.of(context)!.no_results_body,
                         style: Theme.of(context).textTheme.headline5,
                       ),
-                      kHe12,
-                      Text(
-                        AppLocalizations.of(context)!.no_results_hint,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText2!
-                            .copyWith(fontWeight: FontWeight.w400),
-                      ),
+                      // kHe12,
+                      // Text(
+                      //   AppLocalizations.of(context)!.no_results_hint,
+                      //   style: Theme.of(context)
+                      //       .textTheme
+                      //       .bodyText2!
+                      //       .copyWith(fontWeight: FontWeight.w400),
+                      // ),
                       kHe40,
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           fixedSize: Size(220.w, 64.h),
                         ),
                         child: Text(
-                          AppLocalizations.of(context)!.search_again,
+                          AppLocalizations.of(context)!.create_estate_order,
                         ),
                         onPressed: () {
                           Navigator.pop(context);
@@ -505,34 +543,50 @@ class _EstatesScreenState extends State<EstatesScreen> {
         vertical: 50.h,
       ),
       width: 1.sw,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
+      child: Column(
         children: [
-          kWi16,
-          Expanded(
-            flex: 2,
-            child: Divider(
-              color: Theme.of(context).colorScheme.primary,
-              thickness: 1,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              kWi16,
+              Expanded(
+                flex: 2,
+                child: Divider(
+                  color: Theme.of(context).colorScheme.primary,
+                  thickness: 1,
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: ResText(
+                  AppLocalizations.of(context)!.no_more_results,
+                  textAlign: TextAlign.center,
+                  textStyle: textStyling(S.s18, W.w5, isDark ? C.c1 : C.bl),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Divider(
+                  color: Theme.of(context).colorScheme.primary,
+                  thickness: 1,
+                ),
+              ),
+              kWi16,
+            ],
           ),
-          Expanded(
-            flex: 3,
-            child: ResText(
-              AppLocalizations.of(context)!.no_more_results,
-              textAlign: TextAlign.center,
-              textStyle: textStyling(S.s18, W.w5, isDark ? C.c1 : C.bl),
+          kHe28,
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(220.w, 64.h),
             ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Divider(
-              color: Theme.of(context).colorScheme.primary,
-              thickness: 1,
+            child: Text(
+              AppLocalizations.of(context)!.create_estate_order,
             ),
-          ),
-          kWi16,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
         ],
       ),
     );

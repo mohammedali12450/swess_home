@@ -33,6 +33,7 @@ import '../../business_logic_components/bloc/office_details_bloc/office_details_
 import '../../data/models/estate.dart';
 import '../../data/models/estate_office.dart';
 import '../widgets/cupertino_action_sheet.dart';
+import '../widgets/estate_horizon_card.dart';
 import '../widgets/report_estate.dart';
 import '../widgets/res_text.dart';
 import 'authentication_screen.dart';
@@ -429,15 +430,23 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         shrinkWrap: true,
                         itemCount: estates.length,
                         itemBuilder: (_, index) {
-                          return EstateCard(
-                            color: Theme.of(context).colorScheme.background,
+                          return EstateHorizonCard(
                             estate: estates.elementAt(index),
-                            onClosePressed: () {
-                              showReportModalBottomSheet(
-                                  context, estates.elementAt(index).id!);
-                            },
-                            removeCloseButton: false,
+                              onClosePressed: () {
+                                showReportModalBottomSheet(
+                                    context, estates.elementAt(index).id!);
+                              },
+                              closeButton: false,
                           );
+                          // return EstateCard(
+                          //   color: Theme.of(context).colorScheme.background,
+                          //   estate: estates.elementAt(index),
+                          //   onClosePressed: () {
+                          //     showReportModalBottomSheet(
+                          //         context, estates.elementAt(index).id!);
+                          //   },
+                          //   removeCloseButton: false,
+                          // );
                         },
                       ),
                     ],

@@ -105,6 +105,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   @override
   void initState() {
     super.initState();
+    ApplicationSharedPreferences.setWalkThroughPassState(true);
     userRegisterBloc = UserRegisterBloc(UserAuthenticationRepository());
     userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
     governoratesBloc = BlocProvider.of<GovernoratesBloc>(context);

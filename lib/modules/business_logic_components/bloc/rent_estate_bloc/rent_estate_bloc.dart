@@ -64,9 +64,21 @@ class RentEstateBloc extends Bloc<RentEstatesEvent, RentEstateState> {
     on<GetMyRentEstatesFetchStarted>((event, emit) async {
       emit(GetMyRentEstateFetchProgress());
       try {
-        rentEstates = await _messageRepository.getMyRentEstates(
-            event.token);
+        rentEstates = await _messageRepository.getMyRentEstates(event.token);
         emit(GetMyRentEstateFetchComplete(rentEstates: rentEstates!));
+      } catch (e, stack) {
+        if (e is GeneralException) {
+          emit(RentEstateFetchError(error: e.errorMessage!));
+        }
+        print(e);
+        print(stack);
+      }
+    });
+    on<DeleteMyRentEstatesFetchStarted>((event, emit) async {
+      emit(DeleteMyRentEstateFetchProgress());
+      try {
+        await _messageRepository.deleteMyRentEstates(event.token);
+        emit(DeleteMyRentEstateFetchComplete());
       } catch (e, stack) {
         if (e is GeneralException) {
           emit(RentEstateFetchError(error: e.errorMessage!));

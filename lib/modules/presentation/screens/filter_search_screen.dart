@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
@@ -189,6 +188,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                             MaterialPageRoute(
                               builder: (_) => EstatesScreen(
                                 searchData: searchData,
+                                locationName: locationNameCubit.state,
                                 eventSearch: EstatesFetchStarted(
                                   searchData: searchData,
                                   isAdvanced: false,

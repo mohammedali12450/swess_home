@@ -9,6 +9,7 @@ class AppColors {
   static const lastColor = Color(0xff3F72AF);
   static Color hintColor = Colors.black.withOpacity(0.4);
   static Color whiteHintColor = Colors.white.withOpacity(0.4);
+  static Color whiteBackgroundColor = Colors.white.withOpacity(0.8);
   static Color blackBackgroundLayer = Colors.black.withOpacity(0.72);
   static const Color primaryDark = Color(0xff90B8F8);
   static  Color secondaryDark = const Color(0xff353941);

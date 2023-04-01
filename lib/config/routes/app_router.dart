@@ -45,13 +45,13 @@ import 'package:swesshome/modules/data/repositories/user_authentication_reposito
 import 'package:swesshome/modules/presentation/screens/after_estate_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
-import 'package:swesshome/modules/presentation/screens/created_estates_screen.dart';
+import 'package:swesshome/modules/presentation/screens/my_created_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/languages_screen.dart';
 import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
 import 'package:swesshome/modules/presentation/screens/office_search_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
-import 'package:swesshome/modules/presentation/screens/recent_estates_orders_screen.dart';
+import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/reset_password_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/search_location_screen.dart';

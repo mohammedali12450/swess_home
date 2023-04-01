@@ -8,6 +8,7 @@ import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../../constants/design_constants.dart';
 import '../../../core/functions/app_theme_information.dart';
+import '../../../core/storage/shared_preferences/recent_searches_shared_preferences.dart';
 import '../../business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_bloc.dart';
@@ -18,6 +19,7 @@ import '../../data/models/period_type.dart';
 import '../../data/models/rent_estate.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/rent_estate_repository.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/immediately_card.dart';
 import '../widgets/my_dropdown_list.dart';
 import '../widgets/res_text.dart';
@@ -82,6 +84,12 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
   Widget build(BuildContext context) {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
+      drawer: SizedBox(
+        width: getScreenWidth(context) * (75/100),
+        child: const Drawer(
+          child: MyDrawer(),
+        ),
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           await _onRefresh();
@@ -247,6 +255,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
                     return ImmediatelyCard(
                       rentEstate: rentEstates.elementAt(index),
                       isForCommunicate: true,
+                      isForDelete: false,
                     );
                   }, childCount: rentEstates.length),
                 );
