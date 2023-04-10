@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:swesshome/constants/colors.dart' as colors;
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
-import 'package:swesshome/modules/presentation/screens/chat_screen.dart';
 import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../../constants/assets_paths.dart';
+
 import '../../../core/functions/screen_informations.dart';
-import '../widgets/blur_create_estate.dart';
+import 'chat_screen.dart';
 import 'create_order_screen.dart';
 
 class NavigationBarScreen extends StatefulWidget {
@@ -36,7 +33,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         drawer: SizedBox(
-          width: getScreenWidth(context) * (75/100),
+          width: getScreenWidth(context) * (75 / 100),
           child: const Drawer(
             child: MyDrawer(),
           ),
@@ -44,9 +41,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
         body: BlocBuilder<ChannelCubit, dynamic>(
           bloc: pageCubit,
           builder: (_, pageNum) {
-            return Directionality(
-                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-                child: callPage(pageNum));
+            return Directionality(textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr, child: callPage(pageNum));
           },
         ),
         // floatingActionButton: Padding(
@@ -112,13 +107,13 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
     switch (_selectedBar) {
       case 0:
         return const HomeScreen();
-        // if (homeScreen == null) {
-        //   homeScreen = const HomeScreen();
-        //   homeScreenState = homeScreen!.createState();
-        //   return homeScreen!;
-        // } else {
-        //   return homeScreenState!.build(context);
-        // }
+      // if (homeScreen == null) {
+      //   homeScreen = const HomeScreen();
+      //   homeScreenState = homeScreen!.createState();
+      //   return homeScreen!;
+      // } else {
+      //   return homeScreenState!.build(context);
+      // }
       case 1:
         return const EstateImmediatelyScreen();
       case 2:

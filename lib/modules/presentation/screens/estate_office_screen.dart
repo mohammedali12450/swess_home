@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -19,11 +20,8 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_introduction_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
-import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
@@ -36,6 +34,7 @@ import '../widgets/cupertino_action_sheet.dart';
 import '../widgets/estate_horizon_card.dart';
 import '../widgets/report_estate.dart';
 import '../widgets/res_text.dart';
+import '../widgets/wonderful_alert_dialog.dart';
 import 'authentication_screen.dart';
 
 class EstateOfficeScreen extends StatefulWidget {
@@ -50,8 +49,7 @@ class EstateOfficeScreen extends StatefulWidget {
 class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
   final VisitBloc _visitBloc = VisitBloc(EstateRepository());
 
-  final LikeAndUnlikeBloc _likeAndUnlikeBloc =
-      LikeAndUnlikeBloc(Unliked(), EstateRepository());
+  final LikeAndUnlikeBloc _likeAndUnlikeBloc = LikeAndUnlikeBloc(Unliked(), EstateRepository());
   final GetOfficesBloc _getOfficesBloc = GetOfficesBloc(EstateRepository());
 
   final ScrollController _scrollController = ScrollController();
@@ -69,10 +67,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
       userToken = UserSharedPreferences.getAccessToken();
     }
     _onRefresh();
-    _visitBloc.add(VisitStarted(
-        visitId: widget.id,
-        token: userToken,
-        visitType: VisitType.estateOffice));
+    _visitBloc.add(VisitStarted(visitId: widget.id, token: userToken, visitType: VisitType.estateOffice));
 
     isEstatesFinished = false;
   }
@@ -111,15 +106,11 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
           controller: _scrollController
             ..addListener(
               () {
-                if (_scrollController.offset ==
-                        _scrollController.position.maxScrollExtent &&
-                    !_getOfficesBloc.isFetching &&
-                    !isEstatesFinished) {
+                if (_scrollController.offset == _scrollController.position.maxScrollExtent && !_getOfficesBloc.isFetching && !isEstatesFinished) {
                   _getOfficesBloc
                     ..isFetching = true
                     ..add(
-                      GetOfficesDetailsStarted(
-                          officeId: widget.id, token: userToken),
+                      GetOfficesDetailsStarted(officeId: widget.id, token: userToken),
                     );
                 }
               },
@@ -132,18 +123,14 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                 bloc: _getOfficesBloc,
                 listener: (_, estateState) async {
                   if (estateState is GetOfficesFetchError) {
-                    var error = estateState.isConnectionError
-                        ? AppLocalizations.of(context)!.no_internet_connection
-                        : estateState.errorMessage;
-                    await showWonderfulAlertDialog(
-                        context, AppLocalizations.of(context)!.error, error);
+                    var error = estateState.isConnectionError ? AppLocalizations.of(context)!.no_internet_connection : estateState.errorMessage;
+                    await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
                   }
                   if (estateState is GetOfficesFetchComplete) {
                     results = estateState.results;
                     estates.addAll(estateState.results.estates);
                     _getOfficesBloc.isFetching = false;
-                    if (estateState.results.estates.isEmpty &&
-                        estates.isNotEmpty) {
+                    if (estateState.results.estates.isEmpty && estates.isNotEmpty) {
                       isEstatesFinished = true;
                     }
                   }
@@ -161,30 +148,22 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         child: SizedBox(
                             width: 1.sw,
                             height: 1.sh - 75.h,
-                            child: FetchResult(
-                                content: AppLocalizations.of(context)!
-                                    .error_happened_when_executing_operation)),
+                            child: FetchResult(content: AppLocalizations.of(context)!.error_happened_when_executing_operation)),
                       ),
                     );
                   }
-                  if (estateState is GetOfficesFetchProgress &&
-                      estates.isEmpty) {
+                  if (estateState is GetOfficesFetchProgress && estates.isEmpty) {
                     return const PropertyShimmer();
-                  } else if (estateState is! GetOfficesFetchComplete &&
-                      estates.isEmpty) {
+                  } else if (estateState is! GetOfficesFetchComplete && estates.isEmpty) {
                     return FetchResult(
-                      content: AppLocalizations.of(context)!
-                          .error_happened_when_executing_operation,
+                      content: AppLocalizations.of(context)!.error_happened_when_executing_operation,
                       iconSize: 0.25.sw,
                     );
                   }
                   return Column(
                     children: [
                       Container(
-                        padding: EdgeInsets.only(
-                            left: (results!.communicationMedias == null)
-                                ? 10.w
-                                : 0),
+                        padding: EdgeInsets.only(left: (results!.communicationMedias == null) ? 10.w : 0),
                         width: getScreenWidth(context),
                         child: (results!.communicationMedias != null)
                             ? Row(
@@ -207,10 +186,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                   34.verticalSpace,
                                   ResText(
                                     results!.estateOffice.name!,
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .headline4!
-                                        .copyWith(
+                                    textStyle: Theme.of(context).textTheme.headline4!.copyWith(
                                           fontWeight: FontWeight.w600,
                                           //fontSize: 24.sp
                                         ),
@@ -219,8 +195,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                   12.verticalSpace,
                                   ResText(
                                     results!.estateOffice.locationS!,
-                                    textStyle:
-                                        Theme.of(context).textTheme.headline6,
+                                    textStyle: Theme.of(context).textTheme.headline6,
                                   ),
                                 ],
                               ),
@@ -255,22 +230,16 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                             Expanded(
                               flex: 1,
                               child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(180.w, 64.h)),
+                                style: ElevatedButton.styleFrom(fixedSize: Size(180.w, 64.h)),
                                 onPressed: () async {
-                                  if (BlocProvider.of<UserLoginBloc>(context)
-                                          .user ==
-                                      null) {
+                                  if (BlocProvider.of<UserLoginBloc>(context).user == null) {
                                     await buildSignInRequiredDialog();
                                     return;
                                   }
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) =>
-                                          CreatePropertyIntroductionScreen(
-                                              officeId:
-                                                  results!.estateOffice.id),
+                                      builder: (_) => CreatePropertyIntroductionScreen(officeId: results!.estateOffice.id),
                                     ),
                                   );
                                 },
@@ -281,11 +250,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                     const Icon(Icons.add),
                                     ResText(
                                       AppLocalizations.of(context)!.post_estate,
-                                      textStyle: TextStyle(
-                                          fontSize: 18.sp,
-                                          color: isDark
-                                              ? AppColors.black
-                                              : AppColors.white),
+                                      textStyle: TextStyle(fontSize: 18.sp, color: isDark ? AppColors.black : AppColors.white),
                                     )
                                   ],
                                 ),
@@ -294,25 +259,14 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                             kWi16,
                             Expanded(
                               flex: 1,
-                              child: BlocConsumer<LikeAndUnlikeBloc,
-                                  LikeAndUnlikeState>(
+                              child: BlocConsumer<LikeAndUnlikeBloc, LikeAndUnlikeState>(
                                 bloc: _likeAndUnlikeBloc,
                                 listener: (_, likeAndUnlikeState) async {
-                                  if (likeAndUnlikeState
-                                      is LikeAndUnlikeError) {
+                                  if (likeAndUnlikeState is LikeAndUnlikeError) {
                                     var error =
-                                        likeAndUnlikeState.isConnectionError
-                                            ? AppLocalizations.of(context)!
-                                                .no_internet_connection
-                                            : likeAndUnlikeState.error;
-                                    await showWonderfulAlertDialog(
-                                        context,
-                                        AppLocalizations.of(context)!.error,
-                                        error);
-                                    _likeAndUnlikeBloc.add(
-                                        ReInitializeLikeState(
-                                            isLike: results!
-                                                .estateOffice.isLiked!));
+                                        likeAndUnlikeState.isConnectionError ? AppLocalizations.of(context)!.no_internet_connection : likeAndUnlikeState.error;
+                                    await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
+                                    _likeAndUnlikeBloc.add(ReInitializeLikeState(isLike: results!.estateOffice.isLiked!));
                                   } else if (likeAndUnlikeState is Liked) {
                                     results!.estateOffice.isLiked = true;
                                   } else if (likeAndUnlikeState is Unliked) {
@@ -321,8 +275,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                 },
                                 builder: (_, likeAndUnlikeState) {
                                   return ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        fixedSize: Size(180.w, 64.h)),
+                                    style: ElevatedButton.styleFrom(fixedSize: Size(180.w, 64.h)),
                                     onPressed: () async {
                                       if (userToken == null) {
                                         await buildSignInRequiredDialog();
@@ -331,52 +284,29 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
 
                                       if (likeAndUnlikeState is Liked) {
                                         _likeAndUnlikeBloc.add(
-                                          UnlikeStarted(
-                                              token: userToken,
-                                              unlikedObjectId:
-                                                  results!.estateOffice.id,
-                                              likeType: LikeType.estateOffice),
+                                          UnlikeStarted(token: userToken, unlikedObjectId: results!.estateOffice.id, likeType: LikeType.estateOffice),
                                         );
                                       }
                                       if (likeAndUnlikeState is Unliked) {
                                         _likeAndUnlikeBloc.add(
-                                          LikeStarted(
-                                              token: userToken,
-                                              likedObjectId:
-                                                  results!.estateOffice.id,
-                                              likeType: LikeType.estateOffice),
+                                          LikeStarted(token: userToken, likedObjectId: results!.estateOffice.id, likeType: LikeType.estateOffice),
                                         );
                                       }
                                     },
-                                    child: (likeAndUnlikeState
-                                            is LikeAndUnlikeProgress)
+                                    child: (likeAndUnlikeState is LikeAndUnlikeProgress)
                                         ? SpinKitWave(
                                             color: AppColors.white,
                                             size: 16.w,
                                           )
                                         : Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Icon((likeAndUnlikeState is Liked)
-                                                  ? Icons.thumb_up_alt
-                                                  : Icons
-                                                      .thumb_up_alt_outlined),
+                                              Icon((likeAndUnlikeState is Liked) ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined),
                                               kWi12,
                                               ResText(
-                                                (likeAndUnlikeState is Liked)
-                                                    ? AppLocalizations.of(
-                                                            context)!
-                                                        .liked
-                                                    : AppLocalizations.of(
-                                                            context)!
-                                                        .like,
-                                                textStyle: TextStyle(
-                                                    fontSize: 18.sp,
-                                                    color: isDark
-                                                        ? AppColors.black
-                                                        : AppColors.white),
+                                                (likeAndUnlikeState is Liked) ? AppLocalizations.of(context)!.liked : AppLocalizations.of(context)!.like,
+                                                textStyle: TextStyle(fontSize: 18.sp, color: isDark ? AppColors.black : AppColors.white),
                                               )
                                             ],
                                           ),
@@ -391,12 +321,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       Container(
                         height: 32.h,
                         width: 1.sw,
-                        color: isDark
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.secondary,
-                        alignment: isArabic
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
+                        color: isDark ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
+                        alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
                         padding: EdgeInsets.only(
                           right: isArabic ? 8.w : 0,
                           left: !isArabic ? 8.w : 0,
@@ -405,19 +331,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           children: [
                             ResText(
                               AppLocalizations.of(context)!.estate_offers,
-                              textStyle: Theme.of(context)
-                                  .textTheme
-                                  .subtitle2!
-                                  .copyWith(
+                              textStyle: Theme.of(context).textTheme.subtitle2!.copyWith(
                                     color: AppColors.black,
                                   ),
                             ),
                             ResText(
                               "  ${results!.estateOffice.estateLength!} : ",
-                              textStyle: Theme.of(context)
-                                  .textTheme
-                                  .subtitle2!
-                                  .copyWith(
+                              textStyle: Theme.of(context).textTheme.subtitle2!.copyWith(
                                     color: AppColors.black,
                                   ),
                             ),
@@ -432,11 +352,10 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         itemBuilder: (_, index) {
                           return EstateHorizonCard(
                             estate: estates.elementAt(index),
-                              onClosePressed: () {
-                                showReportModalBottomSheet(
-                                    context, estates.elementAt(index).id!);
-                              },
-                              closeButton: false,
+                            onClosePressed: () {
+                              showReportModalBottomSheet(context, estates.elementAt(index).id!);
+                            },
+                            closeButton: false,
                           );
                           // return EstateCard(
                           //   color: Theme.of(context).colorScheme.background,
@@ -480,8 +399,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                 color: Colors.white,
                 borderRadius: circularBorderRadius,
               ),
-              child: CachedNetworkImage(
-                  imageUrl: imagesBaseUrl + results!.estateOffice.logo!),
+              child: CachedNetworkImage(imageUrl: imagesBaseUrl + results!.estateOffice.logo!),
             ),
             // child: CircleAvatar(
             //   radius: 90.w,
@@ -520,16 +438,11 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
               InkWell(
                 onTap: () async {
                   _visitBloc.add(
-                    VisitStarted(
-                        visitId: results!.estateOffice.id,
-                        token: userToken,
-                        visitType: VisitType.officeCall),
+                    VisitStarted(visitId: results!.estateOffice.id, token: userToken, visitType: VisitType.officeCall),
                   );
                   await myCupertinoActionSheet(
                     context,
-                    elementsList: results!.communicationMedias!.phone!
-                        .map((e) => e.value)
-                        .toList(),
+                    elementsList: results!.communicationMedias!.phone!.map((e) => e.value).toList(),
                     onPressed: results!.communicationMedias!.phone!
                         .map((e) => () {
                               launch(
@@ -547,10 +460,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
               InkWell(
                 onTap: () async {
                   _visitBloc.add(
-                    VisitStarted(
-                        visitId: results!.estateOffice.id,
-                        token: userToken,
-                        visitType: VisitType.officeCall),
+                    VisitStarted(visitId: results!.estateOffice.id, token: userToken, visitType: VisitType.officeCall),
                   );
                   // launch(
                   //   "tel://" + results!.mobile!,
@@ -561,16 +471,11 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
               InkWell(
                 onTap: () async {
                   _visitBloc.add(
-                    VisitStarted(
-                        visitId: results!.estateOffice.id,
-                        token: userToken,
-                        visitType: VisitType.officeCall),
+                    VisitStarted(visitId: results!.estateOffice.id, token: userToken, visitType: VisitType.officeCall),
                   );
                   await myCupertinoActionSheet(
                     context,
-                    elementsList: results!.communicationMedias!.whatsApp!
-                        .map((e) => e.value)
-                        .toList(),
+                    elementsList: results!.communicationMedias!.whatsApp!.map((e) => e.value).toList(),
                     onPressed: results!.communicationMedias!.whatsApp!
                         .map((e) => () {
                               launch("tel://" + e.value!);
@@ -578,7 +483,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                         .toList(),
                   );
                 },
-                child: const Icon(Icons.whatsapp_outlined),
+                child: const Icon(Icons.add /*whatsapp_outlined*/),
               ),
             ],
           ),
@@ -628,10 +533,7 @@ class ImageDialog extends StatelessWidget {
       child: Container(
         width: getScreenWidth(context),
         height: 400.h,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: CachedNetworkImageProvider(imagesBaseUrl + path),
-                fit: BoxFit.contain)),
+        decoration: BoxDecoration(image: DecorationImage(image: CachedNetworkImageProvider(imagesBaseUrl + path), fit: BoxFit.contain)),
       ),
     );
   }

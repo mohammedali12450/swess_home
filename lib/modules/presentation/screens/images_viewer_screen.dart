@@ -3,8 +3,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
@@ -17,9 +17,7 @@ class ImagesViewerScreen extends StatefulWidget {
   final String screenTitle;
   final String videoUrl;
 
-  const ImagesViewerScreen(this.images, this.screenTitle, this.videoUrl,
-      {Key? key})
-      : super(key: key);
+  const ImagesViewerScreen(this.images, this.screenTitle, this.videoUrl, {Key? key}) : super(key: key);
 
   @override
   _ImagesViewerScreenState createState() => _ImagesViewerScreenState();
@@ -35,15 +33,15 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
   //
   @override
   void initState() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         String? id = convertUrlToId(widget.videoUrl);
         id ??= "";
-        _ytbPlayerController = YoutubePlayerController(
-          initialVideoId: id,
+        _ytbPlayerController = YoutubePlayerController.fromVideoId(
+          videoId: id,
+          autoPlay: false,
           params: const YoutubePlayerParams(
             showFullscreenButton: true,
-            autoPlay: false,
           ),
         );
       });
@@ -98,12 +96,7 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
             itemCount: image.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (BuildContext context, int index) {
-              image
-                  .elementAt(index)
-                  .image
-                  .resolve(const ImageConfiguration())
-                  .addListener(ImageStreamListener(
-                      (ImageInfo info, bool synchronousCall) {
+              image.elementAt(index).image.resolve(const ImageConfiguration()).addListener(ImageStreamListener((ImageInfo info, bool synchronousCall) {
                 if (!completer.isCompleted) {
                   completer.complete(info.image);
                 }
@@ -123,11 +116,8 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
           bloc: currentImageCubit,
           builder: (_, currentImage) {
             return Center(
-              child: Text(
-                  AppLocalizations.of(context)!.image_counting(
-                      (currentImageCubit.state + 1).toString(),
-                      widget.images.length.toString()),
-                  style: Theme.of(context).textTheme.subtitle2),
+              child: Text(AppLocalizations.of(context)!.image_counting((currentImageCubit.state + 1).toString(), widget.images.length.toString()),
+                  style: Theme.of(context).textTheme.titleSmall),
             );
           },
         ),
@@ -144,9 +134,7 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
           )
         : AspectRatio(
             aspectRatio: 16 / 9,
-            child: _ytbPlayerController != null
-                ? YoutubePlayerIFrame(controller: _ytbPlayerController)
-                : const Center(child: CircularProgressIndicator()),
+            child: _ytbPlayerController != null ? YoutubePlayer(controller: _ytbPlayerController!) : const Center(child: CircularProgressIndicator()),
           );
   }
 
@@ -154,10 +142,8 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
     if (!url.contains("http") && (url.length == 11)) return url;
 
     for (var exp in [
-      RegExp(
-          r"^https:\/\/(?:www\.|m\.)?youtube\.com\/watch\?v=([_\-a-zA-Z0-9]{11}).*$"),
-      RegExp(
-          r"^https:\/\/(?:www\.|m\.)?youtube(?:-nocookie)?\.com\/embed\/([_\-a-zA-Z0-9]{11}).*$"),
+      RegExp(r"^https:\/\/(?:www\.|m\.)?youtube\.com\/watch\?v=([_\-a-zA-Z0-9]{11}).*$"),
+      RegExp(r"^https:\/\/(?:www\.|m\.)?youtube(?:-nocookie)?\.com\/embed\/([_\-a-zA-Z0-9]{11}).*$"),
       RegExp(r"^https:\/\/youtu\.be\/([_\-a-zA-Z0-9]{11}).*$")
     ]) {
       Match? match = exp.firstMatch(url);

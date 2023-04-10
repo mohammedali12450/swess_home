@@ -1,6 +1,7 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
@@ -11,8 +12,8 @@ import 'package:swesshome/modules/business_logic_components/bloc/message_bloc/me
 import 'package:swesshome/modules/business_logic_components/bloc/message_bloc/message_state.dart';
 import 'package:swesshome/modules/data/models/message.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/notifications_shimmer.dart';
+
 import '../../../constants/assets_paths.dart';
 import '../../../constants/design_constants.dart';
 import '../../../core/functions/screen_informations.dart';
@@ -54,8 +55,7 @@ class _ChatScreenState extends State<ChatScreen> {
   _onRefresh() {
     _messageBloc.page = 1;
     messages.clear();
-    _messageBloc.add(
-        GetMessagesFetchStarted(token: UserSharedPreferences.getAccessToken()));
+    _messageBloc.add(GetMessagesFetchStarted(token: UserSharedPreferences.getAccessToken()));
   }
 
   @override
@@ -84,9 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
           },
           child: Stack(
             children: [
-              UserSharedPreferences.getAccessToken() != null
-                  ? buildChatList()
-                  : buildRequiredLogin(),
+              UserSharedPreferences.getAccessToken() != null ? buildChatList() : buildRequiredLogin(),
               BlocBuilder<ChannelCubit, dynamic>(
                 bloc: emojiShowing,
                 builder: (_, emojiState) {
@@ -104,8 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               // height: 150,
                               child: EmojiPicker(
                                 onEmojiSelected: (category, emoji) async {
-                                  messageController.text =
-                                      messageController.text + emoji.emoji;
+                                  messageController.text = messageController.text + emoji.emoji;
                                   // await controller.sendMessage();
                                 },
                                 //onBackspacePressed: () {},
@@ -115,21 +112,15 @@ class _ChatScreenState extends State<ChatScreen> {
                                     verticalSpacing: 0,
                                     horizontalSpacing: 0,
                                     initCategory: Category.SMILEYS,
-                                    bgColor: isDark
-                                        ? AppColors.primaryColor
-                                        : AppColors.white,
-                                    indicatorColor:
-                                        Theme.of(context).primaryColor,
-                                    iconColor:
-                                        Theme.of(context).unselectedWidgetColor,
-                                    iconColorSelected:
-                                        Theme.of(context).primaryColor,
-                                    progressIndicatorColor:
-                                        Theme.of(context).primaryColor,
+                                    bgColor: isDark ? AppColors.primaryColor : AppColors.white,
+                                    indicatorColor: Theme.of(context).primaryColor,
+                                    iconColor: Theme.of(context).unselectedWidgetColor,
+                                    iconColorSelected: Theme.of(context).primaryColor,
+                                    /*progressIndicatorColor:
+                                        Theme.of(context).primaryColor,*/
                                     showRecentsTab: true,
                                     recentsLimit: 28,
-                                    tabIndicatorAnimDuration:
-                                        kTabScrollDuration,
+                                    tabIndicatorAnimDuration: kTabScrollDuration,
                                     categoryIcons: const CategoryIcons(),
                                     buttonMode: ButtonMode.MATERIAL),
                               ),
@@ -162,8 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return BlocBuilder<MessageBloc, MessageState>(
       bloc: _messageBloc,
       builder: (_, state) {
-        if (state is MessageFetchNone ||
-            (state is GetMessageFetchProgress && messages.isEmpty)) {
+        if (state is MessageFetchNone || (state is GetMessageFetchProgress && messages.isEmpty)) {
           return const NotificationsShimmer();
         }
         if (state is GetMessageFetchComplete) {
@@ -181,17 +171,13 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Icon(
                   Icons.chat_outlined,
-                  color:
-                      Theme.of(context).colorScheme.primary.withOpacity(0.24),
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.24),
                   size: 120.w,
                 ),
                 kHe24,
                 ResText(
                   AppLocalizations.of(context)!.no_message,
-                  textStyle: Theme.of(context)
-                      .textTheme
-                      .headline5!
-                      .copyWith(color: AppColors.primaryColor),
+                  textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.primaryColor),
                 ),
                 kHe40,
                 // ElevatedButton(
@@ -219,14 +205,10 @@ class _ChatScreenState extends State<ChatScreen> {
             controller: _scrollController
               ..addListener(
                 () {
-                  if (_scrollController.offset ==
-                          _scrollController.position.maxScrollExtent &&
-                      !_messageBloc.isFetching &&
-                      !isEstatesFinished) {
+                  if (_scrollController.offset == _scrollController.position.maxScrollExtent && !_messageBloc.isFetching && !isEstatesFinished) {
                     _messageBloc
                       ..isFetching = true
-                      ..add(GetMessagesFetchStarted(
-                          token: UserSharedPreferences.getAccessToken()));
+                      ..add(GetMessagesFetchStarted(token: UserSharedPreferences.getAccessToken()));
                   }
                 },
               ),
@@ -268,9 +250,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
       child: Container(
-        decoration: BoxDecoration(
-            color: Theme.of(context).dialogBackgroundColor,
-            borderRadius: smallBorderRadius),
+        decoration: BoxDecoration(color: Theme.of(context).dialogBackgroundColor, borderRadius: smallBorderRadius),
         width: 1.sw,
         //height: 50.h,
         child: Row(
@@ -278,8 +258,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Expanded(
               flex: 6,
               child: Container(
-                padding: EdgeInsets.only(
-                    left: isArabic ? 0 : 8.w, right: isArabic ? 8.w : 0),
+                padding: EdgeInsets.only(left: isArabic ? 0 : 8.w, right: isArabic ? 8.w : 0),
                 decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.1),
                   borderRadius: smallBorderRadius,
@@ -294,8 +273,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     border: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
-                    hintText: AppLocalizations.of(context)!
-                        .message_notes_descriptions,
+                    hintText: AppLocalizations.of(context)!.message_notes_descriptions,
                     prefixIcon: IconButton(
                       onPressed: () {
                         emojiShowing.setState(!emojiShowing.state);
@@ -332,9 +310,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       bloc: _messageBloc,
                       listener: (_, messageState) {
                         if (messageState is SendMessageFetchComplete) {
-                          Fluttertoast.showToast(
-                              msg: AppLocalizations.of(context)!.complete_send,
-                              toastLength: Toast.LENGTH_LONG);
+                          Fluttertoast.showToast(msg: AppLocalizations.of(context)!.complete_send, toastLength: Toast.LENGTH_LONG);
                           messageController.clear();
                           _onRefresh();
                           //Navigator.pop(context, true);

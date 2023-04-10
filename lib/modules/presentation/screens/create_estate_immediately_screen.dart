@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/data/repositories/rent_estate_repository.dart';
+
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
 import '../../../utils/helpers/numbers_helper.dart';
@@ -33,12 +34,10 @@ class CreateEstateImmediatelyScreen extends StatefulWidget {
   const CreateEstateImmediatelyScreen({Key? key}) : super(key: key);
 
   @override
-  State<CreateEstateImmediatelyScreen> createState() =>
-      _CreateEstateImmediatelyScreenState();
+  State<CreateEstateImmediatelyScreen> createState() => _CreateEstateImmediatelyScreenState();
 }
 
-class _CreateEstateImmediatelyScreenState
-    extends State<CreateEstateImmediatelyScreen> {
+class _CreateEstateImmediatelyScreenState extends State<CreateEstateImmediatelyScreen> {
   TextEditingController spaceController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController roomController = TextEditingController(text: "0");
@@ -91,14 +90,11 @@ class _CreateEstateImmediatelyScreenState
     //   estateTypes.add(estatesTypes!.elementAt(i));
     // }
     periodTypes = BlocProvider.of<PeriodTypesBloc>(context).periodTypes!;
-    interiorStatuses =
-        BlocProvider.of<InteriorStatusesBloc>(context).interiorStatuses!;
+    interiorStatuses = BlocProvider.of<InteriorStatusesBloc>(context).interiorStatuses!;
 
     _rentEstateBloc = RentEstateBloc(RentEstateRepository());
 
-    isForStore = BlocProvider.of<SystemVariablesBloc>(context)
-        .systemVariables!
-        .isForStore;
+    isForStore = BlocProvider.of<SystemVariablesBloc>(context).systemVariables!.isForStore;
     if (isForStore) {
       phoneDialCode = "+961";
     } else {
@@ -127,8 +123,7 @@ class _CreateEstateImmediatelyScreenState
                 errorText: errorMessage,
                 isDense: true,
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.onBackground),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
                 ),
               ),
               onTap: () {
@@ -138,8 +133,7 @@ class _CreateEstateImmediatelyScreenState
               onChanged: (value) {
                 spaceErrorCubit.setState(null);
                 if (!NumbersHelper.isNumeric(value)) {
-                  spaceErrorCubit
-                      .setState(AppLocalizations.of(context)!.invalid_value);
+                  spaceErrorCubit.setState(AppLocalizations.of(context)!.invalid_value);
                 }
                 rentEstate.space = int.tryParse(spaceController.text)!;
               },
@@ -240,9 +234,7 @@ class _CreateEstateImmediatelyScreenState
                 bloc: _rentEstateBloc,
                 listener: (_, rentState) async {
                   if (rentState is SendRentEstateFetchComplete) {
-                    Fluttertoast.showToast(
-                        msg: AppLocalizations.of(context)!.after_rate_message,
-                        toastLength: Toast.LENGTH_LONG);
+                    Fluttertoast.showToast(msg: AppLocalizations.of(context)!.after_rate_message, toastLength: Toast.LENGTH_LONG);
                     Navigator.pop(context);
                   }
                 },
@@ -264,21 +256,15 @@ class _CreateEstateImmediatelyScreenState
                 }
                 if (selectedRegion!.id == 0) {
                   Fluttertoast.showToast(
-                      msg: AppLocalizations.of(context)!.location_message,
-                      textColor: AppColors.primaryColor,
-                      toastLength: Toast.LENGTH_LONG);
+                      msg: AppLocalizations.of(context)!.location_message, textColor: AppColors.primaryColor, toastLength: Toast.LENGTH_LONG);
                   return;
                 }
                 if (authenticationController.text.startsWith("0")) {
-                  rentEstate.whatsAppNumber = phoneDialCode +
-                      authenticationController.text.substring(1);
+                  rentEstate.whatsAppNumber = phoneDialCode + authenticationController.text.substring(1);
                 } else if (authenticationController.text != "") {
-                  rentEstate.whatsAppNumber =
-                      phoneDialCode + authenticationController.text;
+                  rentEstate.whatsAppNumber = phoneDialCode + authenticationController.text;
                 }
-                _rentEstateBloc.add(SendRentEstatesFetchStarted(
-                    rentEstate: rentEstate,
-                    token: UserSharedPreferences.getAccessToken()!));
+                _rentEstateBloc.add(SendRentEstatesFetchStarted(rentEstate: rentEstate, token: UserSharedPreferences.getAccessToken()!));
               },
             ),
           ),
@@ -314,9 +300,7 @@ class _CreateEstateImmediatelyScreenState
                 decoration: BoxDecoration(
                     borderRadius: smallBorderRadius,
                     border: Border.all(
-                      color: !isDark
-                          ? AppColors.primaryColor
-                          : AppColors.yellowDarkColor,
+                      color: !isDark ? AppColors.primaryColor : AppColors.yellowDarkColor,
                       width: 0.3,
                     )),
                 child: TextField(
@@ -331,8 +315,7 @@ class _CreateEstateImmediatelyScreenState
                     FocusScope.of(context).unfocus();
                     if (selectedRegion != null) {
                       rentEstate.locationId = selectedRegion!.id;
-                      locationNameCubit
-                          .setState(selectedRegion!.getLocationName());
+                      locationNameCubit.setState(selectedRegion!.getLocationName());
                       locationController.text = locationNameCubit.state;
                       locationErrorCubit.setState(null);
                     }
@@ -344,17 +327,13 @@ class _CreateEstateImmediatelyScreenState
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(bottom: 27.h, right: 8.w),
                     errorText: errorMessage,
-                    hintText:
-                        AppLocalizations.of(context)!.estate_location_hint,
+                    hintText: AppLocalizations.of(context)!.estate_location_hint,
                     //contentPadding: kSmallSymWidth,
                     // errorBorder: kOutlinedBorderRed,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: smallBorderRadius,
                       borderSide: BorderSide(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onBackground
-                            .withOpacity(0.4),
+                        color: Theme.of(context).colorScheme.onBackground.withOpacity(0.4),
                       ),
                     ),
                   ),
@@ -437,15 +416,12 @@ class _CreateEstateImmediatelyScreenState
             child: Padding(
               padding: EdgeInsets.only(bottom: 5.h),
               child: MyDropdownList(
-                elementsList:
-                    periodTypes.map((e) => e.name.split("|").first).toList(),
+                elementsList: periodTypes.map((e) => e.name.split("|").first).toList(),
                 onSelect: (index) {
                   // set search data estate type :
                   rentEstate.periodTypeId = periodTypes.elementAt(index).id;
                 },
-                validator: (value) => value == null
-                    ? AppLocalizations.of(context)!.this_field_is_required
-                    : null,
+                validator: (value) => value == null ? AppLocalizations.of(context)!.this_field_is_required : null,
                 selectedItem: AppLocalizations.of(context)!.please_select,
               ),
             ),
@@ -496,27 +472,20 @@ class _CreateEstateImmediatelyScreenState
                         controller: priceController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                          hintText: isForStore
-                              ? ""
-                              : AppLocalizations.of(context)!
-                                  .estate_rent_price_hint_syrian,
+                          hintText: isForStore ? "" : AppLocalizations.of(context)!.estate_rent_price_hint_syrian,
                           errorText: errorMessage,
                           isDense: true,
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color:
-                                    Theme.of(context).colorScheme.onBackground),
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.onBackground),
                           ),
                         ),
                         cursorColor: Theme.of(context).colorScheme.onBackground,
                         onChanged: (value) {
                           priceErrorCubit.setState(null);
                           if (!NumbersHelper.isNumeric(value)) {
-                            priceErrorCubit.setState(
-                                AppLocalizations.of(context)!.invalid_value);
+                            priceErrorCubit.setState(AppLocalizations.of(context)!.invalid_value);
                           }
-                          rentEstate.price =
-                              int.tryParse(priceController.text)!;
+                          rentEstate.price = int.tryParse(priceController.text)!;
                         },
                       );
                     },
@@ -526,9 +495,7 @@ class _CreateEstateImmediatelyScreenState
                 Expanded(
                     flex: 1,
                     child: ResText(
-                      isForStore
-                          ? "L.L"
-                          : AppLocalizations.of(context)!.syrian_bound,
+                      isForStore ? "L.L" : AppLocalizations.of(context)!.syrian_bound,
                       textAlign: TextAlign.center,
                       textStyle: Theme.of(context).textTheme.headline6,
                     )),
@@ -575,12 +542,9 @@ class _CreateEstateImmediatelyScreenState
               child: MyDropdownList(
                 elementsList: interiorStatuses.map((e) => e.name).toList(),
                 onSelect: (index) {
-                  rentEstate.interiorStatusesId =
-                      interiorStatuses.elementAt(index).id;
+                  rentEstate.interiorStatusesId = interiorStatuses.elementAt(index).id;
                 },
-                validator: (value) => value == null
-                    ? AppLocalizations.of(context)!.this_field_is_required
-                    : null,
+                validator: (value) => value == null ? AppLocalizations.of(context)!.this_field_is_required : null,
                 selectedItem: AppLocalizations.of(context)!.please_select,
               ),
             ),
@@ -650,8 +614,7 @@ class _CreateEstateImmediatelyScreenState
                         ),
                         onTap: () {
                           checkFurnishedStateCubit.setState(true);
-                          rentEstate.isFurnished =
-                              checkFurnishedStateCubit.state ? 1 : 0;
+                          rentEstate.isFurnished = checkFurnishedStateCubit.state ? 1 : 0;
                         },
                       ),
                     ),
@@ -738,8 +701,7 @@ class _CreateEstateImmediatelyScreenState
                     if (textCubit.state > 0) {
                       textCubit.setState(textCubit.state - 1);
                       textController.text = textCubit.state.toString();
-                    } else if (label == AppLocalizations.of(context)!.floor &&
-                        textCubit.state > -2) {
+                    } else if (label == AppLocalizations.of(context)!.floor && textCubit.state > -2) {
                       textCubit.setState(textCubit.state - 1);
                       textController.text = textCubit.state.toString();
                     }
@@ -761,10 +723,7 @@ class _CreateEstateImmediatelyScreenState
                         return TextField(
                           readOnly: true,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1!
-                              .copyWith(height: 2.h),
+                          style: Theme.of(context).textTheme.subtitle1!.copyWith(height: 2.h),
                           onChanged: (String text) {
                             textController.text = text;
                             textCubit.setState(int.tryParse(text) ?? 0);
@@ -1005,7 +964,7 @@ class _CreateEstateImmediatelyScreenState
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Row(
             children: [
-              const Icon(Icons.whatsapp_outlined),
+              const Icon(Icons.add /*whatsapp_outlined*/),
               kWi8,
               ResText(
                 AppLocalizations.of(context)!.whatsapp_number + " :",
@@ -1024,8 +983,7 @@ class _CreateEstateImmediatelyScreenState
                 height: 55.h,
                 padding: EdgeInsets.symmetric(horizontal: 18.w),
                 decoration: BoxDecoration(
-                  border:
-                      Border.all(color: AppColors.secondaryDark, width: 0.5),
+                  border: Border.all(color: AppColors.secondaryDark, width: 0.5),
                   borderRadius: const BorderRadius.all(
                     Radius.elliptical(8, 8),
                   ),
@@ -1034,26 +992,19 @@ class _CreateEstateImmediatelyScreenState
                   textDirection: TextDirection.ltr,
                   child: TextField(
                     controller: authenticationController,
-                    style: Theme.of(context).textTheme.headline5!.copyWith(
-                        height: 1.6.h,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16.sp),
+                    style: Theme.of(context).textTheme.headline5!.copyWith(height: 1.6.h, fontWeight: FontWeight.w400, fontSize: 16.sp),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       errorText: errorMessage,
                       errorMaxLines: 2,
                       prefixIcon: Text(
                         isForStore ? "+961" : "+963",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5!
-                            .copyWith(height: 2.5.h),
+                        style: Theme.of(context).textTheme.headline5!.copyWith(height: 2.5.h),
                       ),
                     ),
                     onChanged: (phone) {
                       authenticationError.setState(null);
-                      rentEstate.whatsAppNumber =
-                          phoneDialCode + authenticationController.text;
+                      rentEstate.whatsAppNumber = phoneDialCode + authenticationController.text;
                     },
                   ),
                 ),
@@ -1113,63 +1064,52 @@ class _CreateEstateImmediatelyScreenState
 
     // location verification
     if (selectedRegion == null || selectedRegion!.id == null) {
-      locationErrorCubit
-          .setState(AppLocalizations.of(context)!.this_field_is_required);
-      scrollController.animateTo(0,
-          duration: const Duration(seconds: 1), curve: Curves.ease);
+      locationErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
+      scrollController.animateTo(0, duration: const Duration(seconds: 1), curve: Curves.ease);
       return false;
     }
     locationErrorCubit.setState(null);
 
     // space verification
     if (spaceController.text.isEmpty) {
-      spaceErrorCubit
-          .setState(AppLocalizations.of(context)!.this_field_is_required);
-      scrollController.animateTo(0,
-          duration: const Duration(seconds: 1), curve: Curves.ease);
+      spaceErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
+      scrollController.animateTo(0, duration: const Duration(seconds: 1), curve: Curves.ease);
       return false;
     }
     spaceErrorCubit.setState(null);
 
     // estate InteriorStatuses & PeriodTypes verification
     if (!_formKey.currentState!.validate()) {
-      scrollController.animateTo(500,
-          duration: const Duration(seconds: 1), curve: Curves.ease);
+      scrollController.animateTo(500, duration: const Duration(seconds: 1), curve: Curves.ease);
       return false;
     }
 
     // price verification
     if (priceController.text.isEmpty) {
-      priceErrorCubit
-          .setState(AppLocalizations.of(context)!.this_field_is_required);
-      scrollController.animateTo(300,
-          duration: const Duration(seconds: 1), curve: Curves.ease);
+      priceErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
+      scrollController.animateTo(300, duration: const Duration(seconds: 1), curve: Curves.ease);
       return false;
     }
     priceErrorCubit.setState(null);
 
     //room verification
     if (roomCubit.state == 0 || roomController.text.isEmpty) {
-      roomErrorCubit
-          .setState(AppLocalizations.of(context)!.this_field_is_required);
-      scrollController.animateTo(700,
-          duration: const Duration(seconds: 1), curve: Curves.ease);
+      roomErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
+      scrollController.animateTo(700, duration: const Duration(seconds: 1), curve: Curves.ease);
       return false;
     }
     roomErrorCubit.setState(null);
 
     //salon verification
     if (salonCubit.state == 0 || salonController.text.isEmpty) {
-      salonErrorCubit
-          .setState(AppLocalizations.of(context)!.this_field_is_required);
+      salonErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
       return false;
     }
     salonErrorCubit.setState(null);
 
     //bath verification
     if (bathroomCubit.state == 0 || roomController.text.isEmpty) {
-      bathErrorCubit
-          .setState(AppLocalizations.of(context)!.this_field_is_required);
+      bathErrorCubit.setState(AppLocalizations.of(context)!.this_field_is_required);
       return false;
     }
     bathErrorCubit.setState(null);
@@ -1177,13 +1117,10 @@ class _CreateEstateImmediatelyScreenState
     // phone number validate :
     if (authenticationController.text.isNotEmpty) {
       try {
-        final parsedPhoneNumber = await PhoneNumberUtil()
-            .parse(phoneDialCode + authenticationController.text);
-        rentEstate.whatsAppNumber =
-            parsedPhoneNumber.international.replaceAll(" ", "");
+        final parsedPhoneNumber = await PhoneNumberUtil().parse(phoneDialCode + authenticationController.text);
+        rentEstate.whatsAppNumber = parsedPhoneNumber.international.replaceAll(" ", "");
       } catch (e) {
-        authenticationError
-            .setState(AppLocalizations.of(context)!.invalid_mobile_number);
+        authenticationError.setState(AppLocalizations.of(context)!.invalid_mobile_number);
         return false;
       }
     }
