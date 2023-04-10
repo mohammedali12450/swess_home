@@ -1,12 +1,15 @@
 import 'dart:ui';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/config/routes/app_router.dart';
 import 'package:swesshome/constants/assets_paths.dart';
@@ -27,6 +30,7 @@ import 'package:swesshome/modules/data/repositories/estate_order_repository.dart
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/data/repositories/reports_repository.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+
 import 'config/themes/my_themes.dart';
 import 'constants/application_constants.dart';
 import 'core/functions/store_notification.dart';
@@ -68,9 +72,6 @@ import 'modules/data/repositories/period_types_repository.dart';
 import 'modules/data/repositories/price_domains_repository.dart';
 import 'modules/data/repositories/rent_estate_repository.dart';
 import 'modules/data/repositories/system_variables_repository.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-
 import 'modules/presentation/screens/home_screen.dart';
 
 const bool _clearSharedPreferences = false;
@@ -131,11 +132,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
 
     // Bind observer :
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     // initialize notifications count :
-    notificationsCubit = NotificationsCubit(
-        NotificationsSharedPreferences.getNotificationsCount());
+    notificationsCubit = NotificationsCubit(NotificationsSharedPreferences.getNotificationsCount());
 
     // Firebase messages initializing :
     initializeFirebaseMessaging();
@@ -187,20 +187,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (_) => RegionsBloc(),
         ),
         BlocProvider(
-          create: (_) => ForgetPasswordBloc(
-              userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => ForgetPasswordBloc(userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
-          create: (_) => VerificationCodeBloc(
-              userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => VerificationCodeBloc(userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
-          create: (_) => ResendVerificationCodeBloc(
-              userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => ResendVerificationCodeBloc(userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
-          create: (_) => ResetPasswordBloc(
-              userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => ResetPasswordBloc(userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
           create: (_) => OwnershipTypeBloc(
@@ -324,17 +320,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               designSize: const Size(428, 926),
               minTextAdapt: true,
               splitScreenMode: false,
-              builder: () => MaterialApp(
+              builder: (_, __) => MaterialApp(
                 navigatorKey: navigatorKey,
                 debugShowCheckedModeBanner: false,
                 onGenerateRoute: appRouter.onGenerateRoute,
                 initialRoute: '/',
                 builder: (context, widget) {
-                  ScreenUtil.setContext(context);
-                  return MediaQuery(
-                      data:
-                          MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-                      child: widget!);
+                  ScreenUtil.init(context);
+                  return MediaQuery(data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: widget!);
                 },
                 supportedLocales: L10n.all,
                 locale: localeProvider.locale,
@@ -376,12 +369,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             notification.title,
             notification.body,
             NotificationDetails(
-              android: AndroidNotificationDetails(
-                  androidNotificationsChannel.id,
-                  androidNotificationsChannel.name,
-                  channelDescription: androidNotificationsChannel.description,
-                  color: Colors.blue,
-                  playSound: true),
+              android: AndroidNotificationDetails(androidNotificationsChannel.id, androidNotificationsChannel.name,
+                  channelDescription: androidNotificationsChannel.description, color: Colors.blue, playSound: true),
             ),
           );
         }
@@ -401,7 +390,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void dispose() {
     super.dispose();
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
@@ -410,9 +399,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       // reopen the app
       checkNewNotifications();
-    } else if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached ||
-        state == AppLifecycleState.inactive) {
+    } else if (state == AppLifecycleState.paused || state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
       // close the app || killed the app from ROM
       print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
     }

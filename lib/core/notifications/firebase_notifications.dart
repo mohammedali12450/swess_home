@@ -4,11 +4,10 @@ import 'package:swesshome/core/functions/store_notification.dart';
 
 import 'local_notifications.dart';
 
-
-Future initializeFirebase()async{
+Future initializeFirebase() async {
   await Firebase.initializeApp(
-    //options: DefaultFirebaseOptions.currentPlatform,
-  );
+      //options: DefaultFirebaseOptions.currentPlatform,
+      );
   // background messages initializing:
   FirebaseMessaging.onBackgroundMessage(backgroundFirebaseMessagesHandler);
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -17,10 +16,10 @@ Future initializeFirebase()async{
     alert: true,
   );
   // local notifications initializing:
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (_) {});
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings, /*onSelectNotification: (_) {}*/
+  );
 }
-
 
 // On background messages:
 
@@ -28,6 +27,6 @@ Future<void> backgroundFirebaseMessagesHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   if (message.notification != null && message.notification!.body != null) {
     print(" On background firebase message");
-    await storeNotification() ;
+    await storeNotification();
   }
 }
