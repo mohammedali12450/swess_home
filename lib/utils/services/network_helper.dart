@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:swesshome/constants/api_paths.dart';
-import 'package:swesshome/core/exceptions/connection_exception.dart';
 
 import '../../core/storage/shared_preferences/application_shared_preferences.dart';
 
@@ -14,15 +13,11 @@ class NetworkHelper {
     BaseOptions baseOptions = BaseOptions(
         baseUrl: baseUrl,
         method: 'Get',
-        receiveTimeout: 70000,
-        connectTimeout: 70000,
-        sendTimeout: 70000,
+        receiveTimeout: const Duration(milliseconds: 70000),
+        connectTimeout: const Duration(milliseconds: 70000),
+        sendTimeout: const Duration(milliseconds: 70000),
         followRedirects: false,
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "lang": isEnglish ? "en" : "ar"
-        },
+        headers: {"Content-Type": "application/json", "Accept": "application/json", "lang": isEnglish ? "en" : "ar"},
         validateStatus: (status) {
           if (status != null) {
             return status <= 500;
@@ -65,16 +60,11 @@ class NetworkHelper {
     );
   }
 
-  Future<Response> get(String url,
-      {Map<String, dynamic>? queryParameters,
-      Map<String, String>? header,
-      String? token}) async {
+  Future<Response> get(String url, {Map<String, dynamic>? queryParameters, Map<String, String>? header, String? token}) async {
     /* Check if there are missed data !!*/
-    assert(_dioInstance.options.baseUrl != "",
-        "Base url can not has blank value!");
+    assert(_dioInstance.options.baseUrl != "", "Base url can not has blank value!");
     assert(url != "", "url can not has blank value!");
-    assert(header == null || token == null,
-        "you can not pass header and token together, put the token inside your passed header!!");
+    assert(header == null || token == null, "you can not pass header and token together, put the token inside your passed header!!");
     /* Complete information */
     if (token != null) {
       _dioInstance.options.headers["authorization"] = 'Bearer $token';
@@ -89,9 +79,9 @@ class NetworkHelper {
     try {
       response = await _dioInstance.get(url, queryParameters: queryParameters);
     } on DioError catch (e) {
-      if (e.type == DioErrorType.other) {
+      /* if (e.type == DioErrorType.other) {
         throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
-      }
+      }*/
       if (kDebugMode) {
         print(e.message);
       }
@@ -101,16 +91,11 @@ class NetworkHelper {
   }
 
   Future<Response> post(String url, dynamic fromData,
-      {Map<String, dynamic>? queryParameters,
-      Map<String, String>? headers,
-      String? token,
-      Function(int)? onSendProgress}) async {
+      {Map<String, dynamic>? queryParameters, Map<String, String>? headers, String? token, Function(int)? onSendProgress}) async {
     /* Check if there are missed data !!*/
-    assert(_dioInstance.options.baseUrl != "",
-        "Base url can not has blank value!");
+    assert(_dioInstance.options.baseUrl != "", "Base url can not has blank value!");
     assert(url != "", "url can not has blank value!");
-    assert(headers == null || token == null,
-        "you can not pass header and token together, put the token inside your passed header!!");
+    assert(headers == null || token == null, "you can not pass header and token together, put the token inside your passed header!!");
     /* Complete information */
     if (headers != null) {
       _dioInstance.options.headers = headers;
@@ -133,9 +118,9 @@ class NetworkHelper {
         },
       );
     } on DioError catch (e) {
-      if (e.type == DioErrorType.other) {
+      /* if (e.type == DioErrorType.other) {
         throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
-      }
+      }*/
       if (kDebugMode) {
         print(e.message);
       }
@@ -145,16 +130,12 @@ class NetworkHelper {
   }
 
   Future<Response> patch(String url, Map<String, dynamic>? fromData,
-      {Map<String, dynamic>? queryParameters,
-      Map<String, String>? headers,
-      String? token}) async {
+      {Map<String, dynamic>? queryParameters, Map<String, String>? headers, String? token}) async {
     /* Check if there are missed data !!*/
 
-    assert(_dioInstance.options.baseUrl != "",
-        "Base url can not has blank value!");
+    assert(_dioInstance.options.baseUrl != "", "Base url can not has blank value!");
     assert(url != "", "url can not has blank value!");
-    assert(headers == null || token == null,
-        "you can not pass header and token together, put the token inside your passed header!!");
+    assert(headers == null || token == null, "you can not pass header and token together, put the token inside your passed header!!");
     /* Complete information */
 
     if (headers != null) {
@@ -166,12 +147,11 @@ class NetworkHelper {
     /* Execute post method */
     Response response;
     try {
-      response = await _dioInstance.patch(url,
-          data: fromData, queryParameters: queryParameters);
+      response = await _dioInstance.patch(url, data: fromData, queryParameters: queryParameters);
     } on DioError catch (e) {
-      if (e.type == DioErrorType.other) {
+      /* if (e.type == DioErrorType.other) {
         throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
-      }
+      }*/
       if (kDebugMode) {
         print(e.message);
       }
@@ -181,17 +161,12 @@ class NetworkHelper {
   }
 
   Future<Response> delete(String url,
-      {Map<String, dynamic>? fromData,
-      Map<String, dynamic>? queryParameters,
-      Map<String, String>? headers,
-      String? token}) async {
+      {Map<String, dynamic>? fromData, Map<String, dynamic>? queryParameters, Map<String, String>? headers, String? token}) async {
     /* Check if there are missed data !!*/
 
-    assert(_dioInstance.options.baseUrl != "",
-        "Base url can not has blank value!");
+    assert(_dioInstance.options.baseUrl != "", "Base url can not has blank value!");
     assert(url != "", "url can not has blank value!");
-    assert(headers == null || token == null,
-        "you can not pass header and token together, put the token inside your passed header!!");
+    assert(headers == null || token == null, "you can not pass header and token together, put the token inside your passed header!!");
     /* Complete information */
 
     if (headers != null) {
@@ -203,12 +178,11 @@ class NetworkHelper {
     /* Execute post method */
     Response response;
     try {
-      response = await _dioInstance.delete(url,
-          data: fromData, queryParameters: queryParameters);
+      response = await _dioInstance.delete(url, data: fromData, queryParameters: queryParameters);
     } on DioError catch (e) {
-      if (e.type == DioErrorType.other) {
+      /*if (e.type == DioErrorType.other) {
         throw ConnectionException(errorMessage: "تحقق من اتصالك بالإنترنت");
-      }
+      }*/
       if (kDebugMode) {
         print(e.message);
       }
@@ -217,17 +191,12 @@ class NetworkHelper {
     return response;
   }
 
-  Future<Response> put(String url, dynamic fromData,
-      {Map<String, dynamic>? queryParameters,
-      Map<String, String>? headers,
-      String? token}) async {
+  Future<Response> put(String url, dynamic fromData, {Map<String, dynamic>? queryParameters, Map<String, String>? headers, String? token}) async {
     /* Check if there are missed data !!*/
 
-    assert(_dioInstance.options.baseUrl != "",
-        "Base url can not has blank value!");
+    assert(_dioInstance.options.baseUrl != "", "Base url can not has blank value!");
     assert(url != "", "url can not has blank value!");
-    assert(headers == null || token == null,
-        "you can not pass header and token together, put the token inside your passed header!!");
+    assert(headers == null || token == null, "you can not pass header and token together, put the token inside your passed header!!");
     /* Complete informations */
 
     if (headers != null) {
@@ -239,16 +208,15 @@ class NetworkHelper {
     /* Execute post method */
     Response response;
     try {
-      response = await _dioInstance.put(url,
-          data: fromData, queryParameters: queryParameters);
+      response = await _dioInstance.put(url, data: fromData, queryParameters: queryParameters);
     } on DioError catch (e) {
       if (kDebugMode) {
         print(e.message);
       }
-      if (e.type == DioErrorType.other) {
+      /* if (e.type == DioErrorType.other) {
         throw ConnectionException(
             errorMessage: "! تحقق من اتصالك بشبكة الإنترنت");
-      }
+      }*/
       throw Exception(e.message);
     }
     return response;
