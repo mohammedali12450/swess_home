@@ -9,8 +9,10 @@ String imagesBaseUrl = hostingerTestImageUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl";
 
 //new api
+
 const userRegisterURL = "customer/register";
 const userLoginURL = "customer/login";
+const userSocialLogin = "";
 const userDataURL = "customer/details";
 const userEditDataURL = "customer/update";
 const governoratesURL = "customer/governorates";
@@ -75,7 +77,6 @@ const multiLoginURL = "customer/check-login-code";
 const getEstateDetailsURL = "estate/details/";
 const downloadURL = "download-url";
 
-
 //old api
 // const userRegisterUrl = "api/user/register";
 // const userLoginUrl = "api/login1"; //login1 can't access with multi login   //login can access with multi login
@@ -134,4 +135,3 @@ const downloadURL = "download-url";
 
 const isUpdatedForIosUrl = "api/isUpdatedForIos";
 const isUpdatedForAndroidUrl = "api/isUpdatedForAndroid";
-

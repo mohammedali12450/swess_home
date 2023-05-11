@@ -1,11 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
 import 'package:swesshome/core/exceptions/unknown_exception.dart';
+import 'package:swesshome/core/functions/setup_locator_app.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_event.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+import 'package:swesshome/modules/data/services/google_sign_in_services.dart';
 import '../../../../core/exceptions/general_exception.dart';
 import 'user_login_state.dart';
 
@@ -58,4 +62,27 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
       }
     });
   }
+
+  Future<void> loginGoogle() async {
+    final googleSignInService = locator.get<GoogleSignInService>();
+    final isLogged = await googleSignInService.isSignedIn();
+
+    if (isLogged) {
+      log("You alrady login by google");
+      return;
+    }
+
+    final token = await googleSignInService.login();
+
+    if (token == null) {
+      log("You Can't login by google");
+      return;
+    }
+
+    userAuthenticationRepository.socialLogin("google", token);
+
+    //some code here...
+  }
+
+  Future<void> loginFacebook() async {}
 }

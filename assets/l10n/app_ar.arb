@@ -581,6 +581,8 @@
   "on_progress_from_office":"قيد الانتظار من قبل المكتب العقاري",
   "pending":"قيد الانتظار",
   "rejected":"مرفوض",
-  "accepted":"مقبول"
+  "accepted":"مقبول",
+  "google":"غوغل",
+  "facebook":"فيسبوك"
 }
 

@@ -584,5 +584,7 @@
   "on_progress_from_office":"On progress from office",
   "pending":"Pending",
   "rejected":"Rejected",
-  "accepted":"Accepted"
+  "accepted":"Accepted",
+  "google":"Google",
+  "facebook":"Facebook"
 }

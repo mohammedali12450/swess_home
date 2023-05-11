@@ -34,6 +34,78 @@ class UserAuthenticationRepository {
     return user;
   }
 
+  Future login(String authentication, String password) async {
+    Response response;
+
+    try {
+      response =
+          await userAuthenticationProvider.login(authentication, password);
+    } catch (_) {
+      rethrow;
+    }
+
+    if (response.statusCode == 422) {
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+    }
+
+    if (response.statusCode == 403) {
+      throw UnauthorizedException(
+          message: jsonDecode(response.toString())["message"]);
+    }
+
+    if (response.statusCode == 400) {
+      throw GeneralException(
+          errorMessage: jsonDecode(response.toString())["message"]);
+    }
+
+    if (response.statusCode != 200) {
+      throw UnknownException();
+    }
+
+    User user = User.fromJson(jsonDecode(response.toString())["data"]["user"]);
+
+    UserSharedPreferences.setAccessToken(
+        jsonDecode(response.toString())["data"]["token"]);
+
+    return user;
+  }
+
+  Future socialLogin(String provider, String token) async {
+    Response response;
+
+    try {
+      response = await userAuthenticationProvider.socialLogin(provider, token);
+    } catch (_) {
+      rethrow;
+    }
+
+    if (response.statusCode == 422) {
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+    }
+
+    if (response.statusCode == 403) {
+      throw UnauthorizedException(
+          message: jsonDecode(response.toString())["message"]);
+    }
+
+    if (response.statusCode == 400) {
+      throw GeneralException(
+          errorMessage: jsonDecode(response.toString())["message"]);
+    }
+
+    if (response.statusCode != 200) {
+      throw UnknownException();
+    }
+
+    User user = User.fromJson(jsonDecode(response.toString())["data"]["user"]);
+
+    UserSharedPreferences.setAccessToken(
+      jsonDecode(response.toString())["data"]["token"],
+    );
+
+    return user;
+  }
+
   Future verificationCode(String mobile, String code) async {
     Response response;
 
@@ -97,42 +169,6 @@ class UserAuthenticationRepository {
     }
     // User user = User.fromJson(jsonDecode(response.toString())["data"]);
     // return user;
-  }
-
-  Future login(String authentication, String password) async {
-    Response response;
-
-    try {
-      response =
-          await userAuthenticationProvider.login(authentication, password);
-    } catch (_) {
-      rethrow;
-    }
-
-    if (response.statusCode == 422) {
-      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
-    }
-
-    if (response.statusCode == 403) {
-      throw UnauthorizedException(
-          message: jsonDecode(response.toString())["message"]);
-    }
-
-    if (response.statusCode == 400) {
-      throw GeneralException(
-          errorMessage: jsonDecode(response.toString())["message"]);
-    }
-
-    if (response.statusCode != 200) {
-      throw UnknownException();
-    }
-
-    User user = User.fromJson(jsonDecode(response.toString())["data"]["user"]);
-
-    UserSharedPreferences.setAccessToken(
-        jsonDecode(response.toString())["data"]["token"]);
-
-    return user;
   }
 
   Future forgetPassword(String mobile) async {

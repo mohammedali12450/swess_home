@@ -30,6 +30,21 @@ class UserAuthenticationProvider {
     return response;
   }
 
+  Future socialLogin(String provider, String token) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+
+    try {
+      response = await helper.post(
+        userSocialLogin,
+        {"provider": provider, "token": token},
+      );
+    } catch (_) {
+      rethrow;
+    }
+    return response;
+  }
+
   Future forgetPassword(String mobile) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
