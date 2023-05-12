@@ -31,6 +31,7 @@ import 'package:swesshome/modules/data/repositories/estate_order_repository.dart
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/data/repositories/reports_repository.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+import 'package:swesshome/modules/presentation/widgets/app/global_loader_overlay_configuration.dart';
 
 import 'config/themes/my_themes.dart';
 import 'constants/application_constants.dart';
@@ -329,29 +330,31 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               designSize: const Size(428, 926),
               minTextAdapt: true,
               splitScreenMode: false,
-              builder: (_, __) => MaterialApp(
-                navigatorKey: navigatorKey,
-                debugShowCheckedModeBanner: false,
-                onGenerateRoute: appRouter.onGenerateRoute,
-                initialRoute: '/',
-                builder: (context, widget) {
-                  ScreenUtil.init(context);
-                  return MediaQuery(
-                      data:
-                          MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-                      child: widget!);
-                },
-                supportedLocales: L10n.all,
-                locale: localeProvider.locale,
-                localizationsDelegates: const [
-                  AppLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                themeMode: themeProvider.themeMode,
-                theme: MyThemes.lightTheme(context),
-                darkTheme: MyThemes.darkTheme(context),
+              builder: (_, __) => GlobalLoaderOverlayConfiguration(
+                child: MaterialApp(
+                  navigatorKey: navigatorKey,
+                  debugShowCheckedModeBanner: false,
+                  onGenerateRoute: appRouter.onGenerateRoute,
+                  initialRoute: '/',
+                  builder: (context, widget) {
+                    ScreenUtil.init(context);
+                    return MediaQuery(
+                        data: MediaQuery.of(context)
+                            .copyWith(textScaleFactor: 1.0),
+                        child: widget!);
+                  },
+                  supportedLocales: L10n.all,
+                  locale: localeProvider.locale,
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  themeMode: themeProvider.themeMode,
+                  theme: MyThemes.lightTheme(context),
+                  darkTheme: MyThemes.darkTheme(context),
+                ),
               ),
             );
           }),

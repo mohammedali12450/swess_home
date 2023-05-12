@@ -586,5 +586,12 @@
   "rejected":"Rejected",
   "accepted":"Accepted",
   "google":"Google",
-  "facebook":"Facebook"
+  "facebook":"Facebook",
+  "serverErrorOccurred":"Server error occurred",
+  "notLoggedYet":"You are not logged in yet",
+  "anErrorOccurred":"An error occurred",
+  "thankYouAddingReview":"Thank you for adding your review",
+  "youMustBeAddRating":"You must be add rating",
+  "addReview":"Add a Review",
+  "writeNotes":"Write Notes"
 }

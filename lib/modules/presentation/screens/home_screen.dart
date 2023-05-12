@@ -8,8 +8,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:swesshome/main.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/home_estate_card.dart';
+import 'package:swesshome/utils/helpers/app_dialog.dart';
 
 import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
@@ -81,6 +83,10 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    Future.delayed(const Duration(seconds: 2)).then((_) =>
+        AppDialog.reviewDialog(context: navigatorKey.currentState!.context));
+
     getEstateSearch();
     RecentSearchesSharedPreferences.setDateRefreshRecent(
         int.parse(DateFormat("dd").format(DateTime.now())));
