@@ -5,8 +5,10 @@ import 'package:swesshome/modules/data/repositories/rating_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/review/review_dialog.dart';
 
 class AppDialog {
+  static bool isDialogReviewShow = false;
   static Future reviewDialog({required BuildContext context}) async {
-    return showGeneralDialog(
+    isDialogReviewShow = true;
+    final dialog = await showGeneralDialog(
       context: context,
       barrierLabel: '',
       barrierDismissible: true,
@@ -35,5 +37,8 @@ class AppDialog {
         );
       },
     );
+    isDialogReviewShow = false;
+
+    return dialog;
   }
 }

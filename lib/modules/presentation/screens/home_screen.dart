@@ -12,6 +12,7 @@ import 'package:swesshome/main.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/home_estate_card.dart';
 import 'package:swesshome/utils/helpers/app_dialog.dart';
+import 'package:swesshome/utils/helpers/automatic_show_review.dart';
 
 import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
@@ -83,10 +84,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
-    Future.delayed(const Duration(seconds: 2)).then((_) =>
-        AppDialog.reviewDialog(context: navigatorKey.currentState!.context));
-
+    automaticShowReview();
     getEstateSearch();
     RecentSearchesSharedPreferences.setDateRefreshRecent(
         int.parse(DateFormat("dd").format(DateTime.now())));
@@ -179,6 +177,7 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+
     return Scaffold(
       backgroundColor: Colors.grey.withOpacity(0.1),
       appBar: AppBar(
