@@ -31,7 +31,7 @@ Future<void> automaticShowReview() async {
           DateTime.now();
 
       if (dateCashe.isBefore(DateTime.now())) {
-        Future.delayed(const Duration(seconds: 2)).then((_) {
+        Future.delayed(Duration.zero).then((_) {
           if (!AppDialog.isDialogReviewShow) {
             AppDialog.reviewDialog(context: navigatorKey.currentState!.context);
           }

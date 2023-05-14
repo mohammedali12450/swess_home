@@ -1,5 +1,6 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -466,6 +467,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     },
                     controller: passwordControllerLogin,
                     keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z]')),
+                    ],
                     obscureText: !isVisible,
                     decoration: InputDecoration(
                       errorText: errorMessage,
@@ -660,6 +664,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     },
                     controller: passwordController,
                     keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z]')),
+                    ],
                     obscureText: !isVisible,
                     decoration: InputDecoration(
                       errorText: errorMessage,
@@ -701,6 +708,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     cursorColor: Theme.of(context).colorScheme.onBackground,
                     controller: repeatPasswordController,
                     keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z]')),
+                    ],
                     obscureText: !isVisible,
                     decoration: InputDecoration(
                       errorText: errorMessage,
@@ -1103,6 +1113,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           .setState(AppLocalizations.of(context)!.invalid_mobile_number);
       return false;
     }
+
+    if (passwordValidator1(passwordControllerLogin.text, context) != null) {
+      passwordErrorLogin
+          .setState(passwordValidator1(passwordControllerLogin.text, context));
+      scrollController.animateTo(100.h,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      return false;
+    }
+
     return isValidationSuccess;
   }
 

@@ -27,9 +27,8 @@ String? passwordValidator1(String? password, BuildContext context) {
     return AppLocalizations.of(context)!.enter_password;
   } else if (password.length < 6) {
     return AppLocalizations.of(context)!.password_least;
-  } else if (password.length > 9) {
-    return AppLocalizations.of(context)!.password_must;
   }
+
   return null;
 }
 
