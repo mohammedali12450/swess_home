@@ -584,5 +584,14 @@
   "on_progress_from_office":"On progress from office",
   "pending":"Pending",
   "rejected":"Rejected",
-  "accepted":"Accepted"
+  "accepted":"Accepted",
+  "google":"Google",
+  "facebook":"Facebook",
+  "serverErrorOccurred":"Server error occurred",
+  "notLoggedYet":"You are not logged in yet",
+  "anErrorOccurred":"An error occurred",
+  "thankYouAddingReview":"Thank you for adding your review",
+  "youMustBeAddRating":"You must be add rating",
+  "addReview":"Add a Review",
+  "writeNotes":"Write Notes"
 }

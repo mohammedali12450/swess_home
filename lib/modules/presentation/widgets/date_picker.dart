@@ -29,14 +29,15 @@ Future<void> myDatePicker(
     minTime: minTime,
     maxTime: maxTime,
     theme: DatePickerTheme(
-        headerColor: AppColors.primaryColor,
-        backgroundColor: AppColors.secondaryColor,
-        itemStyle: TextStyle(
-            color: AppColors.primaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 18.sp),
-        cancelStyle: TextStyle(color: Colors.white, fontSize: 16.sp),
-        doneStyle: TextStyle(color: Colors.white, fontSize: 16.sp)),
+      headerColor: AppColors.primaryColor,
+      backgroundColor: AppColors.secondaryColor,
+      itemStyle: TextStyle(
+          color: AppColors.primaryColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 18.sp),
+      cancelStyle: TextStyle(color: Colors.white, fontSize: 16.sp),
+      doneStyle: TextStyle(color: Colors.white, fontSize: 16.sp),
+    ),
     onConfirm: (date) {
       if (onConfirm != null) {
         var inputDate = DateFormat('dd/MM/yyyy').format(date);

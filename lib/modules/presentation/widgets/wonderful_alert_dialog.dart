@@ -4,26 +4,26 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/colors.dart';
 
 Future<void> showWonderfulAlertDialog(
-    BuildContext context,
-    String title,
-    String body, {
-      String? defaultButtonContent,
-      double? defaultButtonWidth,
-      double? defaultButtonHeight,
-      Function()? onDefaultButtonPressed,
-      TextStyle? titleTextStyle,
-      TextStyle? bodyTextStyle,
-      TextStyle? defaultButtonContentStyle,
-      bool removeDefaultButton = false,
-      List<Widget>? dialogButtons,
-      double? width,
-      double? height,
-      EdgeInsets? dialogPadding,
-      double? elevation,
-      Color? backgroundColor,
-      double? borderRadius,
-      bool barrierDismissible = true,
-    }) async {
+  BuildContext context,
+  String title,
+  String body, {
+  String? defaultButtonContent,
+  double? defaultButtonWidth,
+  double? defaultButtonHeight,
+  Function()? onDefaultButtonPressed,
+  TextStyle? titleTextStyle,
+  TextStyle? bodyTextStyle,
+  TextStyle? defaultButtonContentStyle,
+  bool removeDefaultButton = false,
+  List<Widget>? dialogButtons,
+  double? width,
+  double? height,
+  EdgeInsets? dialogPadding,
+  double? elevation,
+  Color? backgroundColor,
+  double? borderRadius,
+  bool barrierDismissible = true,
+}) async {
   await showDialog(
     barrierDismissible: barrierDismissible,
     context: context,
@@ -32,7 +32,8 @@ Future<void> showWonderfulAlertDialog(
       child: Container(
         width: width ?? 250.w,
         height: height,
-        padding: dialogPadding ?? EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
+        padding: dialogPadding ??
+            EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
         decoration: BoxDecoration(
           color: backgroundColor ?? Theme.of(context).colorScheme.background,
           borderRadius: BorderRadius.all(

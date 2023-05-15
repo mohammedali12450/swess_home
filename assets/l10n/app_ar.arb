@@ -581,6 +581,15 @@
   "on_progress_from_office":"قيد الانتظار من قبل المكتب العقاري",
   "pending":"قيد الانتظار",
   "rejected":"مرفوض",
-  "accepted":"مقبول"
+  "accepted":"مقبول",
+  "google":"غوغل",
+  "facebook":"فيسبوك",
+  "serverErrorOccurred":"حدث خطأ في السيرفر",
+  "notLoggedYet":"انت لم تسجل دخول بعد",
+  "anErrorOccurred":"حدث خطأ",
+  "thankYouAddingReview":"شكرا على اضافة تقييمك",
+  "youMustBeAddRating":"يجب أن تضيف تقييم",
+  "addReview":"إضافة تقييم ",
+  "writeNotes":"اكتب الملاحظات"
 }
 
