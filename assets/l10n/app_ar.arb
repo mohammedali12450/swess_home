@@ -590,6 +590,7 @@
   "thankYouAddingReview":"شكرا على اضافة تقييمك",
   "youMustBeAddRating":"يجب أن تضيف تقييم",
   "addReview":"إضافة تقييم ",
-  "writeNotes":"اكتب الملاحظات"
+  "writeNotes":"اكتب الملاحظات",
+  "invalidEmail":"بريد الالكتروني غير صالح"
 }
 

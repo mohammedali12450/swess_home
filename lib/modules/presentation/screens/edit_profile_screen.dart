@@ -280,15 +280,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 onPressed: () async {
                                   _userEditDataBloc.add(
                                     UserEditDataStarted(
-                                        user: Register(
-                                            firstName: widget.user.firstName!,
-                                            lastName: widget.user.lastName!,
-                                            //email: widget.user.email!,
-                                            governorate: selectedGovernorateId,
-                                            //birthdate: widget.user.birthdate!,
-                                            authentication:
-                                                widget.user.authentication!),
-                                        token: token),
+                                      user: Register(
+                                          firstName: widget.user.firstName!,
+                                          lastName: widget.user.lastName!,
+                                          //email: widget.user.email!,
+                                          governorate: selectedGovernorateId,
+                                          //birthdate: widget.user.birthdate!,
+                                          authentication:
+                                              widget.user.authentication!),
+                                      token: token,
+                                    ),
                                   );
                                   FocusScope.of(context).unfocus();
                                 },

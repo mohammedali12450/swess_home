@@ -593,5 +593,6 @@
   "thankYouAddingReview":"Thank you for adding your review",
   "youMustBeAddRating":"You must be add rating",
   "addReview":"Add a Review",
-  "writeNotes":"Write Notes"
+  "writeNotes":"Write Notes",
+  "invalidEmail":"Invalid email"
 }
