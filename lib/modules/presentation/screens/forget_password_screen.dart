@@ -209,6 +209,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               minimumSize: Size(180.w, 60.h),
+              maximumSize: Size(200.w, 60.h),
             ),
             onPressed: () async {
               // validators :
