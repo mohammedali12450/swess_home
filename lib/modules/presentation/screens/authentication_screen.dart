@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -7,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
+import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
@@ -30,6 +34,7 @@ import 'package:swesshome/modules/data/repositories/user_authentication_reposito
 import 'package:swesshome/modules/presentation/screens/forget_password_screen.dart';
 import 'package:swesshome/modules/presentation/screens/verification_login_code.dart';
 import 'package:swesshome/modules/presentation/screens/verification_screen.dart';
+import 'package:swesshome/modules/presentation/widgets/button_socail.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import '../../../core/functions/validators.dart';
@@ -74,7 +79,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   ChannelCubit lastNameError = ChannelCubit(null);
   //ChannelCubit emailError = ChannelCubit(null);
   ChannelCubit countryError = ChannelCubit(null);
- // ChannelCubit birthdateError = ChannelCubit(null);
+  // ChannelCubit birthdateError = ChannelCubit(null);
   ChannelCubit userCountry = ChannelCubit(null);
   late UserRegisterBloc userRegisterBloc;
   late UserLoginBloc userLoginBloc;
@@ -309,10 +314,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     );
                     return;
                   }
+                  log(loginState.errorMessage!);
                   showWonderfulAlertDialog(
-                      context,
-                      AppLocalizations.of(context)!.error,
-                      loginState.errorMessage!);
+                    context,
+                    AppLocalizations.of(context)!.error,
+                    loginState.errorMessage!,
+                  );
                 }
               }
               if (loginState is UserLoginComplete) {
@@ -463,6 +470,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     },
                     controller: passwordControllerLogin,
                     keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z]')),
+                    ],
                     obscureText: !isVisible,
                     decoration: InputDecoration(
                       errorText: errorMessage,
@@ -484,43 +494,24 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               );
             },
           ),
-          Row(
-            children: [
-              InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const ForgetPasswordScreen()));
-                  },
-                  child: ResText(
-                    AppLocalizations.of(context)!.forget_password,
-                    textStyle: Theme.of(context).textTheme.bodyText2,
-                  )),
-              const Spacer(),
-              // BlocBuilder<ChannelCubit, dynamic>(
-              //   bloc: _checkBoxStateCubit,
-              //   builder: (_, isChecked) {
-              //     return Checkbox(
-              //       value: isChecked,
-              //       onChanged: (_) {
-              //         _checkBoxStateCubit.setState(!isChecked);
-              //       },
-              //     );
-              //   },
-              // ),
-              // Text(
-              //   AppLocalizations.of(context)!.remember_me,
-              //   style: Theme.of(context).textTheme.bodyText2,
-              // ),
-            ],
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const ForgetPasswordScreen()));
+            },
+            child: ResText(
+              AppLocalizations.of(context)!.forget_password,
+              textStyle: Theme.of(context).textTheme.bodyText2,
+            ),
           ),
           kHe24,
           Center(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(240.w, 64.h),
-                maximumSize: Size(300.w, 64.h),
+                minimumSize: Size(330.w, 60.h),
+                maximumSize: Size(330.w, 60.h),
               ),
               child: BlocBuilder<UserLoginBloc, UserLoginState>(
                 builder: (_, loginState) {
@@ -554,16 +545,48 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 if (!await getFieldsValidationSignIn()) {
                   return;
                 }
-                userLoginBloc.add(UserLoginStarted(
-                    authentication: phoneNumber,
-                    password: passwordControllerLogin.text));
+
+                // ignore: use_build_context_synchronously
                 FocusScope.of(context).unfocus();
+
+                userLoginBloc.add(
+                  UserLoginStarted(
+                    authentication: phoneNumber,
+                    password: passwordControllerLogin.text,
+                  ),
+                );
                 ApplicationSharedPreferences.setLoginPassed(true);
                 UserSharedPreferences.setPhoneNumber(phoneNumber);
               },
             ),
           ),
-          kHe16,
+          Container(
+            height: 40.h,
+            margin: EdgeInsets.only(top: 25.h, bottom: 10.h),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ButtonSocail(
+                      text: AppLocalizations.of(context)!.google,
+                      iconPath: "$assetsImages/google_icon.png",
+                      onPress: () async {
+                        await BlocProvider.of<UserLoginBloc>(context)
+                            .loginGoogle();
+                      }),
+                ),
+                kWi20,
+                Expanded(
+                  child: ButtonSocail(
+                    text: AppLocalizations.of(context)!.facebook,
+                    iconPath: "$assetsImages/facebook_icon.png",
+                    onPress: () async {
+                      BlocProvider.of<UserLoginBloc>(context).loginFacebook();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
           TextButton(
             onPressed: () {
               _isLoginSelected.setState(false);
@@ -619,8 +642,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     userCountry.setState(country.name);
                   },
                   controller: authenticationController,
-                  decoration:
-                      InputDecoration(errorText: errorMessage, errorMaxLines: 2),
+                  decoration: InputDecoration(
+                      errorText: errorMessage, errorMaxLines: 2),
                   initialCountryCode: isForStore ? 'LB' : 'SY',
                   onChanged: (phone) {
                     phoneDialCode = phone.countryCode;
@@ -650,6 +673,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     },
                     controller: passwordController,
                     keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z]')),
+                    ],
                     obscureText: !isVisible,
                     decoration: InputDecoration(
                       errorText: errorMessage,
@@ -691,6 +717,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     cursorColor: Theme.of(context).colorScheme.onBackground,
                     controller: repeatPasswordController,
                     keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z]')),
+                    ],
                     obscureText: !isVisible,
                     decoration: InputDecoration(
                       errorText: errorMessage,
@@ -974,19 +1003,20 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 userRegisterBloc.add(
                   UserRegisterStarted(
                     register: Register(
-                        authentication: phoneNumber,
-                        password: passwordController.text,
-                        firstName: firstNameController.text,
-                        lastName: lastNameController.text,
-                        // birthdate: birthdateController.text,
-                        // //birthDate!,
-                        // email: emailController.text == ""
-                        //     ? "ghinasharaf@gmail.com"
-                        //     : emailController.text,
-                        country: userCountry.state.toString(),
-                        governorate: selectedGovernorateId,
-                        latitude: latitude,
-                        longitude: longitude),
+                      authentication: phoneNumber,
+                      password: passwordController.text,
+                      firstName: firstNameController.text,
+                      lastName: lastNameController.text,
+                      // birthdate: birthdateController.text,
+                      // //birthDate!,
+                      // email: emailController.text == ""
+                      //     ? "ghinasharaf@gmail.com"
+                      //     : emailController.text,
+                      country: userCountry.state.toString(),
+                      governorate: selectedGovernorateId,
+                      latitude: latitude,
+                      longitude: longitude,
+                    ),
                   ),
                 );
                 UserSharedPreferences.setPhoneNumber(phoneNumber);
@@ -1093,6 +1123,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           .setState(AppLocalizations.of(context)!.invalid_mobile_number);
       return false;
     }
+
+    if (passwordValidator1(passwordControllerLogin.text, context) != null) {
+      passwordErrorLogin
+          .setState(passwordValidator1(passwordControllerLogin.text, context));
+      scrollController.animateTo(100.h,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      return false;
+    }
+
     return isValidationSuccess;
   }
 

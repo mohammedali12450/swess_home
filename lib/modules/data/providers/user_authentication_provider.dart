@@ -21,12 +21,29 @@ class UserAuthenticationProvider {
     Response response;
 
     try {
-      response = await helper.post(userLoginURL,
-          {"authentication": authentication, "password": password});
+      response = await helper.post(userLoginURL, {
+        "authentication": authentication,
+        "password": password,
+      });
     } catch (_) {
       rethrow;
     }
 
+    return response;
+  }
+
+  Future socialLogin(String provider, String token) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response;
+
+    try {
+      response = await helper.post(
+        userSocialLogin,
+        {"provider": provider, "token": token},
+      );
+    } catch (_) {
+      rethrow;
+    }
     return response;
   }
 

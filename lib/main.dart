@@ -13,6 +13,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/config/routes/app_router.dart';
 import 'package:swesshome/constants/assets_paths.dart';
+import 'package:swesshome/core/functions/setup_locator_app.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_bloc.dart';
@@ -30,6 +31,7 @@ import 'package:swesshome/modules/data/repositories/estate_order_repository.dart
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/data/repositories/reports_repository.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
+import 'package:swesshome/modules/presentation/widgets/app/global_loader_overlay_configuration.dart';
 
 import 'config/themes/my_themes.dart';
 import 'constants/application_constants.dart';
@@ -97,6 +99,9 @@ void main() async {
     await clearSharedPreferences();
   }
 
+  // Setup Locator App (locator pattern services)
+  await setupLocatorApp();
+
   // Run application:
   if (!_clearSharedPreferences) {
     runApp(
@@ -135,7 +140,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
 
     // initialize notifications count :
-    notificationsCubit = NotificationsCubit(NotificationsSharedPreferences.getNotificationsCount());
+    notificationsCubit = NotificationsCubit(
+        NotificationsSharedPreferences.getNotificationsCount());
 
     // Firebase messages initializing :
     initializeFirebaseMessaging();
@@ -187,16 +193,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (_) => RegionsBloc(),
         ),
         BlocProvider(
-          create: (_) => ForgetPasswordBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => ForgetPasswordBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
-          create: (_) => VerificationCodeBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => VerificationCodeBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
-          create: (_) => ResendVerificationCodeBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => ResendVerificationCodeBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
-          create: (_) => ResetPasswordBloc(userAuthenticationRepository: UserAuthenticationRepository()),
+          create: (_) => ResetPasswordBloc(
+              userAuthenticationRepository: UserAuthenticationRepository()),
         ),
         BlocProvider(
           create: (_) => OwnershipTypeBloc(
@@ -320,26 +330,31 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               designSize: const Size(428, 926),
               minTextAdapt: true,
               splitScreenMode: false,
-              builder: (_, __) => MaterialApp(
-                navigatorKey: navigatorKey,
-                debugShowCheckedModeBanner: false,
-                onGenerateRoute: appRouter.onGenerateRoute,
-                initialRoute: '/',
-                builder: (context, widget) {
-                  ScreenUtil.init(context);
-                  return MediaQuery(data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: widget!);
-                },
-                supportedLocales: L10n.all,
-                locale: localeProvider.locale,
-                localizationsDelegates: const [
-                  AppLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                themeMode: themeProvider.themeMode,
-                theme: MyThemes.lightTheme(context),
-                darkTheme: MyThemes.darkTheme(context),
+              builder: (_, __) => GlobalLoaderOverlayConfiguration(
+                child: MaterialApp(
+                  navigatorKey: navigatorKey,
+                  debugShowCheckedModeBanner: false,
+                  onGenerateRoute: appRouter.onGenerateRoute,
+                  initialRoute: '/',
+                  builder: (context, widget) {
+                    ScreenUtil.init(context);
+                    return MediaQuery(
+                        data: MediaQuery.of(context)
+                            .copyWith(textScaleFactor: 1.0),
+                        child: widget!);
+                  },
+                  supportedLocales: L10n.all,
+                  locale: localeProvider.locale,
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  themeMode: themeProvider.themeMode,
+                  theme: MyThemes.lightTheme(context),
+                  darkTheme: MyThemes.darkTheme(context),
+                ),
               ),
             );
           }),
@@ -369,8 +384,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             notification.title,
             notification.body,
             NotificationDetails(
-              android: AndroidNotificationDetails(androidNotificationsChannel.id, androidNotificationsChannel.name,
-                  channelDescription: androidNotificationsChannel.description, color: Colors.blue, playSound: true),
+              android: AndroidNotificationDetails(
+                  androidNotificationsChannel.id,
+                  androidNotificationsChannel.name,
+                  channelDescription: androidNotificationsChannel.description,
+                  color: Colors.blue,
+                  playSound: true),
             ),
           );
         }
@@ -399,7 +418,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       // reopen the app
       checkNewNotifications();
-    } else if (state == AppLifecycleState.paused || state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.inactive) {
       // close the app || killed the app from ROM
       print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
     }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
@@ -16,8 +18,10 @@ class UserRegisterBloc extends Bloc<UserRegisterEvent, UserRegisterState> {
       emit(UserRegisterProgress());
 
       try {
-        User registeredUser =
+        log("Issue");
+        final User registeredUser =
             await userAuthenticationRepository.register(event.register);
+        log("Success");
         emit(UserRegisterComplete(user: registeredUser));
       } on ConnectionException catch (e) {
         emit(
