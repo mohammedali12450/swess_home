@@ -41,7 +41,7 @@ class RatingDialog extends StatelessWidget {
                 child: ValueListenableBuilder<bool>(
                   valueListenable: reviewBloc.isInputVaild,
                   builder: (_, value, child) => AnimatedSize(
-                    duration: const Duration(milliseconds: 600),
+                    duration: const Duration(milliseconds: 400),
                     child: Container(
                       width: 0.8.sw,
                       height: value ? 0.25.sh : 0.3.sh,
