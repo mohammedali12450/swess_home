@@ -21,8 +21,10 @@ class UserAuthenticationProvider {
     Response response;
 
     try {
-      response = await helper.post(userLoginURL,
-          {"authentication": authentication, "password": password});
+      response = await helper.post(userLoginURL, {
+        "authentication": authentication,
+        "password": password,
+      });
     } catch (_) {
       rethrow;
     }

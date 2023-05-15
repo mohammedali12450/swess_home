@@ -23,7 +23,9 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
       emit(UserLoginProgress());
       try {
         user = await userAuthenticationRepository.login(
-            event.authentication, event.password);
+          event.authentication,
+          event.password,
+        );
 
         emit(UserLoginComplete());
       } on ConnectionException catch (e) {
