@@ -60,6 +60,7 @@ class _VerificationCodeScreenResetState
     _waitingTime.sink.add(currentDuration);
   }
 
+
   startWaitingTimer(initValue) {
     dataStore.setLastOtpRequestValue(
       OtpRequestValueModel(
@@ -80,7 +81,7 @@ class _VerificationCodeScreenResetState
     dataStore.getLastOtpRequestValue().then((value) {
       // check if there is no timer to send code
       if (value.requestedTime!
-          .isBefore(DateTime.now().subtract(const Duration(minutes: 1)))) {
+          .isBefore(DateTime.now().subtract(const Duration(minutes: 15)))) {
         // forgetPasswordBloc.add(
         //   ForgetPasswordStarted(
         //     mobile: widget.phoneNumber,
@@ -90,11 +91,11 @@ class _VerificationCodeScreenResetState
 
       if (value.textValue != dataStore.user.data!.authentication ||
           value.requestedTime!
-              .isBefore(DateTime.now().subtract(const Duration(minutes: 1)))) {
+              .isBefore(DateTime.now().subtract(const Duration(minutes: 15)))) {
         setWaitingTime(0);
       } else {
         startWaitingTimer(
-            59 - (DateTime.now().difference(value.requestedTime!)).inSeconds);
+            889 - (DateTime.now().difference(value.requestedTime!)).inSeconds);
       }
     });
   }
@@ -261,6 +262,7 @@ class _VerificationCodeScreenResetState
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(180.w, 60.h),
+                maximumSize: Size(200.w, 60.h),
               ),
               onPressed: () async {
                 verificationCodeBloc.add(
@@ -319,7 +321,7 @@ class _VerificationCodeScreenResetState
                           mobile: widget.phoneNumber,
                           verificationCode: verificationCodeController.text),
                     );
-                    startWaitingTimer(59);
+                    startWaitingTimer(899);
                     FocusScope.of(context).unfocus();
                   },
                   child: Center(
@@ -363,7 +365,8 @@ class _VerificationCodeScreenResetState
           if (waitingTimeSnapshot.data != 0) {
             return Center(
               child: Text(
-                '00:${waitingTimeSnapshot.data}',
+                '${(((_waitingTime.stream.value / 60).truncate()) % 60).toString().padLeft(2,"0")}:'
+                    '${((_waitingTime.stream.value) % 60).toString().padLeft(2,"0")}',
                 style: TextStyle(fontSize: 20.sp),
               ),
             );

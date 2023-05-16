@@ -181,6 +181,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               minimumSize: Size(180.w, 60.h),
+              maximumSize: Size(200.w, 60.h),
             ),
             onPressed: () {
               // validators :
