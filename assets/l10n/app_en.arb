@@ -591,7 +591,8 @@
   "notLoggedYet":"You are not logged in yet",
   "anErrorOccurred":"An error occurred",
   "thankYouAddingReview":"Thank you for adding your review",
-  "youMustBeAddRating":"You must be add rating",
+  "youMustBeAddNotes":"You must be add notes",
   "addReview":"Add a Review",
-  "writeNotes":"Write Notes"
+  "writeNotes":"Write Notes",
+  "invalidEmail":"Invalid email"
 }

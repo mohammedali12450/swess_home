@@ -57,7 +57,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
 
     if (val != null && val.isEmpty) {
       return AppLocalizations.of(navigatorKey.currentState!.context)!
-          .youMustBeAddRating;
+          .youMustBeAddNotes;
     }
 
     return null;

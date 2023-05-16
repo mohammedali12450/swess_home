@@ -7,7 +7,7 @@ class Register {
 
   String? password;
 
-  //String? email;
+  String? email;
 
   //String birthdate;
 
@@ -22,7 +22,7 @@ class Register {
       required this.lastName,
       required this.authentication,
       this.password,
-      //this.email,
+      this.email,
       //required this.birthdate,
       this.governorate,
       this.country,
@@ -35,7 +35,7 @@ class Register {
     map["last_name"] = lastName;
     map["authentication"] = authentication;
     map["password"] = password;
-    //map["email"] = email;
+    map["email"] = email;
     //map["dob"] = birthdate;
     map["location_id"] = governorate;
     map["country"] = country;
@@ -48,7 +48,7 @@ class Register {
     Map<String, dynamic> map = {};
     map["first_name"] = firstName;
     map["last_name"] = lastName;
-   // map["email"] = email;
+    // map["email"] = email;
     //map["dob"] = birthdate;
     map["governorate"] = governorate;
     map["_method"] = "PUT";

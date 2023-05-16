@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/constants/formatters.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/fcm_bloc/fcm_bloc.dart';
@@ -77,7 +78,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   ChannelCubit repeatPasswordError = ChannelCubit(null);
   ChannelCubit firstNameError = ChannelCubit(null);
   ChannelCubit lastNameError = ChannelCubit(null);
-  //ChannelCubit emailError = ChannelCubit(null);
+  ChannelCubit emailError = ChannelCubit(null);
   ChannelCubit countryError = ChannelCubit(null);
   // ChannelCubit birthdateError = ChannelCubit(null);
   ChannelCubit userCountry = ChannelCubit(null);
@@ -149,9 +150,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     if (errorResponseMap.containsKey("password")) {
       passwordError.setState(errorResponseMap["password"].first);
     }
-    // if (errorResponseMap.containsKey("email")) {
-    //   emailError.setState(errorResponseMap["email"].first);
-    // }
+    if (errorResponseMap.containsKey("email")) {
+      emailError.setState(errorResponseMap["email"].first);
+    }
     // if (errorResponseMap.containsKey("birthOfDate")) {
     //   birthdateError.setState(errorResponseMap["birthOfDate"].first);
     // }
@@ -190,15 +191,17 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   return;
                 }
 
-                if (registerState.errorResponse != null) {
-                  signUpErrorHandling(registerState.errorResponse);
-                } else if (registerState.errorMessage != null) {
+                // if (registerState.errorResponse != null) {
+                //   signUpErrorHandling(registerState.errorResponse);
+                // } else
+                if (registerState.errorMessage != null) {
                   showWonderfulAlertDialog(
                       context,
                       AppLocalizations.of(context)!.error,
                       registerState.errorMessage!);
                 }
               }
+
               if (registerState is UserRegisterComplete) {
                 String phone = registerState.user.authentication!;
                 Navigator.push(
@@ -471,7 +474,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     controller: passwordControllerLogin,
                     keyboardType: TextInputType.text,
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z]')),
+                      onlyEnglishLetters,
                     ],
                     obscureText: !isVisible,
                     decoration: InputDecoration(
@@ -497,9 +500,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           InkWell(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const ForgetPasswordScreen()));
+                context,
+                MaterialPageRoute(builder: (_) => const ForgetPasswordScreen()),
+              );
             },
             child: ResText(
               AppLocalizations.of(context)!.forget_password,
@@ -655,9 +658,35 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               },
             ),
           ),
+          //-------------------------------------------------------------
           kHe24,
           ResText(
-            AppLocalizations.of(context)!.password + " :",
+            "${AppLocalizations.of(context)!.email} :",
+            textStyle: Theme.of(context).textTheme.headline6,
+          ),
+          kHe8,
+          BlocBuilder<ChannelCubit, dynamic>(
+            bloc: emailError,
+            builder: (_, errorMessage) {
+              return TextField(
+                onChanged: (_) {
+                  emailError.setState(null);
+                },
+                controller: emailController,
+                decoration: InputDecoration(
+                  errorText: errorMessage,
+                  hintText: AppLocalizations.of(context)!.enter_your_email,
+                  suffix: null,
+                  suffixIcon: null,
+                  isCollapsed: false,
+                ),
+              );
+            },
+          ),
+          //-------------------------------------------------------------
+          kHe24,
+          ResText(
+            "${AppLocalizations.of(context)!.password} :",
             textStyle: Theme.of(context).textTheme.headline6,
           ),
           kHe8,
@@ -674,7 +703,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     controller: passwordController,
                     keyboardType: TextInputType.text,
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z]')),
+                      onlyEnglishLetters,
                     ],
                     obscureText: !isVisible,
                     decoration: InputDecoration(
@@ -718,7 +747,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     controller: repeatPasswordController,
                     keyboardType: TextInputType.text,
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z]')),
+                      onlyEnglishLetters,
                     ],
                     obscureText: !isVisible,
                     decoration: InputDecoration(
@@ -1009,9 +1038,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       lastName: lastNameController.text,
                       // birthdate: birthdateController.text,
                       // //birthDate!,
-                      // email: emailController.text == ""
-                      //     ? "ghinasharaf@gmail.com"
-                      //     : emailController.text,
+                      email: emailController.text,
                       country: userCountry.state.toString(),
                       governorate: selectedGovernorateId,
                       latitude: latitude,
@@ -1088,11 +1115,14 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
     // email verification
     // print(EmailValidator.validate(emailController.text));
-    // if (!EmailValidator.validate(emailController.text)) {
-    //   emailError.setState(emailValidator(emailController.text, context));
-    //   return false;
-    // }
-    // emailError.setState(null);
+
+    if (emailValidator(emailController.text, context) != null) {
+      scrollController.animateTo(120.h,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
+      emailError.setState(emailValidator(emailController.text, context));
+      return false;
+    }
+    emailError.setState(null);
 
     // terms_conditions verification
     if (!isCheck) {

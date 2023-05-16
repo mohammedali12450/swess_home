@@ -43,10 +43,19 @@ String? confirmPasswordValidator1(
 }
 
 String? emailValidator(String? email, BuildContext context) {
-  if (email == "") {
-    return null;
-  } else if (!email!.contains("@") && !email.contains(".com")) {
+  if (email?.isEmpty ?? false) {
     return AppLocalizations.of(context)!.enter_your_email;
+  } else if (email?.isEmailNotVaild ?? false) {
+    return AppLocalizations.of(context)!.invalidEmail;
   }
   return null;
+}
+
+extension StringExtension on String {
+  bool get isEmailNotVaild {
+    String p =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+    return !RegExp(p).hasMatch(this);
+  }
 }

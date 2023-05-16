@@ -588,8 +588,9 @@
   "notLoggedYet":"انت لم تسجل دخول بعد",
   "anErrorOccurred":"حدث خطأ",
   "thankYouAddingReview":"شكرا على اضافة تقييمك",
-  "youMustBeAddRating":"يجب أن تضيف تقييم",
+  "youMustBeAddNotes":"يجب أن تضيف ملاحظات",
   "addReview":"إضافة تقييم ",
-  "writeNotes":"اكتب الملاحظات"
+  "writeNotes":"اكتب الملاحظات",
+  "invalidEmail":"بريد الالكتروني غير صالح"
 }
 

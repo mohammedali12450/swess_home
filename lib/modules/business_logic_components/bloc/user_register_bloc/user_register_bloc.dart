@@ -18,10 +18,9 @@ class UserRegisterBloc extends Bloc<UserRegisterEvent, UserRegisterState> {
       emit(UserRegisterProgress());
 
       try {
-        log("Issue");
         final User registeredUser =
             await userAuthenticationRepository.register(event.register);
-        log("Success");
+
         emit(UserRegisterComplete(user: registeredUser));
       } on ConnectionException catch (e) {
         emit(
@@ -32,10 +31,11 @@ class UserRegisterBloc extends Bloc<UserRegisterEvent, UserRegisterState> {
         if (e is FieldsException) {
           emit(
             UserRegisterError(
-                errorResponse: (e.jsonErrorFields["errors"] != null)
-                    ? e.jsonErrorFields["errors"] as Map<String, dynamic>
-                    : null,
-                errorMessage: e.jsonErrorFields["message"]),
+              errorResponse: (e.jsonErrorFields["errors"] != null)
+                  ? e.jsonErrorFields["errors"] as Map<String, dynamic>
+                  : null,
+              errorMessage: e.jsonErrorFields["message"],
+            ),
           );
         }
         if (e is UnknownException) {
