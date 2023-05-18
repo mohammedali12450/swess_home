@@ -591,6 +591,7 @@
   "youMustBeAddNotes":"يجب أن تضيف ملاحظات",
   "addReview":"إضافة تقييم ",
   "writeNotes":"اكتب الملاحظات",
-  "invalidEmail":"بريد الالكتروني غير صالح"
+  "invalidEmail":"بريد الالكتروني غير صالح",
+  "create_estate_request":"إنشاء طلب عقار جديد"
 }
 

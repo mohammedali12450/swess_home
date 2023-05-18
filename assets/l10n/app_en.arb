@@ -594,5 +594,6 @@
   "youMustBeAddNotes":"You must be add notes",
   "addReview":"Add a Review",
   "writeNotes":"Write Notes",
-  "invalidEmail":"Invalid email"
+  "invalidEmail":"Invalid email",
+  "create_estate_request":"Create New Estate Request"
 }
