@@ -18,6 +18,7 @@ import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/pages/terms_of_use_page.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/create_estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -121,6 +122,18 @@ class _MyDrawerState extends State<MyDrawer> {
           iconData: Icons.star_rate_outlined,
           onTap: () {
             Navigator.pushNamed(context, RatingScreen.id);
+          },
+        ),
+        RowInformation(
+          content: AppLocalizations.of(context)!.create_estate_request,
+          iconData: Icons.real_estate_agent_outlined,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const CreateEstateImmediatelyScreen(),
+              ),
+            );
           },
         ),
         buildMainDrawer(isDark),
@@ -269,6 +282,13 @@ class _MyDrawerState extends State<MyDrawer> {
           onTap: () {
             Share.share(AppLocalizations.of(context)!.upload_app +
                 '\n${ApplicationSharedPreferences.getDownloadUrl()}');
+          },
+        ),
+        RowInformation(
+          content: AppLocalizations.of(context)!.contact_us,
+          iconData: Icons.people_outline,
+          onTap: () {
+          ///
           },
         ),
         RowInformation(
