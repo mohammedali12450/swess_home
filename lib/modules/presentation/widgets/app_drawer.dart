@@ -10,6 +10,7 @@ import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
+import 'package:swesshome/main.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_state.dart';
@@ -22,6 +23,7 @@ import 'package:swesshome/modules/presentation/screens/create_estate_immediately
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+import 'package:swesshome/utils/helpers/app_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -121,19 +123,8 @@ class _MyDrawerState extends State<MyDrawer> {
           content: AppLocalizations.of(context)!.rate_us,
           iconData: Icons.star_rate_outlined,
           onTap: () {
-            Navigator.pushNamed(context, RatingScreen.id);
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.create_estate_request,
-          iconData: Icons.real_estate_agent_outlined,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const CreateEstateImmediatelyScreen(),
-              ),
-            );
+            showReview();
+            // Navigator.pushNamed(context, RatingScreen.id);
           },
         ),
         buildMainDrawer(isDark),
@@ -334,7 +325,7 @@ class _MyDrawerState extends State<MyDrawer> {
           },
         ),
         RowInformation(
-          content: AppLocalizations.of(context)!.help,
+          content: AppLocalizations.of(context)!.faq,
           iconData: Icons.error_outline,
           onTap: () {
             Navigator.pushNamed(context, FAQScreen.id);
@@ -376,6 +367,12 @@ class _MyDrawerState extends State<MyDrawer> {
     // Navigator.pushNamedAndRemoveUntil(
     //     context, NavigationBarScreen.id, ModalRoute.withName('/'));
     return;
+  }
+
+  Future<void> showReview() async {
+    Future.delayed(Duration.zero).then((_) {
+      AppDialog.reviewDialog(context: navigatorKey.currentState!.context);
+    });
   }
 }
 
