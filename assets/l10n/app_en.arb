@@ -595,5 +595,7 @@
   "addReview":"Add a Review",
   "writeNotes":"Write Notes",
   "invalidEmail":"Invalid email",
-  "create_estate_request":"Create New Estate Request"
+  "create_estate_request":"Create New Estate Request",
+  "saved":"Saved",
+  "estate_offers2":"Estate Offers"
 }

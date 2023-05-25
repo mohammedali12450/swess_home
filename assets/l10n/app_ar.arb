@@ -592,6 +592,8 @@
   "addReview":"إضافة تقييم ",
   "writeNotes":"اكتب الملاحظات",
   "invalidEmail":"بريد الالكتروني غير صالح",
-  "create_estate_request":"إنشاء طلب عقار جديد"
+  "create_estate_request":"إنشاء طلب عقار جديد",
+  "saved":"المفضلة",
+  "estate_offers2":"العروض العقارية"
 }
 
