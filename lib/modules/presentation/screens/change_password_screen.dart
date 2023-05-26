@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:phone_number/phone_number.dart';
+import 'package:swesshome/constants/formatters.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
+import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 
 import '../../../constants/assets_paths.dart';
 import '../../../constants/design_constants.dart';
@@ -28,6 +30,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final ChannelCubit systemPasswordError = ChannelCubit(null);
   final ChannelCubit officeTelephoneError = ChannelCubit(null);
   late ChangePasswordBloc changePasswordBloc;
+
+  /// added new
+  final ChannelCubit _oldPasswordVisibilityCubit = ChannelCubit(false);
+  final ChannelCubit _newPasswordVisibilityCubit = ChannelCubit(false);
+  ChannelCubit oldPasswordError = ChannelCubit(null);
+  ChannelCubit newPasswordError = ChannelCubit(null);
+
 
 // Controllers:
   TextEditingController newPasswordController = TextEditingController();
@@ -64,7 +73,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  56.verticalSpace,
+                  40.verticalSpace,
                   SizedBox(
                     width: 200.w,
                     height: 200.w,
@@ -74,8 +83,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       foregroundColor: Colors.transparent,
                     ),
                   ),
-                  32.verticalSpace,
-                  buildFieldWidget()
+                  10.verticalSpace,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15,right: 15),
+                    child: buildFieldWidget(),
+                  )
                 ],
               ),
             ),
@@ -90,33 +102,116 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         8.verticalSpace,
-        TextFormField(
-          textDirection: TextDirection.ltr,
-          cursorColor: Theme.of(context).colorScheme.onBackground,
-          controller: oldPasswordController,
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            hintText: AppLocalizations.of(context)!.enter_your_old_password,
-          ),
+        ResText(
+          "${AppLocalizations.of(context)!.old_password} :",
+          textStyle: Theme.of(context).textTheme.headline6,
         ),
-        16.verticalSpace,
-        TextFormField(
-          validator: (value) {
-            return passwordValidator1(value, context);
+        BlocBuilder<ChannelCubit, dynamic>(
+          bloc: oldPasswordError,
+          builder: (_, errorMessage) {
+            return BlocBuilder<ChannelCubit, dynamic>(
+              bloc: _oldPasswordVisibilityCubit,
+              builder: (context, isVisible) {
+                return TextField(
+                  onChanged: (value) {
+                    oldPasswordError.setState(null);
+                  },
+                  controller: oldPasswordController,
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [
+                    onlyEnglishLetters,
+                  ],
+                  obscureText: !isVisible,
+                  decoration: InputDecoration(
+                    errorText: errorMessage,
+                    hintText: AppLocalizations.of(context)!.enter_your_old_password,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        (!isVisible)
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                      onPressed: () {
+                        _oldPasswordVisibilityCubit.setState(!isVisible);
+                      },
+                    ),
+                    isCollapsed: false,
+                  ),
+                );
+              },
+            );
           },
-          textDirection: TextDirection.ltr,
-          cursorColor: Theme.of(context).colorScheme.onBackground,
-          controller: newPasswordController,
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            hintText: AppLocalizations.of(context)!.enter_your_new_password,
-          ),
         ),
+        // TextFormField(
+        //   textDirection: TextDirection.ltr,
+        //   cursorColor: Theme.of(context).colorScheme.onBackground,
+        //   controller: oldPasswordController,
+        //   keyboardType: TextInputType.text,
+        //   decoration: InputDecoration(
+        //     hintText: AppLocalizations.of(context)!.enter_your_old_password,
+        //   ),
+        // ),
+        20.verticalSpace,
+        ResText(
+          "${AppLocalizations.of(context)!.new_password} :",
+          textStyle: Theme.of(context).textTheme.headline6,
+        ),
+        BlocBuilder<ChannelCubit, dynamic>(
+          bloc: newPasswordError,
+          builder: (_, errorMessage) {
+            return BlocBuilder<ChannelCubit, dynamic>(
+              bloc: _newPasswordVisibilityCubit,
+              builder: (context, isVisible) {
+                return TextField(
+                  onChanged: (value) {
+                    newPasswordError.setState(null);
+                  },
+                  controller: newPasswordController,
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [
+                    onlyEnglishLetters,
+                  ],
+                  obscureText: !isVisible,
+                  decoration: InputDecoration(
+                    errorText: errorMessage,
+                    hintText: AppLocalizations.of(context)!.enter_your_new_password,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        (!isVisible)
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                      onPressed: () {
+                        _newPasswordVisibilityCubit.setState(!isVisible);
+                      },
+                    ),
+                    isCollapsed: false,
+                  ),
+                );
+              },
+            );
+          },
+        ),
+        // TextFormField(
+        //   validator: (value) {
+        //     return passwordValidator1(value, context);
+        //   },
+        //   textDirection: TextDirection.ltr,
+        //   cursorColor: Theme.of(context).colorScheme.onBackground,
+        //   controller: newPasswordController,
+        //   keyboardType: TextInputType.text,
+        //   decoration: InputDecoration(
+        //     hintText: AppLocalizations.of(context)!.enter_your_new_password,
+        //   ),
+        // ),
         56.verticalSpace,
         Center(
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               minimumSize: Size(180.w, 60.h),
+              maximumSize: Size(200.w, 60.h),
             ),
             onPressed: () async {
               changePasswordBloc.add(
