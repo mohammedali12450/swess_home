@@ -594,5 +594,7 @@
   "youMustBeAddNotes":"You must be add notes",
   "addReview":"Add a Review",
   "writeNotes":"Write Notes",
-  "invalidEmail":"Invalid email"
+  "invalidEmail":"Invalid email",
+  "old_password":"Old Password",
+  "new_password":"New Password"
 }

@@ -591,6 +591,8 @@
   "youMustBeAddNotes":"يجب أن تضيف ملاحظات",
   "addReview":"إضافة تقييم ",
   "writeNotes":"اكتب الملاحظات",
-  "invalidEmail":"بريد الالكتروني غير صالح"
+  "invalidEmail":"بريد الالكتروني غير صالح",
+  "old_password":"كلمة السر القديمة",
+  "new_password":"كلمة السر الجديدة"
 }
 
