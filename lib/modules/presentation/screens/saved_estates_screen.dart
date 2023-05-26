@@ -122,33 +122,35 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                       ),
                     );
                   }
-                  return Column(
-                    children: [
-                      kHe12,
-                      buildSavedList(),
-                      kHe44,
-                      Padding(
-                        padding: kTinyAllPadding,
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: 60.h,
-                          width: 1.sw,
-                          decoration: BoxDecoration(
-                            borderRadius: lowBorderRadius,
-                            border:
-                                Border.all(color: AppColors.yellowDarkColor),
-                          ),
-                          child: ResText(
-                            AppLocalizations.of(context)!.nearby,
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .headline4!
-                                .copyWith(fontWeight: FontWeight.w700),
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        kHe12,
+                        buildSavedList(),
+                        kHe44,
+                        Padding(
+                          padding: kTinyAllPadding,
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: 60.h,
+                            width: 1.sw,
+                            decoration: BoxDecoration(
+                              borderRadius: lowBorderRadius,
+                              border:
+                                  Border.all(color: AppColors.yellowDarkColor),
+                            ),
+                            child: ResText(
+                              AppLocalizations.of(context)!.nearby,
+                              textStyle: Theme.of(context)
+                                  .textTheme
+                                  .headline4!
+                                  .copyWith(fontWeight: FontWeight.w700),
+                            ),
                           ),
                         ),
-                      ),
-                      buildSavedList(),
-                    ],
+                        buildSavedList(),
+                      ],
+                    ),
                   );
                 },
               ),
