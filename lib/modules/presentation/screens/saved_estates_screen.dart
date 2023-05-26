@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_state.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
+import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
@@ -48,6 +50,12 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: SizedBox(
+          width: getScreenWidth(context) * (75 / 100),
+          child: const Drawer(
+            child: MyDrawer(),
+          ),
+        ),
         appBar: AppBar(
           centerTitle: true,
           title: Text(
