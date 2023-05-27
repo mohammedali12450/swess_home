@@ -268,6 +268,14 @@ class _MyDrawerState extends State<MyDrawer> {
     return Column(
       children: [
         RowInformation(
+          content: AppLocalizations.of(context)!.rate_us,
+          iconData: Icons.star_rate_outlined,
+          onTap: () {
+            showReview();
+            // Navigator.pushNamed(context, RatingScreen.id);
+          },
+        ),
+        RowInformation(
           content: AppLocalizations.of(context)!.invite_friends,
           iconData: Icons.people_alt_outlined,
           onTap: () {
