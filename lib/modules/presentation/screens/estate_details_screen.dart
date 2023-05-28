@@ -23,6 +23,7 @@ import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
+import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/estate_office_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/small_elevated_card.dart';
 import 'package:swesshome/utils/helpers/date_helper.dart';
@@ -299,6 +300,35 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   padding: kTinyAllPadding,
                   child: Row(
                     children: [
+                      (BlocProvider.of<UserLoginBloc>(context).user == null) ?
+                        Row(
+                          children: [
+                            InkWell(
+                              onTap: () async{
+                                await Navigator.pushNamed(context, AuthenticationScreen.id);
+                              },
+                              child: ResText(
+                                AppLocalizations.of(context)!.sign_in,
+                                textAlign: TextAlign.start,
+                                textStyle: GoogleFonts.libreFranklin(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline
+                                    ),
+                              ),
+                            ),
+                            ResText(
+                              " " +  AppLocalizations.of(context)!.first + " " +  AppLocalizations.of(context)!.get_price,
+                              textAlign: TextAlign.start,
+                              textStyle: GoogleFonts.libreFranklin(
+                                  color: Theme.of(context).colorScheme.onBackground,
+                                  fontWeight: FontWeight.w400,
+                                fontSize: 12.sp,
+                                  height: 1.3.h
+                              ),
+                            ),
+                          ],
+                        ) :
                       Row(
                         children: [
                           Padding(

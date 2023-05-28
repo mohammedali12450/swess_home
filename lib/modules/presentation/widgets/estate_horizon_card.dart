@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
+import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -146,6 +149,35 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                               ],
                             ),
                           ),
+                          (BlocProvider.of<UserLoginBloc>(context).user == null) ?
+                          Row(
+                            children: [
+                              InkWell(
+                                onTap: () async{
+                                  await Navigator.pushNamed(context, AuthenticationScreen.id);
+                                },
+                                child: ResText(
+                                  AppLocalizations.of(context)!.sign_in,
+                                  textAlign: TextAlign.start,
+                                  textStyle: GoogleFonts.libreFranklin(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.w600,
+                                      decoration: TextDecoration.underline
+                                  ),
+                                ),
+                              ),
+                              ResText(
+                                " " +  AppLocalizations.of(context)!.first + " " +  AppLocalizations.of(context)!.get_price,
+                                textAlign: TextAlign.start,
+                                textStyle: GoogleFonts.libreFranklin(
+                                    color: Theme.of(context).colorScheme.onBackground,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.sp,
+                                    height: 1.3.h
+                                ),
+                              ),
+                            ],
+                          ) :
                           ResText(
                             NumbersHelper.getMoneyFormat(intPrice) +
                                 " " +
