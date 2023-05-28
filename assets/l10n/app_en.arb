@@ -594,5 +594,7 @@
   "youMustBeAddNotes":"You must be add notes",
   "addReview":"Add a Review",
   "writeNotes":"Write Notes",
-  "invalidEmail":"Invalid email"
+  "invalidEmail":"Invalid email",
+  "first":"first",
+  "get_price":"to get the price"
 }
