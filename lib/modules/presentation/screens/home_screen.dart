@@ -337,7 +337,7 @@ class HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            15.verticalSpace,
+                            // 15.verticalSpace,
                             TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
@@ -361,34 +361,34 @@ class HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ],
                                 )),
-                            const Divider(
-                              indent: 20,
-                              thickness: 0.1,
-                              endIndent: 20,
-                            ),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const OfficeSearchScreen(),
-                                    ),
-                                  );
-                                },
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.house_outlined),
-                                    kWi16,
-                                    Text(
-                                      AppLocalizations.of(context)!
-                                          .search_for_estate_agent,
-                                      style:
-                                          Theme.of(context).textTheme.headline5,
-                                    ),
-                                  ],
-                                )),
+                            // const Divider(
+                            //   indent: 20,
+                            //   thickness: 0.1,
+                            //   endIndent: 20,
+                            // ),
+                            // TextButton(
+                            //     onPressed: () {
+                            //       Navigator.pop(context);
+                            //       Navigator.push(
+                            //         context,
+                            //         MaterialPageRoute(
+                            //           builder: (_) =>
+                            //               const OfficeSearchScreen(),
+                            //         ),
+                            //       );
+                            //     },
+                            //     child: Row(
+                            //       children: [
+                            //         const Icon(Icons.house_outlined),
+                            //         kWi16,
+                            //         Text(
+                            //           AppLocalizations.of(context)!
+                            //               .search_for_estate_agent,
+                            //           style:
+                            //               Theme.of(context).textTheme.headline5,
+                            //         ),
+                            //       ],
+                            //     )),
                           ],
                         ),
                       ),
