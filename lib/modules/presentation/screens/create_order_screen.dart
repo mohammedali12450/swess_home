@@ -13,6 +13,7 @@ import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit
 import 'package:swesshome/modules/data/models/estate_type.dart';
 import 'package:swesshome/modules/data/models/price_domain.dart';
 import 'package:swesshome/modules/presentation/screens/after_estate_order_screen.dart';
+import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/assets_paths.dart';
@@ -85,8 +86,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           var error = estateOrderState.isConnectionError
               ? AppLocalizations.of(context)!.no_internet_connection
               : estateOrderState.error;
-          await showWonderfulAlertDialog(
-              context, AppLocalizations.of(context)!.error, error);
+          // await showWonderfulAlertDialog(context, AppLocalizations.of(context)!.error, error);
+          await buildSignInRequiredDialog();
         }
       },
       child: SafeArea(
@@ -335,5 +336,34 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       return false;
     }
     return true;
+  }
+
+  Future buildSignInRequiredDialog() async {
+    await showWonderfulAlertDialog(
+      context,
+      AppLocalizations.of(context)!.error,
+      AppLocalizations.of(context)!.this_features_require_login,
+      removeDefaultButton: true,
+      dialogButtons: [
+        ElevatedButton(
+          child: Text(
+            AppLocalizations.of(context)!.sign_in,
+          ),
+          onPressed: () async {
+            await Navigator.pushNamed(context, AuthenticationScreen.id);
+            Navigator.pop(context);
+          },
+        ),
+        ElevatedButton(
+          child: Text(
+            AppLocalizations.of(context)!.cancel,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+      width: 400.w,
+    );
   }
 }
