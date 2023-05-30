@@ -439,7 +439,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               builder: (_, errorMessage) {
                 return IntlPhoneField(
                   controller: authenticationControllerLogin,
-                  decoration: InputDecoration(errorText: errorMessage),
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(top: Provider.of<LocaleProvider>(context).isArabic() ? 3 : 0),
+                      errorText: errorMessage),
                   initialCountryCode: isForStore ? 'LB' : 'SY',
                   onChanged: (phone) {
                     phoneDialCodeLogin = phone.countryCode;
@@ -645,7 +648,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     userCountry.setState(country.name);
                   },
                   controller: authenticationController,
+                  textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
+                      contentPadding: EdgeInsets.only(top: Provider.of<LocaleProvider>(context).isArabic() ? 3 : 0),
                       errorText: errorMessage, errorMaxLines: 2),
                   initialCountryCode: isForStore ? 'LB' : 'SY',
                   onChanged: (phone) {
