@@ -7,7 +7,7 @@ import 'package:swesshome/utils/helpers/app_dialog.dart';
 Timer? timer;
 
 Future<void> automaticShowReview() async {
-  const Duration duration = Duration(days: 7);
+  const Duration duration = Duration(days: 10);
   final dateShowReview = UserSharedPreferences.getDateShowReview();
 
   if (dateShowReview == null) {

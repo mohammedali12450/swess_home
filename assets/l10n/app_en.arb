@@ -596,5 +596,8 @@
   "writeNotes":"Write Notes",
   "invalidEmail":"Invalid email",
   "old_password":"Old Password",
-  "new_password":"New Password"
+  "new_password":"New Password",
+  "create_estate_request":"Create New Estate Request",
+  "saved":"Saved",
+  "estate_offers2":"Estate Offers"
 }

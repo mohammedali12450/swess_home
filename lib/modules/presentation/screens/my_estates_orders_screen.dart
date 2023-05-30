@@ -8,12 +8,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/repositories/estate_order_repository.dart';
+import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_order_card.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/clients_orders_shimmer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -124,6 +126,12 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
           centerTitle: true,
           title: Text(
             AppLocalizations.of(context)!.recent_created_orders,
+          ),
+        ),
+        drawer: SizedBox(
+          width: getScreenWidth(context) * (75 / 100),
+          child: const Drawer(
+            child: MyDrawer(),
           ),
         ),
         body: RefreshIndicator(
