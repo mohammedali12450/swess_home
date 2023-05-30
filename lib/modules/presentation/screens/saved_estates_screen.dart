@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_b
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_state.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
+import 'package:swesshome/modules/presentation/screens/navigation_bar_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
@@ -125,6 +127,30 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                             AppLocalizations.of(context)!
                                 .have_not_saved_estates,
                             style: Theme.of(context).textTheme.headline5,
+                          ),
+                          kHe12,
+                          Center(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: Size(180.w, 60.h),
+                                maximumSize: Size(200.w, 60.h),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  AppLocalizations.of(context)!.search,
+                                  style: const TextStyle(fontSize: 20),
+                                ),
+                              ),
+                              onPressed: () async {
+                                FocusScope.of(context).unfocus();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                        const NavigationBarScreen()));
+
+                              },
+                            ),
                           ),
                         ],
                       ),

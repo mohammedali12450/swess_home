@@ -26,6 +26,7 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/screens/estate_details_screen.dart';
+import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
@@ -352,7 +353,39 @@ class _EstateCardState extends State<EstateCard> {
                           decoration: BoxDecoration(
                             color: estatePriceBackgroundColor,
                           ),
-                          child: Row(
+                          child: (BlocProvider.of<UserLoginBloc>(context).user == null) ?
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.w, right: 10.w),
+                            child: Row(
+                              children: [
+                                InkWell(
+                                  onTap: () async{
+                                    await Navigator.pushNamed(context, AuthenticationScreen.id);
+                                  },
+                                  child: ResText(
+                                    AppLocalizations.of(context)!.sign_in,
+                                    textAlign: TextAlign.start,
+                                    textStyle: GoogleFonts.libreFranklin(
+                                        color: Theme.of(context).colorScheme.primary,
+                                        fontWeight: FontWeight.w600,
+                                        decoration: TextDecoration.underline
+                                    ),
+                                  ),
+                                ),
+                                ResText(
+                                  " " +  AppLocalizations.of(context)!.first + " " +  AppLocalizations.of(context)!.get_price,
+                                  textAlign: TextAlign.start,
+                                  textStyle: GoogleFonts.libreFranklin(
+                                      color: Theme.of(context).colorScheme.onBackground,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12.sp,
+                                      height: 1.3.h
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ) :
+                          Row(
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(

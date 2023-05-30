@@ -15,6 +15,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/repositories/estate_order_repository.dart';
+import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_order_card.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/clients_orders_shimmer.dart';
@@ -186,6 +187,30 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                             style: Theme.of(context).textTheme.headline4,
                             textAlign: TextAlign.center,
                           ),
+                          10.verticalSpace,
+                          Center(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: Size(180.w, 60.h),
+                                maximumSize: Size(200.w, 60.h),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  AppLocalizations.of(context)!.estate_order,
+                                  style: const TextStyle(fontSize: 20),
+                                ),
+                              ),
+                              onPressed: () async {
+                                FocusScope.of(context).unfocus();
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                        const CreateOrderScreen()));
+
+                              },
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -216,10 +241,10 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                     child: BlocListener<DeleteEstatesBloc, DeleteEstatesState>(
                       listener: (_, deleteEstateOrderState) async {
                         if (deleteEstateOrderState
-                            is DeleteEstatesFetchComplete) {
+                        is DeleteEstatesFetchComplete) {
                           await _onRefresh();
                         } else if (deleteEstateOrderState
-                            is DeleteEstatesFetchError) {}
+                        is DeleteEstatesFetchError) {}
                       },
                       child: ScrollablePositionedList.builder(
                           itemScrollController: scrollController,
@@ -228,30 +253,30 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                           itemBuilder: (_, index) {
                             return (widget.estateId != null && find)
                                 ? AnimatedBuilder(
-                                    animation: _colorTween,
-                                    builder: (context, _) => EstateOrderCard(
-                                      estateOrder: orders.elementAt(index),
-                                      //color: Theme.of(context).colorScheme.background,
-                                      color: (int.parse(widget.estateId!) ==
-                                              orders.elementAt(index).id)
-                                          ? _colorTween.value
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .background,
-                                      onTap: () async {
-                                        await deleteEstateOrder(index);
-                                      },
-                                    ),
-                                  )
+                              animation: _colorTween,
+                              builder: (context, _) => EstateOrderCard(
+                                estateOrder: orders.elementAt(index),
+                                //color: Theme.of(context).colorScheme.background,
+                                color: (int.parse(widget.estateId!) ==
+                                    orders.elementAt(index).id)
+                                    ? _colorTween.value
+                                    : Theme.of(context)
+                                    .colorScheme
+                                    .background,
+                                onTap: () async {
+                                  await deleteEstateOrder(index);
+                                },
+                              ),
+                            )
                                 : EstateOrderCard(
-                                    estateOrder: orders.elementAt(index),
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .background,
-                                    onTap: () async {
-                                      await deleteEstateOrder(index);
-                                    },
-                                  );
+                              estateOrder: orders.elementAt(index),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .background,
+                              onTap: () async {
+                                await deleteEstateOrder(index);
+                              },
+                            );
                           }),
                     ),
                   );

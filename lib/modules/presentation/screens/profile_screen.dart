@@ -358,21 +358,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
 
         //buildImmediatelyRent,
-        buildListTile(
-          icon: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: const Icon(Icons.house_outlined),
-          ),
-          title: ResText(
-            AppLocalizations.of(context)!.my_estate_immediately,
-            textAlign: TextAlign.start,
-            textStyle: Theme.of(context).textTheme.headline6,
-          ),
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const MyImmediatelyRentScreen()));
-          },
-        ),
+        // buildListTile(
+        //   icon: Padding(
+        //     padding: EdgeInsets.symmetric(horizontal: 10.w),
+        //     child: const Icon(Icons.house_outlined),
+        //   ),
+        //   title: ResText(
+        //     AppLocalizations.of(context)!.my_estate_immediately,
+        //     textAlign: TextAlign.start,
+        //     textStyle: Theme.of(context).textTheme.headline6,
+        //   ),
+        //   onTap: () {
+        //     Navigator.push(context,
+        //         MaterialPageRoute(builder: (_) => const MyImmediatelyRentScreen()));
+        //   },
+        // ),
 
         buildDeleteMyAccount(),
         buildLogout(),
