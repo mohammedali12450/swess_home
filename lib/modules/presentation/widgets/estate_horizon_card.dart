@@ -146,6 +146,14 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                   textStyle:
                                       Theme.of(context).textTheme.headline5,
                                 ),
+                                ResText(
+                                  widget.estate.description!,
+                                  textAlign: TextAlign.start,
+                                  maxLines: 2,
+                                  minFontSize: 10,
+                                  textStyle:
+                                  Theme.of(context).textTheme.headline4,
+                                ),
                               ],
                             ),
                           ),
