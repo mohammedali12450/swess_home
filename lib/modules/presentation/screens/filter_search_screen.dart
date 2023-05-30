@@ -152,6 +152,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           primary: isDark ? AppColors.primaryColor : null,
                           padding: EdgeInsets.zero,
                           minimumSize: Size(20.w, 60.h),
+                          maximumSize: Size(20.w, 60.h),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -208,6 +209,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           primary: isDark ? AppColors.primaryColor : null,
                           padding: EdgeInsets.zero,
                           minimumSize: Size(20.w, 60.h),
+                          maximumSize: Size(20.w, 60.h),
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.clear,
