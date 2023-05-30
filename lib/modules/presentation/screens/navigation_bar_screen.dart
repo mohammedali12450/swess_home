@@ -6,7 +6,9 @@ import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
+import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
+import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 
 import '../../../core/functions/screen_informations.dart';
@@ -70,23 +72,33 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                   type: BottomNavigationBarType.fixed,
                   showSelectedLabels: true,
                   showUnselectedLabels: true,
+                  unselectedLabelStyle: const TextStyle(fontSize: 12),
+                  selectedLabelStyle: const TextStyle(fontSize: 12),
                   items: [
                     BottomNavigationBarItem(
                       icon: const Icon(Icons.search_outlined),
                       label: AppLocalizations.of(context)!.search,
                     ),
                     BottomNavigationBarItem(
-                      icon: const Icon(Icons.house_outlined),
-                      label: AppLocalizations.of(context)!.estate_immediately,
+                      icon: const Icon(Icons.bookmark_border_outlined),
+                      label: AppLocalizations.of(context)!.saved,
                     ),
+                    // BottomNavigationBarItem(
+                    //   icon: const Icon(Icons.house_outlined),
+                    //   label: AppLocalizations.of(context)!.estate_immediately,
+                    // ),
                     BottomNavigationBarItem(
                       icon: const Icon(Icons.home_outlined),
                       label: AppLocalizations.of(context)!.estate_order,
                     ),
                     BottomNavigationBarItem(
-                      icon: const Icon(Icons.chat_outlined),
-                      label: AppLocalizations.of(context)!.chat,
+                      icon: const Icon(Icons.history),
+                      label: AppLocalizations.of(context)!.estate_offers2,
                     ),
+                    // BottomNavigationBarItem(
+                    //   icon: const Icon(Icons.chat_outlined),
+                    //   label: AppLocalizations.of(context)!.chat,
+                    // ),
                     BottomNavigationBarItem(
                       icon: const Icon(Icons.person_outline),
                       label: AppLocalizations.of(context)!.profile,
@@ -115,11 +127,11 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
       //   return homeScreenState!.build(context);
       // }
       case 1:
-        return const EstateImmediatelyScreen();
+        return const SavedEstatesScreen();
       case 2:
         return const CreateOrderScreen();
       case 3:
-        return const ChatScreen();
+        return const RecentEstateOrdersScreen();
       case 4:
         return const ProfileScreen();
       default:
