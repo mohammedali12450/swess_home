@@ -10,6 +10,7 @@ import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
+import 'package:swesshome/main.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_state.dart';
@@ -18,9 +19,11 @@ import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/pages/terms_of_use_page.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/create_estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+import 'package:swesshome/utils/helpers/app_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -120,7 +123,8 @@ class _MyDrawerState extends State<MyDrawer> {
           content: AppLocalizations.of(context)!.rate_us,
           iconData: Icons.star_rate_outlined,
           onTap: () {
-            Navigator.pushNamed(context, RatingScreen.id);
+            showReview();
+            // Navigator.pushNamed(context, RatingScreen.id);
           },
         ),
         buildMainDrawer(isDark),
@@ -264,11 +268,26 @@ class _MyDrawerState extends State<MyDrawer> {
     return Column(
       children: [
         RowInformation(
+          content: AppLocalizations.of(context)!.rate_us,
+          iconData: Icons.star_rate_outlined,
+          onTap: () {
+            showReview();
+            // Navigator.pushNamed(context, RatingScreen.id);
+          },
+        ),
+        RowInformation(
           content: AppLocalizations.of(context)!.invite_friends,
           iconData: Icons.people_alt_outlined,
           onTap: () {
             Share.share(AppLocalizations.of(context)!.upload_app +
                 '\n${ApplicationSharedPreferences.getDownloadUrl()}');
+          },
+        ),
+        RowInformation(
+          content: AppLocalizations.of(context)!.contact_us,
+          iconData: Icons.people_outline,
+          onTap: () {
+          ///
           },
         ),
         RowInformation(
@@ -314,7 +333,7 @@ class _MyDrawerState extends State<MyDrawer> {
           },
         ),
         RowInformation(
-          content: AppLocalizations.of(context)!.help,
+          content: AppLocalizations.of(context)!.faq,
           iconData: Icons.error_outline,
           onTap: () {
             Navigator.pushNamed(context, FAQScreen.id);
@@ -356,6 +375,12 @@ class _MyDrawerState extends State<MyDrawer> {
     // Navigator.pushNamedAndRemoveUntil(
     //     context, NavigationBarScreen.id, ModalRoute.withName('/'));
     return;
+  }
+
+  Future<void> showReview() async {
+    Future.delayed(Duration.zero).then((_) {
+      AppDialog.reviewDialog(context: navigatorKey.currentState!.context);
+    });
   }
 }
 
