@@ -52,43 +52,46 @@ class RatingDialog extends StatelessWidget {
                       child: child!,
                     ),
                   ),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 0.018.sh,
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.addReview,
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          color: AppColors.black,
-                          fontWeight: FontWeight.w700,
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 0.018.sh,
                         ),
-                      ),
-                      SizedBox(height: 0.0145.sh),
-                      AddRating(
-                        initialRating: reviewBloc.rating,
-                        onRatingUpdate: reviewBloc.onUpdateRating,
-                      ),
-                      NotesReviewField(
-                        formStateKey: reviewBloc.formStateKey,
-                        controller: reviewBloc.notesController,
-                        validator: reviewBloc.notesValidator,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ReviewButton(
-                            onPresses: reviewBloc.cancelReview,
-                            text: AppLocalizations.of(context)!.cancel,
+                        Text(
+                          AppLocalizations.of(context)!.addReview,
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            color: AppColors.black,
+                            fontWeight: FontWeight.w700,
                           ),
-                          ReviewButton(
-                            onPresses: reviewBloc.sendReview,
-                            text: AppLocalizations.of(context)!.send,
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        SizedBox(height: 0.0145.sh),
+                        AddRating(
+                          initialRating: reviewBloc.rating,
+                          onRatingUpdate: reviewBloc.onUpdateRating,
+                        ),
+                        NotesReviewField(
+                          formStateKey: reviewBloc.formStateKey,
+                          controller: reviewBloc.notesController,
+                          validator: reviewBloc.notesValidator,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ReviewButton(
+                              onPresses: reviewBloc.cancelReview,
+                              text: AppLocalizations.of(context)!.cancel,
+                            ),
+                            ReviewButton(
+                              onPresses: reviewBloc.sendReview,
+                              text: AppLocalizations.of(context)!.send,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

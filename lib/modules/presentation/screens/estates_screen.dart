@@ -12,6 +12,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/est
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_state.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
+import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
@@ -228,10 +229,16 @@ class _EstatesScreenState extends State<EstatesScreen> {
                           fixedSize: Size(220.w, 64.h),
                         ),
                         child: Text(
-                          AppLocalizations.of(context)!.create_estate_order,
+                          AppLocalizations.of(context)!.estate_order,
                         ),
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const CreateOrderScreen()
+                            ),
+                          );
+                          // Navigator.pop(context);
                         },
                       )
                     ],
@@ -581,10 +588,16 @@ class _EstatesScreenState extends State<EstatesScreen> {
               fixedSize: Size(220.w, 64.h),
             ),
             child: Text(
-              AppLocalizations.of(context)!.create_estate_order,
+              AppLocalizations.of(context)!.estate_order,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const CreateOrderScreen()
+                ),
+              );
+              // Navigator.pop(context);
             },
           )
         ],
