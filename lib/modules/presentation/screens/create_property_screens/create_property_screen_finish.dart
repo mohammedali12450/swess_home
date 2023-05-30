@@ -86,7 +86,7 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
           )
               : Column(
             children: [
-              36.verticalSpace,
+              // 36.verticalSpace,
               BlocBuilder<ChannelCubit, dynamic>(
                 bloc: sendProgress,
                 builder: (_, percent) {
@@ -94,13 +94,13 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
                   return CircularPercentIndicator(
                     backgroundColor: Theme.of(context).colorScheme.onBackground.withOpacity(0.24),
                     progressColor: Theme.of(context).colorScheme.onBackground,
-                    radius: 100,
+                    radius: 70,
                     lineWidth: 10,
                     percent: (percent / 100).toDouble(),
                     center: (estateSendState is SendEstateComplete)
                         ? Icon(
                       Icons.check,
-                      size: 80.w,
+                      size: 70.w,
                     )
                         : Text(
                       percent.toInt().toString() + "%",
@@ -122,7 +122,7 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
                     maxLines: 30,
                   ),
                 ),
-              42.verticalSpace,
+              // 15.verticalSpace,
               if (estateSendState is SendEstateComplete) ...[
                 Text(
                   AppLocalizations.of(context)!.congratulations,
@@ -139,7 +139,8 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
               const Spacer(),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(240.w, 64.h),
+                  minimumSize: Size(240.w, 55.h),
+                  maximumSize: Size(240.w, 55.h),
                 ),
                 child: Text(
                   (estateSendState is SendEstateComplete)
