@@ -592,6 +592,8 @@
   "addReview":"إضافة تقييم ",
   "writeNotes":"اكتب الملاحظات",
   "invalidEmail":"بريد الالكتروني غير صالح",
+  "old_password":"كلمة السر القديمة",
+  "new_password":"كلمة السر الجديدة",
   "first":"أولاً",
   "get_price":"للحصول على السعر",
   "create_estate_request":"إنشاء طلب عقار جديد",
