@@ -64,6 +64,10 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
   bool isSell = true;
   bool isHouse = true;
   bool isFarmsOrVacations = true;
+  List<String> estateImages = [];
+  List<String> streetImages = [];
+  List<String> floorPlanImages = [];
+  List<String> nearbyPlaces = [];
 
   // Others:
   late String currency;
@@ -82,13 +86,36 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
         token: userToken,
         visitType: VisitType.estate));
     // switchers initializing:
-    isLands = widget.estate.estateType!.id == landsPropertyTypeNumber;
-    isShops = widget.estate.estateType!.id == shopsPropertyTypeNumber;
-    isSell = widget.estate.estateOfferType!.id == sellOfferTypeNumber;
-    isHouse = widget.estate.estateType!.id == housePropertyTypeNumber;
-    isFarmsOrVacations =
-        (widget.estate.estateType!.id == farmsPropertyTypeNumber) ||
-            (widget.estate.estateType!.id == vacationsPropertyTypeNumber);
+    if(widget.estate.estateType !=null || widget.estate.estateOfferType != null) {
+      isLands = widget.estate.estateType!.id == landsPropertyTypeNumber;
+      isShops = widget.estate.estateType!.id == shopsPropertyTypeNumber;
+      isSell = widget.estate.estateOfferType!.id == sellOfferTypeNumber;
+      isHouse = widget.estate.estateType!.id == housePropertyTypeNumber;
+      isFarmsOrVacations =
+          (widget.estate.estateType!.id == farmsPropertyTypeNumber) ||
+              (widget.estate.estateType!.id == vacationsPropertyTypeNumber);
+    }
+    if(widget.estate.images != null) {
+      estateImages = widget.estate.images!
+          .where((element) => element.type == "estate_image")
+          .map((e) => e.url)
+          .toList();
+      streetImages = widget.estate.images!
+          .where((element) => element.type == "street_image")
+          .map((e) => e.url)
+          .toList();
+      floorPlanImages = widget.estate.images!
+          .where((element) => element.type == "floor_plan")
+          .map((e) => e.url)
+          .toList();
+    }
+
+    if (widget.estate.nearbyPlaces != null) {
+      for (String element in widget.estate.nearbyPlaces!.split("|")) {
+        nearbyPlaces.add(element);
+      }
+    }
+
   }
 
   @override
@@ -99,26 +126,6 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
 
     int intPrice = int.parse(widget.estate.price!);
     String estatePrice = NumbersHelper.getMoneyFormat(intPrice);
-
-    List<String> estateImages = widget.estate.images!
-        .where((element) => element.type == "estate_image")
-        .map((e) => e.url)
-        .toList();
-    List<String> streetImages = widget.estate.images!
-        .where((element) => element.type == "street_image")
-        .map((e) => e.url)
-        .toList();
-    List<String> floorPlanImages = widget.estate.images!
-        .where((element) => element.type == "floor_plan")
-        .map((e) => e.url)
-        .toList();
-
-    List<String> nearbyPlaces = [];
-    if (widget.estate.nearbyPlaces != null) {
-      for (String element in widget.estate.nearbyPlaces!.split("|")) {
-        nearbyPlaces.add(element);
-      }
-    }
 
     return SafeArea(
       child: Scaffold(
@@ -136,8 +143,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
               ),
               onPressed: () {
                 Share.share('${AppLocalizations.of(context)!.estate_offers} :\n'
-                    '${widget.estate.estateType!.name.split("|")[1]} لل'
-                    '${widget.estate.estateOfferType!.name} '
+                    '${widget.estate.estateType == null ? "" :  widget.estate.estateType!.name.split("|")[1]} لل'
+                    '${widget.estate.estateOfferType == null ? "" : widget.estate.estateOfferType!.name} '
                     ' في ${widget.estate.locationS} \n'
                     'https://www.swesshome.com/estate/${widget.estate.id} ');
                 if (UserSharedPreferences.getAccessToken() != null) {
@@ -348,8 +355,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                   height: 1.5.h),
                             ),
                           ),
-                          if (widget.estate.estateOfferType!.id !=
-                              rentOfferTypeNumber)
+                         if(widget.estate.estateOfferType != null)  if (widget.estate.estateOfferType!.id !=
+                             rentOfferTypeNumber)
                             Padding(
                               padding: EdgeInsets.only(
                                 right: (isArabic) ? 8.w : 0,
@@ -368,7 +375,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                     ),
                               ),
                             ),
-                          if (widget.estate.estateOfferType!.id ==
+                          if(widget.estate.estateOfferType != null) if (widget.estate.estateOfferType!.id ==
                               rentOfferTypeNumber)
                             Padding(
                               padding: EdgeInsets.only(
@@ -432,7 +439,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             left: (isArabic) ? 12.w : 0,
                             right: (!isArabic) ? 12.w : 0,
                           ),
-                          child: ResText(
+                          child:  widget.estate.estateType == null ? const Center():
+                          ResText(
                             AppLocalizations.of(context)!
                                 .estate_offer_place_sentence(
                               widget.estate.estateType!.name.split('|').last,
@@ -452,7 +460,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             await showDialog(
                                 context: context,
                                 builder: (_) => ImageDialog(
-                                    path: widget.estate.estateOffice!.logo!));
+                                    path: widget.estate.estateOffice == null ? "" : widget.estate.estateOffice!.logo!));
                           },
                           child: Column(
                             children: [
@@ -463,9 +471,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                   decoration: BoxDecoration(
                                     color: Colors.transparent,
                                     image: DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                        imagesBaseUrl +
-                                            widget.estate.estateOffice!.logo!,
+                                      image: widget.estate.estateOffice == null ? const CachedNetworkImageProvider(swessHomeIconPath) :
+                                      CachedNetworkImageProvider(
+                                        imagesBaseUrl + widget.estate.estateOffice!.logo!,
                                       ),
                                     ),
                                   ),
@@ -592,7 +600,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   onTap: () {},
                 ),
                 // Rent period :
-                if (widget.estate.estateOfferType!.id == rentOfferTypeNumber)
+                if(widget.estate.estateOfferType != null) if (widget.estate.estateOfferType!.id == rentOfferTypeNumber)
                   RowInformation(
                     title:
                         AppLocalizations.of(context)!.estate_rent_period + " :",
@@ -638,6 +646,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             .copyWith(fontSize: 16.sp),
                       ),
                       8.horizontalSpace,
+                      widget.estate.areaUnit == null ? Center() :
                       ResText(
                         widget.estate.areaUnit!.name,
                         textStyle: Theme.of(context)
@@ -723,7 +732,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 if (isSell)
                   RowInformation(
                     title: AppLocalizations.of(context)!.ownership_type + " :",
-                    content: widget.estate.ownershipType!.name,
+                    content:  widget.estate.ownershipType == null ? "" : widget.estate.ownershipType!.name,
                     icon: SvgPicture.asset(
                       documentOutlineIconPath,
                       width: 32.w,
@@ -828,7 +837,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (_) =>
-                            EstateOfficeScreen(widget.estate.estateOffice!.id),
+                            EstateOfficeScreen(widget.estate.estateOffice == null ? -1 : widget.estate.estateOffice!.id),
                       ),
                     );
                   },
@@ -837,16 +846,18 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       SizedBox(
                         width: 120.w,
                         height: 120.h,
-                        child: CachedNetworkImage(
-                            imageUrl: imagesBaseUrl +
-                                widget.estate.estateOffice!.logo!),
+                        child: widget.estate.estateOffice == null ?  CachedNetworkImage(imageUrl: swessHomeIconPath) :
+                        CachedNetworkImage(
+                            imageUrl: imagesBaseUrl + widget.estate.estateOffice!.logo!),
                       ),
                       kHe8,
+                      widget.estate.estateOffice == null ? Center() :
                       ResText(
                         widget.estate.estateOffice!.name!,
                         textStyle: Theme.of(context).textTheme.headline4,
                       ),
                       kHe12,
+                      widget.estate.estateOffice == null ? Center() :
                       ResText(
                         widget.estate.estateOffice!.location!.getLocationName(),
                         textStyle: Theme.of(context).textTheme.headline6,
@@ -869,7 +880,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (_) => EstateOfficeScreen(
-                                  widget.estate.estateOffice!.id),
+                            widget.estate.estateOffice == null ? -1 : widget.estate.estateOffice!.id),
                             ),
                           );
                         },
@@ -901,6 +912,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           await myCupertinoActionSheet(
                             context,
                             elementsList: [
+                              widget.estate.estateOffice == null ? "" :
                               widget.estate.estateOffice!.phone!.split("+")[1] +
                                   "+"
                             ],
