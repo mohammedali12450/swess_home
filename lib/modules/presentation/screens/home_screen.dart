@@ -605,7 +605,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 .copyWith(
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.secondaryDark,
-                                    fontSize: 20.sp),
+                                    fontSize: 15.sp),
                           ),
                         ]),
                     Column(
@@ -613,6 +613,7 @@ class HomeScreenState extends State<HomeScreen> {
                         Icon(
                           Icons.arrow_forward,
                           size: 27.w,
+                          color: AppColors.primaryColor,
                         ),
                       ],
                     ),
