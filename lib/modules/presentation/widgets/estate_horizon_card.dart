@@ -72,7 +72,7 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => EstateDetailsScreen(estate: widget.estate),
+            builder: (_) => EstateDetailsScreen(estate: widget.estate,),
           ),
         );
       },
@@ -146,8 +146,9 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                   textStyle:
                                       Theme.of(context).textTheme.headline5,
                                 ),
+                                widget.estate.description == null ? const Center():
                                 ResText(
-                                  widget.estate.description!,
+                                   widget.estate.description!,
                                   textAlign: TextAlign.start,
                                   maxLines: 2,
                                   minFontSize: 10,
