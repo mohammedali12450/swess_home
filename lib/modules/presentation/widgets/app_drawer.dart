@@ -119,14 +119,14 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
         ),
         kHe16,
-        RowInformation(
-          content: AppLocalizations.of(context)!.rate_us,
-          iconData: Icons.star_rate_outlined,
-          onTap: () {
-            showReview();
-            // Navigator.pushNamed(context, RatingScreen.id);
-          },
-        ),
+        // RowInformation(
+        //   content: AppLocalizations.of(context)!.rate_us,
+        //   iconData: Icons.star_rate_outlined,
+        //   onTap: () {
+        //     showReview();
+        //     // Navigator.pushNamed(context, RatingScreen.id);
+        //   },
+        // ),
         buildMainDrawer(isDark),
         BlocBuilder<UserLoginBloc, UserLoginState>(
           builder: (context, userLoginState) {
