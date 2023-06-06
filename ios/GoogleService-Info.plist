@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>356592627729-pesj1b06g4gisucf1q64598m45d9b6en.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.356592627729-pesj1b06g4gisucf1q64598m45d9b6en</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>356592627729-nlfu8cm217cmgnkcjnj41jten4tn6qfj.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBJxn-vZ4h3-tZgWYBVjryaszwBxqvl7FM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>356592627729</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.odayhmourad.swesshome</string>
+	<key>PROJECT_ID</key>
+	<string>swesshomeproject-2a86e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>swesshomeproject-2a86e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:356592627729:ios:4e674a76b55fc72eae01b0</string>
+</dict>
+</plist>
