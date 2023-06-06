@@ -118,8 +118,8 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
         selectedLanguageCubit.setState(isArabic ? Language.arabic : Language.english);
       },
       child: Container(
-        width: 175.w,
-        height: 160.h,
+        width: 130.w,
+        height: 130.h,
         margin: EdgeInsets.symmetric(horizontal: 8.w),
         decoration: BoxDecoration(
           color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent,
