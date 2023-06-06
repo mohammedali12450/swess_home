@@ -134,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 6.verticalSpace,
                 const Divider(),
                 6.verticalSpace,
-                buildThemeModeSetting(),
+                // buildThemeModeSetting(),
               ],
               if (UserSharedPreferences.getAccessToken() != null) ...[
                 BlocBuilder<UserDataBloc, UserDataState>(
@@ -280,7 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               : Icons.keyboard_arrow_left),
         ),
 
-        buildThemeModeSetting(),
+        // buildThemeModeSetting(),
 
         // buildChangePassword,
         buildListTile(

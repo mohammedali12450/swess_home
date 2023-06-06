@@ -353,7 +353,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   ],
                   themeMode: themeProvider.themeMode,
                   theme: MyThemes.lightTheme(context),
-                  darkTheme: MyThemes.darkTheme(context),
+                  // darkTheme: MyThemes.darkTheme(context),
                 ),
               ),
             );
