@@ -9,16 +9,16 @@
       "client_info": {
         "mobilesdk_app_id": "1:356592627729:android:6480200ca5358a1bae01b0",
         "android_client_info": {
-          "package_name": "com.real_estate.realestatecustomer"
+          "package_name": "com.odayhmourad.swesshome"
         }
       },
       "oauth_client": [
         {
-          "client_id": "356592627729-4n35d89t7tppf94rp4ltb0abf55re09d.apps.googleusercontent.com",
+          "client_id": "356592627729-nlfu8cm217cmgnkcjnj41jten4tn6qfj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.real_estate.realestatecustomer",
-            "certificate_hash": "34ee59f1c96999a052237c8ca79f1db297b818eb"
+            "package_name": "com.odayhmourad.swesshome",
+            "certificate_hash": "9c182416b593739571dabd3c6ae42066cd9a09b2"
           }
         },
         {
@@ -37,6 +37,13 @@
             {
               "client_id": "356592627729-hah8ciusjfi7qb2ffdictiejnl8diqo8.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "356592627729-gjmkoumlplnhcsrpe7igeclqics8aoad.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.realestate.swesshome"
+              }
             }
           ]
         }
