@@ -88,7 +88,7 @@ class _IntroductionScreen4State extends State<IntroductionScreen4> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(
-                    height: 100.h,
+                    height: 40.h,
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
