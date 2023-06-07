@@ -9,6 +9,7 @@ import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
+import 'package:swesshome/modules/presentation/screens/saved_estates_screen_nav_bar.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 
 import '../../../core/functions/screen_informations.dart';
@@ -127,7 +128,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
       //   return homeScreenState!.build(context);
       // }
       case 1:
-        return const SavedEstatesScreen();
+        return const SavedEstatesScreenNavBar();
       case 2:
         return const CreateOrderScreen();
       case 3:
