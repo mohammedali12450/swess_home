@@ -5,8 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
@@ -44,10 +46,22 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
   String? userToken;
   late bool isArabic;
   late bool isDark;
+  late bool isForStore;
+  bool isSell = true;
+  bool isLands = true;
+
 
   @override
   void initState() {
     super.initState();
+    isForStore = BlocProvider.of<SystemVariablesBloc>(context)
+        .systemVariables!
+        .isForStore;
+
+    if(widget.estate.estateType !=null || widget.estate.estateOfferType != null) {
+      isSell = widget.estate.estateOfferType!.id == sellOfferTypeNumber;
+      isLands = widget.estate.estateType!.id == landsPropertyTypeNumber;
+    }
 
     _saveAndUnSaveEstateBloc = SaveAndUnSaveEstateBloc(
       (widget.estate.isSaved!) ? EstateSaved() : EstateUnSaved(),
@@ -64,6 +78,7 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     int intPrice = int.tryParse(widget.estate.price!)!;
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -74,31 +89,32 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
         );
       },
       child: Container(
+        padding: const EdgeInsets.only(top: 10,left: 10,right: 10),
         decoration: BoxDecoration(
           border: Border.all(
             width: 1,
-            color: AppColors.white,
+            color: AppColors.lightGreyColor.withOpacity(0.5),
           ),
           color: Theme.of(context).colorScheme.background,
-          borderRadius: medBorderRadius,
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).colorScheme.shadow,
-              offset: const Offset(0, 2),
-              blurRadius: 4,
-            )
-          ],
+          borderRadius: veryLowBorderRadius,
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Theme.of(context).colorScheme.shadow,
+          //     offset: const Offset(0, 2),
+          //     blurRadius: 4,
+          //   )
+          // ],
         ),
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.start,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 3,
+              flex: 2,
               child: Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: medBorderRadius,
+                    borderRadius: lowBorderRadius,
                     child: Container(
                       width: getScreenWidth(context) * (65 / 100),
                       decoration: BoxDecoration(
@@ -117,116 +133,116 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                           : Image.asset(swessHomeIconPath),
                     ),
                   ),
-                  Positioned(
-                    right: 10.w,
-                    top: 10.h,
-                    child: BlocConsumer<SaveAndUnSaveEstateBloc,
-                        SaveAndUnSaveEstateState>(
-                      bloc: _saveAndUnSaveEstateBloc,
-                      listener: (_, saveAndUnSaveState) async {
-                        if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
-                          var error = saveAndUnSaveState.isConnectionError
-                              ? AppLocalizations.of(context)!
-                                  .no_internet_connection
-                              : saveAndUnSaveState.error;
-                          await showWonderfulAlertDialog(context,
-                              AppLocalizations.of(context)!.error, error);
-                          _saveAndUnSaveEstateBloc.add(
-                            ReInitializeSaveState(
-                                isSaved: widget.estate.isSaved!),
-                          );
-                        }
-                        if (saveAndUnSaveState is EstateSaved) {
-                          widget.estate.isSaved = true;
-                        }
-                        if (saveAndUnSaveState is EstateUnSaved) {
-                          widget.estate.isSaved = false;
-                        }
-                      },
-                      builder: (_, saveAndUnSaveState) {
-                        return SizedBox(
-                          height: 35.h,
-                          width: 35.w,
-                          child: FloatingActionButton(
-                            heroTag: widget.estate.id.toString(),
-                            elevation: 5,
-                            backgroundColor: AppColors.white,
-                            shape: const BeveledRectangleBorder(
-                                borderRadius: BorderRadius.zero),
-                            onPressed: () {
-                              if (userToken == null) {
-                                showWonderfulAlertDialog(
-                                  context,
-                                  AppLocalizations.of(context)!.confirmation,
-                                  AppLocalizations.of(context)!
-                                      .this_features_require_login,
-                                  removeDefaultButton: true,
-                                  width: 400.w,
-                                  dialogButtons: [
-                                    ElevatedButton(
-                                      child: Text(
-                                        AppLocalizations.of(context)!.cancel,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                    ElevatedButton(
-                                      child: Text(
-                                        AppLocalizations.of(context)!.sign_in,
-                                      ),
-                                      onPressed: () async {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const AuthenticationScreen(
-                                              popAfterFinish: true,
-                                            ),
-                                          ),
-                                        );
-                                        Navigator.pop(context);
-                                        if (UserSharedPreferences
-                                                .getAccessToken() !=
-                                            null) {
-                                          userToken = UserSharedPreferences
-                                              .getAccessToken();
-                                        }
-                                        return;
-                                      },
-                                    ),
-                                  ],
-                                );
-                                return;
-                              }
-                              if (saveAndUnSaveState is EstateSaved) {
-                                _saveAndUnSaveEstateBloc.add(UnSaveEventStarted(
-                                    token: userToken,
-                                    estateId: widget.estate.id!));
-                              }
-                              if (saveAndUnSaveState is EstateUnSaved) {
-                                _saveAndUnSaveEstateBloc.add(EstateSaveStarted(
-                                    token: userToken,
-                                    estateId: widget.estate.id!));
-                              }
-                            },
-                            child: (saveAndUnSaveState
-                                    is EstateSaveAndUnSaveProgress)
-                                ? SpinKitWave(
-                                    color: AppColors.primaryColor,
-                                    size: 16.w,
-                                  )
-                                : Icon(
-                                    (saveAndUnSaveState is EstateSaved)
-                                        ? Icons.bookmark
-                                        : Icons.bookmark_border_outlined,
-                                    color: AppColors.primaryColor,
-                                  ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  // Positioned(
+                  //   right: 10.w,
+                  //   top: 10.h,
+                  //   child: BlocConsumer<SaveAndUnSaveEstateBloc,
+                  //       SaveAndUnSaveEstateState>(
+                  //     bloc: _saveAndUnSaveEstateBloc,
+                  //     listener: (_, saveAndUnSaveState) async {
+                  //       if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
+                  //         var error = saveAndUnSaveState.isConnectionError
+                  //             ? AppLocalizations.of(context)!
+                  //                 .no_internet_connection
+                  //             : saveAndUnSaveState.error;
+                  //         await showWonderfulAlertDialog(context,
+                  //             AppLocalizations.of(context)!.error, error);
+                  //         _saveAndUnSaveEstateBloc.add(
+                  //           ReInitializeSaveState(
+                  //               isSaved: widget.estate.isSaved!),
+                  //         );
+                  //       }
+                  //       if (saveAndUnSaveState is EstateSaved) {
+                  //         widget.estate.isSaved = true;
+                  //       }
+                  //       if (saveAndUnSaveState is EstateUnSaved) {
+                  //         widget.estate.isSaved = false;
+                  //       }
+                  //     },
+                  //     builder: (_, saveAndUnSaveState) {
+                  //       return SizedBox(
+                  //         height: 35.h,
+                  //         width: 35.w,
+                  //         child: FloatingActionButton(
+                  //           heroTag: widget.estate.id.toString(),
+                  //           elevation: 5,
+                  //           backgroundColor: AppColors.white,
+                  //           shape: const BeveledRectangleBorder(
+                  //               borderRadius: BorderRadius.zero),
+                  //           onPressed: () {
+                  //             if (userToken == null) {
+                  //               showWonderfulAlertDialog(
+                  //                 context,
+                  //                 AppLocalizations.of(context)!.confirmation,
+                  //                 AppLocalizations.of(context)!
+                  //                     .this_features_require_login,
+                  //                 removeDefaultButton: true,
+                  //                 width: 400.w,
+                  //                 dialogButtons: [
+                  //                   ElevatedButton(
+                  //                     child: Text(
+                  //                       AppLocalizations.of(context)!.cancel,
+                  //                     ),
+                  //                     onPressed: () {
+                  //                       Navigator.pop(context);
+                  //                     },
+                  //                   ),
+                  //                   ElevatedButton(
+                  //                     child: Text(
+                  //                       AppLocalizations.of(context)!.sign_in,
+                  //                     ),
+                  //                     onPressed: () async {
+                  //                       await Navigator.push(
+                  //                         context,
+                  //                         MaterialPageRoute(
+                  //                           builder: (_) =>
+                  //                               const AuthenticationScreen(
+                  //                             popAfterFinish: true,
+                  //                           ),
+                  //                         ),
+                  //                       );
+                  //                       Navigator.pop(context);
+                  //                       if (UserSharedPreferences
+                  //                               .getAccessToken() !=
+                  //                           null) {
+                  //                         userToken = UserSharedPreferences
+                  //                             .getAccessToken();
+                  //                       }
+                  //                       return;
+                  //                     },
+                  //                   ),
+                  //                 ],
+                  //               );
+                  //               return;
+                  //             }
+                  //             if (saveAndUnSaveState is EstateSaved) {
+                  //               _saveAndUnSaveEstateBloc.add(UnSaveEventStarted(
+                  //                   token: userToken,
+                  //                   estateId: widget.estate.id!));
+                  //             }
+                  //             if (saveAndUnSaveState is EstateUnSaved) {
+                  //               _saveAndUnSaveEstateBloc.add(EstateSaveStarted(
+                  //                   token: userToken,
+                  //                   estateId: widget.estate.id!));
+                  //             }
+                  //           },
+                  //           child: (saveAndUnSaveState
+                  //                   is EstateSaveAndUnSaveProgress)
+                  //               ? SpinKitWave(
+                  //                   color: AppColors.primaryColor,
+                  //                   size: 16.w,
+                  //                 )
+                  //               : Icon(
+                  //                   (saveAndUnSaveState is EstateSaved)
+                  //                       ? Icons.bookmark
+                  //                       : Icons.bookmark_border_outlined,
+                  //                   color: AppColors.primaryColor,
+                  //                 ),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -234,98 +250,346 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
               flex: 2,
               child: Container(
                 width: getScreenWidth(context) * (65 / 100),
-                padding: kSmallSymWidth,
+                padding: const EdgeInsets.only(top: 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    kHe12,
-                    Expanded(
-                      flex: 4,
-                      child: Row(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: ResText(widget.estate.locationS?? "",
+                            maxLines: 2,
+                            textAlign: TextAlign.start,
+                            textStyle: Theme.of(context).textTheme.headline3!.copyWith(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12.sp,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        BlocConsumer<SaveAndUnSaveEstateBloc,
+                            SaveAndUnSaveEstateState>(
+                          bloc: _saveAndUnSaveEstateBloc,
+                          listener: (_, saveAndUnSaveState) async {
+                            if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
+                              var error = saveAndUnSaveState.isConnectionError
+                                  ? AppLocalizations.of(context)!
+                                  .no_internet_connection
+                                  : saveAndUnSaveState.error;
+                              await showWonderfulAlertDialog(context,
+                                  AppLocalizations.of(context)!.error, error);
+                              _saveAndUnSaveEstateBloc.add(
+                                ReInitializeSaveState(
+                                    isSaved: widget.estate.isSaved!),
+                              );
+                            }
+                            if (saveAndUnSaveState is EstateSaved) {
+                              widget.estate.isSaved = true;
+                            }
+                            if (saveAndUnSaveState is EstateUnSaved) {
+                              widget.estate.isSaved = false;
+                            }
+                          },
+                          builder: (_, saveAndUnSaveState) {
+                            return InkWell(
+                              onTap: () {
+                                if (userToken == null) {
+                                  showWonderfulAlertDialog(
+                                    context,
+                                    AppLocalizations.of(context)!.confirmation,
+                                    AppLocalizations.of(context)!
+                                        .this_features_require_login,
+                                    removeDefaultButton: true,
+                                    width: 400.w,
+                                    dialogButtons: [
+                                      ElevatedButton(
+                                        child: Text(
+                                          AppLocalizations.of(context)!.cancel,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      ElevatedButton(
+                                        child: Text(
+                                          AppLocalizations.of(context)!.sign_in,
+                                        ),
+                                        onPressed: () async {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                              const AuthenticationScreen(
+                                                popAfterFinish: true,
+                                              ),
+                                            ),
+                                          );
+                                          Navigator.pop(context);
+                                          if (UserSharedPreferences
+                                              .getAccessToken() !=
+                                              null) {
+                                            userToken = UserSharedPreferences
+                                                .getAccessToken();
+                                          }
+                                          return;
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                  return;
+                                }
+                                if (saveAndUnSaveState is EstateSaved) {
+                                  _saveAndUnSaveEstateBloc.add(UnSaveEventStarted(
+                                      token: userToken,
+                                      estateId: widget.estate.id!));
+                                }
+                                if (saveAndUnSaveState is EstateUnSaved) {
+                                  _saveAndUnSaveEstateBloc.add(EstateSaveStarted(
+                                      token: userToken,
+                                      estateId: widget.estate.id!));
+                                }
+                              },
+                              child: (saveAndUnSaveState
+                              is EstateSaveAndUnSaveProgress)
+                                  ? SpinKitWave(
+                                color: AppColors.lightblue,
+                                size: 15.w,
+                              )
+                                  : Icon(
+                                (saveAndUnSaveState is EstateSaved)
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_border_outlined,
+                                color: AppColors.lightblue,
+                                size: 30,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    if (isSell)
+                      RowInformation(
+                        title: "${AppLocalizations.of(context)!.ownership_type} :",
+                        content:  widget.estate.ownershipType == null ? "" : widget.estate.ownershipType!.name,
+                        onTap: () {},
+                      ),
+                    // Estate interior status :
+                    if (!isLands)
+                      RowInformation(
+                        title: "${AppLocalizations.of(context)!.interior_status} :",
+                        content: widget.estate.interiorStatus!.name,
+                        onTap: () {},
+                      ),
+                    RowInformation(
+                      title: "${AppLocalizations.of(context)!.estate_area} :",
+                      widgetContent: Row(
                         children: [
                           ResText(
-                            "${widget.estate.estateTypeName!}"
-                            " ${isArabic ? "لل" : "for "}"
-                            "${widget.estate.estateOfferTypeName}"
-                            "${(widget.estate.periodTypeName!.isEmpty) ? " " : "/ ${widget.estate.periodTypeName!}"}",
+                            widget.estate.area!,
                             textStyle: Theme.of(context)
                                 .textTheme
                                 .headline3!
                                 .copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 25.sp),
+                                fontWeight: FontWeight.w400,
+                                fontSize: 10.sp),
+                          ),
+                          5.horizontalSpace,
+                          widget.estate.areaUnit == null ? const Center() :
+                          ResText(
+                            widget.estate.areaUnit!.name,
+                            textStyle: Theme.of(context)
+                                .textTheme
+                                .headline3!
+                                .copyWith(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 10.sp),
                           ),
                         ],
                       ),
+                      onTap: () {},
                     ),
-                    Expanded(
-                      flex: 6,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Row(
-                              children: [
-                                ResText(
-                                  widget.estate.area! +
-                                      " " +
-                                      widget.estate.areaUnitName!,
-                                  textStyle:
-                                      Theme.of(context).textTheme.headline6,
-                                ),
-                              ],
+                    if (widget.estate.publishedAt != null)
+                      RowInformation(
+                        title: "${AppLocalizations.of(context)!.adding_date} :",
+                        content: DateHelper.getDateByFormat(
+                            DateTime.parse(
+                              widget.estate.publishedAt.toString(),
                             ),
-                          ),
-                          if (widget.estate.periodType == null)
-                            Expanded(
-                              flex: 2,
-                              child: Row(
-                                children: [
-                                  ResText(
-                                    widget.estate.ownershipTypeName!,
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .headline6!
-                                        .copyWith(
-                                            color: isDark
-                                                ? AppColors.yellowDarkColor
-                                                : AppColors.lastColor),
-                                  ),
-                                ],
-                              ),
-                            ),
-                        ],
+                            "yyyy/MM/dd"),
+
+                        onTap: () {},
                       ),
+                    RowInformation(
+                      title: "${AppLocalizations.of(context)!.estate_price} :",
+                      content: NumbersHelper.getMoneyFormat(intPrice) +
+                          " " +
+                          (isForStore
+                              ? "L.L"
+                              : AppLocalizations.of(context)!
+                              .syrian_bound),
+
+                      onTap: () {},
                     ),
-                    kHe20,
-                    Expanded(
-                      flex: 4,
-                      child: SizedBox(
-                        width: getScreenWidth(context) * (60 / 100),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(top: 8.h),
-                              child: ResText(
-                                NumbersHelper.getMoneyFormat(intPrice) +
-                                    " " +
-                                    AppLocalizations.of(context)!.syrian_bound,
-                                textStyle:
-                                    Theme.of(context).textTheme.headline4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // kHe12,
+                    // Expanded(
+                    //   flex: 4,
+                    //   child: Row(
+                    //     children: [
+                    //       ResText(
+                    //         "${widget.estate.estateTypeName!}"
+                    //         " ${isArabic ? "لل" : "for "}"
+                    //         "${widget.estate.estateOfferTypeName}"
+                    //         "${(widget.estate.periodTypeName!.isEmpty) ? " " : "/ ${widget.estate.periodTypeName!}"}",
+                    //         textStyle: Theme.of(context)
+                    //             .textTheme
+                    //             .headline3!
+                    //             .copyWith(
+                    //                 fontWeight: FontWeight.w700,
+                    //                 fontSize: 25.sp),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // Expanded(
+                    //   flex: 6,
+                    //   child: Column(
+                    //     children: [
+                    //       Expanded(
+                    //         flex: 2,
+                    //         child: Row(
+                    //           children: [
+                    //             ResText(
+                    //               widget.estate.area! +
+                    //                   " " +
+                    //                   widget.estate.areaUnitName!,
+                    //               textStyle:
+                    //                   Theme.of(context).textTheme.headline6,
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //       if (widget.estate.periodType == null)
+                    //         Expanded(
+                    //           flex: 2,
+                    //           child: Row(
+                    //             children: [
+                    //               ResText(
+                    //                 widget.estate.ownershipTypeName!,
+                    //                 textStyle: Theme.of(context)
+                    //                     .textTheme
+                    //                     .headline6!
+                    //                     .copyWith(
+                    //                         color: isDark
+                    //                             ? AppColors.yellowDarkColor
+                    //                             : AppColors.lastColor),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // // kHe20,
+                    // Expanded(
+                    //   flex: 4,
+                    //   child: SizedBox(
+                    //     width: getScreenWidth(context) * (60 / 100),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //       children: [
+                    //         Padding(
+                    //           padding: EdgeInsets.only(top: 8.h),
+                    //           child: ResText(
+                    //             NumbersHelper.getMoneyFormat(intPrice) +
+                    //                 " " +
+                    //                 AppLocalizations.of(context)!.syrian_bound,
+                    //             textStyle:
+                    //                 Theme.of(context).textTheme.headline4,
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class RowInformation extends StatelessWidget {
+  final Function() onTap;
+
+  final String title;
+
+  final String? content;
+
+  final Widget? widgetContent;
+
+
+  final bool withBottomDivider;
+
+  const RowInformation({
+    Key? key,
+    required this.onTap,
+    required this.title,
+    this.widgetContent,
+    this.withBottomDivider = true,
+    this.content,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4.h),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 0.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ResText(
+                    title,
+                    textStyle: Theme.of(context)
+                        .textTheme
+                        .headline3!
+                        .copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10.sp),
+                  ),
+                  5.horizontalSpace,
+                  (widgetContent != null)
+                      ? widgetContent!
+                      : Expanded(
+                    child: ResText(
+                      content ?? "",
+                      textStyle: Theme.of(context)
+                          .textTheme
+                          .headline3!
+                          .copyWith(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 10.sp),
+                      textAlign: TextAlign.start,
+                      maxLines: 8,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
