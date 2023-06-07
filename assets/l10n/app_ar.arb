@@ -598,6 +598,9 @@
   "get_price":"للحصول على السعر",
   "create_estate_request":"إنشاء طلب عقار جديد",
   "saved":"المفضلة",
-  "estate_offers2":"العروض العقارية"
+  "estate_offers2":"العروض العقارية",
+  "search2": "البحث",
+  "previous_search_results": "نتائج البحث السابقة",
+  "result_matching_search_page":"تم العثور على نتائج مطابقة لخيارات البحث الخاصة بك ، وسيتم عرض نتائج مماثلة ، إن وجدت"
 }
 
