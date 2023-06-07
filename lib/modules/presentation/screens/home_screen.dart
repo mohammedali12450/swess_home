@@ -181,6 +181,13 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.withOpacity(0.1),
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppColors.black),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: Text(
+          AppLocalizations.of(context)!.search,
+          style: const TextStyle(color: AppColors.black),
+        ),
         actions: [
           InkWell(
             child: BlocBuilder<NotificationsCubit, int>(
@@ -418,47 +425,48 @@ class HomeScreenState extends State<HomeScreen> {
       child: Padding(
         padding: kLargeSymHeight,
         child: Container(
-          height: 60.h,
+          height: 50.h,
           width: 1.sw,
           alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
           decoration: BoxDecoration(
             color: AppColors.white,
             border: Border.all(
-                color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                color: !isDark ? AppColors.lightblue : AppColors.yellowDarkColor,
                 width: 1),
-            borderRadius: lowBorderRadius,
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).colorScheme.shadow,
-                offset: const Offset(0, 2),
-                blurRadius: 4,
-              )
-            ],
+            borderRadius: veryLowBorderRadius,
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Theme.of(context).colorScheme.shadow,
+            //     offset: const Offset(0, 2),
+            //     blurRadius: 4,
+            //   )
+            // ],
           ),
-          margin: EdgeInsets.only(
-            bottom: 8.h,
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: 12.w,
-          ),
+          // margin: EdgeInsets.only(
+          //   bottom: 8.h,
+          // ),
+          // padding: EdgeInsets.symmetric(
+          //   horizontal: 12.w,
+          // ),
           child: Row(
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Icon(
                   Icons.search_outlined,
-                  color: AppColors.primaryColor,
+                  color: AppColors.lightblue,
                   size: 25.w,
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(
-                    left: !isArabic ? 8.w : 0, right: isArabic ? 8.w : 0),
+                    left: !isArabic ? 8.w : 0, right: isArabic ? 8.w : 0,top: isArabic ? 0.w : 3),
                 child: Text(
-                  AppLocalizations.of(context)!.enter_location_name,
+                  AppLocalizations.of(context)!.search2,
+                  // AppLocalizations.of(context)!.enter_location_name,
                   style: Theme.of(context).textTheme.headline5!.copyWith(
                       fontWeight: FontWeight.w500,
-                      color: AppColors.primaryColor),
+                      color: AppColors.lightGreyColor),
                 ),
               ),
             ],
@@ -473,7 +481,7 @@ class HomeScreenState extends State<HomeScreen> {
       children: [
         buildTitle(context),
         buildEstatesCard(context),
-        kHe36,
+        // kHe36,
         // buildRating(),
       ],
     );
@@ -481,7 +489,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   Widget buildTitle(context) {
     return Padding(
-      padding: EdgeInsets.only(left: 12.w, right: 12.w),
+      padding: EdgeInsets.only(left: 15.w, right: 15.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -490,19 +498,19 @@ class HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Text(
+                //   AppLocalizations.of(context)!.new_homes_for_you,
+                //   style: Theme.of(context).textTheme.headline3!.copyWith(
+                //       fontWeight: FontWeight.bold,
+                //       color: AppColors.primaryColor,
+                //       fontSize: isArabic ? 28.sp : 30.sp),
+                // ),
                 Text(
-                  AppLocalizations.of(context)!.new_homes_for_you,
-                  style: Theme.of(context).textTheme.headline3!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryColor,
-                      fontSize: isArabic ? 28.sp : 30.sp),
-                ),
-                Text(
-                  AppLocalizations.of(context)!.based_on_your_recent_searches,
+                  AppLocalizations.of(context)!.previous_search_results,
                   style: Theme.of(context).textTheme.headline4!.copyWith(
                       fontWeight: FontWeight.w500,
-                      color: AppColors.primaryColor,
-                      fontSize: isArabic ? 22.sp : 24.sp),
+                      color: AppColors.lightGreyColor,
+                      fontSize: 16),
                 ),
               ],
             ),
@@ -510,29 +518,34 @@ class HomeScreenState extends State<HomeScreen> {
           Expanded(
             flex: 1,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        Colors.white.withOpacity(0.7)),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w)),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.clear,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5!
-                        .copyWith(color: AppColors.primaryColor),
-                    textAlign: TextAlign.center,
-                  ),
+                TextButton(
                   onPressed: () {
                     RecentSearchesSharedPreferences.removeSearches();
                     RecentSearchesSharedPreferences
                         .removeRecentSearchesFilter();
                     getEstateSearch();
                   },
+                  style: TextButton.styleFrom(
+                    backgroundColor: AppColors.lightGrey2Color,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: isArabic ? 0 : 5 ),
+                      child: Text(
+                        AppLocalizations.of(context)!.clear,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline5!.copyWith(fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -555,26 +568,109 @@ class HomeScreenState extends State<HomeScreen> {
         sortType: "desc");
     return Padding(
       padding: kMediumLarHeight,
-      child: Card(
-        color: Colors.white,
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => EstatesScreen(
-                      searchData: searchData,
-                      locationName: estateSearchFilterCubit.state.elementAt(0),
-                      eventSearch: EstatesFetchStarted(
-                        searchData: searchData,
-                        isAdvanced: false,
-                        token: UserSharedPreferences.getAccessToken(),
+      child: Column(
+        children: [
+          Card(
+            color: Colors.white,
+            child: Column(
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EstatesScreen(
+                          searchData: searchData,
+                          locationName: estateSearchFilterCubit.state.elementAt(0),
+                          eventSearch: EstatesFetchStarted(
+                            searchData: searchData,
+                            isAdvanced: false,
+                            token: UserSharedPreferences.getAccessToken(),
+                          ),
+                        ),
                       ),
+                    );
+                  },
+                  child: Padding(
+                    padding: kLargeSymHeight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                estateSearchFilterCubit.state.elementAt(0),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline3!
+                                    .copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        color: AppColors.black,
+                                        fontSize: 16.sp),
+                              ),
+                              const SizedBox(height: 10,),
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                child: Text(
+                                  // estateTypeName +
+                                  //     " ${isArabic ? "لل" : ""}" +
+                                  //     estateOfferName +
+                                  //     priceMaxMin,
+                                  AppLocalizations.of(context)!.result_matching_search_page,
+                                  maxLines: 2,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline3!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.lightGreyColor,
+                                          fontSize: 12.sp),
+                                ),
+                              ),
+                            ]),
+                        Column(
+                          children: [
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 27.w,
+                              color: AppColors.primaryColor,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                );
+                ),
+                // kHe12,
+                Container(
+                  height: !isArabic ? 350.h : 320.h,
+                  padding: const EdgeInsets.only(left: 10,right: 10),
+                  child: ListView.builder(
+                    reverse: isArabic ? true : false,
+                    itemCount: estateSearchCubit.state.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding:
+                            EdgeInsets.only(left: 8.w, right: 3.w, bottom: 20.h),
+                        child: HomeEstateCard(
+                            estate: estateSearchCubit.state.elementAt(index)),
+                      );
+                    },
+                  ),
+                ),
+                // kHe24,
+              ],
+            ),
+          ),
+          kHe8,
+          /// new Api
+          Card(
+            color: Colors.white,
+            child: InkWell(
+              onTap: () {
+                // todo
               },
               child: Padding(
                 padding: kLargeSymHeight,
@@ -585,27 +681,29 @@ class HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            estateSearchFilterCubit.state.elementAt(0),
+                            "دمشق القديمة، باب توما",
                             style: Theme.of(context)
                                 .textTheme
                                 .headline3!
                                 .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primaryColor,
-                                    fontSize: 23.sp),
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.black,
+                                fontSize: 16.sp),
                           ),
-                          Text(
-                            estateTypeName +
-                                " ${isArabic ? "لل" : ""}" +
-                                estateOfferName +
-                                priceMaxMin,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline4!
-                                .copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.secondaryDark,
-                                    fontSize: 15.sp),
+                          const SizedBox(height: 10,),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            child: Text(
+                              AppLocalizations.of(context)!.result_matching_search_page,
+                              maxLines: 2,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline3!
+                                  .copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.lightGreyColor,
+                                  fontSize: 12.sp),
+                            ),
                           ),
                         ]),
                     Column(
@@ -621,26 +719,64 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            kHe12,
-            SizedBox(
-              height: !isDark ? 475.h : 485.h,
-              child: ListView.builder(
-                reverse: isArabic ? true : false,
-                itemCount: estateSearchCubit.state.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding:
-                        EdgeInsets.only(left: 8.w, right: 3.w, bottom: 20.h),
-                    child: HomeEstateCard(
-                        estate: estateSearchCubit.state.elementAt(index)),
-                  );
-                },
+          ),
+          /// new Api
+          kHe8,
+          Card(
+            color: Colors.white,
+            child: InkWell(
+              onTap: () {
+                // todo
+              },
+              child: Padding(
+                padding: kLargeSymHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "دمشق القديمة، باب توما",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline3!
+                                .copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.black,
+                                fontSize: 16.sp),
+                          ),
+                          const SizedBox(height: 10,),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            child: Text(
+                              AppLocalizations.of(context)!.result_matching_search_page,
+                              maxLines: 2,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline3!
+                                  .copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.lightGreyColor,
+                                  fontSize: 12.sp),
+                            ),
+                          ),
+                        ]),
+                    Column(
+                      children: [
+                        Icon(
+                          Icons.arrow_forward,
+                          size: 27.w,
+                          color: AppColors.primaryColor,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-            kHe24,
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
