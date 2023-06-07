@@ -232,6 +232,7 @@ BoxShadow lowWhiteElevation = BoxShadow(
     blurRadius: 6,
     spreadRadius: 2);
 
+const BorderRadius veryLowBorderRadius = BorderRadius.all(Radius.circular(3));
 const BorderRadius lowBorderRadius = BorderRadius.all(Radius.circular(8));
 const BorderRadius smallBorderRadius = BorderRadius.all(Radius.circular(12));
 const BorderRadius medBorderRadius = BorderRadius.all(Radius.circular(16));
