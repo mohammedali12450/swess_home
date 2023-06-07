@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
@@ -14,7 +15,7 @@ import 'package:swesshome/modules/presentation/screens/authentication_screen.dar
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'package:swesshome/utils/helpers/date_helper.dart';
 import '../../../constants/api_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../utils/helpers/numbers_helper.dart';
@@ -49,6 +50,8 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
   late bool isArabic;
   late bool isForStore;
   late SaveAndUnSaveEstateBloc _saveAndUnSaveEstateBloc;
+  bool isSell = true;
+  bool isLands = true;
 
   @override
   void initState() {
@@ -60,6 +63,11 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
     isForStore = BlocProvider.of<SystemVariablesBloc>(context)
         .systemVariables!
         .isForStore;
+
+    if(widget.estate.estateType !=null || widget.estate.estateOfferType != null) {
+      isSell = widget.estate.estateOfferType!.id == sellOfferTypeNumber;
+      isLands = widget.estate.estateType!.id == landsPropertyTypeNumber;
+    }
     super.initState();
   }
 
@@ -82,20 +90,21 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
             elevation: 8,
             color: widget.color ?? Theme.of(context).colorScheme.background,
             shape: const RoundedRectangleBorder(
-              borderRadius: smallBorderRadius,
+              borderRadius: lowBorderRadius,
             ),
             child: SizedBox(
-              height: 140.h,
+              // height: 150.h,
               child: Row(
                 children: [
                   Expanded(
                     flex: 1,
                     child: Padding(
-                      padding: EdgeInsets.all(3.w),
+                      padding: EdgeInsets.all(8.w),
                       child: ClipRRect(
-                        borderRadius: smallBorderRadius,
+                        borderRadius: lowBorderRadius,
                         child: Container(
                           width: 1.sw * (65 / 100),
+                          height: 150.h,
                           decoration: BoxDecoration(
                             border: Border.all(
                               width: 1,
@@ -118,8 +127,8 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                     flex: 2,
                     child: Padding(
                       padding: EdgeInsets.only(
-                          left: isArabic ? 0 : 16.w,
-                          right: !isArabic ? 0 : 16.w),
+                          left: isArabic ? 0 : 5.w,
+                          right: !isArabic ? 0 : 5.w),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -127,74 +136,140 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                           Padding(
                             padding: EdgeInsets.only(top: 12.h),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ResText(
-                                  "${widget.estate.estateType!.name.split("|").first}"
-                                  " ${isArabic ? "لل" : "for "}"
-                                  "${widget.estate.estateOfferType!.name.split("|").first}"
-                                  "${(widget.estate.periodType == null) ? " " : "/ ${widget.estate.periodType!.name}"}",
-                                  textStyle: Theme.of(context)
-                                      .textTheme
-                                      .headline3!
-                                      .copyWith(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 23.sp),
-                                ),
-                                ResText(
-                                  widget.estate.locationS!,
-                                  textStyle:
-                                      Theme.of(context).textTheme.headline5,
-                                ),
-                                widget.estate.description == null ? const Center():
-                                ResText(
-                                   widget.estate.description!,
-                                  textAlign: TextAlign.start,
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.5,
+                                  child: ResText(widget.estate.locationS!,
                                   maxLines: 2,
-                                  minFontSize: 10,
-                                  textStyle:
-                                  Theme.of(context).textTheme.headline4,
-                                ),
-                              ],
-                            ),
-                          ),
-                          (BlocProvider.of<UserLoginBloc>(context).user == null) ?
-                          Row(
-                            children: [
-                              InkWell(
-                                onTap: () async{
-                                  await Navigator.pushNamed(context, AuthenticationScreen.id);
-                                },
-                                child: ResText(
-                                  AppLocalizations.of(context)!.sign_in,
-                                  textAlign: TextAlign.start,
-                                  textStyle: GoogleFonts.libreFranklin(
-                                      color: Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.w600,
-                                      decoration: TextDecoration.underline
+                                    textAlign: TextAlign.start,
+                                    textStyle: Theme.of(context).textTheme.headline3!.copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12.sp,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              ResText(
-                                " " +  AppLocalizations.of(context)!.first + " " +  AppLocalizations.of(context)!.get_price,
-                                textAlign: TextAlign.start,
-                                textStyle: GoogleFonts.libreFranklin(
-                                    color: Theme.of(context).colorScheme.onBackground,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12.sp,
-                                    height: 1.3.h
+                                if (isSell)
+                                  RowInformation(
+                                    title: AppLocalizations.of(context)!.ownership_type + " :",
+                                    content:  widget.estate.ownershipType == null ? "" : widget.estate.ownershipType!.name,
+                                    onTap: () {},
+                                  ),
+                                // Estate interior status :
+                                if (!isLands)
+                                  RowInformation(
+                                    title: "${AppLocalizations.of(context)!.interior_status} :",
+                                    content: widget.estate.interiorStatus!.name,
+                                    onTap: () {},
+                                  ),
+                                RowInformation(
+                                  title: "${AppLocalizations.of(context)!.estate_area} :",
+                                  widgetContent: Row(
+                                    children: [
+                                      ResText(
+                                        widget.estate.area!,
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headline3!
+                                            .copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 10.sp),
+                                      ),
+                                      5.horizontalSpace,
+                                      widget.estate.areaUnit == null ? const Center() :
+                                      ResText(
+                                        widget.estate.areaUnit!.name,
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headline3!
+                                            .copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 10.sp),
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () {},
                                 ),
-                              ),
-                            ],
-                          ) :
-                          ResText(
-                            NumbersHelper.getMoneyFormat(intPrice) +
-                                " " +
-                                (isForStore
-                                    ? "L.L"
-                                    : AppLocalizations.of(context)!
-                                        .syrian_bound),
-                            textStyle: Theme.of(context).textTheme.headline5,
+                                if (widget.estate.publishedAt != null)
+                                RowInformation(
+                                  title: "${AppLocalizations.of(context)!.adding_date} :",
+                                  content: DateHelper.getDateByFormat(
+                                      DateTime.parse(
+                                        widget.estate.publishedAt.toString(),
+                                      ),
+                                      "yyyy/MM/dd"),
+
+                                  onTap: () {},
+                                ),
+                                (BlocProvider.of<UserLoginBloc>(context).user == null) ?
+                                Row(
+                                  children: [
+                                    Center(
+                                      child: TextButton(
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: Size(80.w, 25.h),
+                                          maximumSize: Size(80.w, 25.h),
+                                          backgroundColor: AppColors.primaryColor
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            AppLocalizations.of(context)!.sign_in,
+                                            style: const TextStyle(fontSize: 10,color: AppColors.white),
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          await Navigator.pushNamed(context, AuthenticationScreen.id);
+                                        },
+                                      ),
+                                    ),
+                                    ResText(
+                                      " ${AppLocalizations.of(context)!.first} ${AppLocalizations.of(context)!.get_price}",
+                                      textAlign: TextAlign.start,
+                                      textStyle: GoogleFonts.libreFranklin(
+                                          color: Theme.of(context).colorScheme.onBackground,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12.sp,
+                                          height: 1.3.h
+                                      ),
+                                    ),
+                                  ],
+                                ) :
+                                RowInformation(
+                                  title: "${AppLocalizations.of(context)!.estate_price} :",
+                                  content: NumbersHelper.getMoneyFormat(intPrice) +
+                                      " " +
+                                      (isForStore
+                                          ? "L.L"
+                                          : AppLocalizations.of(context)!
+                                          .syrian_bound),
+
+                                  onTap: () {},
+                                ),
+                                // ResText(
+                                //   "${widget.estate.estateType!.name.split("|").first}"
+                                //   " ${isArabic ? "لل" : "for "}"
+                                //   "${widget.estate.estateOfferType!.name.split("|").first}"
+                                //   "${(widget.estate.periodType == null) ? " " : "/ ${widget.estate.periodType!.name}"}",
+                                //   textStyle: Theme.of(context)
+                                //       .textTheme
+                                //       .headline3!
+                                //       .copyWith(
+                                //           fontWeight: FontWeight.w600,
+                                //           fontSize: 12.sp),
+                                // ),
+                                // widget.estate.description == null ? const Center():
+                                // ResText(
+                                //    widget.estate.description!,
+                                //   textAlign: TextAlign.start,
+                                //   maxLines: 2,
+                                //   minFontSize: 10,
+                                //   textStyle:
+                                //   Theme.of(context).textTheme.headline4,
+                                // ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -280,6 +355,76 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                       ),
                     ),
                 ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RowInformation extends StatelessWidget {
+  final Function() onTap;
+
+  final String title;
+
+  final String? content;
+
+  final Widget? widgetContent;
+
+
+  final bool withBottomDivider;
+
+  const RowInformation({
+    Key? key,
+    required this.onTap,
+    required this.title,
+    this.widgetContent,
+    this.withBottomDivider = true,
+    this.content,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4.h),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 0.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ResText(
+                    title,
+                      textStyle: Theme.of(context)
+                          .textTheme
+                          .headline3!
+                          .copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10.sp),
+                  ),
+                  5.horizontalSpace,
+                  (widgetContent != null)
+                      ? widgetContent!
+                      : Expanded(
+                    child: ResText(
+                      content ?? "",
+                      textStyle: Theme.of(context)
+                          .textTheme
+                          .headline3!
+                          .copyWith(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 10.sp),
+                      textAlign: TextAlign.start,
+                      maxLines: 8,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

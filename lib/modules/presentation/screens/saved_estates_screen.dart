@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_state.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/screens/navigation_bar_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
-import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
-import '../widgets/estate_card.dart';
 import '../widgets/estate_horizon_card.dart';
 import '../widgets/res_text.dart';
 
@@ -35,6 +31,8 @@ class SavedEstatesScreen extends StatefulWidget {
 class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
   late SavedEstatesBloc _savedEstatesBloc;
   List<Estate> estates = [];
+  late bool isArabic;
+  bool? profile;
 
   @override
   void initState() {
@@ -50,18 +48,16 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return SafeArea(
       child: Scaffold(
-        drawer: SizedBox(
-          width: getScreenWidth(context) * (75 / 100),
-          child: const Drawer(
-            child: MyDrawer(),
-          ),
-        ),
         appBar: AppBar(
+          iconTheme: const IconThemeData(color: AppColors.black),
           centerTitle: true,
+          backgroundColor: Colors.white,
           title: Text(
             AppLocalizations.of(context)!.saved_estates,
+            style: const TextStyle(color: AppColors.black),
           ),
         ),
         body: RefreshIndicator(
@@ -116,11 +112,10 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                         children: [
                           Icon(
                             Icons.error_outline,
-                            size: 0.5.sw,
+                            size: 0.2.sw,
                             color: Theme.of(context)
                                 .colorScheme
-                                .primary
-                                .withOpacity(0.64),
+                                .primary,
                           ),
                           kHe24,
                           Text(
@@ -128,17 +123,17 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                                 .have_not_saved_estates,
                             style: Theme.of(context).textTheme.headline5,
                           ),
-                          kHe12,
+                          kHe24,
                           Center(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                minimumSize: Size(180.w, 60.h),
-                                maximumSize: Size(200.w, 60.h),
+                                minimumSize: Size(180.w, 50.h),
+                                maximumSize: Size(200.w, 50.h),
                               ),
                               child: Center(
                                 child: Text(
                                   AppLocalizations.of(context)!.search,
-                                  style: const TextStyle(fontSize: 20),
+                                  style: const TextStyle(fontSize: 18),
                                 ),
                               ),
                               onPressed: () async {
@@ -159,30 +154,31 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                   return SingleChildScrollView(
                     child: Column(
                       children: [
-                        kHe12,
+                        // kHe12,
                         buildSavedList(),
-                        kHe44,
+                        kHe20,
                         Padding(
                           padding: kTinyAllPadding,
                           child: Container(
                             alignment: Alignment.center,
-                            height: 60.h,
+                            height: 50.h,
                             width: 1.sw,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               borderRadius: lowBorderRadius,
-                              border:
-                                  Border.all(color: AppColors.yellowDarkColor),
+                              // border: Border.all(color: AppColors.primaryColor),
+                              color: AppColors.primaryColor
                             ),
                             child: ResText(
                               AppLocalizations.of(context)!.nearby,
                               textStyle: Theme.of(context)
                                   .textTheme
                                   .headline4!
-                                  .copyWith(fontWeight: FontWeight.w700),
+                                  .copyWith(fontWeight: FontWeight.w700,color: Colors.white),
                             ),
                           ),
                         ),
                         buildSavedList(),
+                        // kHe50,
                       ],
                     ),
                   );
