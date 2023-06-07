@@ -3,14 +3,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_state.dart';
+import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
+import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/navigation_bar_screen.dart';
+import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
+import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
+import 'package:swesshome/modules/presentation/widgets/icone_badge.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,16 +25,16 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../widgets/estate_horizon_card.dart';
 import '../widgets/res_text.dart';
 
-class SavedEstatesScreen extends StatefulWidget {
+class SavedEstatesScreenNavBar extends StatefulWidget {
   static const String id = "SavedEstatesScreen";
 
-  const SavedEstatesScreen({Key? key}) : super(key: key);
+  const SavedEstatesScreenNavBar({Key? key}) : super(key: key);
 
   @override
-  _SavedEstatesScreenState createState() => _SavedEstatesScreenState();
+  _SavedEstatesScreenNavBarState createState() => _SavedEstatesScreenNavBarState();
 }
 
-class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
+class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
   late SavedEstatesBloc _savedEstatesBloc;
   List<Estate> estates = [];
   late bool isArabic;
@@ -51,6 +57,12 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return SafeArea(
       child: Scaffold(
+        drawer: SizedBox(
+          width: getScreenWidth(context) * (75 / 100),
+          child: const Drawer(
+            child: MyDrawer(),
+          ),
+        ),
         appBar: AppBar(
           iconTheme: const IconThemeData(color: AppColors.black),
           centerTitle: true,
@@ -59,6 +71,59 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
             AppLocalizations.of(context)!.saved_estates,
             style: const TextStyle(color: AppColors.black),
           ),
+          actions: [
+            InkWell(
+              child: BlocBuilder<NotificationsCubit, int>(
+                builder: (_, notificationsCount) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                        left: isArabic ? 12.w : 0, right: isArabic ? 0 : 12.w),
+                    child: IconBadge(
+                      icon: const Icon(
+                        Icons.notifications_outlined,
+                      ),
+                      itemCount: notificationsCount,
+                      right: 0,
+                      top: 5.h,
+                      hideZero: true,
+                    ),
+                  );
+                },
+              ),
+              onTap: () async {
+                if (UserSharedPreferences.getAccessToken() == null) {
+                  await showWonderfulAlertDialog(
+                      context,
+                      AppLocalizations.of(context)!.confirmation,
+                      AppLocalizations.of(context)!.this_features_require_login,
+                      removeDefaultButton: true,
+                      dialogButtons: [
+                        ElevatedButton(
+                          child: Text(
+                            AppLocalizations.of(context)!.sign_in,
+                          ),
+                          onPressed: () async {
+                            await Navigator.pushNamed(
+                                context, AuthenticationScreen.id);
+                            Navigator.pop(context);
+                          },
+                        ),
+                        ElevatedButton(
+                          child: Text(
+                            AppLocalizations.of(context)!.cancel,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                      width: 400.w);
+                  return;
+                }
+                Navigator.pushNamed(context, NotificationScreen.id);
+              },
+            ),
+          ],
         ),
         body: RefreshIndicator(
           color: Theme.of(context).colorScheme.primary,
@@ -164,9 +229,9 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                             height: 50.h,
                             width: 1.sw,
                             decoration: const BoxDecoration(
-                              borderRadius: lowBorderRadius,
-                              // border: Border.all(color: AppColors.primaryColor),
-                              color: AppColors.primaryColor
+                                borderRadius: lowBorderRadius,
+                                // border: Border.all(color: AppColors.primaryColor),
+                                color: AppColors.primaryColor
                             ),
                             child: ResText(
                               AppLocalizations.of(context)!.nearby,
@@ -178,7 +243,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                           ),
                         ),
                         buildSavedList(),
-                        // kHe50,
+                        kHe50,
                       ],
                     ),
                   );
