@@ -59,7 +59,7 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
             SizedBox(
               width: 1.sw,
               child: Text(
-                AppLocalizations.of(context)!.estate_type + " :",
+                "${AppLocalizations.of(context)!.estate_type} :",
               ),
             ),
             16.verticalSpace,
@@ -95,7 +95,7 @@ class _CreatePropertyScreen1State extends State<CreatePropertyScreen1> {
             ),
             const Spacer(),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 64.h)),
+              style: ElevatedButton.styleFrom(fixedSize: Size(240.w, 50.h)),
               child: Text(
                 AppLocalizations.of(context)!.next,
                 textAlign: TextAlign.center,

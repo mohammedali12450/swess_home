@@ -86,6 +86,7 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
           )
               : Column(
             children: [
+              24.verticalSpace,
               // 36.verticalSpace,
               BlocBuilder<ChannelCubit, dynamic>(
                 bloc: sendProgress,
@@ -124,11 +125,12 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
                 ),
               // 15.verticalSpace,
               if (estateSendState is SendEstateComplete) ...[
+                10.verticalSpace,
                 Text(
                   AppLocalizations.of(context)!.congratulations,
                   style: Theme.of(context).textTheme.headline4,
                 ),
-                24.verticalSpace,
+                10.verticalSpace,
                 Text(
                   AppLocalizations.of(context)!.finish_send_estate,
                   maxLines: 3,
@@ -139,8 +141,8 @@ class _CreatePropertyScreenFinishState extends State<CreatePropertyScreenFinish>
               const Spacer(),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(240.w, 55.h),
-                  maximumSize: Size(240.w, 55.h),
+                  minimumSize: Size(240.w, 50.h),
+                  maximumSize: Size(240.w, 50.h),
                 ),
                 child: Text(
                   (estateSendState is SendEstateComplete)

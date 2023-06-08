@@ -37,7 +37,7 @@ class _CandidatesScreenState extends State<CandidatesScreen> {
                   children: [
                     Icon(
                       Icons.error_outline,
-                      size: 0.5.sw,
+                      size: 0.3.sw,
                       color: Theme.of(context)
                           .colorScheme
                           .primary

@@ -297,116 +297,116 @@ class HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.symmetric(vertical: 5.w),
-        child: Directionality(
-          textDirection: ui.TextDirection.ltr,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
-            child: GestureDetector(
-              child: Card(
-                color: AppColors.primaryColor,
-                elevation: 4,
-                shape: StadiumBorder(
-                  side: BorderSide(
-                    color: AppColors.yellowColor,
-                    width: 2,
-                  ),
-                ),
-                child: Container(
-                  width: 100.w,
-                  alignment: Alignment.center,
-                  height: 72.h,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 2.h),
-                    child: Text(
-                      AppLocalizations.of(context)!.search,
-                      style: TextStyle(color: AppColors.white, fontSize: 20.sp),
-                    ),
-                  ),
-                ),
-              ),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => Dialog(
-                    elevation: 2,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 16.h, horizontal: 12.w),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                        borderRadius: lowBorderRadius,
-                      ),
-                      child: Padding(
-                        padding: kTinyAllPadding,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // 15.verticalSpace,
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const FilterSearchScreen(),
-                                    ),
-                                  );
-                                },
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.home_work_outlined),
-                                    kWi16,
-                                    Text(
-                                      AppLocalizations.of(context)!
-                                          .estate_search,
-                                      style:
-                                          Theme.of(context).textTheme.headline5,
-                                    ),
-                                  ],
-                                )),
-                            // const Divider(
-                            //   indent: 20,
-                            //   thickness: 0.1,
-                            //   endIndent: 20,
-                            // ),
-                            // TextButton(
-                            //     onPressed: () {
-                            //       Navigator.pop(context);
-                            //       Navigator.push(
-                            //         context,
-                            //         MaterialPageRoute(
-                            //           builder: (_) =>
-                            //               const OfficeSearchScreen(),
-                            //         ),
-                            //       );
-                            //     },
-                            //     child: Row(
-                            //       children: [
-                            //         const Icon(Icons.house_outlined),
-                            //         kWi16,
-                            //         Text(
-                            //           AppLocalizations.of(context)!
-                            //               .search_for_estate_agent,
-                            //           style:
-                            //               Theme.of(context).textTheme.headline5,
-                            //         ),
-                            //       ],
-                            //     )),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      ),
+      // floatingActionButton: Padding(
+      //   padding: EdgeInsets.symmetric(vertical: 5.w),
+      //   child: Directionality(
+      //     textDirection: ui.TextDirection.ltr,
+      //     child: Padding(
+      //       padding: EdgeInsets.symmetric(horizontal: 5.w),
+      //       child: GestureDetector(
+      //         child: Card(
+      //           color: AppColors.primaryColor,
+      //           elevation: 4,
+      //           shape: StadiumBorder(
+      //             side: BorderSide(
+      //               color: AppColors.yellowColor,
+      //               width: 2,
+      //             ),
+      //           ),
+      //           child: Container(
+      //             width: 100.w,
+      //             alignment: Alignment.center,
+      //             height: 72.h,
+      //             child: Padding(
+      //               padding: EdgeInsets.only(top: 2.h),
+      //               child: Text(
+      //                 AppLocalizations.of(context)!.search,
+      //                 style: TextStyle(color: AppColors.white, fontSize: 20.sp),
+      //               ),
+      //             ),
+      //           ),
+      //         ),
+      //         onTap: () {
+      //           showDialog(
+      //             context: context,
+      //             builder: (context) => Dialog(
+      //               elevation: 2,
+      //               child: Container(
+      //                 padding: EdgeInsets.symmetric(
+      //                     vertical: 16.h, horizontal: 12.w),
+      //                 decoration: BoxDecoration(
+      //                   color: Theme.of(context).colorScheme.background,
+      //                   borderRadius: lowBorderRadius,
+      //                 ),
+      //                 child: Padding(
+      //                   padding: kTinyAllPadding,
+      //                   child: Column(
+      //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //                     mainAxisSize: MainAxisSize.min,
+      //                     children: [
+      //                       // 15.verticalSpace,
+      //                       TextButton(
+      //                           onPressed: () {
+      //                             Navigator.pop(context);
+      //                             Navigator.push(
+      //                               context,
+      //                               MaterialPageRoute(
+      //                                 builder: (_) =>
+      //                                     const FilterSearchScreen(),
+      //                               ),
+      //                             );
+      //                           },
+      //                           child: Row(
+      //                             children: [
+      //                               const Icon(Icons.home_work_outlined),
+      //                               kWi16,
+      //                               Text(
+      //                                 AppLocalizations.of(context)!
+      //                                     .estate_search,
+      //                                 style:
+      //                                     Theme.of(context).textTheme.headline5,
+      //                               ),
+      //                             ],
+      //                           )),
+      //                       // const Divider(
+      //                       //   indent: 20,
+      //                       //   thickness: 0.1,
+      //                       //   endIndent: 20,
+      //                       // ),
+      //                       // TextButton(
+      //                       //     onPressed: () {
+      //                       //       Navigator.pop(context);
+      //                       //       Navigator.push(
+      //                       //         context,
+      //                       //         MaterialPageRoute(
+      //                       //           builder: (_) =>
+      //                       //               const OfficeSearchScreen(),
+      //                       //         ),
+      //                       //       );
+      //                       //     },
+      //                       //     child: Row(
+      //                       //       children: [
+      //                       //         const Icon(Icons.house_outlined),
+      //                       //         kWi16,
+      //                       //         Text(
+      //                       //           AppLocalizations.of(context)!
+      //                       //               .search_for_estate_agent,
+      //                       //           style:
+      //                       //               Theme.of(context).textTheme.headline5,
+      //                       //         ),
+      //                       //       ],
+      //                       //     )),
+      //                     ],
+      //                   ),
+      //                 ),
+      //               ),
+      //             ),
+      //           );
+      //         },
+      //       ),
+      //     ),
+      //   ),
+      // ),
       drawer: SizedBox(
         width: getScreenWidth(context) * (75 / 100),
         child: const Drawer(
@@ -431,7 +431,7 @@ class HomeScreenState extends State<HomeScreen> {
           decoration: BoxDecoration(
             color: AppColors.white,
             border: Border.all(
-                color: !isDark ? AppColors.lightblue : AppColors.yellowDarkColor,
+                color: isDark ? AppColors.lightblue : AppColors.yellowDarkColor,
                 width: 1),
             borderRadius: veryLowBorderRadius,
             // boxShadow: [
@@ -790,11 +790,11 @@ class HomeScreenState extends State<HomeScreen> {
         children: [
           SvgPicture.asset(
             documentOutlineIconPath,
-            width: 0.5.sw,
-            height: 0.4.sw,
+            width: 0.3.sw,
+            height: 0.3.sw,
             color: Theme.of(context).colorScheme.onBackground.withOpacity(0.42),
           ),
-          48.verticalSpace,
+          50.verticalSpace,
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 40.w),
             child: Text(
@@ -803,10 +803,10 @@ class HomeScreenState extends State<HomeScreen> {
               textAlign: TextAlign.center,
             ),
           ),
-          48.verticalSpace,
+          50.verticalSpace,
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              fixedSize: Size(220.w, 64.h),
+              fixedSize: Size(220.w, 50.h),
             ),
             child: Text(
               AppLocalizations.of(context)!.new_search,

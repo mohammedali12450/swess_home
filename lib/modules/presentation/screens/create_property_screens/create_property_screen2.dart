@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/area_units_bloc/area_units_bloc.dart';
@@ -13,6 +14,7 @@ import 'package:swesshome/modules/data/models/area_unit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/ownership_type.dart';
 import 'package:swesshome/modules/data/models/period_type.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/widgets/create_property_template.dart';
 import 'package:swesshome/modules/presentation/widgets/my_dropdown_list.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
@@ -83,6 +85,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
 
   @override
   Widget build(BuildContext context) {
+    bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     bool isKeyboardOpened = MediaQuery.of(context).viewInsets.bottom != 0;
 
     isForStore = BlocProvider.of<SystemVariablesBloc>(context)
@@ -91,36 +94,39 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
 
     List<Widget> priceWidget = [
       Expanded(
-        flex: 2,
+        flex: 1,
         child: BlocBuilder<ChannelCubit, dynamic>(
           bloc: areaErrorCubit,
           builder: (_, errorMessage) {
-            return TextField(
-              textDirection: TextDirection.ltr,
-              controller: areaController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.area_hint,
-                errorText: errorMessage,
-                isDense: true,
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.onBackground),
+            return Padding(
+              padding: EdgeInsets.only(top: isArabic? 12 : 8),
+              child: TextField(
+                textDirection: TextDirection.ltr,
+                controller: areaController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.area_hint,
+                  errorText: errorMessage,
+                  isDense: true,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.onBackground),
+                  ),
                 ),
+                cursorColor: Theme.of(context).colorScheme.onBackground,
+                onChanged: (value) {
+                  areaErrorCubit.setState(null);
+                  if (!NumbersHelper.isNumeric(value)) {
+                    areaErrorCubit
+                        .setState(AppLocalizations.of(context)!.invalid_value);
+                  }
+                },
               ),
-              cursorColor: Theme.of(context).colorScheme.onBackground,
-              onChanged: (value) {
-                areaErrorCubit.setState(null);
-                if (!NumbersHelper.isNumeric(value)) {
-                  areaErrorCubit
-                      .setState(AppLocalizations.of(context)!.invalid_value);
-                }
-              },
             );
           },
         ),
       ),
-      12.horizontalSpace,
+      10.horizontalSpace,
       Expanded(
         flex: 1,
         child: GestureDetector(
@@ -129,7 +135,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
             FocusScope.of(context).unfocus();
           },
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 12.5),
+            padding: const EdgeInsets.only(bottom: 0),
             child: MyDropdownList(
               isOnChangeNull: isKeyboardOpened,
               elementsList: areaTypes.map((e) => e.name).toList(),
@@ -158,21 +164,23 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
             children: [
               24.verticalSpace,
               Text(
-                AppLocalizations.of(context)!.estate_area + " :",
+                "${AppLocalizations.of(context)!.estate_area} :",
               ),
-              16.verticalSpace,
-              Row(children: priceWidget),
-              24.verticalSpace,
+              // 8.verticalSpace,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                  children: priceWidget),
+              20.verticalSpace,
               Text(
                 (isSell)
-                    ? AppLocalizations.of(context)!.estate_price + " :"
-                    : AppLocalizations.of(context)!.estate_rent_price + " :",
+                    ? "${AppLocalizations.of(context)!.estate_price} :"
+                    : "${AppLocalizations.of(context)!.estate_rent_price} :",
               ),
-              16.verticalSpace,
+              // 16.verticalSpace,
               Row(
                 children: [
                   Expanded(
-                    flex: 5,
+                    flex: 1,
                     child: BlocBuilder<ChannelCubit, dynamic>(
                       bloc: priceErrorCubit,
                       builder: (_, errorMessage) {
@@ -192,38 +200,41 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                                   .estate_rent_price_hint_syrian;
                         }
 
-                        return TextField(
-                          textDirection: TextDirection.ltr,
-                          controller: priceController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: hintText,
-                            errorText: errorMessage,
-                            isDense: true,
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground),
+                        return Padding(
+                          padding: EdgeInsets.only(top: isArabic? 12 : 8),
+                          child: TextField(
+                            textDirection: TextDirection.ltr,
+                            controller: priceController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              hintText: hintText,
+                              errorText: errorMessage,
+                              isDense: true,
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground),
+                              ),
                             ),
+                            cursorColor:
+                                Theme.of(context).colorScheme.onBackground,
+                            onChanged: (value) {
+                              if (!NumbersHelper.isNumeric(
+                                  value.replaceAll(",", ""))) {
+                                priceErrorCubit.setState(
+                                    AppLocalizations.of(context)!.invalid_value);
+                                return;
+                              }
+                              priceController.text = NumbersHelper.getMoneyFormat(
+                                  int.parse(value.replaceAll(',', '')));
+                              priceController.selection =
+                                  TextSelection.fromPosition(
+                                TextPosition(offset: priceController.text.length),
+                              );
+                              priceErrorCubit.setState(null);
+                            },
                           ),
-                          cursorColor:
-                              Theme.of(context).colorScheme.onBackground,
-                          onChanged: (value) {
-                            if (!NumbersHelper.isNumeric(
-                                value.replaceAll(",", ""))) {
-                              priceErrorCubit.setState(
-                                  AppLocalizations.of(context)!.invalid_value);
-                              return;
-                            }
-                            priceController.text = NumbersHelper.getMoneyFormat(
-                                int.parse(value.replaceAll(',', '')));
-                            priceController.selection =
-                                TextSelection.fromPosition(
-                              TextPosition(offset: priceController.text.length),
-                            );
-                            priceErrorCubit.setState(null);
-                          },
                         );
                       },
                     ),
@@ -232,7 +243,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                   (isSell)
                       ? Container()
                       : Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: GestureDetector(
                             onTap: () {
                               SystemChannels.textInput
@@ -240,7 +251,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                               FocusScope.of(context).unfocus();
                             },
                             child: Padding(
-                              padding: const EdgeInsets.only(bottom: 12.5),
+                              padding: const EdgeInsets.only(bottom: 0),
                               child: MyDropdownList(
                                 isOnChangeNull: isKeyboardOpened,
                                 elementsList: periodTypes
@@ -273,10 +284,10 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
               if (!isSell) ...[
                 24.verticalSpace,
                 Text(
-                  AppLocalizations.of(context)!.estate_rent_period + " :",
+                  "${AppLocalizations.of(context)!.estate_rent_period} :",
                   textAlign: TextAlign.right,
                 ),
-                12.verticalSpace,
+                // 12.verticalSpace,
                 BlocBuilder<ChannelCubit, dynamic>(
                   bloc: periodErrorCubit,
                   builder: (_, errorMessage) {
@@ -315,10 +326,9 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
               if (isHouse) ...[
                 24.verticalSpace,
                 Text(
-                  AppLocalizations.of(context)!.rooms_count +
-                      " ( ${AppLocalizations.of(context)!.optional} ) :",
+                  "${AppLocalizations.of(context)!.rooms_count} ( ${AppLocalizations.of(context)!.optional} ) :",
                 ),
-                16.verticalSpace,
+                // 16.verticalSpace,
                 TextField(
                   controller: roomsCountController,
                   decoration: InputDecoration(
@@ -332,10 +342,9 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                 ),
                 24.verticalSpace,
                 Text(
-                  AppLocalizations.of(context)!.floor_number +
-                      " ( ${AppLocalizations.of(context)!.optional} ) :",
+                  "${AppLocalizations.of(context)!.floor_number} ( ${AppLocalizations.of(context)!.optional} ) :",
                 ),
-                16.verticalSpace,
+                // 16.verticalSpace,
                 TextField(
                   controller: floorController,
                   textDirection: TextDirection.ltr,
@@ -352,9 +361,9 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
               if (isSell && !isHouse) ...[
                 24.verticalSpace,
                 Text(
-                  AppLocalizations.of(context)!.ownership_type + " :",
+                  "${AppLocalizations.of(context)!.ownership_type} :",
                 ),
-                16.verticalSpace,
+                // 16.verticalSpace,
                 MyDropdownList(
                   elementsList:
                       ownershipTypes.map((e) => e.name).toList(),
@@ -401,7 +410,7 @@ class _CreatePropertyScreen2State extends State<CreatePropertyScreen2> {
                   },
                 ),
               ),
-              42.verticalSpace,
+              // 42.verticalSpace,
             ],
           ),
         ),

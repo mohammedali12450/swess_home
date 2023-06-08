@@ -206,14 +206,13 @@ class _EstatesScreenState extends State<EstatesScreen> {
                         Icons.search,
                         color: Theme.of(context)
                             .colorScheme
-                            .primary
-                            .withOpacity(0.24),
-                        size: 120.w,
+                            .primary,
+                        size: 100.w,
                       ),
                       kHe24,
                       Text(
                         AppLocalizations.of(context)!.no_results_body,
-                        style: Theme.of(context).textTheme.headline5,
+                        style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 16),
                       ),
                       // kHe12,
                       // Text(
@@ -226,7 +225,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       kHe40,
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          fixedSize: Size(220.w, 64.h),
+                          fixedSize: Size(220.w, 50.h),
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.estate_order,
@@ -280,7 +279,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
 
   Widget buildFilter() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(8.w, 12.w, 8.w, 7.w),
+      padding: EdgeInsets.fromLTRB(10.w, 12.w, 10.w, 7.w),
       child: Row(
         children: [
           Expanded(
@@ -326,7 +325,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                         color: isPriceSelected
                             ? AppColors.primaryColor
                             : AppColors.white,
-                        borderRadius: smallBorderRadius,
+                        borderRadius: veryLowBorderRadius,
                         border: Border.all(color: AppColors.primaryColor),
                       ),
                       child: Row(
@@ -401,7 +400,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
                         color: isDateSelected
                             ? AppColors.primaryColor
                             : AppColors.white,
-                        borderRadius: smallBorderRadius,
+                        borderRadius: veryLowBorderRadius,
                         border: Border.all(color: AppColors.primaryColor),
                       ),
                       child: Row(
@@ -446,11 +445,11 @@ class _EstatesScreenState extends State<EstatesScreen> {
           padding: kTinyAllPadding,
           child: Container(
             alignment: Alignment.center,
-            height: 60.h,
+            height: 50.h,
             width: getScreenWidth(context),
             decoration: BoxDecoration(
               borderRadius: lowBorderRadius,
-              border: Border.all(color: AppColors.yellowDarkColor),
+              border: Border.all(color: AppColors.primaryColor),
             ),
             child: ResText(
               AppLocalizations.of(context)!.identical_estates,

@@ -7,6 +7,7 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
+import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen_nav_bar.dart';
 import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen_nav_bar.dart';
@@ -81,6 +82,10 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                       label: AppLocalizations.of(context)!.search,
                     ),
                     BottomNavigationBarItem(
+                      icon: const Icon(Icons.history),
+                      label: AppLocalizations.of(context)!.estate_offers2,
+                    ),
+                    BottomNavigationBarItem(
                       icon: const Icon(Icons.bookmark_border_outlined),
                       label: AppLocalizations.of(context)!.saved,
                     ),
@@ -92,10 +97,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                       icon: const Icon(Icons.home_outlined),
                       label: AppLocalizations.of(context)!.estate_order,
                     ),
-                    BottomNavigationBarItem(
-                      icon: const Icon(Icons.history),
-                      label: AppLocalizations.of(context)!.estate_offers2,
-                    ),
+
                     // BottomNavigationBarItem(
                     //   icon: const Icon(Icons.chat_outlined),
                     //   label: AppLocalizations.of(context)!.chat,
@@ -128,11 +130,11 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
       //   return homeScreenState!.build(context);
       // }
       case 1:
-        return const SavedEstatesScreenNavBar();
+        return const RecentEstateOrdersScreenNavBar();
       case 2:
-        return const CreateOrderScreen();
+        return const SavedEstatesScreenNavBar();
       case 3:
-        return const RecentEstateOrdersScreen();
+        return const CreateOrderScreen();
       case 4:
         return const ProfileScreen();
       default:

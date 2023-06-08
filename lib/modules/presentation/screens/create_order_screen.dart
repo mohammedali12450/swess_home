@@ -10,10 +10,13 @@ import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bl
 import 'package:swesshome/modules/business_logic_components/bloc/location_bloc/locations_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/price_domains_bloc/price_domains_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
+import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/estate_type.dart';
 import 'package:swesshome/modules/data/models/price_domain.dart';
 import 'package:swesshome/modules/presentation/screens/after_estate_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
+import 'package:swesshome/modules/presentation/widgets/icone_badge.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/assets_paths.dart';
@@ -93,10 +96,66 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
+            iconTheme: const IconThemeData(color: AppColors.black),
             centerTitle: true,
+            backgroundColor: Colors.white,
             title: Text(
               AppLocalizations.of(context)!.create_estate_order,
+              style: const TextStyle(color: AppColors.black),
             ),
+            actions: [
+              InkWell(
+                child: BlocBuilder<NotificationsCubit, int>(
+                  builder: (_, notificationsCount) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                          left: 0, right: 12.w),
+                      child: IconBadge(
+                        icon: const Icon(
+                          Icons.notifications_outlined,
+                        ),
+                        itemCount: notificationsCount,
+                        right: 0,
+                        top: 5.h,
+                        hideZero: true,
+                      ),
+                    );
+                  },
+                ),
+                onTap: () async {
+                  if (UserSharedPreferences.getAccessToken() == null) {
+                    await showWonderfulAlertDialog(
+                        context,
+                        AppLocalizations.of(context)!.confirmation,
+                        AppLocalizations.of(context)!.this_features_require_login,
+                        removeDefaultButton: true,
+                        dialogButtons: [
+                          ElevatedButton(
+                            child: Text(
+                              AppLocalizations.of(context)!.sign_in,
+                            ),
+                            onPressed: () async {
+                              await Navigator.pushNamed(
+                                  context, AuthenticationScreen.id);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ElevatedButton(
+                            child: Text(
+                              AppLocalizations.of(context)!.cancel,
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                        width: 400.w);
+                    return;
+                  }
+                  Navigator.pushNamed(context, NotificationScreen.id);
+                },
+              ),
+            ],
           ),
           body: Form(
             key: _formKey,
@@ -110,7 +169,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      kHe16,
+                      kHe4,
                       // Text(
                       //   AppLocalizations.of(context)!.order_type + " :",
                       // ),
@@ -128,7 +187,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           },
                           paddingVertical: 5.h,
                           paddingHorizontal: 0),
-                      kHe36,
+                      kHe16,
                       buildLocation(),
                       EstateTypeWidget(
                         searchData: estateOrder,
@@ -144,7 +203,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       //buildPriceDomain(isArabic, isDark),
                       buildNote(),
                       buildButton(),
-                      kHe32,
+                      kHe8,
                     ],
                   ),
                 ),
@@ -170,7 +229,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             const Icon(Icons.location_on_outlined),
             kWi8,
             ResText(
-              AppLocalizations.of(context)!.estate_location + " :",
+              "${AppLocalizations.of(context)!.estate_location} :",
               textStyle: Theme.of(context).textTheme.headline6,
             ),
           ],
@@ -183,7 +242,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               decoration: BoxDecoration(
                   borderRadius: smallBorderRadius,
                   border: Border.all(
-                    color: !isDark
+                    color: isDark
                         ? AppColors.primaryColor
                         : AppColors.yellowDarkColor,
                     width: 1,
@@ -210,13 +269,14 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   hintText: AppLocalizations.of(context)!.estate_location_hint,
                   contentPadding: kSmallSymWidth,
                   errorBorder: kOutlinedBorderRed,
+                  border: InputBorder.none,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: smallBorderRadius,
                     borderSide: BorderSide(
                       color: Theme.of(context)
                           .colorScheme
                           .onBackground
-                          .withOpacity(0.4),
+                          .withOpacity(0),
                     ),
                   ),
                 ),
@@ -224,7 +284,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             );
           },
         ),
-        kHe36,
+        kHe16,
       ],
     );
   }
@@ -237,7 +297,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             const Icon(Icons.speaker_notes_outlined),
             kWi8,
             ResText(
-              AppLocalizations.of(context)!.notes + " :",
+              "${AppLocalizations.of(context)!.notes} :",
               textStyle: Theme.of(context).textTheme.headline6,
             ),
           ],
@@ -249,11 +309,11 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             return Container(
               width: inf,
               padding: kSmallSymWidth,
-              height: 250.h,
+              height: 150.h,
               decoration: BoxDecoration(
                 borderRadius: smallBorderRadius,
                 border: Border.all(
-                  color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                  color: !isDark ? Colors.black38 : AppColors.primaryColor,
                 ),
               ),
               child: TextField(
@@ -285,7 +345,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     return Center(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          fixedSize: const Size(280, 64),
+          fixedSize: const Size(400, 50),
         ),
         child: BlocBuilder<EstateOrderBloc, EstateOrderState>(
           builder: (_, estateOrderState) {

@@ -88,9 +88,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppColors.black),
         centerTitle: true,
+        backgroundColor: Colors.white,
         title: Text(
           AppLocalizations.of(context)!.settings,
+          style: const TextStyle(color: AppColors.black),
+        ),
+        actions: [
+          InkWell(
+            child: BlocBuilder<NotificationsCubit, int>(
+              builder: (_, notificationsCount) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                      left: 0, right: 12.w),
+                  child: IconBadge(
+                    icon: const Icon(
+                      Icons.notifications_outlined,
+                    ),
+                    itemCount: notificationsCount,
+                    right: 0,
+                    top: 5.h,
+                    hideZero: true,
+                  ),
+                );
+              },
+            ),
+            onTap: () async {
+              if (UserSharedPreferences.getAccessToken() == null) {
+                await showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.confirmation,
+                    AppLocalizations.of(context)!.this_features_require_login,
+                    removeDefaultButton: true,
+                    dialogButtons: [
+                      ElevatedButton(
+                        child: Text(
+                          AppLocalizations.of(context)!.sign_in,
+                        ),
+                        onPressed: () async {
+                          await Navigator.pushNamed(
+                              context, AuthenticationScreen.id);
+                          Navigator.pop(context);
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                    width: 400.w);
+                return;
+              }
+              Navigator.pushNamed(context, NotificationScreen.id);
+            },
+          ),
+        ],
+      ),
+      drawer: SizedBox(
+        width: getScreenWidth(context) * (75 / 100),
+        child: const Drawer(
+          child: MyDrawer(),
         ),
       ),
       body: RefreshIndicator(
@@ -104,6 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               if (UserSharedPreferences.getAccessToken() == null) ...[
                 // buildLanguageSetting,
+                  kHe8,
                 buildListTile(
                   icon: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -131,9 +194,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? Icons.keyboard_arrow_right
                       : Icons.keyboard_arrow_left),
                 ),
+
                 6.verticalSpace,
                 const Divider(),
-                6.verticalSpace,
+                10.verticalSpace,
                 // buildThemeModeSetting(),
               ],
               if (UserSharedPreferences.getAccessToken() != null) ...[
@@ -163,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     })
               ],
               //Spacer(),
-              kHe16,
+              // kHe16,
               Align(
                 alignment: Alignment.bottomCenter,
                 child: ResText(
@@ -175,16 +239,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       .copyWith(color: Colors.grey),
                 ),
               ),
-              kHe20,
+              // kHe20,
               kHe36,
             ],
           ),
-        ),
-      ),
-      drawer: SizedBox(
-        width: getScreenWidth(context) * (75 / 100),
-        child: const Drawer(
-          child: MyDrawer(),
         ),
       ),
     );
@@ -250,7 +308,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ? Icons.keyboard_arrow_right
               : Icons.keyboard_arrow_left),
         ),
-
         // buildLanguageSetting,
         buildListTile(
           icon: Padding(
@@ -380,14 +437,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  SizedBox buildProfileImage() {
-    return SizedBox(
-      height: 320.h,
+  Container buildProfileImage() {
+    return Container(
+      color: AppColors.primaryColor,
+      height: 220.h,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            height: 190.h,
+            height: 130.h,
             //width: getScreenWidth(context),
             child: Stack(
               children: [
@@ -425,8 +483,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 Center(
                   child: CircleAvatar(
-                    radius: 60.w,
-                    backgroundColor: Colors.grey,
+                    radius: 50.w,
+                    backgroundColor: AppColors.white,
                     backgroundImage: const AssetImage(swessHomeIconPath),
                   ),
                 ),
@@ -434,14 +492,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           SizedBox(
-            height: 100.h,
+            // height: 100.h,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ResText(
-                  user!.firstName! + " " + user!.lastName!,
+                  "${user!.firstName!} ${user!.lastName!}",
                   textStyle: Theme.of(context).textTheme.headline3!.copyWith(
-                      color: !isDark ? AppColors.black : AppColors.white),
+                      color: !isDark ? AppColors.black : AppColors.white,fontSize: 20),
                 ),
                 // ResText(
                 //   user?.email ?? "",
@@ -450,6 +508,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 //           ? AppColors.hintColor
                 //           : AppColors.white.withOpacity(0.48)),
                 // ),
+                kHe16,
                 Directionality(
                   textDirection: TextDirection.ltr,
                   child: Row(
@@ -482,7 +541,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
-          SizedBox(height: 15.h),
         ],
       ),
     );
@@ -582,7 +640,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: SizedBox(
         width: 1.sw,
-        height: 64.h,
+        // height: 64.h,
         child: ListTile(
           leading: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -779,7 +837,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: SizedBox(
         width: 1.sw,
-        height: 64.h,
+        height: 45.h,
         child: ListTile(
           leading: icon,
           onTap: onTap,

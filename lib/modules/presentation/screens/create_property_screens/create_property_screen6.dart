@@ -38,8 +38,7 @@ class _CreatePropertyScreen6State extends State<CreatePropertyScreen6> {
         children: [
           SizedBox(
             width: 1.sw,
-            child: Text(AppLocalizations.of(context)!.estate_description +
-                " ( ${AppLocalizations.of(context)!.optional} ) :"),
+            child: Text("${AppLocalizations.of(context)!.estate_description} ( ${AppLocalizations.of(context)!.optional} ) :"),
           ),
           16.verticalSpace,
           SizedBox(

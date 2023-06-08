@@ -84,7 +84,7 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
               kHe40,
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(200, 64),
+                  fixedSize: const Size(200, 50),
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.ok,

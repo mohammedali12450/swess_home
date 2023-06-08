@@ -73,7 +73,7 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> with Widg
                 AppLocalizations.of(context)!.estate_location + " :",
               ),
             ),
-            16.verticalSpace,
+            // 16.verticalSpace,
             BlocBuilder<ChannelCubit, dynamic>(
               bloc: propertyLocationErrorCubit,
               builder: (_, errorMessage) => TextField(
@@ -101,11 +101,10 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> with Widg
             SizedBox(
               width: 1.sw,
               child: Text(
-                AppLocalizations.of(context)!.nearby_places +
-                    " ( ${AppLocalizations.of(context)!.optional}) :",
+                "${AppLocalizations.of(context)!.nearby_places} ( ${AppLocalizations.of(context)!.optional}) :",
               ),
             ),
-            16.verticalSpace,
+            // 16.verticalSpace,
             BlocBuilder<ChannelCubit, dynamic>(
               bloc: nearbyPlacesCubit,
               builder: (_, nearbyPlacesList) {
@@ -207,8 +206,7 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> with Widg
             SizedBox(
               width: 1.sw,
               child: Text(
-                AppLocalizations.of(context)!.estate_position +
-                    " ( ${AppLocalizations.of(context)!.optional}) :",
+                "${AppLocalizations.of(context)!.estate_position} ( ${AppLocalizations.of(context)!.optional}) :",
               ),
             ),
             12.verticalSpace,
@@ -276,7 +274,7 @@ class _CreatePropertyScreen3State extends State<CreatePropertyScreen3> with Widg
                 );
               },
             ),
-            42.verticalSpace,
+            // 42.verticalSpace,
           ],
         ),
       ),

@@ -37,19 +37,18 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../data/providers/theme_provider.dart';
 
-class RecentEstateOrdersScreen extends StatefulWidget {
+class RecentEstateOrdersScreenNavBar extends StatefulWidget {
   static const String id = "RecentEstateOrdersScreen";
 
   final String? estateId;
 
-  const RecentEstateOrdersScreen({Key? key, this.estateId}) : super(key: key);
+  const RecentEstateOrdersScreenNavBar({Key? key, this.estateId}) : super(key: key);
 
   @override
-  _RecentEstateOrdersScreenState createState() =>
-      _RecentEstateOrdersScreenState();
+  _RecentEstateOrdersScreenNavBarState createState() => _RecentEstateOrdersScreenNavBarState();
 }
 
-class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
+class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScreenNavBar>
     with TickerProviderStateMixin {
   late RecentEstatesOrdersBloc _recentEstatesOrdersBloc;
   late ItemScrollController scrollController;
@@ -129,9 +128,71 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          iconTheme: const IconThemeData(color: AppColors.black),
           centerTitle: true,
+          backgroundColor: Colors.white,
           title: Text(
             AppLocalizations.of(context)!.recent_created_orders,
+              style: const TextStyle(color: AppColors.black)
+          ),
+          actions: [
+            InkWell(
+              child: BlocBuilder<NotificationsCubit, int>(
+                builder: (_, notificationsCount) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                        left: 0, right:  12.w),
+                    child: IconBadge(
+                      icon: const Icon(
+                        Icons.notifications_outlined,
+                      ),
+                      itemCount: notificationsCount,
+                      right: 0,
+                      top: 5.h,
+                      hideZero: true,
+                    ),
+                  );
+                },
+              ),
+              onTap: () async {
+                if (UserSharedPreferences.getAccessToken() == null) {
+                  await showWonderfulAlertDialog(
+                      context,
+                      AppLocalizations.of(context)!.confirmation,
+                      AppLocalizations.of(context)!.this_features_require_login,
+                      removeDefaultButton: true,
+                      dialogButtons: [
+                        ElevatedButton(
+                          child: Text(
+                            AppLocalizations.of(context)!.sign_in,
+                          ),
+                          onPressed: () async {
+                            await Navigator.pushNamed(
+                                context, AuthenticationScreen.id);
+                            Navigator.pop(context);
+                          },
+                        ),
+                        ElevatedButton(
+                          child: Text(
+                            AppLocalizations.of(context)!.cancel,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                      width: 400.w);
+                  return;
+                }
+                Navigator.pushNamed(context, NotificationScreen.id);
+              },
+            ),
+          ],
+        ),
+        drawer: SizedBox(
+          width: getScreenWidth(context) * (75 / 100),
+          child: const Drawer(
+            child: MyDrawer(),
           ),
         ),
         body: RefreshIndicator(
@@ -286,7 +347,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                                   );
                                 }),
                           ),
-                          kHe24
+                          const SizedBox(height: 75)
                         ],
                       ),
                     ),

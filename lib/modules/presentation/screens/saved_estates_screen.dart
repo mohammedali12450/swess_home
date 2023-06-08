@@ -52,12 +52,9 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          iconTheme: const IconThemeData(color: AppColors.black),
           centerTitle: true,
-          backgroundColor: Colors.white,
           title: Text(
             AppLocalizations.of(context)!.saved_estates,
-            style: const TextStyle(color: AppColors.black),
           ),
         ),
         body: RefreshIndicator(
