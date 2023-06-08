@@ -67,7 +67,7 @@ class _FAQScreenState extends State<FAQScreen> {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       child: ExpansionTile(
-        backgroundColor: !isDark ? Theme.of(context).colorScheme.secondary : Colors.black38,
+        backgroundColor: isDark ? Theme.of(context).colorScheme.secondary : Colors.black38,
         childrenPadding: kLargeSymWidth,
         iconColor: Theme.of(context).colorScheme.primary,
         collapsedIconColor: Theme.of(context).colorScheme.primary,

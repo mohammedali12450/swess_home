@@ -88,7 +88,7 @@ class _CreatePropertyIntroductionScreenState
                 40.verticalSpace,
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    fixedSize: Size(220.w, 64.h),
+                    fixedSize: Size(220.w, 50.h),
                     primary: AppColors.secondaryColor,
                   ),
                   child: ResText(

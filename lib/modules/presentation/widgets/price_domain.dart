@@ -72,13 +72,13 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
               const Icon(Icons.price_change_outlined),
               kWi8,
               Text(
-                AppLocalizations.of(context)!.price_domain + " :",
+                "${AppLocalizations.of(context)!.price_domain} :",
                 style: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
         ),
-        kHe12,
+        kHe4,
         BlocBuilder<ChannelCubit, dynamic>(
             bloc: widget.isRentCubit,
             builder: (_, priceState) {
@@ -171,7 +171,7 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                       alignment: isArabic
                                           ? Alignment.centerRight
                                           : Alignment.centerLeft,
-                                      height: 55.h,
+                                      height: 40.h,
                                       width: 150.w,
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 8.w),
@@ -180,7 +180,7 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                           border: Border.all(
                                             color: !isDark
                                                 ? Colors.black38
-                                                : AppColors.yellowDarkColor,
+                                                : AppColors.primaryColor,
                                             width: 1,
                                           )),
                                       child: Text(min[widget
@@ -265,7 +265,7 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                         alignment: isArabic
                                             ? Alignment.centerRight
                                             : Alignment.centerLeft,
-                                        height: 55.h,
+                                        height: 40.h,
                                         width: 150.w,
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 8.w),
@@ -274,7 +274,7 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                             border: Border.all(
                                               color: !isDark
                                                   ? Colors.black38
-                                                  : AppColors.yellowDarkColor,
+                                                  : AppColors.primaryColor,
                                               width: 1,
                                             )),
                                         child: Text(max[widget
@@ -295,7 +295,7 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                 ),
               );
             }),
-        kHe24,
+        kHe16,
       ],
     );
   }

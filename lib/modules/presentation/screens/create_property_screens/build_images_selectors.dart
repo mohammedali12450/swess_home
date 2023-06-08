@@ -24,7 +24,7 @@ Builder buildImagesSelectors({
         Row(
           children: [
             Text(
-              AppLocalizations.of(context)!.property_images + " :",
+              "${AppLocalizations.of(context)!.property_images} :",
             ),
             const Spacer(),
             if (maximumCountOfEstateImages != null && minimumCountOfEstateImages != null)
@@ -61,8 +61,7 @@ Builder buildImagesSelectors({
         Row(
           children: [
             Text(
-              AppLocalizations.of(context)!.property_street_images +
-                  " ( ${AppLocalizations.of(context)!.optional} ) :",
+              "${AppLocalizations.of(context)!.property_street_images} ( ${AppLocalizations.of(context)!.optional} ) :",
             ),
             const Spacer(),
             if (maximumCountOfStreetImages != null)
@@ -98,8 +97,7 @@ Builder buildImagesSelectors({
         Row(
           children: [
             Text(
-              AppLocalizations.of(context)!.floor_plan_property_images +
-                  " ( ${AppLocalizations.of(context)!.optional} ) :",
+              "${AppLocalizations.of(context)!.floor_plan_property_images} ( ${AppLocalizations.of(context)!.optional} ) :",
             ),
             const Spacer(),
             if (maximumCountOfFloorPlanImages != null)

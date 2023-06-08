@@ -500,6 +500,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               );
             },
           ),
+          kHe4,
           InkWell(
             onTap: () {
               Navigator.push(
@@ -516,8 +517,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           Center(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(330.w, 60.h),
-                maximumSize: Size(330.w, 60.h),
+                minimumSize: Size(330.w, 50.h),
+                maximumSize: Size(330.w, 50.h),
               ),
               child: BlocBuilder<UserLoginBloc, UserLoginState>(
                 builder: (_, loginState) {
@@ -568,7 +569,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           ),
           Container(
             height: 40.h,
-            margin: EdgeInsets.only(top: 25.h, bottom: 10.h),
+            margin: EdgeInsets.only(top: 25.h, bottom: 10.h,left: 5.h,right: 5.h),
             child: Row(
               children: [
                 Expanded(
@@ -965,7 +966,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   children: [
                     Checkbox(
                       activeColor:
-                          isDark ? AppColors.white : AppColors.primaryColor,
+                          !isDark ? AppColors.white : AppColors.primaryColor,
                       value: isChecked,
                       onChanged: (value) {
                         isCheck = value!;
@@ -990,7 +991,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                           ResText(
                             AppLocalizations.of(context)!.terms_condition,
                             textStyle: TextStyle(
-                                fontSize: 16.sp, fontWeight: FontWeight.bold),
+                              decoration: TextDecoration.underline,
+                                fontSize: 12.sp, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -1002,8 +1004,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           Center(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(240.w, 64.h),
-                maximumSize: Size(300.w, 64.h),
+                minimumSize: Size(330.w, 50.h),
+                maximumSize: Size(330.w, 50.h),
               ),
               child: BlocBuilder<UserRegisterBloc, UserRegisterState>(
                 bloc: userRegisterBloc,

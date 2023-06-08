@@ -173,7 +173,7 @@ class _EstateCardState extends State<EstateCard> {
     }
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
+      margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 15.w),
       width: 1.sw,
       decoration: BoxDecoration(
         border: Border.all(
@@ -205,7 +205,7 @@ class _EstateCardState extends State<EstateCard> {
               children: [
                 // Estate images :
                 SizedBox(
-                  height: 300.h,
+                  height: 200.h,
                   child: Stack(
                     children: [
                       PhotoViewGallery.builder(
@@ -341,13 +341,14 @@ class _EstateCardState extends State<EstateCard> {
                   ),
                 ),
                 // Estate price and type :
-                SizedBox(
-                  height: 100.h,
-                  child: Row(
+                Container(
+                  height: 80.h,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // price
                       Expanded(
-                        flex: 3,
+                        flex: 1,
                         child: Container(
                           height: 1.sh,
                           decoration: BoxDecoration(
@@ -355,25 +356,39 @@ class _EstateCardState extends State<EstateCard> {
                           ),
                           child: (BlocProvider.of<UserLoginBloc>(context).user == null) ?
                           Padding(
-                            padding: EdgeInsets.only(left: 10.w, right: 10.w),
+                            padding: EdgeInsets.only(
+                              right: (isArabic) ? 12.w : 0,
+                              left: (!isArabic) ? 12.w : 0,
+                            ),
                             child: Row(
                               children: [
                                 InkWell(
                                   onTap: () async{
                                     await Navigator.pushNamed(context, AuthenticationScreen.id);
                                   },
-                                  child: ResText(
-                                    AppLocalizations.of(context)!.sign_in,
-                                    textAlign: TextAlign.start,
-                                    textStyle: GoogleFonts.libreFranklin(
-                                        color: Theme.of(context).colorScheme.primary,
-                                        fontWeight: FontWeight.w600,
-                                        decoration: TextDecoration.underline
+                                  child: Container(
+                                    width: 100.w,
+                                    height: 30.h,
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primaryColor,
+                                      borderRadius: veryLowBorderRadius,
+                                    ),
+                                    child: Center(
+                                      child: ResText(
+                                        AppLocalizations.of(context)!.sign_in,
+                                        textAlign: TextAlign.start,
+                                        textStyle: GoogleFonts.libreFranklin(
+                                            color: AppColors.white,
+                                            fontWeight: FontWeight.w600,
+                                          fontSize: 15
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
+                                kWi8,
                                 ResText(
-                                  " " +  AppLocalizations.of(context)!.first + " " +  AppLocalizations.of(context)!.get_price,
+                                  " ${AppLocalizations.of(context)!.first} ${AppLocalizations.of(context)!.get_price}",
                                   textAlign: TextAlign.start,
                                   textStyle: GoogleFonts.libreFranklin(
                                       color: Theme.of(context).colorScheme.onBackground,
@@ -384,7 +399,7 @@ class _EstateCardState extends State<EstateCard> {
                                 ),
                               ],
                             ),
-                          ) :
+                          ):
                           Row(
                             children: [
                               Padding(
@@ -454,9 +469,13 @@ class _EstateCardState extends State<EstateCard> {
                       // type :
                       Expanded(
                         flex: 1,
-                        child: Container(
-                          color: estateTypeBackgroundColor,
-                          child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            right: (isArabic) ? 12.w : 0,
+                            left: (!isArabic) ? 12.w : 0,
+                          ),
+                          child: Container(
+                            color: estateTypeBackgroundColor,
                             child: Text(
                               estateType,
                               maxLines: 3,
@@ -464,7 +483,7 @@ class _EstateCardState extends State<EstateCard> {
                               style: Theme.of(context)
                                   .textTheme
                                   .subtitle1!
-                                  .copyWith(color: estateTypeColor),
+                                  .copyWith(color: AppColors.yellowColor),
                             ),
                           ),
                         ),
@@ -474,10 +493,10 @@ class _EstateCardState extends State<EstateCard> {
                 ),
                 // Estate address and office logo
                 Container(
-                  height: 120.h,
-                  color: Colors.transparent,
+                  height: 80.h,
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         flex: 3,
@@ -488,7 +507,7 @@ class _EstateCardState extends State<EstateCard> {
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Container(
                                 color: Colors.transparent,
@@ -503,11 +522,45 @@ class _EstateCardState extends State<EstateCard> {
                                     addingDate,
                                 style: Theme.of(context).textTheme.subtitle2,
                               ),
+                              if (widget.estate.visitCount != null)
+                                Expanded(
+                                  flex:1,
+                                  child: Directionality(
+                                    textDirection: TextDirection.ltr,
+                                    child: Container(
+                                      // padding: EdgeInsets.only(left: 17.w),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.remove_red_eye_outlined,
+                                            color: !isDarkMode
+                                                ? AppColors.lastColor
+                                                : AppColors.yellowDarkColor,
+                                            // size: 20,
+                                          ),
+                                          kWi8,
+                                          Text(
+                                            widget.estate.visitCount!.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline5!
+                                                .copyWith(
+                                                color: !isDarkMode
+                                                    ? AppColors.lastColor
+                                                    : AppColors.yellowDarkColor,
+                                                //fontSize: 14.sp,
+                                                height: 1.5.h),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
                             ],
                           ),
                         ),
                       ),
-                      const Spacer(),
+                      // const Spacer(),
                       Expanded(
                         flex: 1,
                         child: Column(
@@ -529,40 +582,7 @@ class _EstateCardState extends State<EstateCard> {
                               ),
                             ),
                             4.verticalSpace,
-                            if (widget.estate.visitCount != null)
-                              Expanded(
-                                flex:1,
-                                child: Directionality(
-                                  textDirection: TextDirection.ltr,
-                                  child: Container(
-                                    padding: EdgeInsets.only(left: 17.w),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.remove_red_eye_outlined,
-                                          color: !isDarkMode
-                                              ? AppColors.lastColor
-                                              : AppColors.yellowDarkColor,
-                                         // size: 20,
-                                        ),
-                                        kWi8,
-                                        Text(
-                                          widget.estate.visitCount!.toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline5!
-                                              .copyWith(
-                                                  color: !isDarkMode
-                                                      ? AppColors.lastColor
-                                                      : AppColors.yellowDarkColor,
-                                                  //fontSize: 14.sp,
-                                                  height: 1.5.h),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+
                             4.verticalSpace,
                           ],
                         ),

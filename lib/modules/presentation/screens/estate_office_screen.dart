@@ -163,27 +163,29 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                   return Column(
                     children: [
                       Container(
-                        padding: EdgeInsets.only(left: (results!.communicationMedias == null) ? 10.w : 0),
                         width: getScreenWidth(context),
                         child: (results!.communicationMedias != null)
-                            ? Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: buildImage(),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: buildOfficeDetails(),
-                                  ),
-                                ],
-                              )
+                            ? Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: buildImage(),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: buildOfficeDetails(),
+                                    ),
+                                  ],
+                                ),
+                            )
                             : Column(
                                 children: [
                                   buildImage(),
-                                  34.verticalSpace,
+                                  20.verticalSpace,
                                   ResText(
                                     results!.estateOffice.name!,
                                     textStyle: Theme.of(context).textTheme.headline4!.copyWith(
@@ -200,9 +202,9 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                 ],
                               ),
                       ),
-                      8.verticalSpace,
+                      // 8.verticalSpace,
                       // Account name and rate :
-                      kHe12,
+                      kHe4,
                       if (results!.estateOffice.workHours! != " - ")
                         Directionality(
                           textDirection: TextDirection.ltr,
@@ -211,7 +213,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                             decoration: BoxDecoration(
                               border: Border.all(
                                 width: 1,
-                                color: AppColors.yellowDarkColor,
+                                color: AppColors.lightblue,
                               ),
                               borderRadius: lowBorderRadius,
                             ),
@@ -221,16 +223,18 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                             ),
                           ),
                         ),
-                      kHe32,
+                      kHe28,
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Expanded(
                               flex: 1,
                               child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(fixedSize: Size(180.w, 64.h)),
+                                style: ElevatedButton.styleFrom(
+                                    fixedSize: Size(150.w, 50.h),
+                                ),
                                 onPressed: () async {
                                   if (BlocProvider.of<UserLoginBloc>(context).user == null) {
                                     await buildSignInRequiredDialog();
@@ -244,13 +248,13 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                   );
                                 },
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.add),
+                                    const Icon(Icons.add,size: 20,),
                                     ResText(
                                       AppLocalizations.of(context)!.post_estate,
-                                      textStyle: TextStyle(fontSize: 18.sp, color: isDark ? AppColors.black : AppColors.white),
+                                      textStyle: TextStyle(fontSize: 15.sp, color: !isDark ? AppColors.black : AppColors.white),
                                     )
                                   ],
                                 ),
@@ -302,11 +306,11 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Icon((likeAndUnlikeState is Liked) ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined),
+                                              Icon((likeAndUnlikeState is Liked) ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,size: 20,),
                                               kWi12,
                                               ResText(
                                                 (likeAndUnlikeState is Liked) ? AppLocalizations.of(context)!.liked : AppLocalizations.of(context)!.like,
-                                                textStyle: TextStyle(fontSize: 18.sp, color: isDark ? AppColors.black : AppColors.white),
+                                                textStyle: TextStyle(fontSize: 15.sp, color: !isDark ? AppColors.black : AppColors.white),
                                               )
                                             ],
                                           ),
@@ -317,7 +321,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           ],
                         ),
                       ),
-                      kHe40,
+                      kHe28,
                       Container(
                         height: 32.h,
                         width: 1.sw,
@@ -332,7 +336,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                             ResText(
                               AppLocalizations.of(context)!.estate_offers,
                               textStyle: Theme.of(context).textTheme.subtitle2!.copyWith(
-                                    color: AppColors.black,
+                                    color: AppColors.white,
                                   ),
                             ),
                             ResText(
@@ -344,7 +348,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                           ],
                         ),
                       ),
-                      kHe24,
+                      kHe16,
                       ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -380,8 +384,8 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
   }
 
   Widget buildImage() {
-    return SizedBox(
-      height: 230.h,
+    return Container(
+      // height: 200.h,
       child: Align(
         alignment: Alignment.center,
         child: InkWell(
@@ -394,10 +398,11 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
           child: Hero(
             tag: results!.estateOffice.id.toString(),
             child: Container(
+              height: 200,
               clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: circularBorderRadius,
+                borderRadius: lowBorderRadius,
               ),
               child: CachedNetworkImage(imageUrl: imagesBaseUrl + results!.estateOffice.logo!),
             ),
@@ -533,7 +538,7 @@ class ImageDialog extends StatelessWidget {
       child: Container(
         width: getScreenWidth(context),
         height: 400.h,
-        decoration: BoxDecoration(image: DecorationImage(image: CachedNetworkImageProvider(imagesBaseUrl + path), fit: BoxFit.contain)),
+        decoration: BoxDecoration(image: DecorationImage(image: CachedNetworkImageProvider(imagesBaseUrl + path), fit: BoxFit.cover)),
       ),
     );
   }

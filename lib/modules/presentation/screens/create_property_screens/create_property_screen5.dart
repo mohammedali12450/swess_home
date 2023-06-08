@@ -164,7 +164,7 @@ class _CreatePropertyScreen5State extends State<CreatePropertyScreen5> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => (isLands || isShops)
+                    builder: (_) => (!isLands || isShops)
                         ? CreatePropertyScreenFinish(
                             currentOffer: widget.currentOffer)
                         : CreatePropertyScreen6(

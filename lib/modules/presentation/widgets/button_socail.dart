@@ -49,7 +49,7 @@ class _ButtonSocailState extends State<ButtonSocail> {
         ),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(100.r),
+            borderRadius: BorderRadius.circular(5),
           ),
         ),
       ),

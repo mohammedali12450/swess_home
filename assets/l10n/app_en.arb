@@ -602,7 +602,8 @@
   "create_estate_request":"Create New Estate Request",
   "saved":"Saved",
   "estate_offers2":"Estate Offers",
-  "search2": "search",
+  "search2": "Search",
   "previous_search_results": "Previous Search Results",
-  "result_matching_search_page":"Results matching your search options have been found, and similar results, if any, will be displayed"
+  "result_matching_search_page":"Results matching your search options have been found, and similar results, if any, will be displayed",
+  "edit_profile":"Edit Profile"
 }

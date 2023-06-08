@@ -32,7 +32,7 @@ Widget buildChoiceContainer({
             height: 45.h,
             decoration: BoxDecoration(
               border: Border.all(
-                  color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                  color: isDark ? Colors.black38 : AppColors.yellowDarkColor,
                   width: 1),
               borderRadius: lowBorderRadius,
             ),
@@ -44,10 +44,10 @@ Widget buildChoiceContainer({
                       decoration: BoxDecoration(
                         color: isDark
                             ? isChoice
-                                ? AppColors.lastColor.withOpacity(0.5)
+                                ? AppColors.primaryColor
                                 : AppColors.white
                             : !isChoice
-                                ? AppColors.lastColor.withOpacity(0.5)
+                                ? AppColors.primaryColor
                                 : AppColors.white,
                         borderRadius: lowBorderRadius,
                       ),
@@ -78,10 +78,10 @@ Widget buildChoiceContainer({
                       decoration: BoxDecoration(
                         color: isDark
                             ? !isChoice
-                                ? AppColors.lastColor.withOpacity(0.5)
+                                ? AppColors.primaryColor
                                 : AppColors.white
                             : isChoice
-                                ? AppColors.lastColor.withOpacity(0.5)
+                                ? AppColors.primaryColor
                                 : AppColors.white,
                         borderRadius: lowBorderRadius,
                       ),

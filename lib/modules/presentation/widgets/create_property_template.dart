@@ -69,7 +69,7 @@ class _CreatePropertyTemplateState extends State<CreatePropertyTemplate> {
                   right: 12.w,
                   left: 12.w,
                   bottom: 8.w,
-                  top: (isKeyboardOpened) ? 32.h : 16.h,
+                  // top: (isKeyboardOpened) ? 32.h : 16.h,
                 ),
                 decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(

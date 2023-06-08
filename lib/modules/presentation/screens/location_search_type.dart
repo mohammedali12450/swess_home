@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:swesshome/modules/presentation/screens/filter_search_screen.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
@@ -35,12 +36,16 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(AppLocalizations.of(context)!.search),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
+              searchForEstate(),
               buildGPSLocation(),
               buildListLocation(),
               buildRecentSearchedPlaces()
@@ -51,17 +56,41 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
     );
   }
 
+  Widget searchForEstate() {
+    return InkWell(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const FilterSearchScreen()));
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12.h,horizontal: 10),
+        child: Container(
+          height: 50.h,
+          // width: 1.sw,
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+          decoration: BoxDecoration(
+            border: Border.all(
+                color: isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                width: 1),
+            borderRadius: lowBorderRadius,
+          ),
+          child: Text(AppLocalizations.of(context)!.estate_search),
+        ),
+      ),
+    );
+  }
+
   Widget buildGPSLocation() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h),
+      padding: EdgeInsets.symmetric(vertical: 0.h,horizontal: 10),
       child: Container(
-        height: 55.h,
+        height: 50.h,
         width: 1.sw,
         padding: EdgeInsets.symmetric(horizontal: 12.w),
         alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
         decoration: BoxDecoration(
           border: Border.all(
-              color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,
+              color: isDark ? Colors.black38 : AppColors.yellowDarkColor,
               width: 1),
           borderRadius: lowBorderRadius,
         ),
@@ -71,18 +100,21 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
   }
 
   Widget buildListLocation() {
-    return Container(
-      height: 55.h,
-      width: 1.sw,
-      padding: EdgeInsets.symmetric(horizontal: 12.w),
-      alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
-      decoration: BoxDecoration(
-        border: Border.all(
-            color: !isDark ? Colors.black38 : AppColors.yellowDarkColor,
-            width: 1),
-        borderRadius: lowBorderRadius,
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 12.h,horizontal: 10),
+      child: Container(
+        height: 50.h,
+        width: 1.sw,
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+        decoration: BoxDecoration(
+          border: Border.all(
+              color: isDark ? Colors.black38 : AppColors.yellowDarkColor,
+              width: 1),
+          borderRadius: lowBorderRadius,
+        ),
+        child: Text(AppLocalizations.of(context)!.select_location_manual),
       ),
-      child: Text(AppLocalizations.of(context)!.select_location_manual),
     );
   }
 

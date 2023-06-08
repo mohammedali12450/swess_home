@@ -308,34 +308,79 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   child: Row(
                     children: [
                       (BlocProvider.of<UserLoginBloc>(context).user == null) ?
-                        Row(
+                      Padding(
+                        padding: EdgeInsets.only(
+                          right: (isArabic) ? 12.w : 0,
+                          left: (!isArabic) ? 12.w : 0,
+                        ),
+                        child: Row(
                           children: [
                             InkWell(
                               onTap: () async{
                                 await Navigator.pushNamed(context, AuthenticationScreen.id);
                               },
-                              child: ResText(
-                                AppLocalizations.of(context)!.sign_in,
-                                textAlign: TextAlign.start,
-                                textStyle: GoogleFonts.libreFranklin(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.w600,
-                                  decoration: TextDecoration.underline
+                              child: Container(
+                                width: 100.w,
+                                height: 30.h,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: veryLowBorderRadius,
+                                ),
+                                child: Center(
+                                  child: ResText(
+                                    AppLocalizations.of(context)!.sign_in,
+                                    textAlign: TextAlign.start,
+                                    textStyle: GoogleFonts.libreFranklin(
+                                        color: AppColors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15
                                     ),
+                                  ),
+                                ),
                               ),
                             ),
+                            kWi8,
                             ResText(
-                              " " +  AppLocalizations.of(context)!.first + " " +  AppLocalizations.of(context)!.get_price,
+                              " ${AppLocalizations.of(context)!.first} ${AppLocalizations.of(context)!.get_price}",
                               textAlign: TextAlign.start,
                               textStyle: GoogleFonts.libreFranklin(
                                   color: Theme.of(context).colorScheme.onBackground,
                                   fontWeight: FontWeight.w400,
-                                fontSize: 12.sp,
+                                  fontSize: 12.sp,
                                   height: 1.3.h
                               ),
                             ),
                           ],
-                        ) :
+                        ),
+                      ):
+                        // Row(
+                        //   children: [
+                        //     InkWell(
+                        //       onTap: () async{
+                        //         await Navigator.pushNamed(context, AuthenticationScreen.id);
+                        //       },
+                        //       child: ResText(
+                        //         AppLocalizations.of(context)!.sign_in,
+                        //         textAlign: TextAlign.start,
+                        //         textStyle: GoogleFonts.libreFranklin(
+                        //             color: Theme.of(context).colorScheme.primary,
+                        //             fontWeight: FontWeight.w600,
+                        //           decoration: TextDecoration.underline
+                        //             ),
+                        //       ),
+                        //     ),
+                        //     ResText(
+                        //       " " +  AppLocalizations.of(context)!.first + " " +  AppLocalizations.of(context)!.get_price,
+                        //       textAlign: TextAlign.start,
+                        //       textStyle: GoogleFonts.libreFranklin(
+                        //           color: Theme.of(context).colorScheme.onBackground,
+                        //           fontWeight: FontWeight.w400,
+                        //         fontSize: 12.sp,
+                        //           height: 1.3.h
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ) :
                       Row(
                         children: [
                           Padding(
@@ -359,6 +404,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                              rentOfferTypeNumber)
                             Padding(
                               padding: EdgeInsets.only(
+                                top: 5,
                                 right: (isArabic) ? 8.w : 0,
                                 left: (!isArabic) ? 8.w : 0,
                               ),
@@ -408,6 +454,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       const Spacer(),
                       Padding(
                         padding: EdgeInsets.only(
+                          top: 5,
                           left: (isArabic) ? 8.w : 0,
                           right: (!isArabic) ? 8.w : 0,
                         ),
@@ -426,31 +473,75 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 ),
                 // Estate Logo and type :
                 Container(
-                  height: 126.h,
+                  height: 100.h,
                   padding: kTinyAllPadding,
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         flex: 3,
-                        child: Container(
-                          color: Colors.transparent,
-                          padding: EdgeInsets.only(
-                            left: (isArabic) ? 12.w : 0,
-                            right: (!isArabic) ? 12.w : 0,
-                          ),
-                          child:  widget.estate.estateType == null ? const Center():
-                          ResText(
-                            AppLocalizations.of(context)!
-                                .estate_offer_place_sentence(
-                              widget.estate.estateType!.name.split('|').last,
-                              widget.estate.estateOfferType!.name,
-                              widget.estate.locationS!,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              color: Colors.transparent,
+                              padding: EdgeInsets.only(
+                                left: (isArabic) ? 12.w : 0,
+                                right: (!isArabic) ? 12.w : 0,
+                              ),
+                              child:  widget.estate.estateType == null ? const Center():
+                              ResText(
+                                AppLocalizations.of(context)!
+                                    .estate_offer_place_sentence(
+                                  widget.estate.estateType!.name.split('|').last,
+                                  widget.estate.estateOfferType!.name,
+                                  widget.estate.locationS!,
+                                ),
+                                textAlign: TextAlign.start,
+                                textStyle: Theme.of(context).textTheme.bodyText1,
+                                maxLines: 3,
+                              ),
                             ),
-                            textAlign: TextAlign.start,
-                            textStyle: Theme.of(context).textTheme.bodyText1,
-                            maxLines: 3,
-                          ),
+                            if (widget.estate.visitCount != null)
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  padding: EdgeInsets.only(top: 5.h),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                        EdgeInsets.only(bottom: 3.0.h),
+                                        child: Icon(
+                                          Icons.remove_red_eye_outlined,
+                                          color: !isDark
+                                              ? AppColors.lastColor
+                                              : AppColors.yellowDarkColor,
+                                          size: 20.w,
+                                        ),
+                                      ),
+                                      kWi8,
+                                      ResText(
+                                        widget.estate.visitCount!.toString(),
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headline5!
+                                            .copyWith(
+                                            color: !isDark
+                                                ? AppColors.lastColor
+                                                : AppColors
+                                                .yellowDarkColor,
+                                            fontSize: 14.sp,
+                                            height: 1.5.h),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                       Expanded(
@@ -480,44 +571,6 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                 ),
                               ),
                               // Estate Viewer
-                              if (widget.estate.visitCount != null)
-                                Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    padding: EdgeInsets.only(top: 5.h),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.only(bottom: 3.0.h),
-                                          child: Icon(
-                                            Icons.remove_red_eye_outlined,
-                                            color: !isDark
-                                                ? AppColors.lastColor
-                                                : AppColors.yellowDarkColor,
-                                            size: 20.w,
-                                          ),
-                                        ),
-                                        kWi8,
-                                        ResText(
-                                          widget.estate.visitCount!.toString(),
-                                          textStyle: Theme.of(context)
-                                              .textTheme
-                                              .headline5!
-                                              .copyWith(
-                                                  color: !isDark
-                                                      ? AppColors.lastColor
-                                                      : AppColors
-                                                          .yellowDarkColor,
-                                                  fontSize: 14.sp,
-                                                  height: 1.5.h),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
                             ],
                           ),
                         ),
@@ -526,6 +579,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   ),
                 ),
                 // Estate Description :
+                kHe8,
                 Container(
                   height: 32.h,
                   width: 1.sw,
@@ -534,7 +588,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   padding: EdgeInsets.only(
                       right: (isArabic) ? 8.w : 0, left: (!isArabic) ? 8.w : 0),
                   child: ResText(
-                    AppLocalizations.of(context)!.estate_details + " :",
+                    "${AppLocalizations.of(context)!.estate_details} :",
                     textAlign: TextAlign.start,
                     textStyle: Theme.of(context).textTheme.subtitle2!.copyWith(
                         color: Theme.of(context).colorScheme.onBackground),
@@ -561,10 +615,10 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 if (nearbyPlaces.isNotEmpty) ...[
                   const Divider(height: 1.5),
                   RowInformation(
-                    title: AppLocalizations.of(context)!.nearby_places + " :",
+                    title: "${AppLocalizations.of(context)!.nearby_places} :",
                     icon: Icon(
                       Icons.place_outlined,
-                      size: 32.w,
+                      size: 28.w,
                     ),
                     onTap: () {},
                     withBottomDivider: false,
@@ -589,12 +643,12 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 // Estate id :
 
                 RowInformation(
-                  title: AppLocalizations.of(context)!.estate_id + " :",
+                  title: "${AppLocalizations.of(context)!.estate_id} :",
                   content: widget.estate.id.toString(),
                   icon: SvgPicture.asset(
                     id1IconPath,
-                    width: 32.w,
-                    height: 32.w,
+                    width: 28.w,
+                    height: 28.w,
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
                   onTap: () {},
@@ -603,27 +657,33 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 if(widget.estate.estateOfferType != null) if (widget.estate.estateOfferType!.id == rentOfferTypeNumber)
                   RowInformation(
                     title:
-                        AppLocalizations.of(context)!.estate_rent_period + " :",
+                        "${AppLocalizations.of(context)!.estate_rent_period} :",
                     widgetContent: Row(
                       children: [
-                        ResText(
-                          widget.estate.period.toString(),
-                          textStyle: Theme.of(context)
-                              .textTheme
-                              .headline6!
-                              .copyWith(fontSize: 16.sp),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: ResText(
+                            widget.estate.period.toString(),
+                            textStyle: Theme.of(context)
+                                .textTheme
+                                .headline6!
+                                .copyWith(fontSize: 16.sp),
+                          ),
                         ),
                         6.horizontalSpace,
-                        ResText(
-                          widget.estate.periodType != null
-                              ? widget.estate.periodType!.name
-                                  .split("|")
-                                  .elementAt(1)
-                              : "",
-                          textStyle: Theme.of(context)
-                              .textTheme
-                              .headline6!
-                              .copyWith(fontSize: 16.sp),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: ResText(
+                            widget.estate.periodType != null
+                                ? widget.estate.periodType!.name
+                                    .split("|")
+                                    .elementAt(1)
+                                : "",
+                            textStyle: Theme.of(context)
+                                .textTheme
+                                .headline6!
+                                .copyWith(fontSize: 16.sp),
+                          ),
                         ),
                       ],
                     ),
@@ -635,7 +695,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   ),
                 // EstateArea :
                 RowInformation(
-                  title: AppLocalizations.of(context)!.estate_area + " :",
+                  title: "${AppLocalizations.of(context)!.estate_area} :",
                   widgetContent: Row(
                     children: [
                       ResText(
@@ -658,8 +718,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   ),
                   icon: SvgPicture.asset(
                     areaOutlineIconPath,
-                    width: 32.w,
-                    height: 32.w,
+                    width: 28.w,
+                    height: 28.w,
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
                   onTap: () {},
@@ -667,23 +727,23 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 // Furnished State and rooms count:
                 if (!isShops && !isLands) ...[
                   RowInformation(
-                    title: AppLocalizations.of(context)!.furnished + " :",
+                    title: "${AppLocalizations.of(context)!.furnished} :",
                     content: (widget.estate.isFurnished!)
                         ? AppLocalizations.of(context)!.yes
                         : AppLocalizations.of(context)!.no,
                     icon: Icon(
                       Icons.chair_outlined,
-                      size: 32.w,
+                      size: 28.w,
                     ),
                     onTap: () {},
                   ),
                   if (widget.estate.roomsCount != null)
                     RowInformation(
-                      title: AppLocalizations.of(context)!.rooms_count + " :",
+                      title: "${AppLocalizations.of(context)!.rooms_count} :",
                       content: widget.estate.roomsCount,
                       icon: Icon(
                         Icons.king_bed_outlined,
-                        size: 32.w,
+                        size: 28.w,
                       ),
                       onTap: () {},
                     ),
@@ -691,11 +751,11 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
 
                 if (isHouse && widget.estate.floor != null)
                   RowInformation(
-                    title: AppLocalizations.of(context)!.floor_number + " :",
+                    title: "${AppLocalizations.of(context)!.floor_number} :",
                     content: widget.estate.floor,
                     icon: Icon(
                       Icons.apartment,
-                      size: 32.w,
+                      size: 28.w,
                     ),
                     onTap: () {},
                   ),
@@ -704,14 +764,13 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 if (isFarmsOrVacations) ...[
                   if (widget.estate.hasSwimmingPool != null)
                     RowInformation(
-                      title: AppLocalizations.of(context)!.has_swimming_pool +
-                          " :",
+                      title: "${AppLocalizations.of(context)!.has_swimming_pool} :",
                       content: widget.estate.hasSwimmingPool!
                           ? AppLocalizations.of(context)!.yes
                           : AppLocalizations.of(context)!.no,
                       icon: Icon(
                         Icons.pool,
-                        size: 32.w,
+                        size: 28.w,
                       ),
                       onTap: () {},
                     ),
@@ -731,12 +790,12 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 // Estate ownership type :
                 if (isSell)
                   RowInformation(
-                    title: AppLocalizations.of(context)!.ownership_type + " :",
+                    title: "${AppLocalizations.of(context)!.ownership_type} :",
                     content:  widget.estate.ownershipType == null ? "" : widget.estate.ownershipType!.name,
                     icon: SvgPicture.asset(
                       documentOutlineIconPath,
-                      width: 32.w,
-                      height: 32.w,
+                      width: 28.w,
+                      height: 28.w,
                       color: Theme.of(context).colorScheme.onBackground,
                     ),
                     onTap: () {},
@@ -744,11 +803,11 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 // Estate interior status :
                 if (!isLands)
                   RowInformation(
-                    title: AppLocalizations.of(context)!.interior_status + " :",
+                    title: "${AppLocalizations.of(context)!.interior_status} :",
                     content: widget.estate.interiorStatus!.name,
                     icon: Icon(
                       Icons.foundation,
-                      size: 32.w,
+                      size: 28.w,
                     ),
                     onTap: () {},
                   ),
@@ -758,7 +817,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                     title: AppLocalizations.of(context)!.property_street_images,
                     icon: SvgPicture.asset(
                       streetIconPath,
-                      width: 32.w,
+                      width: 28.w,
                       height: 28.w,
                       color: Theme.of(context).colorScheme.onBackground,
                     ),
@@ -783,7 +842,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                         .floor_plan_property_images,
                     icon: Icon(
                       Icons.account_tree_outlined,
-                      size: 32.w,
+                      size: 28.w,
                     ),
                     onTap: () {
                       Navigator.push(
@@ -807,7 +866,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                     title: AppLocalizations.of(context)!.estate_position,
                     icon: Icon(
                       Icons.location_on_outlined,
-                      size: 32.w,
+                      size: 28.w,
                     ),
                     onTap: () {
                       Navigator.push(
@@ -829,7 +888,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       );
                     },
                   ),
-                24.verticalSpace,
+                // 10.verticalSpace,
                 kHe24,
                 InkWell(
                   onTap: () {
@@ -978,27 +1037,33 @@ class RowInformation extends StatelessWidget {
                 children: [
                   8.horizontalSpace,
                   SizedBox(
-                    width: 32.w,
-                    height: 32.w,
+                    width: 28.w,
+                    height: 28.w,
                     child: Center(child: icon),
                   ),
                   8.horizontalSpace,
-                  ResText(
-                    title,
-                    textStyle: Theme.of(context).textTheme.headline6,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: ResText(
+                      title,
+                      textStyle: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 15),
+                    ),
                   ),
                   8.horizontalSpace,
                   (widgetContent != null)
                       ? widgetContent!
                       : Expanded(
-                          child: ResText(
-                            content ?? "",
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .headline6!
-                                .copyWith(fontSize: 16.sp),
-                            textAlign: TextAlign.start,
-                            maxLines: 8,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: ResText(
+                              content ?? "",
+                              textStyle: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(fontSize: 16.sp),
+                              textAlign: TextAlign.start,
+                              maxLines: 8,
+                            ),
                           ),
                         ),
                 ],

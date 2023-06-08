@@ -45,7 +45,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
             const Icon(Icons.home_outlined),
             kWi8,
             ResText(
-              AppLocalizations.of(context)!.estate_type + " :",
+              "${AppLocalizations.of(context)!.estate_type} :",
               textStyle: Theme.of(context).textTheme.headline6,
             ),
           ],
@@ -78,7 +78,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                             borderRadius: circularBorderRadius,
                             border: Border.all(
                                 color: pressState == 0
-                                    ? AppColors.yellowDarkColor
+                                    ? AppColors.lightblue
                                     : AppColors.primaryColor),
                           ),
                           child: Image.asset(buildIconPath,
@@ -89,11 +89,11 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                           textStyle: TextStyle(
                               color: !isDark
                                   ? pressState == 0
-                                      ? AppColors.yellowDarkColor
+                                      ? AppColors.lightblue
                                       : AppColors.primaryColor
                                   : pressState == 0
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.white),
+                                      ? AppColors.lightblue
+                                      : AppColors.primaryColor),
                         ),
                       ],
                     ),
@@ -122,7 +122,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                             borderRadius: circularBorderRadius,
                             border: Border.all(
                                 color: pressState == 3
-                                    ? AppColors.yellowDarkColor
+                                    ? AppColors.lightblue
                                     : AppColors.primaryColor),
                           ),
                           child: Image.asset(farmIconPath,
@@ -133,11 +133,11 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                           textStyle: TextStyle(
                               color: !isDark
                                   ? pressState == 3
-                                      ? AppColors.yellowDarkColor
+                                      ? AppColors.lightblue
                                       : AppColors.primaryColor
                                   : pressState == 3
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.white),
+                                      ? AppColors.lightblue
+                                      : AppColors.primaryColor),
                         ),
                       ],
                     ),
@@ -166,7 +166,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                             borderRadius: circularBorderRadius,
                             border: Border.all(
                                 color: pressState == 2
-                                    ? AppColors.yellowDarkColor
+                                    ? AppColors.lightblue
                                     : AppColors.primaryColor),
                           ),
                           child: Image.asset(landIconPath,
@@ -177,11 +177,11 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                           textStyle: TextStyle(
                               color: !isDark
                                   ? pressState == 2
-                                      ? AppColors.yellowDarkColor
+                                      ? AppColors.lightblue
                                       : AppColors.primaryColor
                                   : pressState == 2
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.white),
+                                      ? AppColors.lightblue
+                                      : AppColors.primaryColor),
                         ),
                       ],
                     ),
@@ -210,7 +210,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                             borderRadius: circularBorderRadius,
                             border: Border.all(
                                 color: pressState == 1
-                                    ? AppColors.yellowDarkColor
+                                    ? AppColors.lightblue
                                     : AppColors.primaryColor),
                           ),
                           child: Image.asset(shopIconPath,
@@ -221,11 +221,11 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                           textStyle: TextStyle(
                               color: !isDark
                                   ? pressState == 1
-                                      ? AppColors.yellowDarkColor
+                                      ? AppColors.lightblue
                                       : AppColors.primaryColor
                                   : pressState == 1
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.white),
+                                      ? AppColors.lightblue
+                                      : AppColors.primaryColor),
                         ),
                       ],
                     ),
@@ -254,7 +254,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                             borderRadius: circularBorderRadius,
                             border: Border.all(
                                 color: pressState == 4
-                                    ? AppColors.yellowDarkColor
+                                    ? AppColors.lightblue
                                     : AppColors.primaryColor),
                           ),
                           child: Image.asset(villaIconPath,
@@ -265,11 +265,11 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                           textStyle: TextStyle(
                               color: !isDark
                                   ? pressState == 4
-                                      ? AppColors.yellowDarkColor
+                                      ? AppColors.lightblue
                                       : AppColors.primaryColor
                                   : pressState == 4
-                                      ? AppColors.yellowDarkColor
-                                      : AppColors.white),
+                                      ? AppColors.lightblue
+                                      : AppColors.primaryColor),
                         ),
                       ],
                     ),
@@ -279,7 +279,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
             );
           },
         ),
-        kHe36,
+        kHe16,
       ],
     );
   }

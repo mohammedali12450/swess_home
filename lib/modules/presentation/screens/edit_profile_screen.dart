@@ -74,6 +74,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
+        title: Text(
+          AppLocalizations.of(context)!.edit_profile,
+        ),
         leading: InkWell(
           onTap: () {
             Navigator.pop(context, false);
@@ -82,14 +85,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
       body: Padding(
-        padding: kSmallMedWidth,
+        padding: kMediumAllPadding,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               ResText(
-                AppLocalizations.of(context)!.first_name + " :",
+                "${AppLocalizations.of(context)!.first_name} :",
                 textStyle: Theme.of(context).textTheme.headline6,
               ),
               kHe8,
@@ -115,7 +118,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               kHe24,
               ResText(
-                AppLocalizations.of(context)!.last_name + " :",
+                "${AppLocalizations.of(context)!.last_name} :",
                 textStyle: Theme.of(context).textTheme.headline6,
               ),
               kHe8,
@@ -268,8 +271,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             builder: (_, sendState) {
                               return ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(240.w, 64.h),
-                                  maximumSize: Size(300.w, 64.h),
+                                  minimumSize: Size(240.w, 50.h),
+                                  maximumSize: Size(300.w, 50.h),
                                 ),
                                 child: (sendState is UserEditDataProgress)
                                     ? SpinKitWave(

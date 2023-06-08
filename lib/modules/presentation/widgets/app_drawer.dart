@@ -66,10 +66,10 @@ class _MyDrawerState extends State<MyDrawer> {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(vertical: 36.h, horizontal: 12.w),
+          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
           alignment: Alignment.topCenter,
           decoration: BoxDecoration(
-            color: !isDark
+            color: isDark
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.secondary,
           ),
@@ -102,7 +102,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   //       color: Colors.white,
                   //       fontWeight: FontWeight.w500),
                   // ),
-                  kHe4,
+                  // kHe4,
                   // Text(
                   //   user.authentication,
                   //   textDirection: TextDirection.ltr,
@@ -118,7 +118,7 @@ class _MyDrawerState extends State<MyDrawer> {
             ],
           ),
         ),
-        kHe16,
+        kHe8,
         // RowInformation(
         //   content: AppLocalizations.of(context)!.rate_us,
         //   iconData: Icons.star_rate_outlined,
@@ -192,10 +192,10 @@ class _MyDrawerState extends State<MyDrawer> {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(vertical: 36.h, horizontal: 12.w),
+          padding: EdgeInsets.symmetric(vertical: 30.h, horizontal: 12.w),
           alignment: Alignment.topCenter,
           decoration: BoxDecoration(
-            color: !isDark
+            color: isDark
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.secondary,
           ),
@@ -214,13 +214,13 @@ class _MyDrawerState extends State<MyDrawer> {
                   height: 100.w,
                 ),
               ),
-              kHe12,
-              Text(
-                AppLocalizations.of(context)!.sign_in,
-                style: Theme.of(context).textTheme.headline4!.copyWith(
-                      color: AppColors.white,
-                    ),
-              ),
+              kHe8,
+              // Text(
+              //   AppLocalizations.of(context)!.sign_in,
+              //   style: Theme.of(context).textTheme.headline4!.copyWith(
+              //         color: AppColors.white,
+              //       ),
+              // ),
               kHe8,
               Text(
                 AppLocalizations.of(context)!.login_drawer_body,
@@ -233,10 +233,10 @@ class _MyDrawerState extends State<MyDrawer> {
               kHe16,
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    fixedSize: Size(200.w, 56.h),
+                    fixedSize: Size(200.w, 50.h),
                     primary: isDark
                         ? AppColors.primaryDark
-                        : AppColors.secondaryColor),
+                        :  Theme.of(context).colorScheme.secondary),
                 child: Text(
                   AppLocalizations.of(context)!.sign_in,
                   style: Theme.of(context)
@@ -267,6 +267,7 @@ class _MyDrawerState extends State<MyDrawer> {
   buildMainDrawer(isDark){
     return Column(
       children: [
+        kHe8,
         RowInformation(
           content: AppLocalizations.of(context)!.rate_us,
           iconData: Icons.star_rate_outlined,
@@ -405,14 +406,14 @@ class RowInformation extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             margin: EdgeInsets.only(top: 8.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Icon(
                   iconData,
-                  size: 30.w,
+                  size: 25.w,
                 ),
                 kWi16,
                 Text(

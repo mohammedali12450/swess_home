@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:phone_number/phone_number.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/formatters.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
@@ -60,7 +61,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(AppLocalizations.of(context)!.change_password,
+          style: const TextStyle(color: AppColors.white),
+        ),
+
+      ),
       body: Container(
         width: 1.sw,
         height: 1.sh,
@@ -210,8 +217,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         Center(
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              minimumSize: Size(180.w, 60.h),
-              maximumSize: Size(200.w, 60.h),
+              minimumSize: Size(400.w, 50.h),
+              maximumSize: Size(400.w, 50.h),
             ),
             onPressed: () async {
               changePasswordBloc.add(

@@ -17,7 +17,7 @@ Future<void> myCupertinoActionSheet(
     message: message,
     actions: <Widget>[
       SizedBox(
-        height: getScreenHeight(context) / 3,
+        height: 60,
         child: ListView.separated(
           itemCount: elementsList!.length,
           itemBuilder: (_, index) {

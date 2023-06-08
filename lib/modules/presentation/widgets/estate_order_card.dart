@@ -42,16 +42,15 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
     String estateOfferType = widget.estateOrder.estateOfferType!.name;
     String estateHeader = AppLocalizations.of(context)!
         .estate_offer_sentence(estateType, estateOfferType);
-
     return Container(
       width: 1.sw,
       padding: const EdgeInsets.symmetric(
-        vertical: kMediumPadding,
+        vertical: kSmallPadding,
         horizontal: kSmallPadding,
       ),
       margin: EdgeInsets.symmetric(
-        vertical: 6.h,
-        horizontal: 8.w,
+        // vertical: 5.h,
+        horizontal: 10.w,
       ),
       decoration: BoxDecoration(
         color: widget.color,
@@ -111,7 +110,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
               },
               child: Icon(
                 Icons.close,
-                color: isDark ? AppColors.white : AppColors.hintColor,
+                color: !isDark ? AppColors.white : AppColors.hintColor,
               ),
             ),
           ),
@@ -131,23 +130,21 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                       .copyWith(color: Theme.of(context).hintColor)),
             ],
           ),
-          kHe16,
+          kHe8,
           Text(widget.estateOrder.location!.getLocationName(),
               style: Theme.of(context).textTheme.subtitle1),
           if (widget.estateOrder.priceDomain != null) ...[
             12.verticalSpace,
-            Text(AppLocalizations.of(context)!.price_domain + " : ",
+            Text("${AppLocalizations.of(context)!.price_domain} : ",
                 style: Theme.of(context).textTheme.subtitle1),
           ],
-          8.verticalSpace,
+          kHe8,
           Text(
-            AppLocalizations.of(context)!.notes +
-                " : " +
-                widget.estateOrder.description,
+            "${AppLocalizations.of(context)!.notes} : ${widget.estateOrder.description}",
             maxLines: 50,
-            style: Theme.of(context).textTheme.subtitle2!.copyWith(height: 1.8),
+            style: Theme.of(context).textTheme.subtitle2!.copyWith(height: 1.5),
           ),
-          kHe24,
+          kHe16,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -165,7 +162,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                   style: Theme.of(context)
                       .textTheme
                       .bodyText2!
-                      .copyWith(color: AppColors.black, height: 1.4.h),
+                      .copyWith(color: AppColors.white, height: 1.4.h),
                 ),
                 onPressed: () {
                   Navigator.push(
@@ -179,7 +176,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
               ),
               buildEstateStatus(),
             ],
-          )
+          ),
         ],
       ),
     );

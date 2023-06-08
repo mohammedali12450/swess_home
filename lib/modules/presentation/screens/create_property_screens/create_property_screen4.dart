@@ -113,6 +113,7 @@ class _CreatePropertyScreen4State extends State<CreatePropertyScreen4> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    24.verticalSpace,
                     buildImagesSelectors(
                       onPropertyImagesSelected: (images) {
                         propertyImages = (images == null)
