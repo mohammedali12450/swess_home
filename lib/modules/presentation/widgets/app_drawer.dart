@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,6 +21,7 @@ import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/pages/terms_of_use_page.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/contacts_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
@@ -51,6 +54,7 @@ class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+
     return SingleChildScrollView(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -127,6 +131,7 @@ class _MyDrawerState extends State<MyDrawer> {
         //     // Navigator.pushNamed(context, RatingScreen.id);
         //   },
         // ),
+
         buildMainDrawer(isDark),
         BlocBuilder<UserLoginBloc, UserLoginState>(
           builder: (context, userLoginState) {
@@ -150,9 +155,8 @@ class _MyDrawerState extends State<MyDrawer> {
                         builder: (_, isLogoutLoading) {
                           return (isLogoutLoading)
                               ? SpinKitWave(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .background,
+                                  color:
+                                      Theme.of(context).colorScheme.background,
                                   size: 16.w,
                                 )
                               : Text(
@@ -236,7 +240,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     fixedSize: Size(200.w, 50.h),
                     primary: isDark
                         ? AppColors.primaryDark
-                        :  Theme.of(context).colorScheme.secondary),
+                        : Theme.of(context).colorScheme.secondary),
                 child: Text(
                   AppLocalizations.of(context)!.sign_in,
                   style: Theme.of(context)
@@ -264,7 +268,7 @@ class _MyDrawerState extends State<MyDrawer> {
     );
   }
 
-  buildMainDrawer(isDark){
+  buildMainDrawer(isDark) {
     return Column(
       children: [
         kHe8,
@@ -288,7 +292,14 @@ class _MyDrawerState extends State<MyDrawer> {
           content: AppLocalizations.of(context)!.contact_us,
           iconData: Icons.people_outline,
           onTap: () {
-          ///
+            ///
+          },
+        ),
+        RowInformation(
+          content: AppLocalizations.of(context)!.contacts,
+          iconData: Icons.contacts,
+          onTap: () {
+            Navigator.of(context).pushNamed(ContactsScreen.id);
           },
         ),
         RowInformation(
@@ -315,10 +326,8 @@ class _MyDrawerState extends State<MyDrawer> {
           content: AppLocalizations.of(context)!.terms_of_use,
           iconData: Icons.security_outlined,
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const TermsOfUsePage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const TermsOfUsePage()));
           },
         ),
         RowInformation(
