@@ -58,6 +58,7 @@ dependencies:
   pinput: ^2.1.4
   emoji_picker_flutter: ^1.5.2
   reorderables: ^0.6.0
+  tutorial_coach_mark: ^1.2.8
 
 
   #state managemnt
