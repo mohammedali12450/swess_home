@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -78,7 +77,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   ChannelCubit repeatPasswordError = ChannelCubit(null);
   ChannelCubit firstNameError = ChannelCubit(null);
   ChannelCubit lastNameError = ChannelCubit(null);
-  ChannelCubit emailError = ChannelCubit(null);
+  // ChannelCubit emailError = ChannelCubit(null);
   ChannelCubit countryError = ChannelCubit(null);
   // ChannelCubit birthdateError = ChannelCubit(null);
   ChannelCubit userCountry = ChannelCubit(null);
@@ -100,7 +99,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   TextEditingController passwordControllerLogin = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
+  // TextEditingController emailController = TextEditingController();
   //TextEditingController birthdateController = TextEditingController();
 
   // Others :
@@ -150,9 +149,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     if (errorResponseMap.containsKey("password")) {
       passwordError.setState(errorResponseMap["password"].first);
     }
-    if (errorResponseMap.containsKey("email")) {
-      emailError.setState(errorResponseMap["email"].first);
-    }
+    // if (errorResponseMap.containsKey("email")) {
+    //   emailError.setState(errorResponseMap["email"].first);
+    // }
     // if (errorResponseMap.containsKey("birthOfDate")) {
     //   birthdateError.setState(errorResponseMap["birthOfDate"].first);
     // }
@@ -190,7 +189,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   );
                   return;
                 }
-
                 // if (registerState.errorResponse != null) {
                 //   signUpErrorHandling(registerState.errorResponse);
                 // } else
@@ -203,15 +201,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               }
 
               if (registerState is UserRegisterComplete) {
-                String phone = registerState.user.authentication!;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => VerificationCodeScreen(
-                      phoneNumber: phone,
-                    ),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (_) =>
+                //     const NavigationBarScreen(),
+                //   ),
+                // );
               }
             },
           ),
@@ -665,30 +661,30 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             ),
           ),
           //-------------------------------------------------------------
-          kHe24,
-          ResText(
-            "${AppLocalizations.of(context)!.email} :",
-            textStyle: Theme.of(context).textTheme.headline6,
-          ),
-          kHe8,
-          BlocBuilder<ChannelCubit, dynamic>(
-            bloc: emailError,
-            builder: (_, errorMessage) {
-              return TextField(
-                onChanged: (_) {
-                  emailError.setState(null);
-                },
-                controller: emailController,
-                decoration: InputDecoration(
-                  errorText: errorMessage,
-                  hintText: AppLocalizations.of(context)!.enter_your_email,
-                  suffix: null,
-                  suffixIcon: null,
-                  isCollapsed: false,
-                ),
-              );
-            },
-          ),
+          // kHe24,
+          // ResText(
+          //   "${AppLocalizations.of(context)!.email} :",
+          //   textStyle: Theme.of(context).textTheme.headline6,
+          // ),
+          // kHe8,
+          // BlocBuilder<ChannelCubit, dynamic>(
+          //   bloc: emailError,
+          //   builder: (_, errorMessage) {
+          //     return TextField(
+          //       onChanged: (_) {
+          //         emailError.setState(null);
+          //       },
+          //       controller: emailController,
+          //       decoration: InputDecoration(
+          //         errorText: errorMessage,
+          //         hintText: AppLocalizations.of(context)!.enter_your_email,
+          //         suffix: null,
+          //         suffixIcon: null,
+          //         isCollapsed: false,
+          //       ),
+          //     );
+          //   },
+          // ),
           //-------------------------------------------------------------
           kHe24,
           ResText(
@@ -827,7 +823,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               );
             },
           ),
-
           //buildEmailField
           // kHe24,
           // ResText(
@@ -851,7 +846,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           //     );
           //   },
           // ),
-
           BlocBuilder<ChannelCubit, dynamic>(
             bloc: userCountry,
             builder: (_, state) {
@@ -918,7 +912,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             },
           ),
           kHe24,
-
           //build date of birth field
           // ResText(
           //   AppLocalizations.of(context)!.date_of_birth + " :",
@@ -1035,7 +1028,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 if (!await getFieldsValidation()) {
                   return;
                 }
-
                 userRegisterBloc.add(
                   UserRegisterStarted(
                     register: Register(
@@ -1045,11 +1037,11 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       lastName: lastNameController.text,
                       // birthdate: birthdateController.text,
                       // //birthDate!,
-                      email: emailController.text,
+                      // email: emailController.text,
                       country: userCountry.state.toString(),
                       governorate: selectedGovernorateId,
-                      latitude: latitude,
-                      longitude: longitude,
+                      // latitude: latitude,
+                      // longitude: longitude,
                     ),
                   ),
                 );
@@ -1120,23 +1112,49 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     passwordError.setState(null);
     repeatPasswordError.setState(null);
 
+    //name validation
+    if (firstNameValidator(firstNameController.text, context) != null) {
+    scrollController.animateTo(120.h,
+    duration: const Duration(seconds: 1), curve: Curves.ease);
+    firstNameError.setState(firstNameValidator(firstNameController.text, context));
+    return false;
+    }
+    else if(lastNameValidator( lastNameController.text, context) != null) {
+    scrollController.animateTo(140.h,
+    duration: const Duration(seconds: 1), curve: Curves.ease);
+    lastNameError.setState(lastNameValidator(lastNameController.text, context));
+    return false;
+    }
+    firstNameError.setState(null);
+    lastNameError.setState(null);
+
     // email verification
     // print(EmailValidator.validate(emailController.text));
 
-    if (emailValidator(emailController.text, context) != null) {
-      scrollController.animateTo(120.h,
-          duration: const Duration(seconds: 1), curve: Curves.ease);
-      emailError.setState(emailValidator(emailController.text, context));
-      return false;
-    }
-    emailError.setState(null);
+    // if (emailValidator(emailController.text, context) != null) {
+    //   scrollController.animateTo(120.h,
+    //       duration: const Duration(seconds: 1), curve: Curves.ease);
+    //   emailError.setState(emailValidator(emailController.text, context));
+    //   return false;
+    // }
+    // emailError.setState(null);
 
     // terms_conditions verification
+
+    // governorate validation
+    if (selectedGovernorateId == 0) {
+      MySnackBar.show(
+          context, AppLocalizations.of(context)!.please_select_governorate);
+      return false;
+    }
+
+    // terms validation
     if (!isCheck) {
       MySnackBar.show(
           context, AppLocalizations.of(context)!.accept_terms_conditions);
       return false;
     }
+
 
     // birthdate verification
     // if (birthdateController.text == "") {
