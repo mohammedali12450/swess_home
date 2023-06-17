@@ -13,6 +13,8 @@ class ApplicationSharedPreferences {
   static const String versionKey = "version_Key";
   static const String downloadKey = "Download_Key";
   static const String visitNumKey = "visit_num_Key";
+  static const definitionTourFirstLunch = "definition-tour";
+
 
   static init() async {
     _preferences = await SharedPreferences.getInstance();
@@ -141,5 +143,13 @@ class ApplicationSharedPreferences {
 
   static Future<bool> removeIsLanguageSelected() async {
     return await _preferences.remove(isLanguageSelected);
+  }
+
+  static Future<bool> isFirstLaunchForDefinitionTour() async {
+    bool isFirstLaunch = _preferences.getBool(definitionTourFirstLunch) ?? true;
+    if(isFirstLaunch) {
+      _preferences.setBool(definitionTourFirstLunch, false);
+    }
+    return isFirstLaunch;
   }
 }
