@@ -17,6 +17,7 @@ import 'package:swesshome/core/walk_through/introduction_screen4.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/area_units_bloc/area_units_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/area_units_bloc/area_units_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/area_units_bloc/area_units_state.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/contacts_bloc/bloc/contacts_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_offer_types_bloc/estate_offer_types_state.dart';
@@ -44,6 +45,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/after_estate_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/contacts_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_created_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
@@ -259,6 +261,14 @@ class AppRouter {
       case LanguagesScreen.id:
         return MaterialPageRoute(
           builder: (_) => const LanguagesScreen(),
+        );
+
+      case ContactsScreen.id:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => ContactsBloc(),
+            child: const ContactsScreen(),
+          ),
         );
       default:
         return null;

@@ -61,7 +61,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.real_estate.realestatecustomer"
+        applicationId "com.odayhmourad.swesshome"
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode 55

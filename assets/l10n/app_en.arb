@@ -606,6 +606,7 @@
   "previous_search_results": "Previous Search Results",
   "result_matching_search_page":"Results matching your search options have been found, and similar results, if any, will be displayed",
   "edit_profile":"Edit Profile",
+  "contacts":"Contacts"
   "welcome": "Welcome to SwessHome",
   "to_contact_us":"To contact us, please call the following numbers",
   "to_contact_us_social":"Or contact us via the following social media",
@@ -613,6 +614,4 @@
   "please_write_email":"please write your email",
   "please_write_title_message":"please write the title of message",
   "please_write_message":"please write the message"
-
-
 }
