@@ -13,7 +13,6 @@ import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/main.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
@@ -24,12 +23,10 @@ import 'package:swesshome/modules/presentation/screens/authentication_screen.dar
 import 'package:swesshome/modules/presentation/screens/contacts_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
-import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
+import 'package:swesshome/modules/presentation/pages/contact_us_body.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/app_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../pages/intellectual_property_rights_page.dart';
 import '../pages/terms_condition_page.dart';
 import '../screens/navigation_bar_screen.dart';
@@ -292,6 +289,7 @@ class _MyDrawerState extends State<MyDrawer> {
           content: AppLocalizations.of(context)!.contact_us,
           iconData: Icons.people_outline,
           onTap: () {
+<<<<<<< lib/modules/presentation/widgets/app_drawer.dart
             ///
           },
         ),
@@ -300,6 +298,12 @@ class _MyDrawerState extends State<MyDrawer> {
           iconData: Icons.contacts,
           onTap: () {
             Navigator.of(context).pushNamed(ContactsScreen.id);
+=======
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ContacttUsBody()));
+>>>>>>> lib/modules/presentation/widgets/app_drawer.dart
           },
         ),
         RowInformation(
@@ -330,18 +334,18 @@ class _MyDrawerState extends State<MyDrawer> {
                 MaterialPageRoute(builder: (_) => const TermsOfUsePage()));
           },
         ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.call_us,
-          iconData: Icons.call_outlined,
-          onTap: () {
-            launch(
-              "tel://" +
-                  BlocProvider.of<SystemVariablesBloc>(context)
-                      .systemVariables!
-                      .normalCompanyPhoneNumber,
-            );
-          },
-        ),
+        // RowInformation(
+        //   content: AppLocalizations.of(context)!.call_us,
+        //   iconData: Icons.call_outlined,
+        //   onTap: () {
+        //     launch(
+        //       "tel://" +
+        //           BlocProvider.of<SystemVariablesBloc>(context)
+        //               .systemVariables!
+        //               .normalCompanyPhoneNumber,
+        //     );
+        //   },
+        // ),
         RowInformation(
           content: AppLocalizations.of(context)!.faq,
           iconData: Icons.error_outline,
