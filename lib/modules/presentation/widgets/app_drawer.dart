@@ -11,7 +11,6 @@ import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/main.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
@@ -19,14 +18,11 @@ import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/pages/terms_of_use_page.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
-import 'package:swesshome/modules/presentation/screens/create_estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
-import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
+import 'package:swesshome/modules/presentation/pages/contact_us_body.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/app_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../pages/intellectual_property_rights_page.dart';
 import '../pages/terms_condition_page.dart';
 import '../screens/navigation_bar_screen.dart';
@@ -288,7 +284,10 @@ class _MyDrawerState extends State<MyDrawer> {
           content: AppLocalizations.of(context)!.contact_us,
           iconData: Icons.people_outline,
           onTap: () {
-          ///
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ContacttUsBody()));
           },
         ),
         RowInformation(
@@ -321,18 +320,18 @@ class _MyDrawerState extends State<MyDrawer> {
                     builder: (_) => const TermsOfUsePage()));
           },
         ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.call_us,
-          iconData: Icons.call_outlined,
-          onTap: () {
-            launch(
-              "tel://" +
-                  BlocProvider.of<SystemVariablesBloc>(context)
-                      .systemVariables!
-                      .normalCompanyPhoneNumber,
-            );
-          },
-        ),
+        // RowInformation(
+        //   content: AppLocalizations.of(context)!.call_us,
+        //   iconData: Icons.call_outlined,
+        //   onTap: () {
+        //     launch(
+        //       "tel://" +
+        //           BlocProvider.of<SystemVariablesBloc>(context)
+        //               .systemVariables!
+        //               .normalCompanyPhoneNumber,
+        //     );
+        //   },
+        // ),
         RowInformation(
           content: AppLocalizations.of(context)!.faq,
           iconData: Icons.error_outline,

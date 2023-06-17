@@ -607,4 +607,11 @@
   "result_matching_search_page":"Results matching your search options have been found, and similar results, if any, will be displayed",
   "edit_profile":"Edit Profile",
    "time_of_receive_code": "the time of arrival of the confirmation message is related to the service provider in the selected country",
+  "welcome": "Welcome to SwessHome",
+  "to_contact_us":"To contact us, please call the following numbers",
+  "to_contact_us_social":"Or contact us via the following social media",
+  "to_contact_us_mail":"Or you can send a direct mail message",
+  "please_write_email":"please write your email",
+  "please_write_title_message":"please write the title of message",
+  "please_write_message":"please write the message"
 }
