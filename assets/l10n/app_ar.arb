@@ -602,6 +602,13 @@
   "search2": "البحث",
   "previous_search_results": "نتائج البحث السابقة",
   "result_matching_search_page":"تم العثور على نتائج مطابقة لخيارات البحث الخاصة بك ، وسيتم عرض نتائج مماثلة ، إن وجدت",
-  "edit_profile":"تعديل الملف الشخصي"
+  "edit_profile":"تعديل الملف الشخصي",
+  "welcome": "أهلا بك في SwessHome",
+  "to_contact_us_numbers":"للتوصل معنا يرجى الاتصال بالأرقام التالية",
+  "to_contact_us_social":"أو قم بالتواصل معنا عبر منصات التواصل الاجتماعي التالية",
+  "to_contact_us_mail":"أو يمكنك إرسال رسالة بريدية مباشرة",
+  "please_write_email":"الرجاء كتابة البريد الإلكتروني الخاص بك",
+  "please_write_title_message":"الرجاء كتابة عنوان الرسالة",
+  "please_write_message":"الرجاء كتابة الرسالة"
 }
 
