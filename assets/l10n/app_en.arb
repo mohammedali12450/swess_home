@@ -612,4 +612,11 @@
   "estate_offers_definition_tour":"All your real estate requests that you have made will be shown, and you can see if your request is accepted, still pending, or rejected, and you can also delete your request",
   "saved_definition_tour":"All properties that you have saved will be displayed after you have visited the offers presented in the application that you liked",
   "profile_definition_tour":"You can view and modify your profile, in addition to other features such as language, changing your password, and others"
+  "welcome": "Welcome to SwessHome",
+  "to_contact_us":"To contact us, please call the following numbers",
+  "to_contact_us_social":"Or contact us via the following social media",
+  "to_contact_us_mail":"Or you can send a direct mail message",
+  "please_write_email":"please write your email",
+  "please_write_title_message":"please write the title of message",
+  "please_write_message":"please write the message"
 }

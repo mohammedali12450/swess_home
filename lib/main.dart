@@ -15,6 +15,7 @@ import 'package:swesshome/config/routes/app_router.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/core/functions/setup_locator_app.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/contact_us/contact_us_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_spacial_bloc/estate_spacial_bloc.dart';
@@ -27,6 +28,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/reset_password_
 import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/verification_bloc/verification_bloc.dart';
+import 'package:swesshome/modules/data/repositories/contact_us_repository.dart';
 import 'package:swesshome/modules/data/repositories/estate_order_repository.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/data/repositories/reports_repository.dart';
@@ -311,6 +313,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         BlocProvider(
           create: (_) => RentEstateBloc(RentEstateRepository()),
+        ),
+        BlocProvider(
+          create: (_) => ContactUsBloc(
+              contactUsRepository: ContactUsRepository()),
         ),
       ],
       child: MultiProvider(
