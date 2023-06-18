@@ -620,5 +620,8 @@
   "to_contact_us_mail":"Or you can send a direct mail message",
   "please_write_email":"please write your email",
   "please_write_title_message":"please write the title of message",
-  "please_write_message":"please write the message"
+  "please_write_message":"please write the message",
+  "logging_history":"Login History",
+  "login_time":"Login Time",
+  "ip_address":"IP Address"
 }

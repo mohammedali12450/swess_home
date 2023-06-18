@@ -617,5 +617,8 @@
   "to_contact_us_mail":"أو يمكنك إرسال رسالة بريدية مباشرة",
   "please_write_email":"الرجاء كتابة البريد الإلكتروني الخاص بك",
   "please_write_title_message":"الرجاء كتابة عنوان الرسالة",
-  "please_write_message":"الرجاء كتابة الرسالة"
+  "please_write_message":"الرجاء كتابة الرسالة",
+  "logging_history":"سجل تسجيل الدخول",
+  "login_time":"وقت تسجيل الدخول",
+  "ip_address":" IP عنوان"
 }
