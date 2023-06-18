@@ -7,7 +7,7 @@ class Register {
 
   String? password;
 
-  String? email;
+  // String? email;
 
   //String birthdate;
 
@@ -15,19 +15,20 @@ class Register {
 
   int? governorate;
 
-  double? latitude, longitude;
+  // double? latitude, longitude;
 
   Register(
       {required this.firstName,
       required this.lastName,
       required this.authentication,
       this.password,
-      this.email,
+      // this.email,
       //required this.birthdate,
       this.governorate,
       this.country,
-      this.latitude,
-      this.longitude});
+      // this.latitude,
+      // this.longitude
+      });
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {};
@@ -35,12 +36,12 @@ class Register {
     map["last_name"] = lastName;
     map["authentication"] = authentication;
     map["password"] = password;
-    map["email"] = email;
+    // map["email"] = email;
     //map["dob"] = birthdate;
     map["location_id"] = governorate;
     map["country"] = country;
-    map["latitude"] = latitude;
-    map["longitude"] = longitude;
+    // map["latitude"] = latitude;
+    // map["longitude"] = longitude;
     return map;
   }
 
