@@ -621,6 +621,9 @@
   "please_write_email":"please write your email",
   "please_write_title_message":"please write the title of message",
   "please_write_message":"please write the message",
+  "logging_history":"Login History",
+  "login_time":"Login Time",
+  "ip_address":"IP Address",
   "please_select_governorate":"please select governorate",
   "please_enter_your_first_name":"Please enter your first name",
   "please_enter_your_last_name":"Please enter your last name"
