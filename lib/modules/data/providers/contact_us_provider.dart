@@ -4,13 +4,13 @@ import 'package:swesshome/utils/services/network_helper.dart';
 
 class ContactUsProvider {
 
-  Future sendDirectMessage(String email,String title,String message) async {
+  Future sendDirectMessage(String email,String subject,String message) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
     try {
       response = await helper.post(sendDirectMessageURL, {
-        "email": email,
-        "title": title,
+        "sender_email": email,
+        "subject": subject,
         "message": message
       });
     } catch (_) {
