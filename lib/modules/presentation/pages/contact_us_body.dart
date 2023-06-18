@@ -7,13 +7,16 @@ import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/core/functions/validators.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/contact_us/contact_us_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/contact_us/contact_us_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/contact_us/contact_us_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
+import 'package:swesshome/modules/data/repositories/contact_us_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/text_field_widget.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+import 'package:swesshome/utils/helpers/my_snack_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -39,43 +42,69 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
 
   @override
   void initState() {
-    contactUsBloc = BlocProvider.of<ContactUsBloc>(context);
     super.initState();
+    contactUsBloc = BlocProvider.of<ContactUsBloc>(context);
+  }
+
+  Future<bool> getFieldsValidation() async {
+    bool isValidationSuccess = true;
+    if (emailController.text.isEmpty) {
+      MySnackBar.show(
+          context, AppLocalizations.of(context)!.please_write_email);
+      emailError.setState(null);
+      return false;
+    } else if(emailValidator(emailController.text, context) != null) {
+      MySnackBar.show(
+          context, AppLocalizations.of(context)!.invalidEmail);
+      emailError.setState(null);
+      return false;
+    }
+    else if(messageTitleController.text.isEmpty) {
+      MySnackBar.show(
+          context, AppLocalizations.of(context)!.please_write_title_message);
+      titleError.setState(null);
+      return false;
+    } else if (messageController.text.isEmpty) {
+      MySnackBar.show(
+          context, AppLocalizations.of(context)!.please_write_message);
+      messageError.setState(null);
+      return false;
+    }
+    return isValidationSuccess;
   }
 
   @override
   Widget build(BuildContext context) {
     bool isKeyboardOpened = MediaQuery.of(context).viewInsets.bottom != 0;
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<ContactUsBloc, ContactUsState>(
-          listener: (_, sendState) {
-            if (sendState is ContactUsError) {
-              if (sendState.isConnectionError) {
-                showWonderfulAlertDialog(
-                  context,
-                  AppLocalizations.of(context)!.error,
-                  AppLocalizations.of(context)!.no_internet_connection,
-                );
-                return;
-              }
-              if (sendState.errorResponse != null) {
-                // todo
-              } else if (sendState.errorMessage != null) {
-                showWonderfulAlertDialog(
-                  context,
-                  AppLocalizations.of(context)!.error,
-                  sendState.errorMessage!,
-                  defaultButtonContent: AppLocalizations.of(context)!.ok,
-                );
-              }
-            }
-            if (sendState is ContactUsComplete) {
-              Navigator.pop(context);
-            }
-          },
-        ),
-      ],
+    return BlocListener<ContactUsBloc, ContactUsState>(
+      listener: (_, sendState) async {
+        if (sendState is ContactUsError) {
+          if (sendState.isConnectionError) {
+            showWonderfulAlertDialog(
+              context,
+              AppLocalizations.of(context)!.error,
+              AppLocalizations.of(context)!.no_internet_connection,
+            );
+            return;
+          }
+          if (sendState.errorMessage != null) {
+            showWonderfulAlertDialog(
+              context,
+              AppLocalizations.of(context)!.error,
+              sendState.errorMessage!,
+              defaultButtonContent: AppLocalizations.of(context)!.ok,
+            );
+          }
+        }
+        if (sendState is ContactUsComplete) {
+          MySnackBar.show(
+              context, AppLocalizations.of(context)!.complete_send);
+          Future.delayed(const Duration(seconds: 1)).then((value) {
+            Navigator.of(context).pop();
+          });
+          // Navigator.pop(context);
+        }
+      },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SizedBox(
@@ -331,29 +360,21 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
                                             },
                                           ),
                                           kHe12,
+
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             children: [
                                               ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
-                                                  fixedSize: const Size(150, 50),
-                                                  backgroundColor: AppColors.blue
+                                                    fixedSize: const Size(150, 50),
+                                                    backgroundColor: AppColors.blue
                                                 ),
                                                 child: BlocBuilder<ContactUsBloc, ContactUsState>(
                                                   builder: (_, sendState) {
                                                     if (sendState is ContactUsProgress) {
-                                                      return Row(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        children: [
-                                                          SpinKitWave(
-                                                            color: Theme.of(context).colorScheme.onPrimary,
-                                                            size: 20.w,
-                                                          ),
-                                                          kWi16,
-                                                          Text(
-                                                            AppLocalizations.of(context)!.send,
-                                                          )
-                                                        ],
+                                                      return SpinKitWave(
+                                                        color: Theme.of(context).colorScheme.background,
+                                                        size: 24.w,
                                                       );
                                                     }
                                                     return Text(
@@ -362,16 +383,14 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
                                                   },
                                                 ),
                                                 onPressed: () async{
-                                                  if (BlocProvider.of<ContactUsBloc>(context).state is ContactUsProgress) {
+                                                  if (!await getFieldsValidation()) {
                                                     return;
                                                   }
-                                                  // todo validators :
-
                                                   contactUsBloc.add(
                                                     ContactUsStarted(
-                                                      email: emailController.text,
-                                                      title: messageTitleController.text,
-                                                      message: messageController.text
+                                                        email: emailController.text,
+                                                        subject: messageTitleController.text,
+                                                        message: messageController.text
                                                     ),
                                                   );
                                                 },
@@ -395,5 +414,6 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
         ),
       ),
     );
+
   }
 }
