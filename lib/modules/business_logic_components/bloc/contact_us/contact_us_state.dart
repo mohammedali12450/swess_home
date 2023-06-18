@@ -8,9 +8,10 @@ class ContactUsComplete extends ContactUsState {}
 
 class ContactUsError extends ContactUsState {
   final String? errorMessage;
-  dynamic errorResponse;
+
   final bool isConnectionError;
 
-  ContactUsError({this.errorMessage, this.errorResponse, this.isConnectionError = false});
+  ContactUsError({required this.errorMessage , this.isConnectionError = false});
+
 }
 
