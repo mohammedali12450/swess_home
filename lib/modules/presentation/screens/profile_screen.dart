@@ -18,6 +18,7 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/logging_history_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -416,6 +417,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (_) => const CreatedEstatesScreen()));
+          },
+        ),
+        /// logging history
+        buildListTile(
+          icon: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: const Icon(Icons.history_edu),
+          ),
+          title: ResText(
+            AppLocalizations.of(context)!.logging_history,
+            textAlign: TextAlign.start,
+            textStyle: Theme.of(context).textTheme.headline6,
+          ),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const LoggingHistoryScreen()));
           },
         ),
 
