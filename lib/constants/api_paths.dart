@@ -1,4 +1,4 @@
-const String proNetBaseUrl = "https://backend-v2.swesshome.com/api/v2/";
+const String proNetBaseUrl = "http://api-dev.swesshome.com/api/v2/";
 const String proNetImagesUrl = "https://backend-v2.swesshome.com/storage/";
 const String hostingerBaseUrl = "http://swesshomerealestate.com/";
 const String hostingerImagesBaseUrl = "http://swesshomerealestate.com/";
@@ -79,6 +79,7 @@ const downloadURL = "download-url";
 
 /// added new
 const sendDirectMessageURL = "messages/store";
+const loggingHistoryURL = "customer/login-history";
 
 //old api
 // const userRegisterUrl = "api/user/register";

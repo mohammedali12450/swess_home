@@ -606,13 +606,25 @@
   "previous_search_results": "Previous Search Results",
   "result_matching_search_page":"Results matching your search options have been found, and similar results, if any, will be displayed",
   "edit_profile":"Edit Profile",
+  "time_of_receive_link": "the time of arrival of the confirmation message is related to the service provider in the selected country",
+  "search_definition_tour_1":"You can search for your real estate application according to your choice of area",
+  "search_definition_tour_2":"If you own a house for sale and want to publish it on the application, follow the existing publishing steps to appear on the application for free after confirming and approving the publication",
+  "estate_order_definition_tour":"In the event that you did not find your real estate request, do not hesitate to send the details of your request to be followed up and transferred to the real estate agent to recommend real estate offers that suit your request",
+  "estate_offers_definition_tour":"All your real estate requests that you have made will be shown, and you can see if your request is accepted, still pending, or rejected, and you can also delete your request",
+  "saved_definition_tour":"All properties that you have saved will be displayed after you have visited the offers presented in the application that you liked",
+  "profile_definition_tour":"You can view and modify your profile, in addition to other features such as language, changing your password, and others",
+  "contacts":"Contacts",
   "welcome": "Welcome to SwessHome",
   "to_contact_us":"To contact us, please call the following numbers",
   "to_contact_us_social":"Or contact us via the following social media",
   "to_contact_us_mail":"Or you can send a direct mail message",
   "please_write_email":"please write your email",
   "please_write_title_message":"please write the title of message",
-  "please_write_message":"please write the message"
-
-
+  "please_write_message":"please write the message",
+  "logging_history":"Login History",
+  "login_time":"Login Time",
+  "ip_address":"IP Address",
+  "please_select_governorate":"please select governorate",
+  "please_enter_your_first_name":"Please enter your first name",
+  "please_enter_your_last_name":"Please enter your last name"
 }

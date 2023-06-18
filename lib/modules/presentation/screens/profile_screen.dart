@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -16,6 +18,7 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/logging_history_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -100,8 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: BlocBuilder<NotificationsCubit, int>(
               builder: (_, notificationsCount) {
                 return Padding(
-                  padding: EdgeInsets.only(
-                      left: 0, right: 12.w),
+                  padding: EdgeInsets.only(left: 0, right: 12.w),
                   child: IconBadge(
                     icon: const Icon(
                       Icons.notifications_outlined,
@@ -166,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               if (UserSharedPreferences.getAccessToken() == null) ...[
                 // buildLanguageSetting,
-                  kHe8,
+                kHe8,
                 buildListTile(
                   icon: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -394,8 +396,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             textStyle: Theme.of(context).textTheme.headline6,
           ),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const RecentEstateOrdersScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const RecentEstateOrdersScreen()));
           },
         ),
         buildListTile(
@@ -409,8 +413,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
             textStyle: Theme.of(context).textTheme.headline6,
           ),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const CreatedEstatesScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const CreatedEstatesScreen()));
+          },
+        ),
+        /// logging history
+        buildListTile(
+          icon: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: const Icon(Icons.history_edu),
+          ),
+          title: ResText(
+            AppLocalizations.of(context)!.logging_history,
+            textAlign: TextAlign.start,
+            textStyle: Theme.of(context).textTheme.headline6,
+          ),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const LoggingHistoryScreen()));
           },
         ),
 
@@ -499,7 +523,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ResText(
                   "${user!.firstName!} ${user!.lastName!}",
                   textStyle: Theme.of(context).textTheme.headline3!.copyWith(
-                      color: !isDark ? AppColors.black : AppColors.white,fontSize: 20),
+                      color: !isDark ? AppColors.black : AppColors.white,
+                      fontSize: 20),
                 ),
                 // ResText(
                 //   user?.email ?? "",
