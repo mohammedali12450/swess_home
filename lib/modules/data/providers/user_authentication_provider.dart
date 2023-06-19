@@ -95,7 +95,7 @@ class UserAuthenticationProvider {
           changePasswordURL,
           {
             "old_password": oldPassword,
-            "new_password": newPassword,
+            "password": newPassword,
           },
           token: token);
     } catch (e) {
