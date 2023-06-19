@@ -606,5 +606,5 @@
   "previous_search_results": "Previous Search Results",
   "result_matching_search_page":"Results matching your search options have been found, and similar results, if any, will be displayed",
   "edit_profile":"Edit Profile",
-   "time_of_receive_code": "the time of arrival of the confirmation message is related to the service provider in the selected country",
+  "time_of_receive_link": "the time of arrival of the confirmation message is related to the service provider in the selected country"
 }
