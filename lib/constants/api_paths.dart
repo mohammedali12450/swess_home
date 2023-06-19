@@ -1,4 +1,4 @@
-const String proNetBaseUrl = "https://backend-v2.swesshome.com/api/v2/";
+const String proNetBaseUrl = "http://api-dev.swesshome.com/api/v2/";
 const String proNetImagesUrl = "https://backend-v2.swesshome.com/storage/";
 const String hostingerBaseUrl = "http://swesshomerealestate.com/";
 const String hostingerImagesBaseUrl = "http://swesshomerealestate.com/";
@@ -61,7 +61,7 @@ const callEstateURL = "estate/call";
 const fcmTokenURL = "fcm-token/create";
 const ratingURL = "app-rate/create";
 const systemVariablesURL = "system-var";
-const sendCodeURL = "customer/send-code";
+const sendCodeURL = "customer/send-password-reset-link";
 const resendCodeURL = "customer/code/resend";
 const checkCodeURL = "customer/code/check";
 const verificationCodeURL = "customer/check-forget-password";
