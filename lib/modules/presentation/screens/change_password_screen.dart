@@ -8,6 +8,7 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/formatters.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
 import '../../../constants/assets_paths.dart';
 import '../../../constants/design_constants.dart';
@@ -58,48 +59,85 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(AppLocalizations.of(context)!.change_password,
-          style: const TextStyle(color: AppColors.white),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ChangePasswordBloc>(
+          create: (context) => changePasswordBloc,
         ),
-
-      ),
-      body: Container(
-        width: 1.sw,
-        height: 1.sh,
-        color: Theme.of(context).colorScheme.secondary,
-        child: Stack(
-          children: [
-            ...kBackgroundDrawings(context),
-            SingleChildScrollView(
-              controller: scrollController,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  40.verticalSpace,
-                  SizedBox(
-                    width: 200.w,
-                    height: 200.w,
-                    child: CircleAvatar(
-                      child: Image.asset(swessHomeIconPath),
-                      backgroundColor: Colors.transparent,
-                      foregroundColor: Colors.transparent,
-                    ),
-                  ),
-                  10.verticalSpace,
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15,right: 15),
-                    child: buildFieldWidget(),
-                  )
-                ],
-              ),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<ChangePasswordBloc, ChangePasswordState>(
+            listener: (_, changeState) {
+              if (changeState is ChangePasswordError) {
+                if (changeState.isConnectionError) {
+                  showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.error,
+                    AppLocalizations.of(context)!.no_internet_connection,
+                  );
+                  return;
+                }
+                if (changeState.errorMessage != null) {
+                  showWonderfulAlertDialog(
+                      context,
+                      AppLocalizations.of(context)!.error,
+                      changeState.errorMessage!);
+                }
+              }
+              if (changeState is ChangePasswordComplete) {
+                showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.done,
+                    AppLocalizations.of(context)!.password_change_successfully);
+              }
+            },
+          ),
+        ],
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(AppLocalizations.of(context)!.change_password,
+              style: const TextStyle(color: AppColors.white),
             ),
-          ],
-        ),
+
+          ),
+          body: Container(
+            width: 1.sw,
+            height: 1.sh,
+            color: Theme.of(context).colorScheme.secondary,
+            child: Stack(
+              children: [
+                ...kBackgroundDrawings(context),
+                SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      40.verticalSpace,
+                      SizedBox(
+                        width: 200.w,
+                        height: 200.w,
+                        child: CircleAvatar(
+                          child: Image.asset(swessHomeIconPath),
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.transparent,
+                        ),
+                      ),
+                      10.verticalSpace,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15,right: 15),
+                        child: buildFieldWidget(),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
       ),
     );
   }
@@ -223,8 +261,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             onPressed: () async {
               changePasswordBloc.add(
                 ChangePasswordStarted(
-                  newPassword: newPasswordController.text,
                   oldPassword: oldPasswordController.text,
+                  newPassword: newPasswordController.text,
                   token: UserSharedPreferences.getAccessToken()!,
                 ),
               );

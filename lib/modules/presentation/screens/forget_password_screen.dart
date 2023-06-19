@@ -6,6 +6,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/assets_paths.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_state.dart';
@@ -103,16 +104,16 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           }
         }
         if (forgetState is ForgetPasswordComplete) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => VerificationCodeScreenReset(
-                phoneNumber: "+" +
-                    phoneNumber!.countryCode +
-                    phoneNumber!.nationalNumber,
-              ),
-            ),
-          );
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (_) => VerificationCodeScreenReset(
+          //       phoneNumber: "+" +
+          //           phoneNumber!.countryCode +
+          //           phoneNumber!.nationalNumber,
+          //     ),
+          //   ),
+          // );
         }
       },
       child: Scaffold(
@@ -130,7 +131,15 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    56.verticalSpace,
+                    40.verticalSpace,
+                    Row(
+                      children: [
+                        IconButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            icon: const Icon(Icons.arrow_back)
+                        ),
+                      ],
+                    ),
                     SizedBox(
                       width: 200.w,
                       height: 200.w,
@@ -152,159 +161,175 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     );
   }
 
-  /// new
-  Column buildSignInScreen() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        40.verticalSpace,
-        Center(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(300.w, 50.h),
-              maximumSize: Size(300.w, 50.h),
-            ),
-            onPressed: () async {
-              // todo send
-            },
-            child: Text(
-              AppLocalizations.of(context)!.send,
-            ),
-          ),
-        ),
-        25.verticalSpace,
-        Center(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(300.w, 50.h),
-              maximumSize: Size(300.w, 50.h),
-            ),
-            onPressed: () async {
-              // todo resend
-            },
-            child: Text(
-              AppLocalizations.of(context)!.resend,
-            ),
-          ),
-        ),
-        25.verticalSpace,
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: Center(
-              child: Text(
-                AppLocalizations.of(context)!.time_of_receive_link,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText2,
-              )),
-        ),
-      ],
-    );
-  }
-
-  /// old
+  // /// new
   // Column buildSignInScreen() {
   //   return Column(
   //     crossAxisAlignment: CrossAxisAlignment.start,
   //     children: [
-  //       Text(
-  //         AppLocalizations.of(context)!.mobile_number + " :",
-  //       ),
-  //       8.verticalSpace,
-  //       BlocBuilder<ChannelCubit, dynamic>(
-  //         bloc: officePhoneErrorLogin,
-  //         builder: (_, errorMessage) {
-  //           return IntlPhoneField(
-  //             controller: officePhoneControllerLogin,
-  //             decoration:
-  //             InputDecoration(errorText: errorMessage, errorMaxLines: 2),
-  //             initialCountryCode: isForStore ? 'LB' : 'SY',
-  //             onChanged: (phone) {
-  //               phoneDialCode = phone.countryCode;
-  //               officePhoneErrorLogin.setState(null);
-  //             },
-  //             disableLengthCheck: true,
-  //             autovalidateMode: AutovalidateMode.disabled,
-  //           );
-  //         },
-  //       ),
-  //       // BlocBuilder<ChannelCubit, dynamic>(
-  //       //   bloc: officePhoneErrorLogin,
-  //       //   builder: (_, errorMessage) {
-  //       //     return TextField(
-  //       //       textDirection: TextDirection.ltr,
-  //       //       onChanged: (_) {
-  //       //         officePhoneErrorLogin.setState(null);
-  //       //       },
-  //       //       cursorColor: Theme.of(context).colorScheme.onBackground,
-  //       //       controller: officePhoneControllerLogin,
-  //       //       keyboardType: TextInputType.phone,
-  //       //       decoration: InputDecoration(
-  //       //         prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-  //       //         prefixIcon: Padding(
-  //       //           padding: EdgeInsets.symmetric(horizontal: 12.w),
-  //       //           child: Text(
-  //       //             phoneDialCode,
-  //       //             style: Theme.of(context).textTheme.caption,
-  //       //             textDirection: TextDirection.ltr,
-  //       //           ),
-  //       //         ),
-  //       //         errorText: errorMessage,
-  //       //         hintText: AppLocalizations.of(context)!.enter_mobile_number,
-  //       //       ),
-  //       //     );
-  //       //   },
-  //       // ),
-  //       56.verticalSpace,
+  //       40.verticalSpace,
   //       Center(
   //         child: ElevatedButton(
   //           style: ElevatedButton.styleFrom(
-  //             minimumSize: Size(180.w, 60.h),
-  //             maximumSize: Size(200.w, 60.h),
+  //             minimumSize: Size(300.w, 50.h),
+  //             maximumSize: Size(300.w, 50.h),
   //           ),
   //           onPressed: () async {
-  //             // validators :
-  //             if (!await signInFieldsValidation()) {
-  //               return;
-  //             }
-  //             forgetPasswordBloc.add(
-  //               ForgetPasswordStarted(
-  //                 mobile: "+" +
-  //                     phoneNumber!.countryCode +
-  //                     phoneNumber!.nationalNumber,
-  //               ),
-  //             );
+  //             // todo send
   //           },
-  //           child: BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
-  //             builder: (_, forgetState) {
-  //               if (forgetState is ForgetPasswordProgress) {
-  //                 return IntrinsicHeight(
-  //                   child: Row(
-  //                     mainAxisAlignment: MainAxisAlignment.center,
-  //                     crossAxisAlignment: CrossAxisAlignment.stretch,
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     children: [
-  //                       Text(
-  //                         AppLocalizations.of(context)!.sending,
-  //                       ),
-  //                       12.horizontalSpace,
-  //                       SpinKitWave(
-  //                         color: Theme.of(context).colorScheme.onPrimary,
-  //                         size: 20.w,
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 );
-  //               }
-  //               return Text(
-  //                 AppLocalizations.of(context)!.next,
-  //               );
-  //             },
+  //           child: Text(
+  //             AppLocalizations.of(context)!.send,
   //           ),
   //         ),
+  //       ),
+  //       25.verticalSpace,
+  //       Center(
+  //         child: ElevatedButton(
+  //           style: ElevatedButton.styleFrom(
+  //             minimumSize: Size(300.w, 50.h),
+  //             maximumSize: Size(300.w, 50.h),
+  //           ),
+  //           onPressed: () async {
+  //             // todo resend
+  //           },
+  //           child: Text(
+  //             AppLocalizations.of(context)!.resend,
+  //           ),
+  //         ),
+  //       ),
+  //       25.verticalSpace,
+  //       Padding(
+  //         padding: const EdgeInsets.all(10),
+  //         child: Center(
+  //             child: Text(
+  //               AppLocalizations.of(context)!.time_of_receive_link,
+  //               textAlign: TextAlign.center,
+  //               style: Theme.of(context).textTheme.bodyText2,
+  //             )),
   //       ),
   //     ],
   //   );
   // }
+
+  /// old
+  Column buildSignInScreen() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.mobile_number + " :",
+        ),
+        8.verticalSpace,
+        BlocBuilder<ChannelCubit, dynamic>(
+          bloc: officePhoneErrorLogin,
+          builder: (_, errorMessage) {
+            return IntlPhoneField(
+              controller: officePhoneControllerLogin,
+              decoration:
+              InputDecoration(errorText: errorMessage, errorMaxLines: 2),
+              initialCountryCode: isForStore ? 'LB' : 'SY',
+              onChanged: (phone) {
+                phoneDialCode = phone.countryCode;
+                officePhoneErrorLogin.setState(null);
+              },
+              disableLengthCheck: true,
+              autovalidateMode: AutovalidateMode.disabled,
+            );
+          },
+        ),
+        // BlocBuilder<ChannelCubit, dynamic>(
+        //   bloc: officePhoneErrorLogin,
+        //   builder: (_, errorMessage) {
+        //     return TextField(
+        //       textDirection: TextDirection.ltr,
+        //       onChanged: (_) {
+        //         officePhoneErrorLogin.setState(null);
+        //       },
+        //       cursorColor: Theme.of(context).colorScheme.onBackground,
+        //       controller: officePhoneControllerLogin,
+        //       keyboardType: TextInputType.phone,
+        //       decoration: InputDecoration(
+        //         prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        //         prefixIcon: Padding(
+        //           padding: EdgeInsets.symmetric(horizontal: 12.w),
+        //           child: Text(
+        //             phoneDialCode,
+        //             style: Theme.of(context).textTheme.caption,
+        //             textDirection: TextDirection.ltr,
+        //           ),
+        //         ),
+        //         errorText: errorMessage,
+        //         hintText: AppLocalizations.of(context)!.enter_mobile_number,
+        //       ),
+        //     );
+        //   },
+        // ),
+        56.verticalSpace,
+        Center(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize: Size(180.w, 60.h),
+              maximumSize: Size(200.w, 60.h),
+            ),
+            onPressed: () async {
+              // validators :
+              if (!await signInFieldsValidation()) {
+                return;
+              }
+              forgetPasswordBloc.add(
+                ForgetPasswordStarted(
+                  mobile: "+" +
+                      phoneNumber!.countryCode +
+                      phoneNumber!.nationalNumber,
+                ),
+              );
+            },
+            child: BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
+              builder: (_, forgetState) {
+                if (forgetState is ForgetPasswordProgress) {
+                  return IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.send,
+                        ),
+                        12.horizontalSpace,
+                        SpinKitWave(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          size: 20.w,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return Text(
+                  AppLocalizations.of(context)!.send,
+                );
+              },
+            ),
+          ),
+        ),
+        56.verticalSpace,
+        BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
+          builder: (_,forgetState) {
+            if(forgetState is ForgetPasswordComplete) {
+              return Padding(
+                padding: const EdgeInsets.all(10),
+                child: Center(
+                    child: Text(
+                      AppLocalizations.of(context)!.time_of_receive_link,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyText2,
+                    )),
+              );
+            } return const Center();
+          }
+        )
+        ],
+    );
+  }
 
 
   Future<bool> signInFieldsValidation() async {
