@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
@@ -302,22 +304,25 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                       ),
                     ),
                     BottomNavigationBar(
+                      backgroundColor: Colors.white,
                       type: BottomNavigationBarType.fixed,
                       showSelectedLabels: true,
                       showUnselectedLabels: true,
                       unselectedLabelStyle: const TextStyle(fontSize: 12),
-                      selectedLabelStyle: const TextStyle(fontSize: 12),
+                      selectedLabelStyle: const TextStyle(fontSize: 12,),
+                      selectedItemColor: AppColors.blue,
+                      unselectedItemColor: const Color(0xFF818283),
                       items: [
                         BottomNavigationBarItem(
-                          icon: const Icon(Icons.search_outlined),
+                          icon: SvgPicture.asset(searchPath,color: pageCubit.state == 0 ? AppColors.blue : const Color(0xFF818283)),
                           label: AppLocalizations.of(context)!.search,
                         ),
                         BottomNavigationBarItem(
-                          icon: const Icon(Icons.history),
+                          icon: SvgPicture.asset(orderPath,color: pageCubit.state == 1 ? AppColors.blue : const Color(0xFF818283)),
                           label: AppLocalizations.of(context)!.estate_offers2,
                         ),
                         BottomNavigationBarItem(
-                          icon: const Icon(Icons.bookmark_border_outlined),
+                          icon: SvgPicture.asset(savedPath,color: pageCubit.state == 2 ? AppColors.blue : const Color(0xFF818283)),
                           label: AppLocalizations.of(context)!.saved,
                         ),
                         // BottomNavigationBarItem(
@@ -325,7 +330,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                         //   label: AppLocalizations.of(context)!.estate_immediately,
                         // ),
                         BottomNavigationBarItem(
-                          icon: const Icon(Icons.home_outlined),
+                          icon: SvgPicture.asset(createEstatePath,color: pageCubit.state == 3 ? AppColors.blue : const Color(0xFF818283)),
                           label: AppLocalizations.of(context)!.estate_order,
                         ),
                         // BottomNavigationBarItem(
@@ -333,7 +338,9 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                         //   label: AppLocalizations.of(context)!.chat,
                         // ),
                         BottomNavigationBarItem(
-                          icon: const Icon(Icons.person_outline),
+                          icon: Image.asset(profilePath,color: pageCubit.state == 4 ? AppColors.blue : const Color(0xFF818283),
+                          width: 28,
+                          ),
                           label: AppLocalizations.of(context)!.profile,
                         ),
                       ],

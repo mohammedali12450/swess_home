@@ -32,4 +32,10 @@ const String villaIconPath = 'assets/icons/villa.png';
 const String whatsappPath = 'assets/icons/whatsapp.svg';
 const String messengerPath = 'assets/icons/messenger.svg';
 
+const String savedPath = "assets/icons/saved.svg";
+const String profilePath = "assets/images/profile.png";
+const String searchPath = "assets/icons/search.svg";
+const String orderPath = "assets/icons/order.svg";
+const String createEstatePath = "assets/icons/create_estate.svg";
+
 const String assetsImages = "assets/images";
