@@ -289,8 +289,10 @@ class _MyDrawerState extends State<MyDrawer> {
           content: AppLocalizations.of(context)!.contact_us,
           iconData: Icons.people_outline,
           onTap: () {
-<<<<<<< lib/modules/presentation/widgets/app_drawer.dart
-            ///
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ContacttUsBody()));
           },
         ),
         RowInformation(
@@ -298,12 +300,6 @@ class _MyDrawerState extends State<MyDrawer> {
           iconData: Icons.contacts,
           onTap: () {
             Navigator.of(context).pushNamed(ContactsScreen.id);
-=======
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => ContacttUsBody()));
->>>>>>> lib/modules/presentation/widgets/app_drawer.dart
           },
         ),
         RowInformation(

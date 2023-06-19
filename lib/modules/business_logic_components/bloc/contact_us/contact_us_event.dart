@@ -4,9 +4,9 @@ class ContactUsStarted extends ContactUsEvent {
 
   final String email;
 
-  final String title;
+  final String subject;
 
   final String message;
 
-  ContactUsStarted({required this.email, required this.title, required this.message});
+  ContactUsStarted({required this.email, required this.subject, required this.message});
 }

@@ -78,7 +78,8 @@ const getEstateDetailsURL = "estate/details/";
 const downloadURL = "download-url";
 
 /// added new
-const sendDirectMessageURL = "";
+const sendDirectMessageURL = "messages/store";
+const loggingHistoryURL = "customer/login-history";
 
 //old api
 // const userRegisterUrl = "api/user/register";

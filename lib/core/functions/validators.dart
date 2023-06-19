@@ -1,6 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+String? firstNameValidator(String? firstName, BuildContext context) {
+  if (firstName?.isEmpty ?? false) {
+    return AppLocalizations.of(context)!.please_enter_your_first_name;
+  }
+  return null;
+}
+
+String? lastNameValidator(String? lastName, BuildContext context) {
+  if (lastName?.isEmpty ?? false) {
+    return AppLocalizations.of(context)!.please_enter_your_last_name;
+  }
+  return null;
+}
+
 String passwordValidator({String? password, BuildContext? context}) {
   if (password!.isEmpty) {
     return "Please enter your password";
