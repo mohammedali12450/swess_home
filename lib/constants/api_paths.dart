@@ -77,6 +77,9 @@ const multiLoginURL = "customer/check-login-code";
 const getEstateDetailsURL = "estate/details/";
 const downloadURL = "download-url";
 
+/// added new
+const sendDirectMessageURL = "";
+
 //old api
 // const userRegisterUrl = "api/user/register";
 // const userLoginUrl = "api/login1"; //login1 can't access with multi login   //login can access with multi login

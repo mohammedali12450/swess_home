@@ -29,5 +29,7 @@ const String landIconPath = 'assets/icons/land.png';
 const String shopIconPath = 'assets/icons/shop.png';
 const String buildIconPath = 'assets/icons/building.png';
 const String villaIconPath = 'assets/icons/villa.png';
+const String whatsappPath = 'assets/icons/whatsapp.svg';
+const String messengerPath = 'assets/icons/messenger.svg';
 
 const String assetsImages = "assets/images";

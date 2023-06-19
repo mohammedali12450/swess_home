@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -100,8 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: BlocBuilder<NotificationsCubit, int>(
               builder: (_, notificationsCount) {
                 return Padding(
-                  padding: EdgeInsets.only(
-                      left: 0, right: 12.w),
+                  padding: EdgeInsets.only(left: 0, right: 12.w),
                   child: IconBadge(
                     icon: const Icon(
                       Icons.notifications_outlined,
@@ -166,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               if (UserSharedPreferences.getAccessToken() == null) ...[
                 // buildLanguageSetting,
-                  kHe8,
+                kHe8,
                 buildListTile(
                   icon: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -394,8 +395,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             textStyle: Theme.of(context).textTheme.headline6,
           ),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const RecentEstateOrdersScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const RecentEstateOrdersScreen()));
           },
         ),
         buildListTile(
@@ -409,8 +412,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             textStyle: Theme.of(context).textTheme.headline6,
           ),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const CreatedEstatesScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const CreatedEstatesScreen()));
           },
         ),
 
@@ -499,7 +504,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ResText(
                   "${user!.firstName!} ${user!.lastName!}",
                   textStyle: Theme.of(context).textTheme.headline3!.copyWith(
-                      color: !isDark ? AppColors.black : AppColors.white,fontSize: 20),
+                      color: !isDark ? AppColors.black : AppColors.white,
+                      fontSize: 20),
                 ),
                 // ResText(
                 //   user?.email ?? "",
