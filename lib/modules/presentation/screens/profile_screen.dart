@@ -233,7 +233,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: ResText(
-                  "version ${ApplicationSharedPreferences.getVersionAppState()}",
+                  "version 2.0 (Demo)",
+                  // "version ${ApplicationSharedPreferences.getVersionAppState()}",
                   textAlign: TextAlign.center,
                   textStyle: Theme.of(context)
                       .textTheme
