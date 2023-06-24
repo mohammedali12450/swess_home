@@ -70,7 +70,7 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
           alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
           decoration: BoxDecoration(
             border: Border.all(
-                color: isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                color: isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
                 width: 1),
             borderRadius: lowBorderRadius,
           ),
@@ -90,7 +90,7 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
         alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
         decoration: BoxDecoration(
           border: Border.all(
-              color: isDark ? Colors.black38 : AppColors.yellowDarkColor,
+              color: isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
               width: 1),
           borderRadius: lowBorderRadius,
         ),
@@ -109,7 +109,7 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
         alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
         decoration: BoxDecoration(
           border: Border.all(
-              color: isDark ? Colors.black38 : AppColors.yellowDarkColor,
+              color: isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
               width: 1),
           borderRadius: lowBorderRadius,
         ),

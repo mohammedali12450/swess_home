@@ -61,8 +61,8 @@ class _MyDropdownListState extends State<MyDropdownList> {
               ),
               hintText: widget.selectedItem,
               hintStyle: TextStyle(
-                color: Colors.black.withOpacity(0.3),
-                // color: isDark ? Colors.white : Colors.black,
+                // color: Colors.black.withOpacity(0.3),
+                color: isDark ? Colors.white : Colors.black,
                 fontSize: 15.sp,
               )),
           isExpanded: true,

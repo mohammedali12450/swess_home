@@ -57,6 +57,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
   List<EstateOrder> orders = [];
   late AnimationController _animationController;
   late Animation _colorTween;
+  late bool isDark;
 
   //late Timer timer;
 
@@ -122,18 +123,19 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     if (widget.estateId != null) {
       initAnimation(context);
     }
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          iconTheme: const IconThemeData(color: AppColors.black),
+          iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
           title: Text(
             AppLocalizations.of(context)!.recent_created_orders,
-              style: const TextStyle(color: AppColors.black)
+            style: TextStyle(color: isDark ? Colors.white : AppColors.black),
           ),
           actions: [
             InkWell(
@@ -143,8 +145,9 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                     padding: EdgeInsets.only(
                         left: 0, right:  12.w),
                     child: IconBadge(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.notifications_outlined,
+                          color: isDark ? Colors.white : AppColors.black
                       ),
                       itemCount: notificationsCount,
                       right: 0,

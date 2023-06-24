@@ -517,9 +517,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                         EdgeInsets.only(bottom: 3.0.h),
                                         child: Icon(
                                           Icons.remove_red_eye_outlined,
-                                          color: !isDark
-                                              ? AppColors.lastColor
-                                              : AppColors.yellowDarkColor,
+                                          color: isDark
+                                              ? AppColors.lightblue
+                                              : AppColors.lastColor,
                                           size: 20.w,
                                         ),
                                       ),
@@ -530,10 +530,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                             .textTheme
                                             .headline5!
                                             .copyWith(
-                                            color: !isDark
-                                                ? AppColors.lastColor
-                                                : AppColors
-                                                .yellowDarkColor,
+                                            color: isDark
+                                                ? AppColors.lightblue
+                                                : AppColors.lastColor,
                                             fontSize: 14.sp,
                                             height: 1.5.h),
                                       ),

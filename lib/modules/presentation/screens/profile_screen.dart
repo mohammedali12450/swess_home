@@ -91,12 +91,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: AppColors.black),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
         title: Text(
           AppLocalizations.of(context)!.settings,
-          style: const TextStyle(color: AppColors.black),
+          style: TextStyle(color: isDark ? Colors.white : AppColors.black),
         ),
         actions: [
           InkWell(
@@ -105,8 +105,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return Padding(
                   padding: EdgeInsets.only(left: 0, right: 12.w),
                   child: IconBadge(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.notifications_outlined,
+                        color: isDark ? Colors.white : AppColors.black
                     ),
                     itemCount: notificationsCount,
                     right: 0,
@@ -200,7 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 6.verticalSpace,
                 const Divider(),
                 10.verticalSpace,
-                // buildThemeModeSetting(),
+                buildThemeModeSetting(),
               ],
               if (UserSharedPreferences.getAccessToken() != null) ...[
                 BlocBuilder<UserDataBloc, UserDataState>(
@@ -229,7 +230,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     })
               ],
               //Spacer(),
-              // kHe16,
+              UserSharedPreferences.getAccessToken() != null ? kHe4 : kHe16,
               Align(
                 alignment: Alignment.bottomCenter,
                 child: ResText(
@@ -255,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       children: [
         buildProfileImage(),
-
+        const Divider(thickness: 0.2),
         // buildNotification
         buildListTile(
           icon: BlocBuilder<NotificationsCubit, int>(
@@ -340,7 +341,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               : Icons.keyboard_arrow_left),
         ),
 
-        // buildThemeModeSetting(),
+        buildThemeModeSetting(),
 
         // buildChangePassword,
         buildListTile(
@@ -464,7 +465,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Container buildProfileImage() {
     return Container(
-      color: AppColors.primaryColor,
+      color: isDark ? AppColors.secondaryDark : AppColors.primaryColor,
       height: 220.h,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -485,9 +486,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: IconButton(
                         icon: Icon(
                           Icons.edit_outlined,
-                          color: !isDark
-                              ? AppColors.primaryColor
-                              : AppColors.white,
+                          color: AppColors.white,
                         ),
                         onPressed: () async {
                           final bool value = await Navigator.push(
@@ -524,7 +523,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ResText(
                   "${user!.firstName!} ${user!.lastName!}",
                   textStyle: Theme.of(context).textTheme.headline3!.copyWith(
-                      color: !isDark ? AppColors.black : AppColors.white,
+                      color: AppColors.white,
                       fontSize: 20),
                 ),
                 // ResText(
@@ -546,9 +545,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             .textTheme
                             .headline6!
                             .copyWith(
-                                color: !isDark
-                                    ? AppColors.primaryColor
-                                    : AppColors.primaryDark),
+                                color: isDark ? AppColors.white : AppColors.white),
                       ),
                       ResText(
                         "${user!.country ?? ""} "
@@ -557,9 +554,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             .textTheme
                             .headline6!
                             .copyWith(
-                                color: !isDark
-                                    ? AppColors.primaryColor
-                                    : AppColors.primaryDark),
+                                color: isDark ? AppColors.white : AppColors.white,),
                       ),
                     ],
                   ),

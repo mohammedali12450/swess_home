@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
@@ -12,6 +13,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/contact_us/cont
 import 'package:swesshome/modules/business_logic_components/bloc/contact_us/contact_us_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/contact_us/contact_us_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/contact_us_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/text_field_widget.dart';
@@ -76,6 +78,7 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
   @override
   Widget build(BuildContext context) {
     bool isKeyboardOpened = MediaQuery.of(context).viewInsets.bottom != 0;
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return BlocListener<ContactUsBloc, ContactUsState>(
       listener: (_, sendState) async {
         if (sendState is ContactUsError) {
@@ -116,7 +119,7 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
                 child: Container(
                   width: 1.sw,
                   height: MediaQuery.of(context).size.height * 0.2,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: isDark ? const Color(0xff26282B) : Theme.of(context).colorScheme.primary,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -155,7 +158,7 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
                   width: 1.sw,
                   decoration: BoxDecoration(
                       borderRadius: highBorderRadius,
-                      color: Theme.of(context).colorScheme.background),
+                      color: isDark ? AppColors.secondaryDark : AppColors.white),
                   child: SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,

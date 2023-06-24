@@ -9,6 +9,7 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
@@ -216,6 +217,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
   @override
   Widget build(BuildContext context) {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: true,
@@ -304,25 +306,25 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                       ),
                     ),
                     BottomNavigationBar(
-                      backgroundColor: Colors.white,
+                      backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
                       type: BottomNavigationBarType.fixed,
                       showSelectedLabels: true,
                       showUnselectedLabels: true,
                       unselectedLabelStyle: const TextStyle(fontSize: 12),
                       selectedLabelStyle: const TextStyle(fontSize: 12,),
-                      selectedItemColor: AppColors.blue,
+                      selectedItemColor: AppColors.lastColor,
                       unselectedItemColor: const Color(0xFF818283),
                       items: [
                         BottomNavigationBarItem(
-                          icon: SvgPicture.asset(searchPath,color: pageCubit.state == 0 ? AppColors.blue : const Color(0xFF818283)),
+                          icon: SvgPicture.asset(searchPath,color: pageCubit.state == 0 ? AppColors.lastColor : const Color(0xFF818283)),
                           label: AppLocalizations.of(context)!.search,
                         ),
                         BottomNavigationBarItem(
-                          icon: SvgPicture.asset(orderPath,color: pageCubit.state == 1 ? AppColors.blue : const Color(0xFF818283)),
+                          icon: SvgPicture.asset(orderPath,color: pageCubit.state == 1 ? AppColors.lastColor : const Color(0xFF818283)),
                           label: AppLocalizations.of(context)!.estate_offers2,
                         ),
                         BottomNavigationBarItem(
-                          icon: SvgPicture.asset(savedPath,color: pageCubit.state == 2 ? AppColors.blue : const Color(0xFF818283)),
+                          icon: SvgPicture.asset(savedPath,color: pageCubit.state == 2 ? AppColors.lastColor : const Color(0xFF818283)),
                           label: AppLocalizations.of(context)!.saved,
                         ),
                         // BottomNavigationBarItem(
@@ -330,7 +332,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                         //   label: AppLocalizations.of(context)!.estate_immediately,
                         // ),
                         BottomNavigationBarItem(
-                          icon: SvgPicture.asset(createEstatePath,color: pageCubit.state == 3 ? AppColors.blue : const Color(0xFF818283)),
+                          icon: SvgPicture.asset(createEstatePath,color: pageCubit.state == 3 ? AppColors.lastColor : const Color(0xFF818283)),
                           label: AppLocalizations.of(context)!.estate_order,
                         ),
                         // BottomNavigationBarItem(
@@ -338,7 +340,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                         //   label: AppLocalizations.of(context)!.chat,
                         // ),
                         BottomNavigationBarItem(
-                          icon: Image.asset(profilePath,color: pageCubit.state == 4 ? AppColors.blue : const Color(0xFF818283),
+                          icon: Image.asset(profilePath,color: pageCubit.state == 4 ? AppColors.lastColor : const Color(0xFF818283),
                           width: 28,
                           ),
                           label: AppLocalizations.of(context)!.profile,

@@ -959,7 +959,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   children: [
                     Checkbox(
                       activeColor:
-                          !isDark ? AppColors.white : AppColors.primaryColor,
+                          isDark ? AppColors.lightblue : AppColors.primaryColor,
                       value: isChecked,
                       onChanged: (value) {
                         isCheck = value!;

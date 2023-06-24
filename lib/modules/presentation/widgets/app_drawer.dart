@@ -51,16 +51,17 @@ class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-
-    return SingleChildScrollView(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        (UserSharedPreferences.getAccessToken() == null)
-            ? buildNullUserDrawer(isDark)
-            : buildUserDrawer(isDark),
-      ],
-    ));
+    return Container(
+      child: SingleChildScrollView(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          (UserSharedPreferences.getAccessToken() == null)
+              ? buildNullUserDrawer(isDark)
+              : buildUserDrawer(isDark),
+        ],
+      )),
+    );
   }
 
   buildUserDrawer(isDark) {
@@ -70,9 +71,10 @@ class _MyDrawerState extends State<MyDrawer> {
           padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
           alignment: Alignment.topCenter,
           decoration: BoxDecoration(
-            color: isDark
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.secondary,
+            color: isDark ? AppColors.secondaryDark : AppColors.primaryColor,
+            // color: isDark
+            //     ? Theme.of(context).colorScheme.secondary :
+            // Theme.of(context).colorScheme.primary,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -93,7 +95,37 @@ class _MyDrawerState extends State<MyDrawer> {
                       height: 100.w,
                     ),
                   ),
-                  kHe24,
+                  kHe8,
+                  if (UserSharedPreferences.getAccessToken() != null) ...[
+                    BlocBuilder<UserLoginBloc, UserLoginState>(
+                        bloc: _userLoginBloc,
+                        builder: (_, UserLoginState userEditState) {
+                          return Column(
+                            children: [
+                              Text(
+                                _userLoginBloc.user!.firstName! + " " + _userLoginBloc.user!.lastName!,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              Text(
+                                _userLoginBloc.user!.authentication!,
+                                textDirection: TextDirection.ltr,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              )
+                            ],
+                          );
+                        })
+                  ],
+                  kHe8,
                   // Text(
                   //   user.userName + " " + user.lastName,
                   //   style: Theme.of(context)
@@ -119,6 +151,7 @@ class _MyDrawerState extends State<MyDrawer> {
             ],
           ),
         ),
+        const Divider(),
         kHe8,
         // RowInformation(
         //   content: AppLocalizations.of(context)!.rate_us,
@@ -196,9 +229,10 @@ class _MyDrawerState extends State<MyDrawer> {
           padding: EdgeInsets.symmetric(vertical: 30.h, horizontal: 12.w),
           alignment: Alignment.topCenter,
           decoration: BoxDecoration(
-            color: isDark
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.secondary,
+            color: isDark ? AppColors.secondaryDark : AppColors.primaryColor,
+            // color: isDark
+            //     ? Theme.of(context).colorScheme.primary
+            //     : Theme.of(context).colorScheme.secondary,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -266,90 +300,92 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 
   buildMainDrawer(isDark) {
-    return Column(
-      children: [
-        kHe8,
-        RowInformation(
-          content: AppLocalizations.of(context)!.rate_us,
-          iconData: Icons.star_rate_outlined,
-          onTap: () {
-            showReview();
-            // Navigator.pushNamed(context, RatingScreen.id);
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.invite_friends,
-          iconData: Icons.people_alt_outlined,
-          onTap: () {
-            Share.share(AppLocalizations.of(context)!.upload_app +
-                '\n${ApplicationSharedPreferences.getDownloadUrl()}');
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.contact_us,
-          iconData: Icons.people_outline,
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => ContacttUsBody()));
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.contacts,
-          iconData: Icons.contacts,
-          onTap: () {
-            Navigator.of(context).pushNamed(ContactsScreen.id);
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.terms_condition,
-          iconData: Icons.verified_user_outlined,
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const TermsAndConditionsPage()));
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.intellectual_property_rights,
-          iconData: Icons.lightbulb_outline,
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const IntellectualPropertyRightsPage()));
-          },
-        ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.terms_of_use,
-          iconData: Icons.security_outlined,
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const TermsOfUsePage()));
-          },
-        ),
-        // RowInformation(
-        //   content: AppLocalizations.of(context)!.call_us,
-        //   iconData: Icons.call_outlined,
-        //   onTap: () {
-        //     launch(
-        //       "tel://" +
-        //           BlocProvider.of<SystemVariablesBloc>(context)
-        //               .systemVariables!
-        //               .normalCompanyPhoneNumber,
-        //     );
-        //   },
-        // ),
-        RowInformation(
-          content: AppLocalizations.of(context)!.faq,
-          iconData: Icons.error_outline,
-          onTap: () {
-            Navigator.pushNamed(context, FAQScreen.id);
-          },
-        ),
-      ],
+    return Container(
+      child: Column(
+        children: [
+          kHe8,
+          RowInformation(
+            content: AppLocalizations.of(context)!.rate_us,
+            iconData: Icons.star_rate_outlined,
+            onTap: () {
+              showReview();
+              // Navigator.pushNamed(context, RatingScreen.id);
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.invite_friends,
+            iconData: Icons.people_alt_outlined,
+            onTap: () {
+              Share.share(AppLocalizations.of(context)!.upload_app +
+                  '\n${ApplicationSharedPreferences.getDownloadUrl()}');
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.contact_us,
+            iconData: Icons.people_outline,
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => ContacttUsBody()));
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.contacts,
+            iconData: Icons.contacts,
+            onTap: () {
+              Navigator.of(context).pushNamed(ContactsScreen.id);
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.terms_condition,
+            iconData: Icons.verified_user_outlined,
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const TermsAndConditionsPage()));
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.intellectual_property_rights,
+            iconData: Icons.lightbulb_outline,
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const IntellectualPropertyRightsPage()));
+            },
+          ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.terms_of_use,
+            iconData: Icons.security_outlined,
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const TermsOfUsePage()));
+            },
+          ),
+          // RowInformation(
+          //   content: AppLocalizations.of(context)!.call_us,
+          //   iconData: Icons.call_outlined,
+          //   onTap: () {
+          //     launch(
+          //       "tel://" +
+          //           BlocProvider.of<SystemVariablesBloc>(context)
+          //               .systemVariables!
+          //               .normalCompanyPhoneNumber,
+          //     );
+          //   },
+          // ),
+          RowInformation(
+            content: AppLocalizations.of(context)!.faq,
+            iconData: Icons.error_outline,
+            onTap: () {
+              Navigator.pushNamed(context, FAQScreen.id);
+            },
+          ),
+        ],
+      ),
     );
   }
 

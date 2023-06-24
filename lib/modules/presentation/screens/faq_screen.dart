@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
@@ -67,9 +68,9 @@ class _FAQScreenState extends State<FAQScreen> {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       child: ExpansionTile(
-        backgroundColor: isDark ? Theme.of(context).colorScheme.secondary : Colors.black38,
+        backgroundColor: isDark ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
         childrenPadding: kLargeSymWidth,
-        iconColor: Theme.of(context).colorScheme.primary,
+        iconColor: isDark ? AppColors.white :  Theme.of(context).colorScheme.primary,
         collapsedIconColor: Theme.of(context).colorScheme.primary,
         title: Padding(
           padding: EdgeInsets.only(left: !isArabic ? 8.w : 0, right: isArabic ? 8.w : 0),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 
 class ButtonSocail extends StatefulWidget {
   const ButtonSocail({
@@ -21,6 +23,7 @@ class ButtonSocail extends StatefulWidget {
 
 class _ButtonSocailState extends State<ButtonSocail> {
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
+  late bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
 
   @override
   void dispose() {
@@ -42,7 +45,7 @@ class _ButtonSocailState extends State<ButtonSocail> {
         ),
         side: MaterialStateProperty.all(
           BorderSide(
-            color: AppColors.primaryColor.withOpacity(0.25),
+            color: isDark ? AppColors.white : AppColors.primaryColor.withOpacity(0.25),
             width: 1.0,
             style: BorderStyle.solid,
           ),
@@ -62,7 +65,7 @@ class _ButtonSocailState extends State<ButtonSocail> {
         valueListenable: isLoading,
         builder: (context, value, child) => value
             ? SpinKitWave(
-                color: AppColors.primaryColor,
+                color: isDark ? AppColors.lightblue : AppColors.primaryColor,
                 size: 20.w,
               )
             : child!,
@@ -73,7 +76,7 @@ class _ButtonSocailState extends State<ButtonSocail> {
             Text(
               widget.text,
               style: TextStyle(
-                color: AppColors.primaryColor,
+                color: isDark ? AppColors.white : AppColors.primaryColor,
                 fontSize: 15.sp,
               ),
             ),

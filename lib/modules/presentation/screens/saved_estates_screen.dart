@@ -8,6 +8,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_b
 import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_state.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/screens/navigation_bar_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
@@ -33,6 +34,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
   List<Estate> estates = [];
   late bool isArabic;
   bool? profile;
+  late bool isDark;
 
   @override
   void initState() {
@@ -49,6 +51,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
   @override
   Widget build(BuildContext context) {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -160,10 +163,10 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                             alignment: Alignment.center,
                             height: 50.h,
                             width: 1.sw,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               borderRadius: lowBorderRadius,
                               // border: Border.all(color: AppColors.primaryColor),
-                              color: AppColors.primaryColor
+                              color: isDark ? AppColors.lightblue : AppColors.primaryColor
                             ),
                             child: ResText(
                               AppLocalizations.of(context)!.nearby,

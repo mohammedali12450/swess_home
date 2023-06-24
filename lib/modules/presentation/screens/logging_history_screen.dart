@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/logging_history_bloc/logging_history_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/logging_history_bloc/logging_history_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/logging_history_bloc/logging_history_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/logging_history_repository.dart';
 
 class LoggingHistoryScreen extends StatefulWidget {
@@ -19,6 +22,7 @@ class LoggingHistoryScreen extends StatefulWidget {
 class _LoggingHistoryScreenState extends State<LoggingHistoryScreen> {
 
   late LoggingHistoryBloc loggingHistoryBloc;
+  late bool isDark;
 
   @override
   void initState() {
@@ -35,6 +39,7 @@ class _LoggingHistoryScreenState extends State<LoggingHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -66,17 +71,18 @@ class _LoggingHistoryScreenState extends State<LoggingHistoryScreen> {
                       children: [
                         Text("${AppLocalizations.of(context)!.login_time}: ${loggingHistoryList[index].loginTime}",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: isDark ? AppColors.white : AppColors.black,
                             fontSize: 15.sp,
                           ),
                         ),
                         Text("${AppLocalizations.of(context)!.ip_address}: ${loggingHistoryList[index].ipAddress}",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: isDark ? AppColors.white : AppColors.black,
                             fontSize: 15.sp,
                           ),
                         ),
                         10.verticalSpace,
+                        index == loggingHistoryList.length -1 ? const Center() :
                         const Divider()
                       ],
                     ),

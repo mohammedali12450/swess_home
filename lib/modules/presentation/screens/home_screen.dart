@@ -181,12 +181,12 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.withOpacity(0.1),
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: AppColors.black),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
         title: Text(
           AppLocalizations.of(context)!.search,
-          style: const TextStyle(color: AppColors.black),
+          style: TextStyle(color: isDark ? Colors.white : AppColors.black),
         ),
         actions: [
           InkWell(
@@ -196,8 +196,9 @@ class HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.only(
                       left: isArabic ? 12.w : 0, right: isArabic ? 0 : 12.w),
                   child: IconBadge(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.notifications_outlined,
+                        color: isDark ? Colors.white : AppColors.black
                     ),
                     itemCount: notificationsCount,
                     right: 0,
@@ -286,7 +287,7 @@ class HomeScreenState extends State<HomeScreen> {
                               UserSharedPreferences.getAccessToken() == null ||
                                       estateSearchState.isEmpty
                                   ? Container(
-                                      height: 0.9.sh,
+                                      height: 0.5.sh,
                                       alignment: Alignment.center,
                                       child: buildEmptyScreen(context),
                                     )
@@ -429,9 +430,9 @@ class HomeScreenState extends State<HomeScreen> {
           width: 1.sw,
           alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: isDark ? Colors.transparent : AppColors.white,
             border: Border.all(
-                color: isDark ? AppColors.lightblue : AppColors.yellowDarkColor,
+                color: isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
                 width: 1),
             borderRadius: veryLowBorderRadius,
             // boxShadow: [
@@ -454,7 +455,7 @@ class HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Icon(
                   Icons.search_outlined,
-                  color: AppColors.lightblue,
+                  color: isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
                   size: 25.w,
                 ),
               ),
@@ -529,7 +530,7 @@ class HomeScreenState extends State<HomeScreen> {
                     getEstateSearch();
                   },
                   style: TextButton.styleFrom(
-                    backgroundColor: AppColors.lightGrey2Color,
+                    backgroundColor: isDark ? AppColors.lightGreyColor : AppColors.lightGrey2Color,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(3),
                     ),
@@ -571,7 +572,7 @@ class HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           Card(
-            color: Colors.white,
+            color: isDark ? Colors.transparent : Colors.white,
             child: Column(
               children: [
                 InkWell(
@@ -606,7 +607,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     .headline3!
                                     .copyWith(
                                         fontWeight: FontWeight.w400,
-                                        color: AppColors.black,
+                                        color: isDark ? AppColors.lightGrey2Color :  AppColors.black,
                                         fontSize: 16.sp),
                               ),
                               const SizedBox(height: 10,),
@@ -634,7 +635,7 @@ class HomeScreenState extends State<HomeScreen> {
                             Icon(
                               Icons.arrow_forward,
                               size: 27.w,
-                              color: AppColors.primaryColor,
+                              color: isDark ? AppColors.lightblue : AppColors.primaryColor,
                             ),
                           ],
                         ),
@@ -667,7 +668,7 @@ class HomeScreenState extends State<HomeScreen> {
           kHe8,
           /// new Api
           Card(
-            color: Colors.white,
+            color: isDark ? Colors.transparent : Colors.white,
             child: InkWell(
               onTap: () {
                 // todo
@@ -687,7 +688,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 .headline3!
                                 .copyWith(
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.black,
+                                color: isDark ? AppColors.lightGrey2Color :  AppColors.black,
                                 fontSize: 16.sp),
                           ),
                           const SizedBox(height: 10,),
@@ -711,7 +712,7 @@ class HomeScreenState extends State<HomeScreen> {
                         Icon(
                           Icons.arrow_forward,
                           size: 27.w,
-                          color: AppColors.primaryColor,
+                          color: isDark ? AppColors.lightblue :  AppColors.primaryColor,
                         ),
                       ],
                     ),
@@ -723,7 +724,7 @@ class HomeScreenState extends State<HomeScreen> {
           /// new Api
           kHe8,
           Card(
-            color: Colors.white,
+            color: isDark ? Colors.transparent : Colors.white,
             child: InkWell(
               onTap: () {
                 // todo
@@ -743,7 +744,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 .headline3!
                                 .copyWith(
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.black,
+                                color: isDark ? AppColors.lightGrey2Color :  AppColors.black,
                                 fontSize: 16.sp),
                           ),
                           const SizedBox(height: 10,),
@@ -767,7 +768,7 @@ class HomeScreenState extends State<HomeScreen> {
                         Icon(
                           Icons.arrow_forward,
                           size: 27.w,
-                          color: AppColors.primaryColor,
+                          color: isDark ? AppColors.lightblue :  AppColors.primaryColor,
                         ),
                       ],
                     ),
@@ -790,11 +791,11 @@ class HomeScreenState extends State<HomeScreen> {
         children: [
           SvgPicture.asset(
             documentOutlineIconPath,
-            width: 0.3.sw,
-            height: 0.3.sw,
+            width: 0.2.sw,
+            height: 0.2.sw,
             color: Theme.of(context).colorScheme.onBackground.withOpacity(0.42),
           ),
-          50.verticalSpace,
+          25.verticalSpace,
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 40.w),
             child: Text(
@@ -803,7 +804,7 @@ class HomeScreenState extends State<HomeScreen> {
               textAlign: TextAlign.center,
             ),
           ),
-          50.verticalSpace,
+          25.verticalSpace,
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               fixedSize: Size(220.w, 50.h),

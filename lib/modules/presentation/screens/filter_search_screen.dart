@@ -153,6 +153,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           padding: EdgeInsets.zero,
                           minimumSize: Size(20.w, 60.h),
                           maximumSize: Size(20.w, 60.h),
+                            backgroundColor: isDark ? AppColors.lightblue : AppColors.primaryColor
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -210,6 +211,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           padding: EdgeInsets.zero,
                           minimumSize: Size(20.w, 60.h),
                           maximumSize: Size(20.w, 60.h),
+                          backgroundColor: isDark ? AppColors.lightblue : AppColors.primaryColor
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.clear,
@@ -309,7 +311,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                 decoration: BoxDecoration(
                   border: Border.all(
                       color:
-                          !isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                          !isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
                       width: 1),
                   borderRadius: lowBorderRadius,
                 ),

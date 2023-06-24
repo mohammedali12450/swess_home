@@ -448,6 +448,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
             height: 50.h,
             width: getScreenWidth(context),
             decoration: BoxDecoration(
+              color: isDark ? AppColors.lightblue : AppColors.primaryColor,
               borderRadius: lowBorderRadius,
               border: Border.all(color: AppColors.primaryColor),
             ),
@@ -456,7 +457,9 @@ class _EstatesScreenState extends State<EstatesScreen> {
               textStyle: Theme.of(context)
                   .textTheme
                   .headline4!
-                  .copyWith(fontWeight: FontWeight.w700),
+                  .copyWith(fontWeight: FontWeight.w700,
+                  color: AppColors.white
+              ),
             ),
           ),
         ),
@@ -501,6 +504,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
             height: 60.h,
             width: getScreenWidth(context),
             decoration: BoxDecoration(
+              color: isDark ? AppColors.lightblue : AppColors.primaryColor,
               borderRadius: lowBorderRadius,
               border: Border.all(color: AppColors.yellowDarkColor),
             ),
@@ -509,7 +513,9 @@ class _EstatesScreenState extends State<EstatesScreen> {
               textStyle: Theme.of(context)
                   .textTheme
                   .headline4!
-                  .copyWith(fontWeight: FontWeight.w700),
+                  .copyWith(fontWeight: FontWeight.w700,
+                color: AppColors.white
+              ),
             ),
           ),
         ),

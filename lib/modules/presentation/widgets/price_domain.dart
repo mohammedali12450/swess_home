@@ -180,7 +180,7 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                           border: Border.all(
                                             color: !isDark
                                                 ? Colors.black38
-                                                : AppColors.primaryColor,
+                                                : AppColors.lightGrey2Color,
                                             width: 1,
                                           )),
                                       child: Text(min[widget
@@ -274,7 +274,7 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                             border: Border.all(
                                               color: !isDark
                                                   ? Colors.black38
-                                                  : AppColors.primaryColor,
+                                                  : AppColors.lightGrey2Color,
                                               width: 1,
                                             )),
                                         child: Text(max[widget
