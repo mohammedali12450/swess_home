@@ -11,6 +11,7 @@ import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -52,6 +53,7 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
   late SaveAndUnSaveEstateBloc _saveAndUnSaveEstateBloc;
   bool isSell = true;
   bool isLands = true;
+  late bool isDark;
 
   @override
   void initState() {
@@ -75,6 +77,7 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
   Widget build(BuildContext context) {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     int intPrice = int.tryParse(widget.estate.price!)!;
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -108,7 +111,7 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                           decoration: BoxDecoration(
                             border: Border.all(
                               width: 1,
-                              color: AppColors.white,
+                              color: isDark ? AppColors.secondaryDark : AppColors.white,
                             ),
                             color: Theme.of(context).colorScheme.background,
                           ),

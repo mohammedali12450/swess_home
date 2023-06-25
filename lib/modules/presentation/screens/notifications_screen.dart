@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/notifications_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/notifications_bloc/notifications_bloc.dart';
@@ -9,6 +11,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/notifications_b
 import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/my_notification.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/notification_card.dart';
@@ -34,6 +37,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   late NotificationsBloc notificationsBloc;
   late String token;
   late int newNotificationsCount;
+  late bool isDark;
 
   @override
   void initState() {
@@ -58,6 +62,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -105,11 +110,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       children: [
                         Icon(
                           Icons.notifications_outlined,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.12),
-                          size: 0.5.sw,
+                          color: isDark ? AppColors.primaryDark : AppColors.primaryColor,
+                          size: 0.3.sw,
                         ),
                         kHe24,
                         Text(
@@ -117,10 +119,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               .you_have_not_notifications,
                           style:
                               Theme.of(context).textTheme.headline5!.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.32),
+                                    color: isDark ? AppColors.white : AppColors.primaryColor,
                                   ),
                         ),
                       ],

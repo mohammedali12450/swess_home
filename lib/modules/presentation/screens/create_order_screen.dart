@@ -96,12 +96,12 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            iconTheme: const IconThemeData(color: AppColors.black),
+            iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
             centerTitle: true,
-            backgroundColor: Colors.white,
+            backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
             title: Text(
               AppLocalizations.of(context)!.create_estate_order,
-              style: const TextStyle(color: AppColors.black),
+              style: TextStyle(color: isDark ? Colors.white : AppColors.black),
             ),
             actions: [
               InkWell(
@@ -243,8 +243,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   borderRadius: smallBorderRadius,
                   border: Border.all(
                     color: isDark
-                        ? AppColors.primaryColor
-                        : AppColors.yellowDarkColor,
+                        ? AppColors.lightGrey2Color
+                        : AppColors.lightblue,
                     width: 1,
                   )),
               child: TextField(
@@ -313,7 +313,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               decoration: BoxDecoration(
                 borderRadius: smallBorderRadius,
                 border: Border.all(
-                  color: !isDark ? Colors.black38 : AppColors.primaryColor,
+                  color: !isDark ? Colors.black38 : AppColors.lightGrey2Color,
                 ),
               ),
               child: TextField(

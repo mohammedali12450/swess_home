@@ -110,7 +110,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
               },
               child: Icon(
                 Icons.close,
-                color: !isDark ? AppColors.white : AppColors.hintColor,
+                color: isDark ? AppColors.white : AppColors.hintColor,
               ),
             ),
           ),
@@ -153,9 +153,9 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                   //splashFactory: NoSplash.splashFactory,
                   padding:
                       EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-                  primary: (isDark)
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.secondary,
+                  primary: isDark
+                      ? AppColors.lightblue
+                      : AppColors.primaryColor,
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.view_candidates,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:swesshome/constants/colors.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 
 
 class SmallElevatedCard extends StatelessWidget {
@@ -13,6 +16,7 @@ class SmallElevatedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late bool?  isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: 8.w,
@@ -60,7 +64,7 @@ class SmallElevatedCard extends StatelessWidget {
               },
               icon:  Icon(
                 Icons.close,
-                color: Theme.of(context).colorScheme.background,
+                color: isDark ? AppColors.white :  Theme.of(context).colorScheme.background,
               ),
             ),
           ],

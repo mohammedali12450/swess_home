@@ -351,8 +351,8 @@ class _EstateCardState extends State<EstateCard> {
                         flex: 1,
                         child: Container(
                           height: 1.sh,
-                          decoration: BoxDecoration(
-                            color: estatePriceBackgroundColor,
+                          decoration: const BoxDecoration(
+                            // color: estatePriceBackgroundColor,
                           ),
                           child: (BlocProvider.of<UserLoginBloc>(context).user == null) ?
                           Padding(
@@ -410,7 +410,7 @@ class _EstateCardState extends State<EstateCard> {
                                 child: Text(
                                   estatePrice,
                                   style: GoogleFonts.libreFranklin(
-                                      color: estatePriceColor,
+                                      // color: estatePriceColor,
                                       fontSize: 24.sp,
                                       fontWeight: FontWeight.w400,
                                       height: 1.5.h),
@@ -432,7 +432,8 @@ class _EstateCardState extends State<EstateCard> {
                                             height: 1.8.h,
                                             fontSize: 22.sp,
                                             fontWeight: FontWeight.w400,
-                                            color: estatePriceColor),
+                                            // color: estatePriceColor
+                                    ),
                                   ),
                                 ),
                               if (widget.estate.estateOfferType!.id ==
@@ -475,7 +476,7 @@ class _EstateCardState extends State<EstateCard> {
                             left: (!isArabic) ? 12.w : 0,
                           ),
                           child: Container(
-                            color: estateTypeBackgroundColor,
+                            // color: estateTypeBackgroundColor,
                             child: Text(
                               estateType,
                               maxLines: 3,
@@ -483,7 +484,7 @@ class _EstateCardState extends State<EstateCard> {
                               style: Theme.of(context)
                                   .textTheme
                                   .subtitle1!
-                                  .copyWith(color: AppColors.yellowColor),
+                                  .copyWith(color: isDarkMode ? AppColors.lightblue : AppColors.lastColor),
                             ),
                           ),
                         ),
@@ -533,9 +534,9 @@ class _EstateCardState extends State<EstateCard> {
                                         children: [
                                           Icon(
                                             Icons.remove_red_eye_outlined,
-                                            color: !isDarkMode
-                                                ? AppColors.lastColor
-                                                : AppColors.yellowDarkColor,
+                                            color: isDarkMode
+                                                ? AppColors.lightblue
+                                                : AppColors.lastColor,
                                             // size: 20,
                                           ),
                                           kWi8,
@@ -545,9 +546,9 @@ class _EstateCardState extends State<EstateCard> {
                                                 .textTheme
                                                 .headline5!
                                                 .copyWith(
-                                                color: !isDarkMode
-                                                    ? AppColors.lastColor
-                                                    : AppColors.yellowDarkColor,
+                                                color: isDarkMode
+                                                    ? AppColors.lightblue
+                                                    : AppColors.lastColor,
                                                 //fontSize: 14.sp,
                                                 height: 1.5.h),
                                           ),

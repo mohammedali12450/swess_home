@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/functions/app_theme_information.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'res_text.dart';
 
 class FetchResult extends StatelessWidget {
@@ -17,6 +20,7 @@ class FetchResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -25,14 +29,14 @@ class FetchResult extends StatelessWidget {
         ),
         Icon(
           iconData ?? Icons.error_outline,
-          size: iconSize ?? 0.5.sw,
-          color: Theme.of(context).hintColor,
+          size: iconSize ?? 0.3.sw,
+          color: isDark ? Theme.of(context).colorScheme.primary : AppColors.primaryColor,
         ),
         kHe24,
         ResText(
           content,
           textStyle: textStyling(S.s18, W.w5, C.bl).copyWith(
-            color: Theme.of(context).colorScheme.onBackground.withOpacity(0.48),
+            color: isDark ? AppColors.white : AppColors.black,
           ),
         ),
       ],

@@ -5,9 +5,11 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/contacts_bloc/bloc/contacts_bloc.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -20,6 +22,9 @@ class ContactsScreen extends StatefulWidget {
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
+
+  late bool isDark;
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +33,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -74,14 +80,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
                   alignment: Alignment.center,
                   height: 40.h,
                   width: 40.h,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryColor,
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.white : AppColors.primaryColor,
                     shape: BoxShape.circle,
                   ),
                   child: Text(
                     (contact.displayName ?? "").fu,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: isDark ? AppColors.black : AppColors.white,
                       fontSize: 15.sp,
                     ),
                   ),
@@ -92,7 +98,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       ? (contact.phones?.first.value ?? "")
                       : "",
                   style: TextStyle(
-                    color: Colors.black.withOpacity(0.75),
+                    color: isDark ? AppColors.lightblue : Colors.black.withOpacity(0.75),
                     fontSize: 12.sp,
                   ),
                 ),

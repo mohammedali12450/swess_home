@@ -1,6 +1,9 @@
+import 'package:floating_bottom_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 
 
 class TextFieldWidget extends StatelessWidget {
@@ -30,8 +33,9 @@ class TextFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Container(
-      color: Colors.white,
+      color: isDark ? AppColors.white.withOpacity(0.5) : AppColors.white,
       width: width,
       height: height,
       padding: padding,

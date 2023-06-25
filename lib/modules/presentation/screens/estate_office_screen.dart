@@ -251,10 +251,10 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.add,size: 20,),
+                                    Icon(Icons.add,size: 20,color: AppColors.white),
                                     ResText(
                                       AppLocalizations.of(context)!.post_estate,
-                                      textStyle: TextStyle(fontSize: 15.sp, color: !isDark ? AppColors.black : AppColors.white),
+                                      textStyle: TextStyle(fontSize: 15.sp, color: AppColors.white),
                                     )
                                   ],
                                 ),
@@ -306,11 +306,11 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Icon((likeAndUnlikeState is Liked) ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,size: 20,),
+                                              Icon((likeAndUnlikeState is Liked) ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,size: 20,color: AppColors.white),
                                               kWi12,
                                               ResText(
                                                 (likeAndUnlikeState is Liked) ? AppLocalizations.of(context)!.liked : AppLocalizations.of(context)!.like,
-                                                textStyle: TextStyle(fontSize: 15.sp, color: !isDark ? AppColors.black : AppColors.white),
+                                                textStyle: TextStyle(fontSize: 15.sp, color: AppColors.white),
                                               )
                                             ],
                                           ),
@@ -325,7 +325,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                       Container(
                         height: 32.h,
                         width: 1.sw,
-                        color: isDark ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
+                        color: isDark ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primary,
                         alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
                         padding: EdgeInsets.only(
                           right: isArabic ? 8.w : 0,
@@ -342,7 +342,7 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
                             ResText(
                               "  ${results!.estateOffice.estateLength!} : ",
                               textStyle: Theme.of(context).textTheme.subtitle2!.copyWith(
-                                    color: AppColors.black,
+                                    color: AppColors.white,
                                   ),
                             ),
                           ],

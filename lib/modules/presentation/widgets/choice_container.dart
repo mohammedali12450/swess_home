@@ -32,7 +32,7 @@ Widget buildChoiceContainer({
             height: 45.h,
             decoration: BoxDecoration(
               border: Border.all(
-                  color: isDark ? Colors.black38 : AppColors.yellowDarkColor,
+                  color: isDark ? AppColors.lightGrey2Color : Colors.black38,
                   width: 1),
               borderRadius: lowBorderRadius,
             ),
@@ -44,7 +44,7 @@ Widget buildChoiceContainer({
                       decoration: BoxDecoration(
                         color: isDark
                             ? isChoice
-                                ? AppColors.primaryColor
+                                ? AppColors.lightblue
                                 : AppColors.white
                             : !isChoice
                                 ? AppColors.primaryColor
@@ -61,7 +61,7 @@ Widget buildChoiceContainer({
                                         ? AppColors.white
                                         : AppColors.secondaryDark
                                     : !isChoice
-                                        ? AppColors.primaryColor
+                                        ? AppColors.white
                                         : AppColors.secondaryDark,
                                 fontWeight: FontWeight.w600),
                       ),
@@ -78,7 +78,7 @@ Widget buildChoiceContainer({
                       decoration: BoxDecoration(
                         color: isDark
                             ? !isChoice
-                                ? AppColors.primaryColor
+                                ? AppColors.lightblue
                                 : AppColors.white
                             : isChoice
                                 ? AppColors.primaryColor
@@ -95,7 +95,7 @@ Widget buildChoiceContainer({
                                         ? AppColors.white
                                         : AppColors.secondaryDark
                                     : isChoice
-                                        ? AppColors.primaryColor
+                                        ? AppColors.white
                                         : AppColors.secondaryDark,
                                 fontWeight: FontWeight.w600),
                       ),

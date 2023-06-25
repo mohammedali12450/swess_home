@@ -79,7 +79,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                             border: Border.all(
                                 color: pressState == 0
                                     ? AppColors.lightblue
-                                    : AppColors.primaryColor),
+                                    : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor),
                           ),
                           child: Image.asset(buildIconPath,
                               color: AppColors.primaryColor),
@@ -90,10 +90,10 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                               color: !isDark
                                   ? pressState == 0
                                       ? AppColors.lightblue
-                                      : AppColors.primaryColor
+                                      : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor
                                   : pressState == 0
                                       ? AppColors.lightblue
-                                      : AppColors.primaryColor),
+                                      : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor),
                         ),
                       ],
                     ),
@@ -123,7 +123,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                             border: Border.all(
                                 color: pressState == 3
                                     ? AppColors.lightblue
-                                    : AppColors.primaryColor),
+                                    : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor),
                           ),
                           child: Image.asset(farmIconPath,
                               color: AppColors.primaryColor),
@@ -134,10 +134,10 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                               color: !isDark
                                   ? pressState == 3
                                       ? AppColors.lightblue
-                                      : AppColors.primaryColor
+                                      : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor
                                   : pressState == 3
                                       ? AppColors.lightblue
-                                      : AppColors.primaryColor),
+                                      : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor),
                         ),
                       ],
                     ),
@@ -167,7 +167,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                             border: Border.all(
                                 color: pressState == 2
                                     ? AppColors.lightblue
-                                    : AppColors.primaryColor),
+                                    : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor),
                           ),
                           child: Image.asset(landIconPath,
                               color: AppColors.primaryColor),
@@ -178,10 +178,10 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                               color: !isDark
                                   ? pressState == 2
                                       ? AppColors.lightblue
-                                      : AppColors.primaryColor
+                                      : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor
                                   : pressState == 2
                                       ? AppColors.lightblue
-                                      : AppColors.primaryColor),
+                                      : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor),
                         ),
                       ],
                     ),
@@ -211,7 +211,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                             border: Border.all(
                                 color: pressState == 1
                                     ? AppColors.lightblue
-                                    : AppColors.primaryColor),
+                                    : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor),
                           ),
                           child: Image.asset(shopIconPath,
                               color: AppColors.primaryColor),
@@ -222,10 +222,10 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                               color: !isDark
                                   ? pressState == 1
                                       ? AppColors.lightblue
-                                      : AppColors.primaryColor
+                                      : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor
                                   : pressState == 1
                                       ? AppColors.lightblue
-                                      : AppColors.primaryColor),
+                                      : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor),
                         ),
                       ],
                     ),
@@ -255,7 +255,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                             border: Border.all(
                                 color: pressState == 4
                                     ? AppColors.lightblue
-                                    : AppColors.primaryColor),
+                                    : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor),
                           ),
                           child: Image.asset(villaIconPath,
                               color: AppColors.primaryColor),
@@ -266,10 +266,10 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                               color: !isDark
                                   ? pressState == 4
                                       ? AppColors.lightblue
-                                      : AppColors.primaryColor
+                                      : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor
                                   : pressState == 4
                                       ? AppColors.lightblue
-                                      : AppColors.primaryColor),
+                                      : isDark ? AppColors.lightGrey2Color : AppColors.primaryColor),
                         ),
                       ],
                     ),

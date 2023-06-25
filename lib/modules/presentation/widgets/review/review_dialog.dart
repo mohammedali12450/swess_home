@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/review_bloc/review_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/review_bloc/review_state.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/widgets/review/add_rating.dart';
 import 'package:swesshome/modules/presentation/widgets/review/notes_review_field.dart';
 import 'package:swesshome/modules/presentation/widgets/review/review_button.dart';
@@ -18,6 +20,7 @@ class RatingDialog extends StatelessWidget {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
     bool isLandscape = mediaQueryData.orientation == Orientation.landscape;
     final ReviewBloc reviewBloc = context.read<ReviewBloc>();
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
@@ -48,7 +51,7 @@ class RatingDialog extends StatelessWidget {
                       padding: EdgeInsets.symmetric(
                         horizontal: 0.05.sw,
                       ),
-                      color: Colors.white,
+                      color: isDark? AppColors.secondaryDark : Colors.white,
                       child: child!,
                     ),
                   ),
@@ -63,7 +66,7 @@ class RatingDialog extends StatelessWidget {
                           AppLocalizations.of(context)!.addReview,
                           style: TextStyle(
                             fontSize: 18.sp,
-                            color: AppColors.black,
+                            color: isDark? AppColors.white : AppColors.black,
                             fontWeight: FontWeight.w700,
                           ),
                         ),

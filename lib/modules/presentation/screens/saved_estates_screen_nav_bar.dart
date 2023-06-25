@@ -10,6 +10,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_b
 import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
+import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/navigation_bar_screen.dart';
@@ -37,7 +38,7 @@ class SavedEstatesScreenNavBar extends StatefulWidget {
 class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
   late SavedEstatesBloc _savedEstatesBloc;
   List<Estate> estates = [];
-  late bool isArabic;
+  late bool isArabic,isDark;
   bool? profile;
 
   @override
@@ -55,6 +56,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
   @override
   Widget build(BuildContext context) {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SafeArea(
       child: Scaffold(
         drawer: SizedBox(
@@ -64,12 +66,12 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
           ),
         ),
         appBar: AppBar(
-          iconTheme: const IconThemeData(color: AppColors.black),
+          iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
           title: Text(
             AppLocalizations.of(context)!.saved_estates,
-            style: const TextStyle(color: AppColors.black),
+            style: TextStyle(color: isDark ? Colors.white : AppColors.black),
           ),
           actions: [
             InkWell(
@@ -79,8 +81,9 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
                     padding: EdgeInsets.only(
                         left: isArabic ? 12.w : 0, right: isArabic ? 0 : 12.w),
                     child: IconBadge(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.notifications_outlined,
+                          color: isDark ? Colors.white : AppColors.black
                       ),
                       itemCount: notificationsCount,
                       right: 0,
@@ -228,10 +231,10 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
                             alignment: Alignment.center,
                             height: 50.h,
                             width: 1.sw,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                                 borderRadius: lowBorderRadius,
                                 // border: Border.all(color: AppColors.primaryColor),
-                                color: AppColors.primaryColor
+                                color: isDark ? AppColors.lightblue : AppColors.primaryColor
                             ),
                             child: ResText(
                               AppLocalizations.of(context)!.nearby,

@@ -60,7 +60,7 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
             widget.screenTitle,
           ),
           bottom: TabBar(
-            indicatorColor: AppColors.yellowDarkColor,
+            indicatorColor: AppColors.lightblue,
             tabs: [
               Tab(text: AppLocalizations.of(context)!.image),
               Tab(text: AppLocalizations.of(context)!.video),

@@ -93,7 +93,7 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
         decoration: BoxDecoration(
           border: Border.all(
             width: 1,
-            color: AppColors.lightGreyColor.withOpacity(0.5),
+            color: isDark ? const Color(0xff26282B) : AppColors.lightGreyColor.withOpacity(0.5),
           ),
           color: Theme.of(context).colorScheme.background,
           borderRadius: veryLowBorderRadius,
@@ -355,14 +355,14 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                               child: (saveAndUnSaveState
                               is EstateSaveAndUnSaveProgress)
                                   ? SpinKitWave(
-                                color: AppColors.lightblue,
+                                color: isDark ? AppColors.lightblue : AppColors.primaryColor,
                                 size: 15.w,
                               )
                                   : Icon(
                                 (saveAndUnSaveState is EstateSaved)
                                     ? Icons.bookmark
                                     : Icons.bookmark_border_outlined,
-                                color: AppColors.lightblue,
+                                color: isDark ? AppColors.lightblue : AppColors.primaryColor,
                                 size: 30,
                               ),
                             );
