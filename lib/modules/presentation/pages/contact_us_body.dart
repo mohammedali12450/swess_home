@@ -110,310 +110,278 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: isDark ? const Color(0xff26282B) : Theme.of(context).colorScheme.primary,
+          title: Text(
+            AppLocalizations.of(context)!.contact_us,
+            style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.white),
+          ),
+        ),
         body: SizedBox(
           width: 1.sw,
           child: Stack(
             children: [
-              Positioned(
-                top: 0,
-                child: Container(
-                  width: 1.sw,
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  color: isDark ? const Color(0xff26282B) : Theme.of(context).colorScheme.primary,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: AppColors.white,
-                          size: 28.w,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.contact_us,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.white),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.transparent,
-                          size: 28.w,
-                        ),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 200),
-                top: (isKeyboardOpened) ? 0 : 120.h,
+              SingleChildScrollView(
                 child: Container(
                   width: 1.sw,
                   decoration: BoxDecoration(
                       borderRadius: highBorderRadius,
                       color: isDark ? AppColors.secondaryDark : AppColors.white),
-                  child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          kHe20,
-                          ResText(AppLocalizations.of(context)!.welcome,
-                            textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.lightGreyColor,fontSize: 15),
-                          ),
-                          kHe32,
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 25),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      kHe20,
+                      ResText(AppLocalizations.of(context)!.welcome,
+                        textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.lightGreyColor,fontSize: 15),
+                      ),
+                      kHe32,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    ResText("${AppLocalizations.of(context)!.to_contact_us}:",
-                                      textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.lightGreyColor,fontSize: 12),
-                                    ),
-                                  ],
+                                ResText("${AppLocalizations.of(context)!.to_contact_us}:",
+                                  textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.lightGreyColor,fontSize: 12),
                                 ),
-                                kHe20,
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        launch(
-                                          "tel://" + "011 222 9 956",
-                                        );
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding:
-                                            EdgeInsets.only(bottom: 3.0.h),
-                                            child: Icon(
-                                              Icons.call,
-                                              color: AppColors.blue,
-                                              size: 20.w,
-                                            ),
-                                          ),
-                                          kWi8,
-                                          ResText(
-                                              "+963 11 222 9 956",
-                                              textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.blue, fontSize: 14.sp)
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    kWi8,
-                                    InkWell(
-                                      onTap: () {
-                                        launch(
-                                          "tel://" + "0954 150 771",
-                                        );
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding:
-                                            EdgeInsets.only(bottom: 3.0.h),
-                                            child: Icon(
-                                              Icons.phone_android,
-                                              color: AppColors.blue,
-                                              size: 20.w,
-                                            ),
-                                          ),
-                                          kWi8,
-                                          ResText(
-                                              "+963 954 150 771",
-                                              textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.blue, fontSize: 14.sp)
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                kHe20,
-                                Row(
-                                  children: [
-                                    ResText("${AppLocalizations.of(context)!.to_contact_us_social}:",
-                                      textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.lightGreyColor,fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                                kHe20,
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    InkWell(
-                                        onTap: () {
-                                          launch(
-                                            "https://" + "wa.me/message/HUX47RG3PB5ND1",
-                                          );
-                                        },
-                                        child: Container(
-                                          width: 120,
-                                          height: 60,
-                                          decoration: BoxDecoration(
-                                              color: AppColors.lightGrey2Color.withOpacity(0.3),
-                                              borderRadius: lowBorderRadius,
-                                              border: Border.all(color: AppColors.lightGreyColor)
-                                          ),
-                                          child: Center(
-                                            child: SvgPicture.asset(whatsappPath,color: AppColors.blue,width: 35,),
-                                          ),
-                                        )
-                                    ),
-                                    kWi8,
-                                    InkWell(
-                                        onTap: () {
-                                          launch(
-                                            "https://" + "www.facebook.com/Swesshome",
-                                          );
-                                        },
-                                        child: Container(
-                                          width: 120,
-                                          height: 60,
-                                          decoration: BoxDecoration(
-                                              color: AppColors.lightGrey2Color.withOpacity(0.3),
-                                              borderRadius: lowBorderRadius,
-                                              border: Border.all(color: AppColors.lightGreyColor)
-                                          ),
-                                          child: Center(
-                                            child: SvgPicture.asset(messengerPath,color: AppColors.blue,width: 35,),
-                                          ),
-                                        )
-                                    ),
-                                  ],
-                                ),
-                                kHe20,
-                                Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    decoration: BoxDecoration(
-                                      borderRadius: lowBorderRadius,
-                                      border: Border.all(color: AppColors.lightGreyColor),
-                                      color: AppColors.lightGrey2Color.withOpacity(0.3),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(14),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              ResText("${AppLocalizations.of(context)!.to_contact_us_mail}:",
-                                                textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.lightGreyColor,fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                          kHe12,
-                                          BlocBuilder<ChannelCubit, dynamic>(
-                                            bloc: emailError,
-                                            builder: (_,errorMessage) {
-                                              return TextFieldWidget(
-                                                width: MediaQuery.of(context).size.width,
-                                                height: 45,
-                                                textEditingController: emailController,
-                                                hintText: AppLocalizations.of(context)!.please_write_email,
-                                                onTap: () {},
-                                                onChanged: (_) {
-                                                  emailError.setState(null);
-                                                },
-                                              );
-                                            },
-                                          ),
-                                          kHe12,
-                                          BlocBuilder<ChannelCubit, dynamic>(
-                                            bloc: titleError,
-                                            builder: (_,errorMessage) {
-                                              return TextFieldWidget(
-                                                width: MediaQuery.of(context).size.width,
-                                                height: 45,
-                                                textEditingController: messageTitleController,
-                                                hintText: AppLocalizations.of(context)!.please_write_title_message,
-                                                onTap: () {},
-                                                onChanged: (_) {
-                                                  titleError.setState(null);
-                                                },
-                                              );
-                                            },
-                                          ),
-                                          kHe12,
-                                          BlocBuilder<ChannelCubit, dynamic>(
-                                            bloc: messageError,
-                                            builder: (_,errorMessage) {
-                                              return TextFieldWidget(
-                                                width: MediaQuery.of(context).size.width,
-                                                height: 100,
-                                                padding: const EdgeInsets.only(top: 10,bottom: 5),
-                                                textEditingController: messageController,
-                                                hintText: AppLocalizations.of(context)!.please_write_message,
-                                                onTap: () {},
-                                                maxLength: 400,
-                                                maxLines: 8,
-                                                onChanged: (_) {
-                                                  messageError.setState(null);
-                                                },
-                                              );
-                                            },
-                                          ),
-                                          kHe12,
-
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                    fixedSize: const Size(150, 50),
-                                                    backgroundColor: AppColors.blue
-                                                ),
-                                                child: BlocBuilder<ContactUsBloc, ContactUsState>(
-                                                  builder: (_, sendState) {
-                                                    if (sendState is ContactUsProgress) {
-                                                      return SpinKitWave(
-                                                        color: Theme.of(context).colorScheme.background,
-                                                        size: 24.w,
-                                                      );
-                                                    }
-                                                    return Text(
-                                                      AppLocalizations.of(context)!.send,
-                                                    );
-                                                  },
-                                                ),
-                                                onPressed: () async{
-                                                  if (!await getFieldsValidation()) {
-                                                    return;
-                                                  }
-                                                  contactUsBloc.add(
-                                                    ContactUsStarted(
-                                                        email: emailController.text,
-                                                        subject: messageTitleController.text,
-                                                        message: messageController.text
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                )
                               ],
                             ),
-                          ),
-                        ],
-                      )
+                            kHe20,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    launch(
+                                      "tel://" + "011 222 9 956",
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                        EdgeInsets.only(bottom: 3.0.h),
+                                        child: Icon(
+                                          Icons.call,
+                                          color: AppColors.blue,
+                                          size: 20.w,
+                                        ),
+                                      ),
+                                      kWi8,
+                                      ResText(
+                                          "+963 11 222 9 956",
+                                          textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.blue, fontSize: 14.sp)
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                kWi8,
+                                InkWell(
+                                  onTap: () {
+                                    launch(
+                                      "tel://" + "0954 150 771",
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                        EdgeInsets.only(bottom: 3.0.h),
+                                        child: Icon(
+                                          Icons.phone_android,
+                                          color: AppColors.blue,
+                                          size: 20.w,
+                                        ),
+                                      ),
+                                      kWi8,
+                                      ResText(
+                                          "+963 954 150 771",
+                                          textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.blue, fontSize: 14.sp)
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            kHe20,
+                            Row(
+                              children: [
+                                ResText("${AppLocalizations.of(context)!.to_contact_us_social}:",
+                                  textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.lightGreyColor,fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            kHe20,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                InkWell(
+                                    onTap: () {
+                                      launch(
+                                        "https://" + "wa.me/message/HUX47RG3PB5ND1",
+                                      );
+                                    },
+                                    child: Container(
+                                      width: 120,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                          color: AppColors.lightGrey2Color.withOpacity(0.3),
+                                          borderRadius: lowBorderRadius,
+                                          border: Border.all(color: AppColors.lightGreyColor)
+                                      ),
+                                      child: Center(
+                                        child: SvgPicture.asset(whatsappPath,color: AppColors.blue,width: 35,),
+                                      ),
+                                    )
+                                ),
+                                kWi8,
+                                InkWell(
+                                    onTap: () {
+                                      launch(
+                                        "https://" + "www.facebook.com/Swesshome",
+                                      );
+                                    },
+                                    child: Container(
+                                      width: 120,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                          color: AppColors.lightGrey2Color.withOpacity(0.3),
+                                          borderRadius: lowBorderRadius,
+                                          border: Border.all(color: AppColors.lightGreyColor)
+                                      ),
+                                      child: Center(
+                                        child: SvgPicture.asset(messengerPath,color: AppColors.blue,width: 35,),
+                                      ),
+                                    )
+                                ),
+                              ],
+                            ),
+                            kHe20,
+                            Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  borderRadius: lowBorderRadius,
+                                  border: Border.all(color: AppColors.lightGreyColor),
+                                  color: AppColors.lightGrey2Color.withOpacity(0.3),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          ResText("${AppLocalizations.of(context)!.to_contact_us_mail}:",
+                                            textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.lightGreyColor,fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                      kHe12,
+                                      BlocBuilder<ChannelCubit, dynamic>(
+                                        bloc: emailError,
+                                        builder: (_,errorMessage) {
+                                          return TextFieldWidget(
+                                            width: MediaQuery.of(context).size.width,
+                                            height: 45,
+                                            textEditingController: emailController,
+                                            hintText: AppLocalizations.of(context)!.please_write_email,
+                                            onTap: () {},
+                                            onChanged: (_) {
+                                              emailError.setState(null);
+                                            },
+                                          );
+                                        },
+                                      ),
+                                      kHe12,
+                                      BlocBuilder<ChannelCubit, dynamic>(
+                                        bloc: titleError,
+                                        builder: (_,errorMessage) {
+                                          return TextFieldWidget(
+                                            width: MediaQuery.of(context).size.width,
+                                            height: 45,
+                                            textEditingController: messageTitleController,
+                                            hintText: AppLocalizations.of(context)!.please_write_title_message,
+                                            onTap: () {},
+                                            onChanged: (_) {
+                                              titleError.setState(null);
+                                            },
+                                          );
+                                        },
+                                      ),
+                                      kHe12,
+                                      BlocBuilder<ChannelCubit, dynamic>(
+                                        bloc: messageError,
+                                        builder: (_,errorMessage) {
+                                          return TextFieldWidget(
+                                            width: MediaQuery.of(context).size.width,
+                                            height: 100,
+                                            padding: const EdgeInsets.only(top: 10,bottom: 5),
+                                            textEditingController: messageController,
+                                            hintText: AppLocalizations.of(context)!.please_write_message,
+                                            onTap: () {},
+                                            maxLength: 400,
+                                            maxLines: 8,
+                                            onChanged: (_) {
+                                              messageError.setState(null);
+                                            },
+                                          );
+                                        },
+                                      ),
+                                      kHe12,
+
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                fixedSize: const Size(150, 50),
+                                                backgroundColor: AppColors.blue
+                                            ),
+                                            child: BlocBuilder<ContactUsBloc, ContactUsState>(
+                                              builder: (_, sendState) {
+                                                if (sendState is ContactUsProgress) {
+                                                  return SpinKitWave(
+                                                    color: Theme.of(context).colorScheme.background,
+                                                    size: 24.w,
+                                                  );
+                                                }
+                                                return Text(
+                                                  AppLocalizations.of(context)!.send,
+                                                );
+                                              },
+                                            ),
+                                            onPressed: () async{
+                                              if (!await getFieldsValidation()) {
+                                                return;
+                                              }
+                                              contactUsBloc.add(
+                                                ContactUsStarted(
+                                                    email: emailController.text,
+                                                    subject: messageTitleController.text,
+                                                    message: messageController.text
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                )
+                            )
+                          ],
+                        ),
+                      ),
+                      kHe32,
+                    ],
                   ),
                 ),
               ),
             ],
-          ),
+          )
         ),
       ),
     );
