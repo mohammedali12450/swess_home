@@ -422,23 +422,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         ),
         /// logging history
-        buildListTile(
-          icon: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: const Icon(Icons.history_edu),
-          ),
-          title: ResText(
-            AppLocalizations.of(context)!.logging_history,
-            textAlign: TextAlign.start,
-            textStyle: Theme.of(context).textTheme.headline6,
-          ),
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const LoggingHistoryScreen()));
-          },
-        ),
+        // buildListTile(
+        //   icon: Padding(
+        //     padding: EdgeInsets.symmetric(horizontal: 10.w),
+        //     child: const Icon(Icons.history_edu),
+        //   ),
+        //   title: ResText(
+        //     AppLocalizations.of(context)!.logging_history,
+        //     textAlign: TextAlign.start,
+        //     textStyle: Theme.of(context).textTheme.headline6,
+        //   ),
+        //   onTap: () {
+        //     Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //             builder: (_) => const LoggingHistoryScreen()));
+        //   },
+        // ),
 
         //buildImmediatelyRent,
         // buildListTile(
