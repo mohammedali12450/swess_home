@@ -7,4 +7,3 @@ final onlyEnglishLetters =
 final only15Numbers = LengthLimitingTextInputFormatter(15);
 
 final onlyNumbers =  FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
->>>>>>> lib/constants/formatters.dart
