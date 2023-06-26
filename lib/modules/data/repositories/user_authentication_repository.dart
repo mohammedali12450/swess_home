@@ -180,8 +180,19 @@ class UserAuthenticationRepository {
       rethrow;
     }
 
+    if (response.statusCode == 422) {
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+    }
+    if (response.statusCode == 403) {
+      throw UnauthorizedException(
+          message: jsonDecode(response.toString())["message"]);
+    }
+    if (response.statusCode == 400) {
+      throw GeneralException(
+          errorMessage: jsonDecode(response.toString())["message"]);
+    }
     if (response.statusCode != 200) {
-      throw GeneralException(errorMessage: jsonDecode(response.toString())['message']);
+      throw UnknownException();
     }
     // User user = User.fromJson(jsonDecode(response.toString())["data"]);
     // return user;
