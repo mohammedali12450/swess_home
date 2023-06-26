@@ -266,7 +266,8 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       buildIdenticalEstates(),
                     if (estateSearch.similarEstates.isNotEmpty)
                       buildSimilarEstates(),
-                    if (isSimilarEstatesFinished) buildEstatesFinished(),
+                    if (isSimilarEstatesFinished)
+                      buildEstatesFinished(),
                   ],
                 ),
               );
@@ -486,7 +487,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
             ),
             child: SpinKitWave(
               color: Theme.of(context).colorScheme.primary,
-              size: 50.w,
+              size: 40.w,
             ),
           ),
       ],
@@ -542,7 +543,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
             ),
             child: SpinKitWave(
               color: Theme.of(context).colorScheme.primary,
-              size: 50.w,
+              size: 40.w,
             ),
           ),
       ],
@@ -552,7 +553,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
   Widget buildEstatesFinished() {
     return Container(
       margin: EdgeInsets.symmetric(
-        vertical: 50.h,
+        vertical: 30.h,
       ),
       width: 1.sw,
       child: Column(
@@ -590,7 +591,7 @@ class _EstatesScreenState extends State<EstatesScreen> {
           kHe28,
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              fixedSize: Size(220.w, 64.h),
+              fixedSize: Size(220.w, 60.h),
             ),
             child: Text(
               AppLocalizations.of(context)!.estate_order,
