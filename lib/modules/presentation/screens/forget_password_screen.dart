@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,18 +7,16 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swesshome/constants/assets_paths.dart';
-import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/constants/formatters.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
-import 'package:swesshome/modules/presentation/screens/verificaton_screen_reset.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
-
 import '../../business_logic_components/bloc/forget_password_bloc/forget_password_event.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
@@ -31,7 +30,6 @@ class ForgetPasswordScreen extends StatefulWidget {
 
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   // Blocs and cubits :
-  //final ChannelCubit _passwordVisibleSwitcherCubit = ChannelCubit(false);
   final ChannelCubit officePhoneError = ChannelCubit(null);
   final ChannelCubit officePhoneErrorLogin = ChannelCubit(null);
   final ChannelCubit systemPasswordError = ChannelCubit(null);
@@ -52,6 +50,12 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   late String phoneDialCodeLogin;
   ScrollController scrollController = ScrollController();
 
+  /// timer
+
+  Timer timer = Timer(Duration.zero, () {});
+  int remainingTime = 0;
+  bool isMounted = false;
+
   @override
   void initState() {
     super.initState();
@@ -68,6 +72,42 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       phoneDialCode = "+963";
       phoneDialCodeLogin = "+963";
     }
+    _startTimer();
+    isMounted = true;
+    _loadTimer();
+  }
+
+  Future<void> _loadTimer() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      remainingTime = prefs.getInt('remaining_time') ?? 900;
+    });
+  }
+
+  void _startTimer() {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (isMounted) {
+        setState(() {
+          remainingTime--;
+        });
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('remaining_time', remainingTime);
+        if (remainingTime <= 0) {
+          timer.cancel();
+        }
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    timer.cancel();
+    isMounted = false;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('remaining_time', remainingTime);
   }
 
   void loginErrorHandling(errorResponseMap) {
@@ -78,13 +118,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TextDirection textDirection = Directionality.of(context);
-    // bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-
     return BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
       listener: (_, forgetState) {
         if (forgetState is ForgetPasswordError) {
-          print("hi $forgetState");
           if (forgetState.isConnectionError) {
             showWonderfulAlertDialog(
               context,
@@ -106,16 +142,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           }
         }
         if (forgetState is ForgetPasswordComplete) {
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (_) => VerificationCodeScreenReset(
-          //       phoneNumber: "+" +
-          //           phoneNumber!.countryCode +
-          //           phoneNumber!.nationalNumber,
-          //     ),
-          //   ),
-          // );
         }
       },
       child: Scaffold(
@@ -146,9 +172,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       width: 200.w,
                       height: 200.w,
                       child: CircleAvatar(
-                        child: Image.asset(swessHomeIconPath),
                         backgroundColor: Colors.transparent,
                         foregroundColor: Colors.transparent,
+                        child: Image.asset(swessHomeIconPath),
                       ),
                     ),
                     32.verticalSpace,
@@ -163,62 +189,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     );
   }
 
-  // /// new
-  // Column buildSignInScreen() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       40.verticalSpace,
-  //       Center(
-  //         child: ElevatedButton(
-  //           style: ElevatedButton.styleFrom(
-  //             minimumSize: Size(300.w, 50.h),
-  //             maximumSize: Size(300.w, 50.h),
-  //           ),
-  //           onPressed: () async {
-  //             // todo send
-  //           },
-  //           child: Text(
-  //             AppLocalizations.of(context)!.send,
-  //           ),
-  //         ),
-  //       ),
-  //       25.verticalSpace,
-  //       Center(
-  //         child: ElevatedButton(
-  //           style: ElevatedButton.styleFrom(
-  //             minimumSize: Size(300.w, 50.h),
-  //             maximumSize: Size(300.w, 50.h),
-  //           ),
-  //           onPressed: () async {
-  //             // todo resend
-  //           },
-  //           child: Text(
-  //             AppLocalizations.of(context)!.resend,
-  //           ),
-  //         ),
-  //       ),
-  //       25.verticalSpace,
-  //       Padding(
-  //         padding: const EdgeInsets.all(10),
-  //         child: Center(
-  //             child: Text(
-  //               AppLocalizations.of(context)!.time_of_receive_link,
-  //               textAlign: TextAlign.center,
-  //               style: Theme.of(context).textTheme.bodyText2,
-  //             )),
-  //       ),
-  //     ],
-  //   );
-  // }
-
   /// old
   Column buildSignInScreen() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.mobile_number + " :",
+          "${AppLocalizations.of(context)!.mobile_number} :",
         ),
         8.verticalSpace,
         BlocBuilder<ChannelCubit, dynamic>(
@@ -283,11 +260,19 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               }
               forgetPasswordBloc.add(
                 ForgetPasswordStarted(
-                  mobile: "+" +
-                      phoneNumber!.countryCode +
-                      phoneNumber!.nationalNumber,
+                  mobile: "+${phoneNumber!.countryCode}${phoneNumber!.nationalNumber}",
                 ),
               );
+              if(remainingTime > 0) {
+                setState(() {});
+              } else {
+                final prefs = await SharedPreferences.getInstance();
+                prefs.remove('remaining_time');
+                setState(() {
+                  remainingTime = 900;
+                });
+                _startTimer();
+              }
             },
             child: BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
               builder: (_, forgetState) {
@@ -317,26 +302,26 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             ),
           ),
         ),
-        56.verticalSpace,
-        BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
-          builder: (_,forgetState) {
-            if(forgetState is ForgetPasswordComplete) {
-              return Padding(
-                padding: const EdgeInsets.all(10),
-                child: Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.time_of_receive_link,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyText2,
-                    )),
-              );
-            } return const Center();
-          }
-        )
-        ],
+        25.verticalSpace,
+        Center(
+          child: remainingTime <= 0 ? const Center()
+              : Column(
+                children: [
+                  Text('${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}',
+                    style: TextStyle(fontSize: 20.sp),
+                  ),
+                  20.verticalSpace,
+                  Text(
+                    AppLocalizations.of(context)!.time_of_receive_link,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ],
+              ),
+        ),
+      ],
     );
   }
-
 
   Future<bool> signInFieldsValidation() async {
     bool isValidationSuccess = true;
