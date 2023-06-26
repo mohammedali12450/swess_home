@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
+import 'package:swesshome/constants/formatters.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
@@ -223,6 +225,10 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           bloc: officePhoneErrorLogin,
           builder: (_, errorMessage) {
             return IntlPhoneField(
+              inputFormatters: <TextInputFormatter>[
+                only15Numbers,
+                onlyNumbers,
+              ],
               controller: officePhoneControllerLogin,
               decoration:
               InputDecoration(errorText: errorMessage, errorMaxLines: 2),
