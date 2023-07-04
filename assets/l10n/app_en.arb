@@ -627,5 +627,6 @@
   "ip_address":"IP Address",
   "please_select_governorate":"please select governorate",
   "please_enter_your_first_name":"Please enter your first name",
-  "please_enter_your_last_name":"Please enter your last name"
+  "please_enter_your_last_name":"Please enter your last name",
+  "success":"success"
 }

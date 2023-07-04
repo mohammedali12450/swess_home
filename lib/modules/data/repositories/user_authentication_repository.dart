@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
@@ -8,7 +8,8 @@ import 'package:swesshome/core/exceptions/unknown_exception.dart';
 import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/user_authentication_provider.dart';
-
+import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 
 class UserAuthenticationRepository {
@@ -179,7 +180,6 @@ class UserAuthenticationRepository {
     } catch (e) {
       rethrow;
     }
-
     if (response.statusCode == 422) {
       throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
@@ -191,8 +191,8 @@ class UserAuthenticationRepository {
       throw GeneralException(
           errorMessage: jsonDecode(response.toString())["message"]);
     }
-    if (response.statusCode != 200) {
-      throw UnknownException();
+    if (response.statusCode == 200) {
+      return jsonDecode(response.toString())["message"];
     }
     // User user = User.fromJson(jsonDecode(response.toString())["data"]);
     // return user;

@@ -28,12 +28,13 @@ class ForgetPasswordScreen extends StatefulWidget {
   _ForgetPasswordScreenState createState() => _ForgetPasswordScreenState();
 }
 
-class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
+class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>{
   // Blocs and cubits :
   final ChannelCubit officePhoneError = ChannelCubit(null);
   final ChannelCubit officePhoneErrorLogin = ChannelCubit(null);
   final ChannelCubit systemPasswordError = ChannelCubit(null);
   final ChannelCubit officeTelephoneError = ChannelCubit(null);
+  final ChannelCubit success = ChannelCubit(null);
   late ForgetPasswordBloc forgetPasswordBloc;
 
   // Controllers:
@@ -50,11 +51,11 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   late String phoneDialCodeLogin;
   ScrollController scrollController = ScrollController();
 
-  /// timer
+  late SharedPreferences _prefs;
+  late Timer _timer;
+  int _remainingSeconds = 0;
+  bool _isTimerActive = false;
 
-  Timer timer = Timer(Duration.zero, () {});
-  int remainingTime = 0;
-  bool isMounted = false;
 
   @override
   void initState() {
@@ -72,43 +73,51 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       phoneDialCode = "+963";
       phoneDialCodeLogin = "+963";
     }
-    _startTimer();
-    isMounted = true;
+    // initWaitingTime();
     _loadTimer();
   }
 
   Future<void> _loadTimer() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      remainingTime = prefs.getInt('remaining_time') ?? 900;
-    });
+    _prefs = await SharedPreferences.getInstance();
+    final lastResetTime = _prefs.getInt('last_reset_time') ?? 0;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final elapsedSeconds = (now - lastResetTime) ~/ 1000;
+    if (elapsedSeconds > 900) {
+      _remainingSeconds = 0;
+    } else {
+      _remainingSeconds = 900 - elapsedSeconds;
+      _startTimer();
+    }
+  }
+
+  Future<void> _savePreferences() async {
+    await _prefs.setInt('last_reset_time', DateTime.now().millisecondsSinceEpoch);
   }
 
   void _startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (isMounted) {
-        setState(() {
-          remainingTime--;
-        });
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('remaining_time', remainingTime);
-        if (remainingTime <= 0) {
-          timer.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_remainingSeconds > 0) {
+          _remainingSeconds--;
+        } else {
+          _stopTimer();
         }
-      } else {
-        timer.cancel();
-      }
+      });
     });
+    _isTimerActive = true;
+  }
+
+  void _stopTimer() {
+    _timer.cancel();
+    _isTimerActive = false;
   }
 
   @override
-  void dispose() async {
+  void dispose() {
+    _stopTimer();
     super.dispose();
-    timer.cancel();
-    isMounted = false;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('remaining_time', remainingTime);
   }
+
 
   void loginErrorHandling(errorResponseMap) {
     if (errorResponseMap.containsKey("user")) {
@@ -129,10 +138,18 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             );
             return;
           }
-          if (forgetState.errorResponse != null) {
-            loginErrorHandling(forgetState.errorResponse);
-          }
+          // if (forgetState.errorResponse != null) {
+          //   loginErrorHandling(forgetState.errorResponse);
+          // }
           if (forgetState.errorMessage != null) {
+            showWonderfulAlertDialog(
+              context,
+              AppLocalizations.of(context)!.error,
+              forgetState.errorMessage!,
+              defaultButtonContent: AppLocalizations.of(context)!.ok,
+            );
+          }
+          if(forgetState.isUnauthorizedError) {
             showWonderfulAlertDialog(
               context,
               AppLocalizations.of(context)!.error,
@@ -142,6 +159,14 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           }
         }
         if (forgetState is ForgetPasswordComplete) {
+          if(forgetState.successMessage != null) {
+            showWonderfulAlertDialog(
+              context,
+              AppLocalizations.of(context)!.success,
+              forgetState.successMessage!,
+              defaultButtonContent: AppLocalizations.of(context)!.ok,
+            );
+          }
         }
       },
       child: Scaffold(
@@ -247,78 +272,74 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         //   },
         // ),
         56.verticalSpace,
-        Center(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(180.w, 60.h),
-              maximumSize: Size(200.w, 60.h),
-            ),
-            onPressed: () async {
-              // validators :
-              if (!await signInFieldsValidation()) {
-                return;
-              }
-              forgetPasswordBloc.add(
-                ForgetPasswordStarted(
-                  mobile: "+${phoneNumber!.countryCode}${phoneNumber!.nationalNumber}",
+        StreamBuilder<int>(
+            builder: (context, snapshot) {
+              return Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(180.w, 60.h),
+                    maximumSize: Size(200.w, 60.h),
+                  ),
+                  onPressed: () async {
+
+                    // validators :
+                    if (!await signInFieldsValidation()) {
+                      return;
+                    }
+
+                    if (_remainingSeconds > 0) {}
+                    else {
+                      forgetPasswordBloc.add(
+                        ForgetPasswordStarted(
+                          mobile: "+${phoneNumber!.countryCode}${phoneNumber!.nationalNumber}",
+                        ),
+                      );
+                      _isTimerActive ? null : await _savePreferences();
+                      setState(() {
+                        _remainingSeconds = 900;
+                        _startTimer();
+                      });
+                      FocusScope.of(context).unfocus();
+                    }
+                  },
+                  child: BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
+                    builder: (_, forgetState) {
+                      if (forgetState is ForgetPasswordProgress) {
+                        return IntrinsicHeight(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.send,
+                              ),
+                              12.horizontalSpace,
+                              SpinKitWave(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                size: 20.w,
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return Text(
+                        AppLocalizations.of(context)!.send,
+                      );
+                    },
+                  ),
                 ),
               );
-              if(remainingTime > 0) {
-                setState(() {});
+            }),
+        30.verticalSpace,
+        StreamBuilder<int>(
+            builder: (context, snapshot) {
+              if (_remainingSeconds > 0) {
+                return _timerCountDown();
               } else {
-                final prefs = await SharedPreferences.getInstance();
-                prefs.remove('remaining_time');
-                setState(() {
-                  remainingTime = 900;
-                });
-                _startTimer();
+                return const Center();
               }
-            },
-            child: BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
-              builder: (_, forgetState) {
-                if (forgetState is ForgetPasswordProgress) {
-                  return IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!.send,
-                        ),
-                        12.horizontalSpace,
-                        SpinKitWave(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          size: 20.w,
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                return Text(
-                  AppLocalizations.of(context)!.send,
-                );
-              },
-            ),
-          ),
-        ),
-        25.verticalSpace,
-        Center(
-          child: remainingTime <= 0 ? const Center()
-              : Column(
-                children: [
-                  Text('${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}',
-                    style: TextStyle(fontSize: 20.sp),
-                  ),
-                  20.verticalSpace,
-                  Text(
-                    AppLocalizations.of(context)!.time_of_receive_link,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                ],
-              ),
-        ),
+            }),
       ],
     );
   }
@@ -339,6 +360,33 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       return false;
     }
     return isValidationSuccess;
+  }
+
+  Widget _timerCountDown() {
+    return StreamBuilder<int>(
+        initialData: 0,
+        builder: (context, waitingTimeSnapshot) {
+          if (_isTimerActive) {
+            return Column(
+              children: [
+                Text(
+                  '${_remainingSeconds ~/ 60}:${_remainingSeconds % 60}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                25.verticalSpace,
+                Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.time_of_receive_link,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Container();
+          }
+        });
   }
 
   getButtonsBorderRadius(bool isLeft) {
