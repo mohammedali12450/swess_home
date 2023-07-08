@@ -13,7 +13,7 @@
   "statistics": "الإحصائيات",
   "log_out": "تسجيل الخروج",
   "password_must": "كلمة السر على الاكثر 21 محرف",
-  "password_least": "كلمة السر على الاقل 6 محارف",
+  "password_least": "كلمة السر على الاقل 8 محارف",
   "password_match": "كلمة السر غير متطابقة",
   "accept_terms_condition": "أوافق على ",
   "terms_condition": "سياسة الخصوصية",
