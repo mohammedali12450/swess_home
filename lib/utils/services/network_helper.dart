@@ -17,7 +17,7 @@ class NetworkHelper {
         connectTimeout: const Duration(milliseconds: 70000),
         sendTimeout: const Duration(milliseconds: 70000),
         followRedirects: false,
-        headers: {"Content-Type": "application/json", "Accept": "application/json", "lang": isEnglish ? "en" : "ar"},
+        headers: {"Content-Type": "application/json", "Accept": "application/json", "Accept-Language": isEnglish ? "en" : "ar"},
         validateStatus: (status) {
           if (status != null) {
             return status <= 500;

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
@@ -8,8 +7,6 @@ import 'package:swesshome/core/exceptions/unknown_exception.dart';
 import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/providers/user_authentication_provider.dart';
-import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 
 class UserAuthenticationRepository {
@@ -28,8 +25,19 @@ class UserAuthenticationRepository {
     if (response.statusCode == 422) {
       throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
+
+    if (response.statusCode == 403) {
+      throw UnauthorizedException(
+          message: jsonDecode(response.toString())["message"]);
+    }
+
+    if (response.statusCode == 400) {
+      throw GeneralException(
+          errorMessage: jsonDecode(response.toString())["message"]);
+    }
+
     if (response.statusCode != 200) {
-      throw UnknownException();
+      return jsonDecode(response.toString())["message"];
     }
 
     User user = User.fromJson(jsonDecode(response.toString())["data"]);
@@ -51,17 +59,30 @@ class UserAuthenticationRepository {
     }
 
     if (response.statusCode == 403) {
+      // return jsonDecode(response.toString())["message"];
       throw UnauthorizedException(
           message: jsonDecode(response.toString())["message"]);
     }
 
     if (response.statusCode == 400) {
+      print('400');
+      return jsonDecode(response.toString())["message"];
+      // throw GeneralException(
+      //     errorMessage: jsonDecode(response.toString())["message"]);
+    }
+
+    if (response.statusCode == 401) {
+      print('401');
+      // return jsonDecode(response.toString())["message"];
       throw GeneralException(
           errorMessage: jsonDecode(response.toString())["message"]);
     }
 
-    if (response.statusCode != 200) {
-      throw UnknownException();
+    if (response.statusCode == 200) {
+      UserSharedPreferences.setAccessToken(
+          jsonDecode(response.toString())["data"]["token"]);
+      return jsonDecode(response.toString())["message"];
+      // throw UnknownException();
     }
 
     User user = User.fromJson(jsonDecode(response.toString())["data"]["user"]);
@@ -70,6 +91,22 @@ class UserAuthenticationRepository {
         jsonDecode(response.toString())["data"]["token"]);
 
     return user;
+  }
+
+  Future resendRegisterConfirmationLink(String phone) async {
+    Response response;
+    try {
+      response = await userAuthenticationProvider.resendRegisterConfirmationLink(phone);
+      print(jsonDecode(response.toString())["message"]);
+    } catch (e) {
+      rethrow;
+    }
+    if (response.statusCode == 401) {
+      return jsonDecode(response.toString())["message"];
+    }
+    if (response.statusCode == 200) {
+      return jsonDecode(response.toString())["message"];
+    }
   }
 
   Future socialLogin(String provider, String token) async {
@@ -162,12 +199,12 @@ class UserAuthenticationRepository {
       rethrow;
     }
 
-    if (response.statusCode == 422) {
-      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
+    if (response.statusCode == 401) {
+      return jsonDecode(response.toString())["message"];
     }
-    if (response.statusCode != 200) {
-      throw GeneralException(
-          errorMessage: jsonDecode(response.toString())["message"]);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.toString())["message"];
+      // throw GeneralException(errorMessage: jsonDecode(response.toString())["message"]);
     }
     // User user = User.fromJson(jsonDecode(response.toString())["data"]);
     // return user;
@@ -186,6 +223,10 @@ class UserAuthenticationRepository {
     if (response.statusCode == 403) {
       throw UnauthorizedException(
           message: jsonDecode(response.toString())["message"]);
+    }
+    if (response.statusCode == 401) {
+      print('401');
+      return jsonDecode(response.toString())["message"];
     }
     if (response.statusCode == 400) {
       throw GeneralException(
