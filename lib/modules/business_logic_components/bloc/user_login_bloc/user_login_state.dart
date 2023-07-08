@@ -2,7 +2,10 @@ abstract class UserLoginState {}
 
 class UserLoginNone extends UserLoginState {}
 
-class UserLoginComplete extends UserLoginState {}
+class UserLoginComplete extends UserLoginState {
+  final String? successMessage;
+  UserLoginComplete({this.successMessage});
+}
 
 class UserLoginProgress extends UserLoginState {}
 

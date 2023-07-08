@@ -32,6 +32,12 @@ class UserAuthenticationProvider {
     return response;
   }
 
+  Future resendRegisterConfirmationLink(String phone) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response = await helper.post(resendRegisterConfirmationLinkURL, {"authentication": phone});
+    return response;
+  }
+
   Future socialLogin(String provider, String token) async {
     NetworkHelper helper = NetworkHelper();
     Response response;

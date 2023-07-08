@@ -19,7 +19,7 @@ class ChangePasswordBloc
     on<ChangePasswordStarted>((event, emit) async {
       emit(ChangePasswordProgress());
       try {
-        user = await userAuthenticationRepository.changePassword(
+        dynamic message = await userAuthenticationRepository.changePassword(
           event.oldPassword,
           event.newPassword,
           event.token,
@@ -27,7 +27,7 @@ class ChangePasswordBloc
         // if (user!.token != null) {
         //   UserSharedPreferences.setAccessToken(user!.token!);
         // }
-        emit(ChangePasswordComplete());
+        emit(ChangePasswordComplete(successMessage: message));
       } on FieldsException catch (e) {
         emit(ChangePasswordError(
             errorResponse: (e.jsonErrorFields["errors"] != null)
