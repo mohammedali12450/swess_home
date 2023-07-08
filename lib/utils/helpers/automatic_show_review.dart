@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import 'package:swesshome/main.dart';
 import 'package:swesshome/utils/helpers/app_dialog.dart';
@@ -24,14 +23,14 @@ Future<void> automaticShowReview() async {
 
   timer = Timer.periodic(
     durationJump,
-    (Timer timer) async {
+        (Timer timer) async {
       DateTime dateCashe = DateTime.tryParse(
-            UserSharedPreferences.getDateShowReview() ?? '',
-          ) ??
+        UserSharedPreferences.getDateShowReview() ?? '',
+      ) ??
           DateTime.now();
 
       if (dateCashe.isBefore(DateTime.now())) {
-        Future.delayed(Duration.zero).then((_) {
+        Future.delayed(const Duration(seconds: 2)).then((_) {
           if (!AppDialog.isDialogReviewShow) {
             AppDialog.reviewDialog(context: navigatorKey.currentState!.context);
           }
