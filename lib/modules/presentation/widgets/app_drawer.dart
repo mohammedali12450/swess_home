@@ -96,36 +96,36 @@ class _MyDrawerState extends State<MyDrawer> {
                     ),
                   ),
                   kHe8,
-                  if (UserSharedPreferences.getAccessToken() != null) ...[
-                    BlocBuilder<UserLoginBloc, UserLoginState>(
-                        bloc: _userLoginBloc,
-                        builder: (_, UserLoginState userEditState) {
-                          return Column(
-                            children: [
-                              Text(
-                                _userLoginBloc.user!.firstName! + " " + _userLoginBloc.user!.lastName!,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              Text(
-                                _userLoginBloc.user!.authentication!,
-                                textDirection: TextDirection.ltr,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                              )
-                            ],
-                          );
-                        })
-                  ],
-                  kHe8,
+                  // if (UserSharedPreferences.getAccessToken() != null) ...[
+                  //   BlocBuilder<UserLoginBloc, UserLoginState>(
+                  //       bloc: _userLoginBloc,
+                  //       builder: (_, UserLoginState userEditState) {
+                  //         return Column(
+                  //           children: [
+                  //             Text(
+                  //               _userLoginBloc.user!.firstName! + " " + _userLoginBloc.user!.lastName!,
+                  //               style: Theme.of(context)
+                  //                   .textTheme
+                  //                   .bodyText2!
+                  //                   .copyWith(
+                  //                   color: Colors.white,
+                  //                   fontWeight: FontWeight.w500),
+                  //             ),
+                  //             Text(
+                  //               _userLoginBloc.user!.authentication!,
+                  //               textDirection: TextDirection.ltr,
+                  //               style: Theme.of(context)
+                  //                   .textTheme
+                  //                   .bodyText2!
+                  //                   .copyWith(
+                  //                   color: Colors.white,
+                  //                   fontWeight: FontWeight.w500),
+                  //             )
+                  //           ],
+                  //         );
+                  //       })
+                  // ],
+                  // kHe8,
                   // Text(
                   //   user.userName + " " + user.lastName,
                   //   style: Theme.of(context)
