@@ -17,19 +17,23 @@ class ContactUsRepository {
     } catch (_) {
       rethrow;
     }
+
     if (response.statusCode == 422) {
       throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
+
     if (response.statusCode == 403) {
       throw UnauthorizedException(
           message: jsonDecode(response.toString())["message"]);
     }
+
     if (response.statusCode == 400) {
       throw GeneralException(
           errorMessage: jsonDecode(response.toString())["message"]);
     }
-    if (response.statusCode != 201) {
-      throw UnknownException();
+
+    if (response.statusCode == 201) {
+      return jsonDecode(response.toString())["message"];
     }
   }
 }
