@@ -284,7 +284,7 @@ class HomeScreenState extends State<HomeScreen> {
                     builder: (_, estateSearchState) {
                       return Center(
                           child:
-                              UserSharedPreferences.getAccessToken() == null ||
+                              // UserSharedPreferences.getAccessToken() == null ||
                                       estateSearchState.isEmpty
                                   ? Container(
                                       height: 0.5.sh,

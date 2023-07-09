@@ -53,7 +53,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
   late RecentEstatesOrdersBloc _recentEstatesOrdersBloc;
   late ItemScrollController scrollController;
   late ItemPositionsListener itemPositionsListener;
-  String? userToken;
+  // String? userToken;
   List<EstateOrder> orders = [];
   late AnimationController _animationController;
   late Animation _colorTween;
@@ -65,13 +65,17 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
   void initState() {
     super.initState();
     _recentEstatesOrdersBloc = RecentEstatesOrdersBloc(EstateOrderRepository());
-
-    User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null) {
-      userToken = UserSharedPreferences.getAccessToken();
+    // User? user = BlocProvider.of<UserLoginBloc>(context).user;
+    // if (user != null) {
+    //   userToken = UserSharedPreferences.getAccessToken();
+    // }
+    // _onRefresh();
+    if (UserSharedPreferences.getAccessToken() != null) {
+      _recentEstatesOrdersBloc.add(
+        RecentEstatesOrdersFetchStarted(
+            token: UserSharedPreferences.getAccessToken()!),
+      );
     }
-    _onRefresh();
-
     scrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
   }
@@ -97,14 +101,16 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
     }
   }
 
-  _onRefresh() {
-    if (userToken != null) {
-      _recentEstatesOrdersBloc.add(
-        RecentEstatesOrdersFetchStarted(
-            token: UserSharedPreferences.getAccessToken()!),
-      );
-    }
-  }
+  // _onRefresh() {
+  //   if (userToken != null) {
+  //     _recentEstatesOrdersBloc.add(
+  //       RecentEstatesOrdersFetchStarted(
+  //           token: UserSharedPreferences.getAccessToken()!),
+  //     );
+  //   }else {
+  //       print('+++++++++++++++++++++++');
+  //   }
+  // }
 
   initAnimation(context) {
     bool isDark =
@@ -201,7 +207,13 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
         body: RefreshIndicator(
           color: Theme.of(context).colorScheme.primary,
           onRefresh: () async {
-            _onRefresh();
+            // _onRefresh();
+            if (UserSharedPreferences.getAccessToken() != null) {
+              _recentEstatesOrdersBloc.add(
+                RecentEstatesOrdersFetchStarted(
+                    token: UserSharedPreferences.getAccessToken()!),
+              );
+            }
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -225,9 +237,8 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                     return const ClientsOrdersShimmer();
                   }
                   if (recentOrdersState is! RecentEstatesOrdersFetchComplete) {
-                    return Container();
+                      return buildSignInRequired(context);
                   }
-
                   orders = recentOrdersState.estateOrders;
                   if (orders.isEmpty) {
                     return Center(
@@ -298,13 +309,26 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                   return RefreshIndicator(
                     color: Theme.of(context).colorScheme.primary,
                     onRefresh: () async {
-                      _onRefresh();
+                      // _onRefresh();
+
+                      if (UserSharedPreferences.getAccessToken() != null) {
+                        _recentEstatesOrdersBloc.add(
+                          RecentEstatesOrdersFetchStarted(
+                              token: UserSharedPreferences.getAccessToken()!),
+                        );
+                      }
                     },
                     child: BlocListener<DeleteEstatesBloc, DeleteEstatesState>(
                       listener: (_, deleteEstateOrderState) async {
                         if (deleteEstateOrderState
                         is DeleteEstatesFetchComplete) {
-                          await _onRefresh();
+                          // await _onRefresh();
+                          if (UserSharedPreferences.getAccessToken() != null) {
+                            _recentEstatesOrdersBloc.add(
+                              RecentEstatesOrdersFetchStarted(
+                                  token: UserSharedPreferences.getAccessToken()!),
+                            );
+                          }
                         } else if (deleteEstateOrderState
                         is DeleteEstatesFetchError) {}
                       },
@@ -370,7 +394,13 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
     deleteEstatesBloc.add(DeleteEstatesFetchStarted(
         token: UserSharedPreferences.getAccessToken(),
         orderId: orders.elementAt(index).id!));
-    await _onRefresh();
+    // await _onRefresh();
+    if (UserSharedPreferences.getAccessToken() != null) {
+      _recentEstatesOrdersBloc.add(
+        RecentEstatesOrdersFetchStarted(
+            token: UserSharedPreferences.getAccessToken()!),
+      );
+    }
   }
 
   jumpToOrder(List<EstateOrder> orders) {
@@ -390,5 +420,45 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
       }
     }
     return -1;
+  }
+
+  Widget buildSignInRequired(context) {
+    return SizedBox(
+        height: 20,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: 60,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(AppLocalizations.of(context)!.this_features_require_login),
+              const SizedBox(height: 30),
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(150.w, 50.h),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.sign_in,
+                  ),
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, AuthenticationScreen.id).then((value) {
+                    });
+                    Navigator.pop(context);
+                    // _onRefresh();
+                    if (UserSharedPreferences.getAccessToken() != null) {
+                      _recentEstatesOrdersBloc.add(
+                        RecentEstatesOrdersFetchStarted(
+                            token: UserSharedPreferences.getAccessToken()!),
+                      );
+                    }
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+      ) ;
   }
 }

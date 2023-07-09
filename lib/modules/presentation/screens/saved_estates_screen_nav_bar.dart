@@ -156,19 +156,20 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
                   }
                 },
                 builder: (BuildContext context, savedEstatesState) {
-                  if (savedEstatesState is SavedEstatesFetchNone) {
-                    return FetchResult(
-                        content: AppLocalizations.of(context)!
-                            .have_not_saved_estates);
-                  }
+                  // if (savedEstatesState is SavedEstatesFetchNone) {
+                  //   return FetchResult(
+                  //       content: AppLocalizations.of(context)!
+                  //           .have_not_saved_estates);
+                  // }
 
                   if (savedEstatesState is SavedEstatesFetchProgress) {
                     return const PropertyShimmer();
                   }
                   if (savedEstatesState is! SavedEstatesFetchComplete) {
-                    return FetchResult(
-                        content: AppLocalizations.of(context)!
-                            .error_happened_when_executing_operation);
+                    return buildSignInRequired(context);
+                    // return FetchResult(
+                    //     content: AppLocalizations.of(context)!
+                    //         .error_happened_when_executing_operation);
                   }
 
                   estates = savedEstatesState.savedEstates;
@@ -271,5 +272,44 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
         );
       },
     );
+  }
+  Widget buildSignInRequired(context) {
+    return SizedBox(
+      height: 20,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 60,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(AppLocalizations.of(context)!.this_features_require_login),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(150.w, 50.h),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.sign_in,
+                ),
+                onPressed: () async {
+                  await Navigator.pushNamed(context, AuthenticationScreen.id).then((value) {
+                  });
+                  Navigator.pop(context);
+                  // _onRefresh();
+                  if (UserSharedPreferences.getAccessToken() != null) {
+                    _savedEstatesBloc.add(
+                      SavedEstatesFetchStarted(
+                          token: UserSharedPreferences.getAccessToken()!),
+                    );
+                  }
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    ) ;
   }
 }

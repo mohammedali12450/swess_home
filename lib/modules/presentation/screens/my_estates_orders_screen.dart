@@ -66,12 +66,17 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
     super.initState();
     _recentEstatesOrdersBloc = RecentEstatesOrdersBloc(EstateOrderRepository());
 
-    User? user = BlocProvider.of<UserLoginBloc>(context).user;
-    if (user != null) {
-      userToken = UserSharedPreferences.getAccessToken();
+    // User? user = BlocProvider.of<UserLoginBloc>(context).user;
+    // if (user != null) {
+    //   userToken = UserSharedPreferences.getAccessToken();
+    // }
+    // _onRefresh();
+    if (UserSharedPreferences.getAccessToken() != null) {
+      _recentEstatesOrdersBloc.add(
+        RecentEstatesOrdersFetchStarted(
+            token: UserSharedPreferences.getAccessToken()!),
+      );
     }
-    _onRefresh();
-
     scrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
   }
@@ -97,14 +102,14 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
     }
   }
 
-  _onRefresh() {
-    if (userToken != null) {
-      _recentEstatesOrdersBloc.add(
-        RecentEstatesOrdersFetchStarted(
-            token: UserSharedPreferences.getAccessToken()!),
-      );
-    }
-  }
+  // _onRefresh() {
+  //   if (userToken != null) {
+  //     _recentEstatesOrdersBloc.add(
+  //       RecentEstatesOrdersFetchStarted(
+  //           token: UserSharedPreferences.getAccessToken()!),
+  //     );
+  //   }
+  // }
 
   initAnimation(context) {
     bool isDark =
@@ -137,7 +142,13 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
         body: RefreshIndicator(
           color: Theme.of(context).colorScheme.primary,
           onRefresh: () async {
-            _onRefresh();
+            // _onRefresh();
+            if (UserSharedPreferences.getAccessToken() != null) {
+              _recentEstatesOrdersBloc.add(
+                RecentEstatesOrdersFetchStarted(
+                    token: UserSharedPreferences.getAccessToken()!),
+              );
+            }
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -161,7 +172,8 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                     return const ClientsOrdersShimmer();
                   }
                   if (recentOrdersState is! RecentEstatesOrdersFetchComplete) {
-                    return Container();
+                    // return Container();
+                    return buildSignInRequired(context);
                   }
 
                   orders = recentOrdersState.estateOrders;
@@ -234,13 +246,25 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                   return RefreshIndicator(
                     color: Theme.of(context).colorScheme.primary,
                     onRefresh: () async {
-                      _onRefresh();
+                      // _onRefresh();
+                      if (UserSharedPreferences.getAccessToken() != null) {
+                        _recentEstatesOrdersBloc.add(
+                          RecentEstatesOrdersFetchStarted(
+                              token: UserSharedPreferences.getAccessToken()!),
+                        );
+                      }
                     },
                     child: BlocListener<DeleteEstatesBloc, DeleteEstatesState>(
                       listener: (_, deleteEstateOrderState) async {
                         if (deleteEstateOrderState
                         is DeleteEstatesFetchComplete) {
-                          await _onRefresh();
+                          // await _onRefresh();
+                          if (UserSharedPreferences.getAccessToken() != null) {
+                            _recentEstatesOrdersBloc.add(
+                              RecentEstatesOrdersFetchStarted(
+                                  token: UserSharedPreferences.getAccessToken()!),
+                            );
+                          }
                         } else if (deleteEstateOrderState
                         is DeleteEstatesFetchError) {}
                       },
@@ -306,7 +330,13 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
     deleteEstatesBloc.add(DeleteEstatesFetchStarted(
         token: UserSharedPreferences.getAccessToken(),
         orderId: orders.elementAt(index).id!));
-    await _onRefresh();
+    // await _onRefresh();
+    if (UserSharedPreferences.getAccessToken() != null) {
+      _recentEstatesOrdersBloc.add(
+        RecentEstatesOrdersFetchStarted(
+            token: UserSharedPreferences.getAccessToken()!),
+      );
+    }
   }
 
   jumpToOrder(List<EstateOrder> orders) {
@@ -326,5 +356,45 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
       }
     }
     return -1;
+  }
+
+  Widget buildSignInRequired(context) {
+    return SizedBox(
+      height: 20,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 60,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(AppLocalizations.of(context)!.this_features_require_login),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(150.w, 50.h),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.sign_in,
+                ),
+                onPressed: () async {
+                  await Navigator.pushNamed(context, AuthenticationScreen.id).then((value) {
+                  });
+                  Navigator.pop(context);
+                  // _onRefresh();
+                  if (UserSharedPreferences.getAccessToken() != null) {
+                    _recentEstatesOrdersBloc.add(
+                      RecentEstatesOrdersFetchStarted(
+                          token: UserSharedPreferences.getAccessToken()!),
+                    );
+                  }
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    ) ;
   }
 }
