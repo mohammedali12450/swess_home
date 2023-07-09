@@ -354,7 +354,7 @@ class _EstateCardState extends State<EstateCard> {
                           decoration: const BoxDecoration(
                             // color: estatePriceBackgroundColor,
                           ),
-                          child: (BlocProvider.of<UserLoginBloc>(context).user == null) ?
+                          child: (UserSharedPreferences.getAccessToken()  == null) ?
                           Padding(
                             padding: EdgeInsets.only(
                               right: (isArabic) ? 12.w : 0,
