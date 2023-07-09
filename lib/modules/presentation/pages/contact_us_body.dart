@@ -13,6 +13,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/contact_us/cont
 import 'package:swesshome/modules/business_logic_components/bloc/contact_us/contact_us_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/contact_us/contact_us_state.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
+import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/contact_us_repository.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
@@ -32,6 +33,7 @@ class ContacttUsBody extends StatefulWidget {
 class _ContacttUsBodyState extends State<ContacttUsBody> {
 
   late ContactUsBloc contactUsBloc;
+  late bool isArabic;
   ChannelCubit emailError = ChannelCubit(null);
   ChannelCubit titleError = ChannelCubit(null);
   ChannelCubit messageError = ChannelCubit(null);
@@ -48,29 +50,29 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
     contactUsBloc = BlocProvider.of<ContactUsBloc>(context);
   }
 
-  Future<bool> getFieldsValidation() async {
+  Future<bool> errorHandling(errorResponseMap) async {
     bool isValidationSuccess = true;
-    if (emailController.text.isEmpty) {
-      MySnackBar.show(
-          context, AppLocalizations.of(context)!.please_write_email);
-      emailError.setState(null);
-      return false;
-    } else if(emailValidator(emailController.text, context) != null) {
-      MySnackBar.show(
-          context, AppLocalizations.of(context)!.invalidEmail);
-      emailError.setState(null);
-      return false;
-    }
-    else if(messageTitleController.text.isEmpty) {
-      MySnackBar.show(
-          context, AppLocalizations.of(context)!.please_write_title_message);
-      titleError.setState(null);
-      return false;
-    } else if (messageController.text.isEmpty) {
-      MySnackBar.show(
-          context, AppLocalizations.of(context)!.please_write_message);
-      messageError.setState(null);
-      return false;
+    if (errorResponseMap.containsKey("sender_email")) {
+      emailError.setState(
+          errorResponseMap["sender_email"].first);
+      showWonderfulAlertDialog(
+          context,
+          AppLocalizations.of(context)!.error,
+          errorResponseMap["sender_email"].first);
+    } else if (errorResponseMap.containsKey("subject")) {
+      titleError.setState(
+          errorResponseMap["subject"].first);
+      showWonderfulAlertDialog(
+          context,
+          AppLocalizations.of(context)!.error,
+          errorResponseMap["subject"].first);
+    } else {
+      messageError.setState(
+          errorResponseMap["message"].first);
+      showWonderfulAlertDialog(
+          context,
+          AppLocalizations.of(context)!.error,
+          errorResponseMap["message"].first);
     }
     return isValidationSuccess;
   }
@@ -78,6 +80,7 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
   @override
   Widget build(BuildContext context) {
     bool isKeyboardOpened = MediaQuery.of(context).viewInsets.bottom != 0;
+    isArabic = Provider.of<LocaleProvider>(context).isArabic();
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return BlocListener<ContactUsBloc, ContactUsState>(
       listener: (_, sendState) async {
@@ -91,21 +94,16 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
             return;
           }
           if (sendState.errorMessage != null) {
-            showWonderfulAlertDialog(
-              context,
-              AppLocalizations.of(context)!.error,
-              sendState.errorMessage!,
-              defaultButtonContent: AppLocalizations.of(context)!.ok,
-            );
+            errorHandling(sendState.errorResponse);
           }
         }
         if (sendState is ContactUsComplete) {
-          MySnackBar.show(
-              context, AppLocalizations.of(context)!.complete_send);
-          Future.delayed(const Duration(seconds: 1)).then((value) {
-            Navigator.of(context).pop();
-          });
-          // Navigator.pop(context);
+          if(sendState.successsMessage != null) {
+            showWonderfulAlertDialog(
+                context,
+                AppLocalizations.of(context)!.success,
+                sendState.successsMessage!);
+          }
         }
       },
       child: Scaffold(
@@ -172,7 +170,7 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
                                       ),
                                       kWi8,
                                       ResText(
-                                          "+963 11 222 9 956",
+                                          isArabic ? "956 9 222 11 963+" : "+963 11 222 9 956",
                                           textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.blue, fontSize: 14.sp)
                                       ),
                                     ],
@@ -199,7 +197,7 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
                                       ),
                                       kWi8,
                                       ResText(
-                                          "+963 954 150 771",
+                                          isArabic ? "771 150 954 963+" : "+963 954 150 771",
                                           textStyle: Theme.of(context).textTheme.headline5!.copyWith(color: AppColors.blue, fontSize: 14.sp)
                                       ),
                                     ],
@@ -354,9 +352,9 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
                                               },
                                             ),
                                             onPressed: () async{
-                                              if (!await getFieldsValidation()) {
-                                                return;
-                                              }
+                                              // if (!await getFieldsValidation()) {
+                                              //   return;
+                                              // }
                                               contactUsBloc.add(
                                                 ContactUsStarted(
                                                     email: emailController.text,
@@ -385,6 +383,6 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
         ),
       ),
     );
-
   }
+
 }
