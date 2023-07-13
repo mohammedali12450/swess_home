@@ -118,8 +118,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                     iconColorSelected: Theme.of(context).primaryColor,
                                     /*progressIndicatorColor:
                                         Theme.of(context).primaryColor,*/
-                                    showRecentsTab: true,
-                                    recentsLimit: 28,
+//                                     showResentsTab: true,
+//                                     resentsLimit: 28,
                                     tabIndicatorAnimDuration: kTabScrollDuration,
                                     categoryIcons: const CategoryIcons(),
                                     buttonMode: ButtonMode.MATERIAL),
