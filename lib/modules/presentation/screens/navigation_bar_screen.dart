@@ -310,21 +310,21 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                       type: BottomNavigationBarType.fixed,
                       showSelectedLabels: true,
                       showUnselectedLabels: true,
-                      unselectedLabelStyle: const TextStyle(fontSize: 12),
-                      selectedLabelStyle: const TextStyle(fontSize: 12,),
+                      unselectedLabelStyle: const TextStyle(fontSize: 10.5),
+                      selectedLabelStyle: const TextStyle(fontSize: 10.5,),
                       selectedItemColor: AppColors.lastColor,
                       unselectedItemColor: const Color(0xFF818283),
                       items: [
                         BottomNavigationBarItem(
-                          icon: SvgPicture.asset(searchPath,color: pageCubit.state == 0 ? AppColors.lastColor : const Color(0xFF818283)),
+                          icon: SvgPicture.asset(searchPath,color: pageCubit.state == 0 ? AppColors.lastColor : const Color(0xFF818283),width: 22.0,height: 22.0,),
                           label: AppLocalizations.of(context)!.search,
                         ),
                         BottomNavigationBarItem(
-                          icon: SvgPicture.asset(orderPath,color: pageCubit.state == 1 ? AppColors.lastColor : const Color(0xFF818283)),
+                          icon: SvgPicture.asset(orderPath,color: pageCubit.state == 1 ? AppColors.lastColor : const Color(0xFF818283),width: 22.0,height: 22.0),
                           label: AppLocalizations.of(context)!.estate_offers2,
                         ),
                         BottomNavigationBarItem(
-                          icon: SvgPicture.asset(savedPath,color: pageCubit.state == 2 ? AppColors.lastColor : const Color(0xFF818283)),
+                          icon: SvgPicture.asset(savedPath,color: pageCubit.state == 2 ? AppColors.lastColor : const Color(0xFF818283),width: 22.0,height: 22.0),
                           label: AppLocalizations.of(context)!.saved,
                         ),
                         // BottomNavigationBarItem(
@@ -332,7 +332,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                         //   label: AppLocalizations.of(context)!.estate_immediately,
                         // ),
                         BottomNavigationBarItem(
-                          icon: SvgPicture.asset(createEstatePath,color: pageCubit.state == 3 ? AppColors.lastColor : const Color(0xFF818283)),
+                          icon: SvgPicture.asset(createEstatePath,color: pageCubit.state == 3 ? AppColors.lastColor : const Color(0xFF818283),width: 22.0,height: 22.0),
                           label: AppLocalizations.of(context)!.estate_order,
                         ),
                         // BottomNavigationBarItem(
@@ -340,9 +340,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                         //   label: AppLocalizations.of(context)!.chat,
                         // ),
                         BottomNavigationBarItem(
-                          icon: Image.asset(profilePath,color: pageCubit.state == 4 ? AppColors.lastColor : const Color(0xFF818283),
-                          width: 28,
-                          ),
+                          icon: Image.asset(profilePath,color: pageCubit.state == 4 ? AppColors.lastColor : const Color(0xFF818283), width: 22.0,height: 22.0                         ),
                           label: AppLocalizations.of(context)!.profile,
                         ),
                       ],

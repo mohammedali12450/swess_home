@@ -9,7 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+// import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/config/routes/app_router.dart';
 import 'package:swesshome/constants/assets_paths.dart';
@@ -127,12 +127,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late NotificationsCubit notificationsCubit;
   late ThemeMode initialThemeMode;
   Locale? initialLocale;
-  PackageInfo packageInfo = PackageInfo(
+/*  PackageInfo packageInfo = PackageInfo(
     appName: 'Unknown',
     packageName: 'Unknown',
     version: 'Unknown',
     buildNumber: 'Unknown',
-  );
+  );*/
 
   @override
   void initState() {
@@ -163,9 +163,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     } else {
       initialThemeMode = ThemeMode.system;
     }
-    _initPackageInfo();
+    // _initPackageInfo();
   }
 
+/*
   Future<void> _initPackageInfo() async {
     final info = await PackageInfo.fromPlatform();
     setState(() {
@@ -173,6 +174,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     });
     ApplicationSharedPreferences.setVersionAppState(packageInfo.version);
   }
+*/
 
   @override
   Widget build(BuildContext context) {
