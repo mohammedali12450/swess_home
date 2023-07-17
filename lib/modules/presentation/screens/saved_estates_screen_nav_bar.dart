@@ -25,6 +25,7 @@ import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../widgets/estate_horizon_card.dart';
 import '../widgets/res_text.dart';
+import '../widgets/will-pop-scope.dart';
 
 class SavedEstatesScreenNavBar extends StatefulWidget {
   static const String id = "SavedEstatesScreen";
@@ -57,7 +58,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
   Widget build(BuildContext context) {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return SafeArea(
+    return BackHomeScreen(child: SafeArea(
       child: Scaffold(
         drawer: SizedBox(
           width: getScreenWidth(context) * (75 / 100),
@@ -82,7 +83,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
                         left: isArabic ? 12.w : 0, right: isArabic ? 0 : 12.w),
                     child: IconBadge(
                       icon: Icon(
-                        Icons.notifications_outlined,
+                          Icons.notifications_outlined,
                           color: isDark ? Colors.white : AppColors.black
                       ),
                       itemCount: notificationsCount,
@@ -257,7 +258,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
           ),
         ),
       ),
-    );
+    ),);
   }
 
   Widget buildSavedList() {

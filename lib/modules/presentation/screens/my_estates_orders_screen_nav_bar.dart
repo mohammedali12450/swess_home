@@ -36,6 +36,7 @@ import '../../data/models/user.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../data/providers/theme_provider.dart';
+import '../widgets/will-pop-scope.dart';
 
 class RecentEstateOrdersScreenNavBar extends StatefulWidget {
   static const String id = "RecentEstateOrdersScreen";
@@ -133,7 +134,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
     if (widget.estateId != null) {
       initAnimation(context);
     }
-    return SafeArea(
+    return BackHomeScreen(child: SafeArea(
       child: Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
@@ -152,7 +153,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                         left: 0, right:  12.w),
                     child: IconBadge(
                       icon: Icon(
-                        Icons.notifications_outlined,
+                          Icons.notifications_outlined,
                           color: isDark ? Colors.white : AppColors.black
                       ),
                       itemCount: notificationsCount,
@@ -237,7 +238,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                     return const ClientsOrdersShimmer();
                   }
                   if (recentOrdersState is! RecentEstatesOrdersFetchComplete) {
-                      return buildSignInRequired(context);
+                    return buildSignInRequired(context);
                   }
                   orders = recentOrdersState.estateOrders;
                   if (orders.isEmpty) {
@@ -385,7 +386,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
           ),
         ),
       ),
-    );
+    ),);
   }
 
   deleteEstateOrder(index) async {

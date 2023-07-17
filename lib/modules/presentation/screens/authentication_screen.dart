@@ -46,6 +46,7 @@ import '../pages/terms_condition_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../widgets/res_text.dart';
+import '../widgets/will-pop-scope.dart';
 import 'navigation_bar_screen.dart';
 import 'dart:ui' as ui;
 
@@ -578,7 +579,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           //   },
           // ),
         ],
-        child: SafeArea(
+        child: BackHomeScreen(child: SafeArea(
           child: Scaffold(
             resizeToAvoidBottomInset: true,
             body: Stack(
@@ -645,7 +646,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               ],
             ),
           ),
-        ),
+        )),
       ),
     );
   }
