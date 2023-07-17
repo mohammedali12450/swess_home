@@ -681,7 +681,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               builder: (_, errorMessage) {
                 return IntlPhoneField(
                   controller: authenticationControllerLogin,
-                  textAlignVertical: TextAlignVertical.center,
+                  textAlignVertical:Provider.of<LocaleProvider>(context).isArabic() ? const TextAlignVertical(y: -0.04) : const TextAlignVertical(y: -0.05),
                   inputFormatters: <TextInputFormatter>[
                     only15Numbers,
                     onlyNumbers,
@@ -927,7 +927,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     userCountry.setState(country.name);
                   },
                   controller: authenticationController,
-                  textAlignVertical: TextAlignVertical.center,
+                  textAlignVertical: Provider.of<LocaleProvider>(context).isArabic() ? const TextAlignVertical(y: -0.04) : const TextAlignVertical(y: -0.05),
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(
                           top: Provider.of<LocaleProvider>(context).isArabic()
