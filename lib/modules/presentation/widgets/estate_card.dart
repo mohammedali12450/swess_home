@@ -523,7 +523,7 @@ class _EstateCardState extends State<EstateCard> {
                                     addingDate,
                                 style: Theme.of(context).textTheme.subtitle2,
                               ),
-                              if (widget.estate.visitCount != null)
+                              /*if (widget.estate.visitCount != null)
                                 Expanded(
                                   flex:1,
                                   child: Directionality(
@@ -556,7 +556,7 @@ class _EstateCardState extends State<EstateCard> {
                                       ),
                                     ),
                                   ),
-                                ),
+                                ),*/
                             ],
                           ),
                         ),

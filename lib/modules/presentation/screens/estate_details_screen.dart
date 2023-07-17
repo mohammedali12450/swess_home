@@ -503,7 +503,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                 maxLines: 3,
                               ),
                             ),
-                            if (widget.estate.visitCount != null)
+                            /*if (widget.estate.visitCount != null)
                               Expanded(
                                 flex: 1,
                                 child: Container(
@@ -539,7 +539,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ),*/
                           ],
                         ),
                       ),
