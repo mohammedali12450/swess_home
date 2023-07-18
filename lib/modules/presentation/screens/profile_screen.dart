@@ -39,6 +39,7 @@ import '../widgets/fetch_result.dart';
 import '../widgets/icone_badge.dart';
 import '../widgets/res_text.dart';
 import '../widgets/shimmers/profile_shimmer.dart';
+import '../widgets/will-pop-scope.dart';
 import 'change_password_screen.dart';
 import 'my_created_estates_screen.dart';
 import 'edit_profile_screen.dart';
@@ -89,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     isEnglish = ApplicationSharedPreferences.getLanguageCode() == "en";
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return Scaffold(
+    return BackHomeScreen(child: Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
         centerTitle: true,
@@ -106,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: EdgeInsets.only(left: 0, right: 12.w),
                   child: IconBadge(
                     icon: Icon(
-                      Icons.notifications_outlined,
+                        Icons.notifications_outlined,
                         color: isDark ? Colors.white : AppColors.black
                     ),
                     itemCount: notificationsCount,
@@ -249,7 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget buildUserProfile() {
