@@ -129,12 +129,43 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
     }
     return SafeArea(
       child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            //minimumSize: Size(175.w, 50.h),
+            maximumSize: Size(170 .w, 50.h),
+            backgroundColor: AppColors.blue,
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(15)
+          ),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Image.asset(add_new_order,width: 25,height: 25,),
+                Text(
+                  AppLocalizations.of(context)!.create_estate_new_order,
+                  style: const TextStyle(fontSize: 12 , fontWeight:FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          onPressed: () async {
+            FocusScope.of(context).unfocus();
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                    const CreateOrderScreen()));
+
+          },
+        ),
         appBar: AppBar(
           iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
           centerTitle: true,
           backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
           title: Text(
-            AppLocalizations.of(context)!.recent_created_orders,
+            AppLocalizations.of(context)!.estate_orders,
             style: TextStyle(color: isDark ? Colors.white : AppColors.black),
           ),
           actions: [
@@ -287,7 +318,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                       }
                     }
                     if (find) {
-                      SchedulerBinding.instance!.addPostFrameCallback((_) {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
                         jumpToOrder(orders);
                       });
                     } else {

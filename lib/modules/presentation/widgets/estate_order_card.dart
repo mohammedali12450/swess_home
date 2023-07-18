@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
@@ -148,33 +149,72 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              buildEstateStatus(),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   //splashFactory: NoSplash.splashFactory,
+                  maximumSize: Size(138.w,50.h),
                   padding:
-                      EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-                  primary: isDark
+                      EdgeInsets.symmetric(horizontal: 25.w, vertical: 15.h),
+                  backgroundColor: isDark
                       ? AppColors.lightblue
-                      : AppColors.primaryColor,
+                      : AppColors.red,
                 ),
-                child: Text(
-                  AppLocalizations.of(context)!.view_candidates,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2!
-                      .copyWith(color: AppColors.white, height: 1.4.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Image.asset(delete_order,width: 25,),
+                    Text(
+                      AppLocalizations.of(context)!.delete_order,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText2!
+                          .copyWith(color: AppColors.white, height: 1.4.h),
+                    ),
+                  ],
                 ),
                 onPressed: () {
-                  Navigator.push(
+                  showWonderfulAlertDialog(
+                      context,
+                      AppLocalizations.of(context)!.caution,
+                      AppLocalizations.of(context)!.confirm_delete,
+                      titleTextStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                          fontSize: 20.sp),
+                      removeDefaultButton: true,
+                      dialogButtons: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              ElevatedButton(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.yes,
+                                  ),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await widget.onTap();
+                                  }),
+                              ElevatedButton(
+                                child: Text(
+                                  AppLocalizations.of(context)!.no,
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ])
+                      ]);
+                  /*Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => CandidatesScreen(
                           estates: widget.estateOrder.candidatesEstates ?? []),
                     ),
-                  );
+                  );*/
+
                 },
               ),
-              buildEstateStatus(),
             ],
           ),
         ],
@@ -185,16 +225,25 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
   Widget buildEstateStatus() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text(
-        widget.estateOrder.orderStatus!,
-        style: TextStyle(
-            color: (widget.estateOrder.orderStatus ==
-                    AppLocalizations.of(context)!.pending)
-                ? AppColors.yellowDarkColor
-                : (widget.estateOrder.orderStatus ==
-                        AppLocalizations.of(context)!.rejected)
-                    ? Colors.red
-                    : Colors.green),
+      child: Text.rich(
+        TextSpan(
+          text: "حالة الطلب : ",
+            style: TextStyle(
+                color: Colors.black , fontSize: 16.sp),
+          children: [
+               TextSpan(text: widget.estateOrder.orderStatus! ,
+                 style: TextStyle(
+                     color: (widget.estateOrder.orderStatus ==
+                         AppLocalizations.of(context)!.pending)
+                         ? AppColors.yellowDarkColor
+                         : (widget.estateOrder.orderStatus ==
+                         AppLocalizations.of(context)!.rejected)
+                         ? Colors.red
+                         : Colors.green))
+          ]
+        ),
+
+
       ),
     );
   }
