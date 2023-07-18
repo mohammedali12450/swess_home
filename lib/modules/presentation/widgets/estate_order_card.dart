@@ -45,10 +45,10 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
         .estate_offer_sentence(estateType, estateOfferType);
     return Container(
       width: 1.sw,
-      padding: const EdgeInsets.symmetric(
-        vertical: kSmallPadding,
-        horizontal: kSmallPadding,
-      ),
+      /*padding: const EdgeInsets.symmetric(
+        vertical: kTinyPadding,
+        horizontal: kTinyPadding,
+      ),*/
       margin: EdgeInsets.symmetric(
         // vertical: 5.h,
         horizontal: 10.w,
@@ -68,154 +68,182 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
               blurRadius: 4),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            // color: AppColors.hintColor,
-            alignment: isArabic ? Alignment.centerLeft : Alignment.centerRight,
-            width: 1.sw,
-            child: InkWell(
-              onTap: () {
-                showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.caution,
-                    AppLocalizations.of(context)!.confirm_delete,
-                    titleTextStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
-                        fontSize: 20.sp),
-                    removeDefaultButton: true,
-                    dialogButtons: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            ElevatedButton(
-                                child: Text(
-                                  AppLocalizations.of(context)!.yes,
-                                ),
-                                onPressed: () async {
-                                  Navigator.pop(context);
-                                  await widget.onTap();
-                                }),
-                            ElevatedButton(
-                              child: Text(
-                                AppLocalizations.of(context)!.no,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ])
-                    ]);
-              },
-              child: Icon(
-                Icons.close,
-                color: isDark ? AppColors.white : AppColors.hintColor,
-              ),
-            ),
-          ),
-          kHe8,
-          Row(
-            children: <Widget>[
-              Text(estateHeader, style: Theme.of(context).textTheme.headline5),
-              const Spacer(),
-              Text(
-                  DateHelper.getDateByFormat(
-                    DateTime.parse(widget.estateOrder.createdAt!),
-                    "yyyy/MM/dd",
+      child: Row(
+        children: [
+          Expanded(child: Image.asset(swessHomeIconPath)),
+          Expanded(
+            flex: 5,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                /*Container(
+                  // color: AppColors.hintColor,
+                  alignment: isArabic ? Alignment.centerLeft : Alignment.centerRight,
+                  width: 1.sw,
+                  child: InkWell(
+                    onTap: () {
+                      showWonderfulAlertDialog(
+                          context,
+                          AppLocalizations.of(context)!.caution,
+                          AppLocalizations.of(context)!.confirm_delete,
+                          titleTextStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                              fontSize: 20.sp),
+                          removeDefaultButton: true,
+                          dialogButtons: [
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  ElevatedButton(
+                                      child: Text(
+                                        AppLocalizations.of(context)!.yes,
+                                      ),
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                        await widget.onTap();
+                                      }),
+                                  ElevatedButton(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.no,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ])
+                          ]);
+                    },
+                    child: Icon(
+                      Icons.close,
+                      color: isDark ? AppColors.white : AppColors.hintColor,
+                    ),
                   ),
-                  style: Theme.of(context)
-                      .textTheme
-                      .subtitle2!
-                      .copyWith(color: Theme.of(context).hintColor)),
-            ],
-          ),
-          kHe8,
-          Text(widget.estateOrder.location!.getLocationName(),
-              style: Theme.of(context).textTheme.subtitle1),
-          if (widget.estateOrder.priceDomain != null) ...[
-            12.verticalSpace,
-            Text("${AppLocalizations.of(context)!.price_domain} : ",
-                style: Theme.of(context).textTheme.subtitle1),
-          ],
-          kHe8,
-          Text(
-            "${AppLocalizations.of(context)!.notes} : ${widget.estateOrder.description}",
-            maxLines: 50,
-            style: Theme.of(context).textTheme.subtitle2!.copyWith(height: 1.5),
-          ),
-          kHe16,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildEstateStatus(),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  //splashFactory: NoSplash.splashFactory,
-                  maximumSize: Size(138.w,50.h),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 25.w, vertical: 15.h),
-                  backgroundColor: isDark
-                      ? AppColors.lightblue
-                      : AppColors.red,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Image.asset(delete_order,width: 25,),
+                ),*/
+                kHe8,
+                /*Row(
+                  children: <Widget>[
+                    Text(estateHeader, style: Theme.of(context).textTheme.headline5),
+                    const Spacer(),
                     Text(
-                      AppLocalizations.of(context)!.delete_order,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText2!
-                          .copyWith(color: AppColors.white, height: 1.4.h),
+                        DateHelper.getDateByFormat(
+                          DateTime.parse(widget.estateOrder.createdAt!),
+                          "yyyy/MM/dd",
+                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle2!
+                            .copyWith(color: Theme.of(context).hintColor)),
+                  ],
+                ),*/
+                Text("مكان العقار : "+
+                    widget.estateOrder.location!.getLocationName(),
+                    style: TextStyle(fontWeight: FontWeight.w500 ,
+                        fontSize: 14.sp)),
+                if (widget.estateOrder.priceDomain != null) ...[
+                  12.verticalSpace,
+                  Text("${AppLocalizations.of(context)!.price_domain} : ",
+                      style: Theme.of(context).textTheme.subtitle1),
+                ],
+                kHe8,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(AppLocalizations.of(context)!.order_type + ":"+ widget.estateOrder.estateOfferType!.name,
+                        style: Theme.of(context).textTheme.subtitle1),
+                    /*if (widget.estateOrder.priceDomain != null) ...[
+                      12.verticalSpace,
+                      Text("${AppLocalizations.of(context)!.price_domain} : ",
+                          style: Theme.of(context).textTheme.subtitle1),
+                    ],*/
+                    Text(AppLocalizations.of(context)!.estate_type+ ":"+ widget.estateOrder.estateType!.name,
+                        style: Theme.of(context).textTheme.subtitle1),
+                    /*if (widget.estateOrder.priceDomain != null) ...[
+                      12.verticalSpace,
+                      Text("${AppLocalizations.of(context)!.price_domain} : ",
+                          style: Theme.of(context).textTheme.subtitle1),
+                    ],*/
+                  ],
+                ),
+                kHe8,
+                Text(AppLocalizations.of(context)!.price_domain + "بين "
+                + "500000" + "و" + "1000000" + "ل.س",//${widget.estateOrder.priceMin} ${widget.estateOrder.priceMax}
+                  //"مجال السعر بين "+"500000"+"و"+"1000000"+"ل.س",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(height: 2.5),
+                ),
+                kHe8,
+                Text(
+                  "${AppLocalizations.of(context)!.notes} : ${widget.estateOrder.description}",
+                  maxLines: 50,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(height: 1.5),
+                ),
+                kHe16,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildEstateStatus(),
+                    InkWell(
+                      onTap: () {
+                        showWonderfulAlertDialog(
+                            context,
+                            AppLocalizations.of(context)!.caution,
+                            AppLocalizations.of(context)!.confirm_delete,
+                            titleTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 20.sp),
+                            removeDefaultButton: true,
+                            dialogButtons: [
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    ElevatedButton(
+                                        child: Text(
+                                          AppLocalizations.of(context)!.yes,
+                                        ),
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          await widget.onTap();
+                                        }),
+                                    ElevatedButton(
+                                      child: Text(
+                                        AppLocalizations.of(context)!.no,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ])
+                            ]);
+                      },
+                      child: Container(
+                        width: 105.w,
+                        margin: EdgeInsets.all(8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Image.asset(delete_order,width: 25,),
+                                Text(
+                                  AppLocalizations.of(context)!.delete_order,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold ,
+                                      fontSize: 15.sp ,
+                                  color: AppColors.red),
+                                ),
+                              ],
+                            ),
+                            Divider(indent: 8.sp,endIndent: 2.sp, color: AppColors.red,thickness: 3)
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                onPressed: () {
-                  showWonderfulAlertDialog(
-                      context,
-                      AppLocalizations.of(context)!.caution,
-                      AppLocalizations.of(context)!.confirm_delete,
-                      titleTextStyle: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                          fontSize: 20.sp),
-                      removeDefaultButton: true,
-                      dialogButtons: [
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              ElevatedButton(
-                                  child: Text(
-                                    AppLocalizations.of(context)!.yes,
-                                  ),
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                    await widget.onTap();
-                                  }),
-                              ElevatedButton(
-                                child: Text(
-                                  AppLocalizations.of(context)!.no,
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ])
-                      ]);
-                  /*Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CandidatesScreen(
-                          estates: widget.estateOrder.candidatesEstates ?? []),
-                    ),
-                  );*/
-
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -223,27 +251,22 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
   }
 
   Widget buildEstateStatus() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text.rich(
-        TextSpan(
-          text: "حالة الطلب : ",
-            style: TextStyle(
-                color: Colors.black , fontSize: 16.sp),
-          children: [
-               TextSpan(text: widget.estateOrder.orderStatus! ,
-                 style: TextStyle(
-                     color: (widget.estateOrder.orderStatus ==
-                         AppLocalizations.of(context)!.pending)
-                         ? AppColors.yellowDarkColor
-                         : (widget.estateOrder.orderStatus ==
-                         AppLocalizations.of(context)!.rejected)
-                         ? Colors.red
-                         : Colors.green))
-          ]
-        ),
-
-
+    return Text.rich(
+      TextSpan(
+        text: "حالة الطلب : ",
+          style: TextStyle(
+              color: Colors.black , fontSize: 15.sp),
+        children: [
+             TextSpan(text: widget.estateOrder.orderStatus! ,
+               style: TextStyle(
+                   color: (widget.estateOrder.orderStatus ==
+                       AppLocalizations.of(context)!.pending)
+                       ? AppColors.yellowDarkColor
+                       : (widget.estateOrder.orderStatus ==
+                       AppLocalizations.of(context)!.rejected)
+                       ? Colors.red
+                       : Colors.green))
+        ]
       ),
     );
   }

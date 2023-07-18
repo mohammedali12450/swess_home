@@ -133,7 +133,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
         floatingActionButton: ElevatedButton(
           style: ElevatedButton.styleFrom(
             //minimumSize: Size(175.w, 50.h),
-            maximumSize: Size(170 .w, 50.h),
+            maximumSize: Size(125.w, 50.h),
             backgroundColor: AppColors.blue,
             alignment: Alignment.center,
             padding: EdgeInsets.all(15)
@@ -144,7 +144,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
               children: [
                 Image.asset(add_new_order,width: 25,height: 25,),
                 Text(
-                  AppLocalizations.of(context)!.create_estate_new_order,
+                  AppLocalizations.of(context)!.create_estate_order,
                   style: const TextStyle(fontSize: 12 , fontWeight:FontWeight.bold),
                 ),
               ],
