@@ -243,60 +243,66 @@ class HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            buildLocationContainer(context),
-            if (date == 7 || date == 16 || date == 21)
-              BlocListener<EstateBloc, EstateState>(
-                bloc: estateBloc,
-                listenWhen: (context, state) {
-                  return state is EstatesFetchComplete;
-                },
-                listener: (_, estateFetchState) async {
-                  if (estateFetchState is EstatesFetchComplete) {
-                    allEstates = List.from(
-                        estateFetchState.estateSearch.similarEstates)
-                      ..addAll(estateFetchState.estateSearch.identicalEstates);
-                    await RecentSearchesSharedPreferences.removeSearches();
-                    RecentSearchesSharedPreferences.setSearches(
-                        allEstates!.take(5).toList());
-                    estateSearchCubit.setState(
-                        await RecentSearchesSharedPreferences.getSearches());
-                  }
-                },
-                child: const SizedBox.shrink(),
+      body: Column(
+        children: [
+          buildLocationContainer(context),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  if (date == 7 || date == 16 || date == 21)
+                    BlocListener<EstateBloc, EstateState>(
+                      bloc: estateBloc,
+                      listenWhen: (context, state) {
+                        return state is EstatesFetchComplete;
+                      },
+                      listener: (_, estateFetchState) async {
+                        if (estateFetchState is EstatesFetchComplete) {
+                          allEstates = List.from(
+                              estateFetchState.estateSearch.similarEstates)
+                            ..addAll(estateFetchState.estateSearch.identicalEstates);
+                          await RecentSearchesSharedPreferences.removeSearches();
+                          RecentSearchesSharedPreferences.setSearches(
+                              allEstates!.take(5).toList());
+                          estateSearchCubit.setState(
+                              await RecentSearchesSharedPreferences.getSearches());
+                        }
+                      },
+                      child: const SizedBox.shrink(),
+                    ),
+                  BlocBuilder<ChannelCubit, dynamic>(
+                    bloc: estateSearchFilterCubit,
+                    builder: (_, estateSearchFilterState) {
+                      if (estateSearchFilterState == null) {
+                        return Container(
+                          alignment: Alignment.center,
+                          child: buildEmptyScreen(context),
+                        );
+                      }
+                      if (estateSearchFilterState.isNotEmpty) {
+                        getEstateSearchFilterCubitAtt();
+                      }
+                      return BlocBuilder<ChannelCubit, dynamic>(
+                          bloc: estateSearchCubit,
+                          builder: (_, estateSearchState) {
+                            return Center(
+                                child:
+                                // UserSharedPreferences.getAccessToken() == null ||
+                                estateSearchState.isEmpty
+                                    ? Container(
+                                  height: 0.5.sh,
+                                  alignment: Alignment.center,
+                                  child: buildEmptyScreen(context),
+                                )
+                                    : buildEstateList(context));
+                          });
+                    },
+                  ),
+                ],
               ),
-            BlocBuilder<ChannelCubit, dynamic>(
-              bloc: estateSearchFilterCubit,
-              builder: (_, estateSearchFilterState) {
-                if (estateSearchFilterState == null) {
-                  return Container(
-                    alignment: Alignment.center,
-                    child: buildEmptyScreen(context),
-                  );
-                }
-                if (estateSearchFilterState.isNotEmpty) {
-                  getEstateSearchFilterCubitAtt();
-                }
-                return BlocBuilder<ChannelCubit, dynamic>(
-                    bloc: estateSearchCubit,
-                    builder: (_, estateSearchState) {
-                      return Center(
-                          child:
-                              // UserSharedPreferences.getAccessToken() == null ||
-                                      estateSearchState.isEmpty
-                                  ? Container(
-                                      height: 0.5.sh,
-                                      alignment: Alignment.center,
-                                      child: buildEmptyScreen(context),
-                                    )
-                                  : buildEstateList(context));
-                    });
-              },
             ),
-          ],
-        ),
+          )
+        ],
       ),
       // floatingActionButton: Padding(
       //   padding: EdgeInsets.symmetric(vertical: 5.w),
