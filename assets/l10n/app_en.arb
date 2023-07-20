@@ -628,5 +628,12 @@
   "please_select_governorate":"please select governorate",
   "please_enter_your_first_name":"Please enter your first name",
   "please_enter_your_last_name":"Please enter your last name",
-  "success":"success"
+  "success":"success",
+  "new_offer":"New offer",
+  "reject_reasons":"Reject reasons",
+  "request_status":"Request status",
+  "delete_request":"Delete request",
+  "add_offer":"add offer",
+  "between":"between"
+
 }

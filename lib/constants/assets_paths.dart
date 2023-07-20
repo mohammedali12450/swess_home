@@ -39,3 +39,9 @@ const String orderPath = "assets/icons/order.svg";
 const String createEstatePath = "assets/icons/create_estate.svg";
 
 const String assetsImages = "assets/images";
+const String trashPath = "assets/icons/trash.svg";
+const String bellPath = "assets/icons/bell_icon.svg";
+const String drawerPath = "assets/icons/drawer_icon.svg";
+const String receiptPath = "assets/icons/receipt_icon.svg";
+
+const String material_symbols_searchPath = "assets/icons/material-symbols_search.svg";

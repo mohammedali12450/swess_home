@@ -626,5 +626,11 @@
   "please_select_governorate":"الرجاء تحديد المحافظة",
   "please_enter_your_first_name":"يرجى إدخال اسمك الأول",
   "please_enter_your_last_name":"الرجاء إدخال اسمك الأخير",
-  "success":"نجاح"
+  "success":"نجاح",
+  "new_offer":"عرض جديد",
+  "reject_reasons":"أسباب الرفض",
+  "request_status":"حالة الطلب",
+  "delete_request":"حذف الطلب",
+  "add_offer":"إضافة عرض",
+  "between":"بين"
 }
