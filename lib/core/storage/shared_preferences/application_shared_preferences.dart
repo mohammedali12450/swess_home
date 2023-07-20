@@ -15,7 +15,6 @@ class ApplicationSharedPreferences {
   static const String visitNumKey = "visit_num_Key";
   static const definitionTourFirstLunch = "definition-tour";
 
-
   static init() async {
     _preferences = await SharedPreferences.getInstance();
     // Initializing:
@@ -89,7 +88,7 @@ class ApplicationSharedPreferences {
   }
 
   static String getVersionAppState() {
-    return _preferences.getString(versionKey)!;
+    return _preferences.getInt(versionKey)!.toString();
   }
 
   static setWalkThroughPassState(bool isPassed) {
@@ -147,7 +146,7 @@ class ApplicationSharedPreferences {
 
   static Future<bool> isFirstLaunchForDefinitionTour() async {
     bool isFirstLaunch = _preferences.getBool(definitionTourFirstLunch) ?? true;
-    if(isFirstLaunch) {
+    if (isFirstLaunch) {
       _preferences.setBool(definitionTourFirstLunch, false);
     }
     return isFirstLaunch;
