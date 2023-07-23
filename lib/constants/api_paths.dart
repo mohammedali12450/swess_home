@@ -4,8 +4,8 @@ const String hostingerBaseUrl = "http://swesshomerealestate.com/";
 const String hostingerImagesBaseUrl = "http://swesshomerealestate.com/";
 const String hostingerTestUrl = "https://swessoffice.com/public/";
 const String hostingerTestImageUrl = "https://swessoffice.com/storage/";
-String baseUrl = hostingerTestUrl;
-String imagesBaseUrl = hostingerTestImageUrl;
+String baseUrl = proNetBaseUrl;
+String imagesBaseUrl = proNetImagesUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl";
 
 //new api

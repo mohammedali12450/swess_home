@@ -12,6 +12,7 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
+import 'package:swesshome/modules/presentation/screens/my_created_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen_nav_bar.dart';
 import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
@@ -369,7 +370,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
       //   return homeScreenState!.build(context);
       // }
       case 1:
-        return RecentEstateOrdersScreenNavBar();
+        return   CreatedEstatesScreen();// RecentEstateOrdersScreenNavBar();
       case 2:
         return SavedEstatesScreenNavBar();
       case 3:
