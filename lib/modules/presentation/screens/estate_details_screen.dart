@@ -307,7 +307,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   padding: kTinyAllPadding,
                   child: Row(
                     children: [
-                      (BlocProvider.of<UserLoginBloc>(context).user == null) ?
+                      (UserSharedPreferences.getAccessToken()  == null) ?
                       Padding(
                         padding: EdgeInsets.only(
                           right: (isArabic) ? 12.w : 0,

@@ -32,6 +32,12 @@ class UserAuthenticationProvider {
     return response;
   }
 
+  Future resendRegisterConfirmationLink(String phone) async {
+    NetworkHelper helper = NetworkHelper();
+    Response response = await helper.post(resendRegisterConfirmationLinkURL, {"authentication": phone});
+    return response;
+  }
+
   Future socialLogin(String provider, String token) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
@@ -152,8 +158,6 @@ class UserAuthenticationProvider {
   Future editUserData(String? token, Register user) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
-
-    print(user.toJsonEdit());
     try {
       response =
           await helper.post(userEditDataURL, user.toJsonEdit(), token: token);

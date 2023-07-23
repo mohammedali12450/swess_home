@@ -206,7 +206,7 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
 
                                   onTap: () {},
                                 ),
-                                (BlocProvider.of<UserLoginBloc>(context).user == null) ?
+                                (UserSharedPreferences.getAccessToken()  == null) ?
                                 Row(
                                   children: [
                                     Center(

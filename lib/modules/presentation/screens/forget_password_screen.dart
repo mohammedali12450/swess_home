@@ -162,7 +162,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>{
           if(forgetState.successMessage != null) {
             showWonderfulAlertDialog(
               context,
-              AppLocalizations.of(context)!.success,
+              " ",
               forgetState.successMessage!,
               defaultButtonContent: AppLocalizations.of(context)!.ok,
             );
@@ -286,14 +286,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>{
                     if (!await signInFieldsValidation()) {
                       return;
                     }
-
+                    forgetPasswordBloc.add(
+                      ForgetPasswordStarted(
+                        mobile: "+${phoneNumber!.countryCode}${phoneNumber!.nationalNumber}",
+                      ),
+                    );
                     if (_remainingSeconds > 0) {}
                     else {
-                      forgetPasswordBloc.add(
-                        ForgetPasswordStarted(
-                          mobile: "+${phoneNumber!.countryCode}${phoneNumber!.nationalNumber}",
-                        ),
-                      );
                       _isTimerActive ? null : await _savePreferences();
                       setState(() {
                         _remainingSeconds = 900;

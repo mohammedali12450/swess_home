@@ -31,6 +31,7 @@ import '../widgets/choice_container.dart';
 import '../widgets/estate_type.dart';
 import '../widgets/price_domain.dart';
 import '../widgets/res_text.dart';
+import '../widgets/will-pop-scope.dart';
 import 'search_location_screen.dart';
 
 class CreateOrderScreen extends StatefulWidget {
@@ -93,7 +94,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           await buildSignInRequiredDialog();
         }
       },
-      child: SafeArea(
+      child: BackHomeScreen(child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
             iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
@@ -217,7 +218,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             ),
           ),
         ),
-      ),
+      ),),
     );
   }
 

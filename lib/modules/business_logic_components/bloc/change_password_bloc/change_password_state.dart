@@ -13,4 +13,7 @@ class ChangePasswordError extends ChangePasswordState {
 
 class ChangePasswordProgress extends ChangePasswordState {}
 
-class ChangePasswordComplete extends ChangePasswordState {}
+class ChangePasswordComplete extends ChangePasswordState {
+  final String? successMessage;
+  ChangePasswordComplete({this.successMessage});
+}

@@ -86,10 +86,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 }
               }
               if (changeState is ChangePasswordComplete) {
-                showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.done,
-                    AppLocalizations.of(context)!.password_change_successfully);
+                if(changeState.successMessage != null) {
+                  showWonderfulAlertDialog(
+                      context,
+                      " ",
+                      changeState.successMessage!);
+                }
               }
             },
           ),
@@ -259,6 +261,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               maximumSize: Size(400.w, 50.h),
             ),
             onPressed: () async {
+              if (!await getFieldsValidation()) {
+                return;
+              }
               changePasswordBloc.add(
                 ChangePasswordStarted(
                   oldPassword: oldPasswordController.text,
@@ -298,5 +303,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
       ],
     );
+  }
+
+  Future<bool> getFieldsValidation() async {
+    bool isValidationSuccess = true;
+
+    if (passwordValidator1(oldPasswordController.text, context) != null) {
+      oldPasswordError.setState(passwordValidator1(oldPasswordController.text, context));
+      return false;
+    }
+    if (passwordValidator1(newPasswordController.text, context) != null) {
+      newPasswordError.setState(passwordValidator1(newPasswordController.text, context));
+      return false;
+    }
+
+    return isValidationSuccess;
   }
 }

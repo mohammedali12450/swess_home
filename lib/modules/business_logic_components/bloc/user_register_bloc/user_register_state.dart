@@ -11,8 +11,9 @@ abstract class UserRegisterState{}
 class UserRegisterNone extends UserRegisterState{}
 class UserRegisterProgress extends UserRegisterState{}
 class UserRegisterComplete extends UserRegisterState{
-  User user ;
-  UserRegisterComplete({required this.user});
+  // User user ;
+  final String? successsMessage;
+  UserRegisterComplete({required this.successsMessage});
 }
 class UserRegisterError extends UserRegisterState{
   final String? errorMessage ;

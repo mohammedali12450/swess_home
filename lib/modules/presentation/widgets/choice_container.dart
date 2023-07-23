@@ -44,8 +44,8 @@ Widget buildChoiceContainer({
                       decoration: BoxDecoration(
                         color: isDark
                             ? isChoice
-                                ? AppColors.lightblue
-                                : AppColors.white
+                                ? AppColors.white
+                                : AppColors.lightblue
                             : !isChoice
                                 ? AppColors.primaryColor
                                 : AppColors.white,
@@ -58,8 +58,8 @@ Widget buildChoiceContainer({
                             Theme.of(context).textTheme.headline5!.copyWith(
                                 color: isDark
                                     ? isChoice
-                                        ? AppColors.white
-                                        : AppColors.secondaryDark
+                                        ? AppColors.secondaryDark
+                                        : AppColors.white
                                     : !isChoice
                                         ? AppColors.white
                                         : AppColors.secondaryDark,
@@ -78,8 +78,8 @@ Widget buildChoiceContainer({
                       decoration: BoxDecoration(
                         color: isDark
                             ? !isChoice
-                                ? AppColors.lightblue
-                                : AppColors.white
+                                ? AppColors.white
+                                : AppColors.lightblue
                             : isChoice
                                 ? AppColors.primaryColor
                                 : AppColors.white,
@@ -92,8 +92,8 @@ Widget buildChoiceContainer({
                             Theme.of(context).textTheme.headline5!.copyWith(
                                 color: isDark
                                     ? !isChoice
-                                        ? AppColors.white
-                                        : AppColors.secondaryDark
+                                        ? AppColors.secondaryDark
+                                        : AppColors.white
                                     : isChoice
                                         ? AppColors.white
                                         : AppColors.secondaryDark,
