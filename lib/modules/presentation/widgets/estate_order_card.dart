@@ -8,11 +8,8 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
-import 'package:swesshome/modules/presentation/screens/candidates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
-import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../../constants/assets_paths.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
 import '../../data/providers/locale_provider.dart';
 import '../../data/repositories/estate_order_repository.dart';
@@ -112,7 +109,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                     ),
                     kHe8,
                     Text(
-                      "${AppLocalizations.of(context)!.price_domain}: ${AppLocalizations.of(context)!.between} ${widget.estateOrder.priceMin}  ,${widget.estateOrder.priceMax} ${AppLocalizations.of(context)!.syrian_currency} ",
+                      "${AppLocalizations.of(context)!.price_domain}: ${AppLocalizations.of(context)!.between} ${widget.estateOrder.priceMin ?? AppLocalizations.of(context)!.undefined}  , ${widget.estateOrder.priceMax ?? AppLocalizations.of(context)!.undefined} ${AppLocalizations.of(context)!.syrian_currency} ",
                       style: cairoTextStyle,
                     ),
                     kHe8,
@@ -126,54 +123,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                       ),
                     ),
                     kHe8,
-                    Row(
-                      children: [
-                        Text(
-                          "${AppLocalizations.of(context)!.request_status} : ",
-                          style: cairoTextStyle.copyWith(
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            " ${widget.estateOrder.orderStatus}",
-                            overflow: TextOverflow.ellipsis,
-                            style: cairoTextStyle.copyWith(
-                              fontSize: 12.sp,
-                              color: widget.estateOrder.orderStatus ==
-                                      AppLocalizations.of(context)!.rejected
-                                  ? Color(0xffFF0000)
-                                  : widget.estateOrder.orderStatus ==
-                                          AppLocalizations.of(context)!.accepted
-                                      ? Color(0xff00720B)
-                                      : Colors.black,
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        Column(
-                          children: [
-                            if (widget.estateOrder.orderStatus ==
-                                AppLocalizations.of(context)!.in_progress) ...[
-                              // DeleteRequestWidget(),
-                              DeleteRequestWidget(onTapYes: widget.onTap),
-                            ],
-                            if (widget.estateOrder.orderStatus ==
-                                AppLocalizations.of(context)!.rejected) ...[
-                              RejectReasonsWidget(),
-                            ],
-                            if (widget.estateOrder.orderStatus ==
-                                AppLocalizations.of(context)!.accepted) ...[
-                              Text(
-                                widget.estateOrder.orderStatus!,
-                                style: cairoTextStyle.copyWith(
-                                    color: Colors.green),
-                              ),
-                            ]
-                          ],
-                        )
-                      ],
-                    )
+                    buildEstateStatus()
                   ],
                 ),
               ),
@@ -183,24 +133,69 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
   }
 
   Widget buildEstateStatus() {
-    return Text.rich(
-      TextSpan(
-        text: "حالة الطلب : ",
-          style: TextStyle(
-              color: Colors.black , fontSize: 15.sp),
-        children: [
-             TextSpan(text: widget.estateOrder.orderStatus! ,
-               style: TextStyle(
-                   color: (widget.estateOrder.orderStatus ==
-                       AppLocalizations.of(context)!.pending)
-                       ? AppColors.yellowDarkColor
-                       : (widget.estateOrder.orderStatus ==
-                       AppLocalizations.of(context)!.rejected)
-                       ? Colors.red
-                       : Colors.green))
-        ]
-      ),
+    return Row(
+      children: [
+        Text(
+          "${AppLocalizations.of(context)!.request_status} : ",
+          style: cairoTextStyle.copyWith(
+            fontSize: 12.sp,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            " ${widget.estateOrder.orderStatus}",
+            overflow: TextOverflow.ellipsis,
+            style: cairoTextStyle.copyWith(
+              fontSize: 12.sp,
+              color: widget.estateOrder.orderStatus ==
+                      AppLocalizations.of(context)!.rejected
+                  ? Color(0xffFF0000)
+                  : widget.estateOrder.orderStatus ==
+                          AppLocalizations.of(context)!.accepted
+                      ? Color(0xff00720B)
+                      : Colors.black,
+            ),
+          ),
+        ),
+        Column(
+          children: [
+            if (widget.estateOrder.orderStatus ==
+                AppLocalizations.of(context)!.in_progress) ...[
+              // DeleteRequestWidget(),
+              DeleteRequestWidget(onTapYes: widget.onTap),
+            ],
+            if (widget.estateOrder.orderStatus ==
+                AppLocalizations.of(context)!.rejected) ...[
+              RejectReasonsWidget(),
+            ],
+            if (widget.estateOrder.orderStatus ==
+                AppLocalizations.of(context)!.accepted) ...[
+              Text(
+                widget.estateOrder.orderStatus!,
+                style: cairoTextStyle.copyWith(color: Colors.green),
+              ),
+            ]
+          ],
+        )
+      ],
     );
+    /*return Text.rich(
+      TextSpan(
+          text: AppLocalizations.of(context)!.request_status,
+          style: TextStyle(color: Colors.black, fontSize: 15.sp),
+          children: [
+            TextSpan(
+                text: widget.estateOrder.orderStatus!,
+                style: TextStyle(
+                    color: (widget.estateOrder.orderStatus ==
+                            AppLocalizations.of(context)!.pending)
+                        ? AppColors.yellowDarkColor
+                        : (widget.estateOrder.orderStatus ==
+                                AppLocalizations.of(context)!.rejected)
+                            ? Colors.red
+                            : Colors.green))
+          ]),
+    );*/
   }
 }
 
@@ -230,7 +225,7 @@ class DeleteRequestWidget extends StatelessWidget {
                     ),
                     onPressed: () async {
                       Navigator.pop(context);
-                      await onTapYes;
+                      onTapYes;
                     }),
                 ElevatedButton(
                   child: Text(

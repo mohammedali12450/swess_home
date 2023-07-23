@@ -14,7 +14,6 @@ import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_state.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/repositories/estate_order_repository.dart';
@@ -33,7 +32,6 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_event.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_state.dart';
-import '../../data/models/user.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../data/providers/theme_provider.dart';
@@ -44,13 +42,16 @@ class RecentEstateOrdersScreenNavBar extends StatefulWidget {
 
   final String? estateId;
 
-  const RecentEstateOrdersScreenNavBar({Key? key, this.estateId}) : super(key: key);
+  const RecentEstateOrdersScreenNavBar({Key? key, this.estateId})
+      : super(key: key);
 
   @override
-  _RecentEstateOrdersScreenNavBarState createState() => _RecentEstateOrdersScreenNavBarState();
+  _RecentEstateOrdersScreenNavBarState createState() =>
+      _RecentEstateOrdersScreenNavBarState();
 }
 
-class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScreenNavBar>
+class _RecentEstateOrdersScreenNavBarState
+    extends State<RecentEstateOrdersScreenNavBar>
     with TickerProviderStateMixin {
   late RecentEstatesOrdersBloc _recentEstatesOrdersBloc;
   late ItemScrollController scrollController;
@@ -264,15 +265,16 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                             documentOutlineIconPath,
                             width: 0.2.sw,
                             height: 0.2.sw,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                           kHe24,
                           Text(
                             AppLocalizations.of(context)!
                                 .have_not_recent_orders,
-                            style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 16),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline4!
+                                .copyWith(fontSize: 16),
                             textAlign: TextAlign.center,
                           ),
                           kHe24,
@@ -294,8 +296,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                        const CreateOrderScreen()));
-
+                                            const CreateOrderScreen()));
                               },
                             ),
                           ),
@@ -336,16 +337,17 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                     child: BlocListener<DeleteEstatesBloc, DeleteEstatesState>(
                       listener: (_, deleteEstateOrderState) async {
                         if (deleteEstateOrderState
-                        is DeleteEstatesFetchComplete) {
+                            is DeleteEstatesFetchComplete) {
                           // await _onRefresh();
                           if (UserSharedPreferences.getAccessToken() != null) {
                             _recentEstatesOrdersBloc.add(
                               RecentEstatesOrdersFetchStarted(
-                                  token: UserSharedPreferences.getAccessToken()!),
+                                  token:
+                                      UserSharedPreferences.getAccessToken()!),
                             );
                           }
                         } else if (deleteEstateOrderState
-                        is DeleteEstatesFetchError) {}
+                            is DeleteEstatesFetchError) {}
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(top: 20),
@@ -450,42 +452,42 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
 
   Widget buildSignInRequired(context) {
     return SizedBox(
-        height: 20,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: 60,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(AppLocalizations.of(context)!.this_features_require_login),
-              const SizedBox(height: 30),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(150.w, 50.h),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.sign_in,
-                  ),
-                  onPressed: () async {
-                    await Navigator.pushNamed(context, AuthenticationScreen.id).then((value) {
-                    });
-                    Navigator.pop(context);
-                    // _onRefresh();
-                    if (UserSharedPreferences.getAccessToken() != null) {
-                      _recentEstatesOrdersBloc.add(
-                        RecentEstatesOrdersFetchStarted(
-                            token: UserSharedPreferences.getAccessToken()!),
-                      );
-                    }
-                  },
+      height: 20,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 60,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(AppLocalizations.of(context)!.this_features_require_login),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(150.w, 50.h),
                 ),
-              )
-            ],
-          ),
+                child: Text(
+                  AppLocalizations.of(context)!.sign_in,
+                ),
+                onPressed: () async {
+                  await Navigator.pushNamed(context, AuthenticationScreen.id)
+                      .then((value) {});
+                  Navigator.pop(context);
+                  // _onRefresh();
+                  if (UserSharedPreferences.getAccessToken() != null) {
+                    _recentEstatesOrdersBloc.add(
+                      RecentEstatesOrdersFetchStarted(
+                          token: UserSharedPreferences.getAccessToken()!),
+                    );
+                  }
+                },
+              ),
+            )
+          ],
         ),
-      ) ;
+      ),
+    );
   }
 }
 
