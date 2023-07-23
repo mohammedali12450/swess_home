@@ -25,6 +25,7 @@ import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../widgets/estate_horizon_card.dart';
 import '../widgets/res_text.dart';
+import '../widgets/will-pop-scope.dart';
 
 class SavedEstatesScreenNavBar extends StatefulWidget {
   static const String id = "SavedEstatesScreen";
@@ -57,7 +58,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
   Widget build(BuildContext context) {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return SafeArea(
+    return BackHomeScreen(child: SafeArea(
       child: Scaffold(
         drawer: SizedBox(
           width: getScreenWidth(context) * (75 / 100),
@@ -82,7 +83,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
                         left: isArabic ? 12.w : 0, right: isArabic ? 0 : 12.w),
                     child: IconBadge(
                       icon: Icon(
-                        Icons.notifications_outlined,
+                          Icons.notifications_outlined,
                           color: isDark ? Colors.white : AppColors.black
                       ),
                       itemCount: notificationsCount,
@@ -156,19 +157,20 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
                   }
                 },
                 builder: (BuildContext context, savedEstatesState) {
-                  if (savedEstatesState is SavedEstatesFetchNone) {
-                    return FetchResult(
-                        content: AppLocalizations.of(context)!
-                            .have_not_saved_estates);
-                  }
+                  // if (savedEstatesState is SavedEstatesFetchNone) {
+                  //   return FetchResult(
+                  //       content: AppLocalizations.of(context)!
+                  //           .have_not_saved_estates);
+                  // }
 
                   if (savedEstatesState is SavedEstatesFetchProgress) {
                     return const PropertyShimmer();
                   }
                   if (savedEstatesState is! SavedEstatesFetchComplete) {
-                    return FetchResult(
-                        content: AppLocalizations.of(context)!
-                            .error_happened_when_executing_operation);
+                    return buildSignInRequired(context);
+                    // return FetchResult(
+                    //     content: AppLocalizations.of(context)!
+                    //         .error_happened_when_executing_operation);
                   }
 
                   estates = savedEstatesState.savedEstates;
@@ -256,7 +258,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
           ),
         ),
       ),
-    );
+    ),);
   }
 
   Widget buildSavedList() {
@@ -271,5 +273,44 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
         );
       },
     );
+  }
+  Widget buildSignInRequired(context) {
+    return SizedBox(
+      height: 20,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 60,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(AppLocalizations.of(context)!.this_features_require_login),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(150.w, 50.h),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.sign_in,
+                ),
+                onPressed: () async {
+                  await Navigator.pushNamed(context, AuthenticationScreen.id).then((value) {
+                  });
+                  Navigator.pop(context);
+                  // _onRefresh();
+                  if (UserSharedPreferences.getAccessToken() != null) {
+                    _savedEstatesBloc.add(
+                      SavedEstatesFetchStarted(
+                          token: UserSharedPreferences.getAccessToken()!),
+                    );
+                  }
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    ) ;
   }
 }

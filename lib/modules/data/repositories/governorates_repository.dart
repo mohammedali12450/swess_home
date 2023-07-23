@@ -5,6 +5,7 @@ import '../models/governorates.dart';
 import '../providers/governorate_provider.dart';
 
 class GovernoratesRepository {
+
   final GovernoratesProvider _governoratesProvider = GovernoratesProvider();
 
   Future<List<Governorate>> getGovernorates() async {

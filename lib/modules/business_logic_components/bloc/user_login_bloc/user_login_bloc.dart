@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
@@ -22,12 +21,12 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
     on<UserLoginStarted>((event, emit) async {
       emit(UserLoginProgress());
       try {
-        user = await userAuthenticationRepository.login(
+        dynamic message = await userAuthenticationRepository.login(
           event.authentication,
           event.password,
         );
 
-        emit(UserLoginComplete());
+        emit(UserLoginComplete(successMessage: message));
       } on ConnectionException catch (e) {
         emit(
           UserLoginError(errorMessage: e.errorMessage, isConnectionError: true),
@@ -64,6 +63,7 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
       }
     });
   }
+
 
   Future<void> loginGoogle() async {
     final googleSignInService = locator.get<GoogleSignInService>();

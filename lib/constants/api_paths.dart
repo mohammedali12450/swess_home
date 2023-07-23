@@ -76,6 +76,7 @@ const getLocationURL = "locations/sub-locations";
 const multiLoginURL = "customer/check-login-code";
 const getEstateDetailsURL = "estate/details/";
 const downloadURL = "download-url";
+const resendRegisterConfirmationLinkURL = "customer/resend-register-confirmation-link";
 
 /// added new
 const sendDirectMessageURL = "messages/store";
