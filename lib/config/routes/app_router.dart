@@ -126,9 +126,9 @@ class AppRouter {
                   // Check internet connection :
                   await checkInternetConnection(context);
                   // Check if there is new version
-                  await isUpdateApp(
+                  /*await isUpdateApp(
                       ApplicationSharedPreferences.getVersionAppState(),
-                      context);
+                      context);*/
                   if (needUpdate) {
                     return const UpdateVersionScreen();
                   }

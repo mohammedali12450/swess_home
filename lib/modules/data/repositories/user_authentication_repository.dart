@@ -97,7 +97,6 @@ class UserAuthenticationRepository {
     Response response;
     try {
       response = await userAuthenticationProvider.resendRegisterConfirmationLink(phone);
-      print(jsonDecode(response.toString())["message"]);
     } catch (e) {
       rethrow;
     }
@@ -273,7 +272,6 @@ class UserAuthenticationRepository {
     try {
       response = await userAuthenticationProvider.sendVerificationLoginCode(
           phone, code);
-      print(response);
     } catch (e) {
       rethrow;
     }
