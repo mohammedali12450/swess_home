@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_state.dart';
 import 'package:swesshome/modules/data/models/register.dart';
+import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
@@ -164,7 +165,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               //     );
               //   },
               // ),
-              if (widget.governorates != null)
+              widget.governorates != null ?
                 Column(
                   children: [
                     kHe24,
@@ -196,7 +197,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             selectedGovernorateId = index + 1;
                             widget.user.governorate =
                                 widget.governorates!.elementAt(index).name;
-                            print(selectedGovernorateId);
                             isEditCubit.setState(true);
                           },
                           validator: (value) => value == null
@@ -208,7 +208,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       },
                     ),
                   ],
-                ),
+                ) :
+              SizedBox(),
               // kHe24,
               // ResText(
               //   AppLocalizations.of(context)!.date_of_birth + " :",
@@ -294,7 +295,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       token: token,
                                     ),
                                   );
-                                  FocusScope.of(context).unfocus();
+                                  //FocusScope.of(context).unfocus();
+                                  if (sendState is UserEditDataComplete)
+                                    {
+                                      Navigator.push(context,MaterialPageRoute(builder: (_)=> ProfileScreen()));
+                                    }
                                 },
                               );
                             },

@@ -76,6 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     _onRefresh();
     governoratesBloc = BlocProvider.of<GovernoratesBloc>(context);
+    BlocProvider.of<GovernoratesBloc>(context).add(GovernoratesFetchStarted());
   }
 
   _onRefresh() {
@@ -200,7 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     kHe4,
 
-                    VersionWidget(),
+                    const VersionWidget(),
                     // kHe20,
                     kHe36,
                   ],
@@ -274,7 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   kHe16,
-                  VersionWidget(),
+                  const VersionWidget(),
                   kHe16,
                 ],
               ),
@@ -514,7 +515,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return Align(
                       alignment: Alignment.topRight,
                       child: IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.edit_outlined,
                           color: AppColors.white,
                         ),
@@ -524,7 +525,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             MaterialPageRoute(
                                 builder: (_) => EditProfileScreen(
                                       user: user!,
-                                      governorates: governorates,
+                                      governorates: governoratesBloc.governorates,
                                     )),
                           );
                           if (value) {
