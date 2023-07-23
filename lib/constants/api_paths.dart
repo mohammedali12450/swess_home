@@ -1,9 +1,5 @@
 const String proNetBaseUrl = "https://api-dev.swesshome.com/api/v2/";
 const String proNetImagesUrl = "https://backend-v2.swesshome.com/storage/";
-const String hostingerBaseUrl = "http://swesshomerealestate.com/";
-const String hostingerImagesBaseUrl = "http://swesshomerealestate.com/";
-const String hostingerTestUrl = "https://swessoffice.com/public/";
-const String hostingerTestImageUrl = "https://swessoffice.com/storage/";
 String baseUrl = proNetBaseUrl;
 String imagesBaseUrl = proNetImagesUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl";
