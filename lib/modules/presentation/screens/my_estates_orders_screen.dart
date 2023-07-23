@@ -235,7 +235,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                       }
                     }
                     if (find) {
-                      SchedulerBinding.instance!.addPostFrameCallback((_) {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
                         jumpToOrder(orders);
                       });
                     } else {

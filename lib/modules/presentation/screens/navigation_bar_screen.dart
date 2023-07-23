@@ -370,11 +370,11 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
       //   return homeScreenState!.build(context);
       // }
       case 1:
-        return   CreatedEstatesScreen();// RecentEstateOrdersScreenNavBar();
+        return CreatedEstatesScreen();// RecentEstateOrdersScreenNavBar();
       case 2:
         return SavedEstatesScreenNavBar();
       case 3:
-        return const CreateOrderScreen();
+        return RecentEstateOrdersScreenNavBar();    //const CreateOrderScreen();
       case 4:
         return ProfileScreen();
       default:

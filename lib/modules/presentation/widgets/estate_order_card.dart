@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
@@ -182,18 +183,22 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
   }
 
   Widget buildEstateStatus() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        widget.estateOrder.orderStatus!,
-        style: TextStyle(
-            color: (widget.estateOrder.orderStatus ==
-                    AppLocalizations.of(context)!.pending)
-                ? AppColors.yellowDarkColor
-                : (widget.estateOrder.orderStatus ==
-                        AppLocalizations.of(context)!.rejected)
-                    ? Colors.red
-                    : Colors.green),
+    return Text.rich(
+      TextSpan(
+        text: "حالة الطلب : ",
+          style: TextStyle(
+              color: Colors.black , fontSize: 15.sp),
+        children: [
+             TextSpan(text: widget.estateOrder.orderStatus! ,
+               style: TextStyle(
+                   color: (widget.estateOrder.orderStatus ==
+                       AppLocalizations.of(context)!.pending)
+                       ? AppColors.yellowDarkColor
+                       : (widget.estateOrder.orderStatus ==
+                       AppLocalizations.of(context)!.rejected)
+                       ? Colors.red
+                       : Colors.green))
+        ]
       ),
     );
   }

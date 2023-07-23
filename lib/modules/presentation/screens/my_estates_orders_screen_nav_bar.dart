@@ -313,7 +313,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                       }
                     }
                     if (find) {
-                      SchedulerBinding.instance!.addPostFrameCallback((_) {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
                         jumpToOrder(orders);
                       });
                     } else {
