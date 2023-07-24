@@ -33,7 +33,9 @@ class ContactsError extends ContactsState {
 @immutable
 class ContactsData extends ContactsState {
   final List<Contact> contacts;
-  const ContactsData({
+  final List<bool> isRegistered;
+  const ContactsData( {
+    required this.isRegistered,
     required this.contacts,
   });
 }

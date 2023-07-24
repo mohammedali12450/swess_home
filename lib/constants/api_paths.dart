@@ -7,7 +7,7 @@ const String hostingerTestImageUrl = "https://swessoffice.com/storage/";
 String baseUrl = hostingerTestUrl;
 String imagesBaseUrl = hostingerTestImageUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl";
-
+const String checkExistingcustomers="https://api-dev.swesshome.com/api/v2/customer/check-existing-customers";
 //new api
 
 const userRegisterURL = "customer/register";
