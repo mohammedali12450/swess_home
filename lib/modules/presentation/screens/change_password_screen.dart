@@ -89,7 +89,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         changeState.errorMessage!);
                   }
                 }
-              }
               if (changeState is ChangePasswordComplete) {
                 Navigator.pushNamed(context, ProfileScreen.id);
 
@@ -134,7 +133,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           child: Image.asset(swessHomeIconPath),
                           backgroundColor: Colors.transparent,
                           foregroundColor: Colors.transparent,
-                        ),
+                        ),),
                         10.verticalSpace,
                         Padding(
                           padding: const EdgeInsets.only(left: 15, right: 15),
