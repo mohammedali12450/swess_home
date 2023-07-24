@@ -70,7 +70,8 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                           onReorder: _onReorder,
                           children: images
                               .map(
-                                (image) => _buildImageCard(image, images.indexOf(image) + 1),
+                                (image) => _buildImageCard(
+                                    image, images.indexOf(image) + 1),
                               )
                               .toList(),
                         ),
@@ -112,7 +113,8 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                 child: ResText(
                   index.toString(),
                   textStyle: Theme.of(context).textTheme.headline1!.copyWith(
-                      color: AppColors.white.withOpacity(0.64), fontWeight: FontWeight.w600),
+                      color: AppColors.white.withOpacity(0.64),
+                      fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -141,7 +143,8 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                       await showWonderfulAlertDialog(
                           context,
                           AppLocalizations.of(context)!.confirmation,
-                          AppLocalizations.of(context)!.delete_image_confirmation,
+                          AppLocalizations.of(context)!
+                              .delete_image_confirmation,
                           removeDefaultButton: true,
                           dialogButtons: [
                             ElevatedButton(
@@ -161,7 +164,8 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                               onPressed: () {
                                 widget.images!.removeAt(index - 1);
                                 widget.onSelect(widget.images!);
-                                imagesCardsCubit.setState(List.from(widget.images!));
+                                imagesCardsCubit
+                                    .setState(List.from(widget.images!));
                                 Navigator.pop(context);
                               },
                             ),
@@ -205,7 +209,8 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
             onTap: () {
               if (isImagesLoadingCubit.state == true) return;
               if (widget.onStartPicking != null && !widget.onStartPicking!()) {
-                Fluttertoast.showToast(msg: AppLocalizations.of(context)!.wait_compress_message);
+                Fluttertoast.showToast(
+                    msg: AppLocalizations.of(context)!.wait_compress_message);
                 return;
               }
               selectImages(context);
@@ -226,8 +231,10 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
                             Text(
                               AppLocalizations.of(context)!.compressing_images,
                               textAlign: TextAlign.center,
-                              style:
-                                  Theme.of(context).textTheme.subtitle2!.copyWith(fontSize: 13.sp),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle2!
+                                  .copyWith(fontSize: 13.sp),
                             ),
                           ],
                         )
@@ -249,17 +256,15 @@ class _VerticalImagesViewerState extends State<VerticalImagesViewer> {
     // Multiple images state :
     List<XFile>? pickedImages = await picker.pickMultiImage();
     isImagesLoadingCubit.setState(true);
-    if (pickedImages != null) {
-      widget.images ??= [];
-      for (XFile file in pickedImages) {
-        File temp = await compressFile(File(file.path));
-        widget.images!.add(temp);
-        // selectedImages.add(File(file.path));
-      }
-      imagesCardsCubit.setState(
-        List.from(widget.images!),
-      );
+    widget.images ??= [];
+    for (XFile file in pickedImages) {
+      File temp = await compressFile(File(file.path));
+      widget.images!.add(temp);
+      // selectedImages.add(File(file.path));
     }
+    imagesCardsCubit.setState(
+      List.from(widget.images!),
+    );
     isImagesLoadingCubit.setState(false);
     widget.onSelect(widget.images);
   }

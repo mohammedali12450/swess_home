@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
-import 'package:swesshome/core/exceptions/unknown_exception.dart';
 import 'package:swesshome/modules/data/providers/contact_us_provider.dart';
 
 class ContactUsRepository {
@@ -13,7 +12,7 @@ class ContactUsRepository {
     Response response;
     try {
       response =
-      await contactUsProvider.sendDirectMessage(email, subject, message);
+          await contactUsProvider.sendDirectMessage(email, subject, message);
     } catch (_) {
       rethrow;
     }

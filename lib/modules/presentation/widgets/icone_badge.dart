@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class IconBadge extends StatelessWidget {
@@ -30,23 +29,23 @@ class IconBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return itemCount == 0 && hideZero
         ? GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                icon,
-              ],
+            onTap: onTap,
+            child: Container(
+              width: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      icon,
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    )
+          )
         : GestureDetector(
             onTap: onTap,
             child: Container(

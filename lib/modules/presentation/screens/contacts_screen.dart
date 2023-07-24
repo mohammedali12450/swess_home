@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:contacts_service/contacts_service.dart';
@@ -94,7 +93,7 @@ class ContactWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: (){
+      onTap: () {
         sendSms("hello%20world!");
       },
       contentPadding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -122,36 +121,39 @@ class ContactWidget extends StatelessWidget {
         textDirection: TextDirection.ltr,
         style: TextStyle(
           color: isDark ? AppColors.lightblue : Colors.black.withOpacity(0.75),
-
           fontSize: 12.sp,
         ),
       ),
-      trailing: ContactButton(isRegistered: isRegistered,
-          sendSms: (){sendSms(AppLocalizations.of(context)!.sms_download+"\nAndroid: https://swesshome.com/app/?s=an\niOS:https://swesshome.com/app/?s=ap");}),
+      trailing: ContactButton(
+          isRegistered: isRegistered,
+          sendSms: () {
+            sendSms(AppLocalizations.of(context)!.sms_download +
+                "\nAndroid: https://swesshome.com/app/?s=an\niOS:https://swesshome.com/app/?s=ap");
+          }),
     );
   }
 
   void sendSms(String smsBody) async {
-      final String phone = (contact.phones?.isNotEmpty ?? false)
-          ? (contact.phones?.first.value ?? "")
-          : "";
+    final String phone = (contact.phones?.isNotEmpty ?? false)
+        ? (contact.phones?.first.value ?? "")
+        : "";
 
-      String url = "";
+    String url = "";
 
-      if (Platform.isAndroid) {
-        url = 'sms:+$phone?body=$smsBody';
-      }
-      if (Platform.isIOS) {
-        url = "sms:$phone?body=$smsBody";
-      }
-
-      final Uri uri = Uri.parse(url);
-
-      if (!(await canLaunchUrl(uri))) {
-        return;
-      }
-      await launchUrl(uri);
+    if (Platform.isAndroid) {
+      url = 'sms:+$phone?body=$smsBody';
     }
+    if (Platform.isIOS) {
+      url = "sms:$phone?body=$smsBody";
+    }
+
+    final Uri uri = Uri.parse(url);
+
+    if (!(await canLaunchUrl(uri))) {
+      return;
+    }
+    await launchUrl(uri);
+  }
 }
 
 class ContactButton extends StatelessWidget {
@@ -168,13 +170,15 @@ class ContactButton extends StatelessWidget {
     return SizedBox(
       width: 150,
       child: ElevatedButton(
-
-        onPressed: isRegistered ? null : () {sendSms();},
+        onPressed: isRegistered
+            ? null
+            : () {
+                sendSms();
+              },
         child: Text(isRegistered
             ? AppLocalizations.of(context)!.registered
             : AppLocalizations.of(context)!.send_invitation),
       ),
     );
   }
-
 }

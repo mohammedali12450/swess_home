@@ -1,4 +1,3 @@
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,10 +7,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:swesshome/main.dart';
 import 'package:swesshome/modules/presentation/screens/rating_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/home_estate_card.dart';
-import 'package:swesshome/utils/helpers/app_dialog.dart';
 import 'package:swesshome/utils/helpers/automatic_show_review.dart';
 
 import '../../../constants/assets_paths.dart';
@@ -43,10 +40,8 @@ import '../widgets/icone_badge.dart';
 import '../widgets/wonderful_alert_dialog.dart';
 import 'authentication_screen.dart';
 import 'estates_screen.dart';
-import 'filter_search_screen.dart';
 import 'location_search_type.dart';
 import 'notifications_screen.dart';
-import 'office_search_screen.dart';
 
 List<Estate> estateSearchList = [];
 ChannelCubit estateSearchCubit = ChannelCubit(estateSearchList);
@@ -181,7 +176,8 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.withOpacity(0.1),
       appBar: AppBar(
-        iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
+        iconTheme:
+            IconThemeData(color: isDark ? Colors.white : AppColors.black),
         centerTitle: true,
         backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
         title: Text(
@@ -196,10 +192,8 @@ class HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.only(
                       left: isArabic ? 12.w : 0, right: isArabic ? 0 : 12.w),
                   child: IconBadge(
-                    icon: Icon(
-                      Icons.notifications_outlined,
-                        color: isDark ? Colors.white : AppColors.black
-                    ),
+                    icon: Icon(Icons.notifications_outlined,
+                        color: isDark ? Colors.white : AppColors.black),
                     itemCount: notificationsCount,
                     right: 0,
                     top: 5.h,
@@ -260,12 +254,15 @@ class HomeScreenState extends State<HomeScreen> {
                         if (estateFetchState is EstatesFetchComplete) {
                           allEstates = List.from(
                               estateFetchState.estateSearch.similarEstates)
-                            ..addAll(estateFetchState.estateSearch.identicalEstates);
-                          await RecentSearchesSharedPreferences.removeSearches();
+                            ..addAll(
+                                estateFetchState.estateSearch.identicalEstates);
+                          await RecentSearchesSharedPreferences
+                              .removeSearches();
                           RecentSearchesSharedPreferences.setSearches(
                               allEstates!.take(5).toList());
                           estateSearchCubit.setState(
-                              await RecentSearchesSharedPreferences.getSearches());
+                              await RecentSearchesSharedPreferences
+                                  .getSearches());
                         }
                       },
                       child: const SizedBox.shrink(),
@@ -287,14 +284,14 @@ class HomeScreenState extends State<HomeScreen> {
                           builder: (_, estateSearchState) {
                             return Center(
                                 child:
-                                // UserSharedPreferences.getAccessToken() == null ||
-                                estateSearchState.isEmpty
-                                    ? Container(
-                                  height: 0.5.sh,
-                                  alignment: Alignment.center,
-                                  child: buildEmptyScreen(context),
-                                )
-                                    : buildEstateList(context));
+                                    // UserSharedPreferences.getAccessToken() == null ||
+                                    estateSearchState.isEmpty
+                                        ? Container(
+                                            height: 0.5.sh,
+                                            alignment: Alignment.center,
+                                            child: buildEmptyScreen(context),
+                                          )
+                                        : buildEstateList(context));
                           });
                     },
                   ),
@@ -461,13 +458,16 @@ class HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Icon(
                   Icons.search_outlined,
-                  color: isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
+                  color:
+                      isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
                   size: 25.w,
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(
-                    left: !isArabic ? 8.w : 0, right: isArabic ? 8.w : 0,top: isArabic ? 0.w : 3),
+                    left: !isArabic ? 8.w : 0,
+                    right: isArabic ? 8.w : 0,
+                    top: isArabic ? 0.w : 3),
                 child: Text(
                   AppLocalizations.of(context)!.search2,
                   // AppLocalizations.of(context)!.enter_location_name,
@@ -536,19 +536,22 @@ class HomeScreenState extends State<HomeScreen> {
                     getEstateSearch();
                   },
                   style: TextButton.styleFrom(
-                    backgroundColor: isDark ? AppColors.lightGreyColor : AppColors.lightGrey2Color,
+                    backgroundColor: isDark
+                        ? AppColors.lightGreyColor
+                        : AppColors.lightGrey2Color,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
                   child: Center(
                     child: Padding(
-                      padding: EdgeInsets.only(top: isArabic ? 0 : 5 ),
+                      padding: EdgeInsets.only(top: isArabic ? 0 : 5),
                       child: Text(
                         AppLocalizations.of(context)!.clear,
                         style: Theme.of(context)
                             .textTheme
-                            .headline5!.copyWith(fontSize: 16),
+                            .headline5!
+                            .copyWith(fontSize: 16),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -588,7 +591,8 @@ class HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(
                         builder: (_) => EstatesScreen(
                           searchData: searchData,
-                          locationName: estateSearchFilterCubit.state.elementAt(0),
+                          locationName:
+                              estateSearchFilterCubit.state.elementAt(0),
                           eventSearch: EstatesFetchStarted(
                             searchData: searchData,
                             isAdvanced: false,
@@ -613,10 +617,14 @@ class HomeScreenState extends State<HomeScreen> {
                                     .headline3!
                                     .copyWith(
                                         fontWeight: FontWeight.w400,
-                                        color: isDark ? AppColors.lightGrey2Color :  AppColors.black,
+                                        color: isDark
+                                            ? AppColors.lightGrey2Color
+                                            : AppColors.black,
                                         fontSize: 16.sp),
                               ),
-                              const SizedBox(height: 10,),
+                              const SizedBox(
+                                height: 10,
+                              ),
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.7,
                                 child: Text(
@@ -624,7 +632,8 @@ class HomeScreenState extends State<HomeScreen> {
                                   //     " ${isArabic ? "لل" : ""}" +
                                   //     estateOfferName +
                                   //     priceMaxMin,
-                                  AppLocalizations.of(context)!.result_matching_search_page,
+                                  AppLocalizations.of(context)!
+                                      .result_matching_search_page,
                                   maxLines: 2,
                                   style: Theme.of(context)
                                       .textTheme
@@ -641,7 +650,9 @@ class HomeScreenState extends State<HomeScreen> {
                             Icon(
                               Icons.arrow_forward,
                               size: 27.w,
-                              color: isDark ? AppColors.lightblue : AppColors.primaryColor,
+                              color: isDark
+                                  ? AppColors.lightblue
+                                  : AppColors.primaryColor,
                             ),
                           ],
                         ),
@@ -652,15 +663,15 @@ class HomeScreenState extends State<HomeScreen> {
                 // kHe12,
                 Container(
                   height: !isArabic ? 350.h : 320.h,
-                  padding: const EdgeInsets.only(left: 10,right: 10),
+                  padding: const EdgeInsets.only(left: 10, right: 10),
                   child: ListView.builder(
                     reverse: isArabic ? true : false,
                     itemCount: estateSearchCubit.state.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
-                        padding:
-                            EdgeInsets.only(left: 8.w, right: 3.w, bottom: 20.h),
+                        padding: EdgeInsets.only(
+                            left: 8.w, right: 3.w, bottom: 20.h),
                         child: HomeEstateCard(
                             estate: estateSearchCubit.state.elementAt(index)),
                       );
@@ -672,6 +683,7 @@ class HomeScreenState extends State<HomeScreen> {
             ),
           ),
           kHe8,
+
           /// new Api
           Card(
             color: isDark ? Colors.transparent : Colors.white,
@@ -693,23 +705,28 @@ class HomeScreenState extends State<HomeScreen> {
                                 .textTheme
                                 .headline3!
                                 .copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: isDark ? AppColors.lightGrey2Color :  AppColors.black,
-                                fontSize: 16.sp),
+                                    fontWeight: FontWeight.w400,
+                                    color: isDark
+                                        ? AppColors.lightGrey2Color
+                                        : AppColors.black,
+                                    fontSize: 16.sp),
                           ),
-                          const SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.7,
                             child: Text(
-                              AppLocalizations.of(context)!.result_matching_search_page,
+                              AppLocalizations.of(context)!
+                                  .result_matching_search_page,
                               maxLines: 2,
                               style: Theme.of(context)
                                   .textTheme
                                   .headline3!
                                   .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.lightGreyColor,
-                                  fontSize: 12.sp),
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.lightGreyColor,
+                                      fontSize: 12.sp),
                             ),
                           ),
                         ]),
@@ -718,7 +735,9 @@ class HomeScreenState extends State<HomeScreen> {
                         Icon(
                           Icons.arrow_forward,
                           size: 27.w,
-                          color: isDark ? AppColors.lightblue :  AppColors.primaryColor,
+                          color: isDark
+                              ? AppColors.lightblue
+                              : AppColors.primaryColor,
                         ),
                       ],
                     ),
@@ -727,6 +746,7 @@ class HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+
           /// new Api
           kHe8,
           Card(
@@ -749,23 +769,28 @@ class HomeScreenState extends State<HomeScreen> {
                                 .textTheme
                                 .headline3!
                                 .copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: isDark ? AppColors.lightGrey2Color :  AppColors.black,
-                                fontSize: 16.sp),
+                                    fontWeight: FontWeight.w400,
+                                    color: isDark
+                                        ? AppColors.lightGrey2Color
+                                        : AppColors.black,
+                                    fontSize: 16.sp),
                           ),
-                          const SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.7,
                             child: Text(
-                              AppLocalizations.of(context)!.result_matching_search_page,
+                              AppLocalizations.of(context)!
+                                  .result_matching_search_page,
                               maxLines: 2,
                               style: Theme.of(context)
                                   .textTheme
                                   .headline3!
                                   .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.lightGreyColor,
-                                  fontSize: 12.sp),
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.lightGreyColor,
+                                      fontSize: 12.sp),
                             ),
                           ),
                         ]),
@@ -774,7 +799,9 @@ class HomeScreenState extends State<HomeScreen> {
                         Icon(
                           Icons.arrow_forward,
                           size: 27.w,
-                          color: isDark ? AppColors.lightblue :  AppColors.primaryColor,
+                          color: isDark
+                              ? AppColors.lightblue
+                              : AppColors.primaryColor,
                         ),
                       ],
                     ),
