@@ -471,7 +471,7 @@ class _RecentEstateOrdersScreenNavBarState
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  fixedSize: Size(150.w, 50.h),
+                  fixedSize: Size(180.w, 50.h),
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.sign_in,

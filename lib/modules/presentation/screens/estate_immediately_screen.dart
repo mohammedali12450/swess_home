@@ -8,7 +8,6 @@ import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../../constants/design_constants.dart';
 import '../../../core/functions/app_theme_information.dart';
-import '../../../core/storage/shared_preferences/recent_searches_shared_preferences.dart';
 import '../../business_logic_components/bloc/period_types_bloc/period_types_bloc.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import '../../business_logic_components/bloc/rent_estate_bloc/rent_estate_bloc.dart';
@@ -85,7 +84,7 @@ class _EstateImmediatelyScreenState extends State<EstateImmediatelyScreen> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
       drawer: SizedBox(
-        width: getScreenWidth(context) * (75/100),
+        width: getScreenWidth(context) * (75 / 100),
         child: const Drawer(
           child: MyDrawer(),
         ),

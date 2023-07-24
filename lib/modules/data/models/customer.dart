@@ -1,5 +1,5 @@
 import 'package:contacts_service/contacts_service.dart';
-import 'package:phone_number/phone_number.dart';
+
 class Customer {
   final String id;
   final String name;
@@ -23,7 +23,7 @@ class Customer {
       id: id,
       name: contact.displayName ?? "user",
       phoneNumbers:
-      contact.phones!.map((number) => number.value ?? '').toList(),
+          contact.phones!.map((number) => number.value ?? '').toList(),
     );
   }
 
@@ -54,6 +54,3 @@ class CustomerList {
     return data;
   }
 }
-
-
-
