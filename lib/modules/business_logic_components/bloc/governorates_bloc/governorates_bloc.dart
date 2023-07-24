@@ -16,7 +16,7 @@ class GovernoratesBloc extends Bloc<GovernoratesEvent, GovernoratesState> {
       emit(GovernoratesFetchProgress());
       try {
         governorates = await governoratesRepository.getGovernorates();
-        emit(GovernoratesFetchComplete(governorates: governorates!));
+        emit(GovernoratesFetchComplete(governorates: governorates! ));
       } catch (e, stack) {
         debugPrint(e.toString());
         debugPrint(stack.toString());

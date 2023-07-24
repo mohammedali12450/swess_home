@@ -76,6 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     _onRefresh();
     governoratesBloc = BlocProvider.of<GovernoratesBloc>(context);
+    BlocProvider.of<GovernoratesBloc>(context).add(GovernoratesFetchStarted());
   }
 
   _onRefresh() {
@@ -164,91 +165,120 @@ class _ProfileScreenState extends State<ProfileScreen> {
         onRefresh: () async {
           _onRefresh();
         },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              if (UserSharedPreferences.getAccessToken() == null) ...[
-                // buildLanguageSetting,
-                kHe8,
-                buildListTile(
-                  icon: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: const Icon(Icons.language_outlined),
-                  ),
-                  title: Row(
-                    children: [
-                      ResText(
-                        AppLocalizations.of(context)!.language_word,
-                        textAlign: TextAlign.start,
-                        textStyle: Theme.of(context).textTheme.headline6,
-                      ),
-                      const Spacer(),
-                      ResText(
-                        AppLocalizations.of(context)!.language,
-                        textAlign: TextAlign.start,
-                        textStyle: Theme.of(context).textTheme.headline6,
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.pushNamed(context, LanguagesScreen.id);
-                  },
-                  trailing: Icon((isEnglish)
-                      ? Icons.keyboard_arrow_right
-                      : Icons.keyboard_arrow_left),
-                ),
+        child: UserSharedPreferences.getAccessToken() != null
+            ? SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    // buildLanguageSetting,
 
-                6.verticalSpace,
-                const Divider(),
-                10.verticalSpace,
-                buildThemeModeSetting(),
-              ],
-              if (UserSharedPreferences.getAccessToken() != null) ...[
-                BlocBuilder<UserDataBloc, UserDataState>(
-                    bloc: _userDataBloc,
-                    builder: (_, UserDataState userEditState) {
-                      if (userEditState is UserDataError) {
-                        return SizedBox(
-                            width: 1.sw,
-                            height: 1.sh - 75.h,
-                            child: FetchResult(
-                                content: AppLocalizations.of(context)!
-                                    .error_happened_when_executing_operation));
-                      }
-                      if (userEditState is UserDataProgress) {
-                        return const ProfileShimmer();
-                      }
-                      if (userEditState is UserDataComplete) {
-                        user = userEditState.user;
-                        if (user!.country != null &&
-                            user!.country == "Syrian Arab Republic") {
-                          governoratesBloc.add(GovernoratesFetchStarted());
-                        }
-                        return buildUserProfile();
-                      }
-                      return Container();
-                    })
-              ],
-              //Spacer(),
-              UserSharedPreferences.getAccessToken() != null ? kHe4 : kHe16,
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: ResText(
-                  "version 2.0 (Demo)",
-                  // "version ${ApplicationSharedPreferences.getVersionAppState()}",
-                  textAlign: TextAlign.center,
-                  textStyle: Theme.of(context)
-                      .textTheme
-                      .headline6!
-                      .copyWith(color: Colors.grey),
+                    BlocBuilder<UserDataBloc, UserDataState>(
+                        bloc: _userDataBloc,
+                        builder: (_, UserDataState userEditState) {
+                          if (userEditState is UserDataError) {
+                            return SizedBox(
+                                width: 1.sw,
+                                height: 1.sh - 75.h,
+                                child: FetchResult(
+                                    content: AppLocalizations.of(context)!
+                                        .error_happened_when_executing_operation));
+                          }
+                          if (userEditState is UserDataProgress) {
+                            return const ProfileShimmer();
+                          }
+                          if (userEditState is UserDataComplete) {
+                            user = userEditState.user;
+                            if (user!.country != null &&
+                                user!.country == "Syrian Arab Republic") {
+                              governoratesBloc.add(GovernoratesFetchStarted());
+                            }
+                            return buildUserProfile();
+                          }
+                          return Container();
+                        }),
+
+                    //Spacer(),
+
+                    kHe4,
+
+                    const VersionWidget(),
+                    // kHe20,
+                    kHe36,
+                  ],
                 ),
+              )
+            : Column(
+                children: [
+                  kHe8,
+                  buildListTile(
+                    icon: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: const Icon(Icons.language_outlined),
+                    ),
+                    title: Row(
+                      children: [
+                        ResText(
+                          AppLocalizations.of(context)!.language_word,
+                          textAlign: TextAlign.start,
+                          textStyle: Theme.of(context).textTheme.headline6,
+                        ),
+                        const Spacer(),
+                        ResText(
+                          AppLocalizations.of(context)!.language,
+                          textAlign: TextAlign.start,
+                          textStyle: Theme.of(context).textTheme.headline6,
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.pushNamed(context, LanguagesScreen.id);
+                    },
+                    trailing: Icon((isEnglish)
+                        ? Icons.keyboard_arrow_right
+                        : Icons.keyboard_arrow_left),
+                  ),
+                  6.verticalSpace,
+                  const Divider(),
+                  10.verticalSpace,
+                  buildThemeModeSetting(),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              fixedSize: Size(double.infinity, 50.h),
+                              primary: isDark
+                                  ? AppColors.primaryDark
+                                  : Theme.of(context).colorScheme.secondary),
+                          child: Text(
+                            AppLocalizations.of(context)!.sign_in,
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle1!
+                                .copyWith(color: AppColors.black),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AuthenticationScreen(
+                                  popAfterFinish: true,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  kHe16,
+                  const VersionWidget(),
+                  kHe16,
+                ],
               ),
-              // kHe20,
-              kHe36,
-            ],
-          ),
-        ),
       ),
     ));
   }
@@ -485,7 +515,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return Align(
                       alignment: Alignment.topRight,
                       child: IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.edit_outlined,
                           color: AppColors.white,
                         ),
@@ -495,7 +525,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             MaterialPageRoute(
                                 builder: (_) => EditProfileScreen(
                                       user: user!,
-                                      governorates: governorates,
+                                      governorates: governoratesBloc.governorates,
                                     )),
                           );
                           if (value) {
@@ -866,6 +896,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: title,
           trailing: trailing,
         ),
+      ),
+    );
+  }
+}
+
+class VersionWidget extends StatelessWidget {
+  const VersionWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: ResText(
+        "version 2.0 (Demo)",
+        // "version ${ApplicationSharedPreferences.getVersionAppState()}",
+        textAlign: TextAlign.center,
+        textStyle:
+            Theme.of(context).textTheme.headline6!.copyWith(color: Colors.grey),
       ),
     );
   }

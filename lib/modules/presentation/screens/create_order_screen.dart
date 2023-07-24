@@ -19,7 +19,6 @@ import 'package:swesshome/modules/presentation/screens/notifications_screen.dart
 import 'package:swesshome/modules/presentation/widgets/icone_badge.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../core/functions/screen_informations.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
@@ -94,131 +93,136 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           await buildSignInRequiredDialog();
         }
       },
-      child: BackHomeScreen(child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
-            centerTitle: true,
-            backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
-            title: Text(
-              AppLocalizations.of(context)!.create_estate_order,
-              style: TextStyle(color: isDark ? Colors.white : AppColors.black),
-            ),
-            actions: [
-              InkWell(
-                child: BlocBuilder<NotificationsCubit, int>(
-                  builder: (_, notificationsCount) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                          left: 0, right: 12.w),
-                      child: IconBadge(
-                        icon: const Icon(
-                          Icons.notifications_outlined,
+      child: BackHomeScreen(
+        child: SafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+              iconTheme:
+                  IconThemeData(color: isDark ? Colors.white : AppColors.black),
+              centerTitle: true,
+              backgroundColor:
+                  isDark ? const Color(0xff26282B) : AppColors.white,
+              title: Text(
+                AppLocalizations.of(context)!.create_estate_order,
+                style:
+                    TextStyle(color: isDark ? Colors.white : AppColors.black),
+              ),
+              actions: [
+                InkWell(
+                  child: BlocBuilder<NotificationsCubit, int>(
+                    builder: (_, notificationsCount) {
+                      return Padding(
+                        padding: EdgeInsets.only(left: 0, right: 12.w),
+                        child: IconBadge(
+                          icon: const Icon(
+                            Icons.notifications_outlined,
+                          ),
+                          itemCount: notificationsCount,
+                          right: 0,
+                          top: 5.h,
+                          hideZero: true,
                         ),
-                        itemCount: notificationsCount,
-                        right: 0,
-                        top: 5.h,
-                        hideZero: true,
-                      ),
-                    );
+                      );
+                    },
+                  ),
+                  onTap: () async {
+                    if (UserSharedPreferences.getAccessToken() == null) {
+                      await showWonderfulAlertDialog(
+                          context,
+                          AppLocalizations.of(context)!.confirmation,
+                          AppLocalizations.of(context)!
+                              .this_features_require_login,
+                          removeDefaultButton: true,
+                          dialogButtons: [
+                            ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.sign_in,
+                              ),
+                              onPressed: () async {
+                                await Navigator.pushNamed(
+                                    context, AuthenticationScreen.id);
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.cancel,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                          width: 400.w);
+                      return;
+                    }
+                    Navigator.pushNamed(context, NotificationScreen.id);
                   },
                 ),
-                onTap: () async {
-                  if (UserSharedPreferences.getAccessToken() == null) {
-                    await showWonderfulAlertDialog(
-                        context,
-                        AppLocalizations.of(context)!.confirmation,
-                        AppLocalizations.of(context)!.this_features_require_login,
-                        removeDefaultButton: true,
-                        dialogButtons: [
-                          ElevatedButton(
-                            child: Text(
-                              AppLocalizations.of(context)!.sign_in,
-                            ),
-                            onPressed: () async {
-                              await Navigator.pushNamed(
-                                  context, AuthenticationScreen.id);
-                              Navigator.pop(context);
+              ],
+            ),
+            body: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Container(
+                padding: kMediumSymWidth,
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        kHe4,
+                        // Text(
+                        //   AppLocalizations.of(context)!.order_type + " :",
+                        // ),
+                        // kHe12,
+                        buildChoiceContainer(
+                            context: context,
+                            cubit: isRentCubit,
+                            textRight: AppLocalizations.of(context)!.buy,
+                            textLeft: AppLocalizations.of(context)!.rent,
+                            onTapRight: () {
+                              estateOrder.estateOfferTypeId = 1;
                             },
-                          ),
-                          ElevatedButton(
-                            child: Text(
-                              AppLocalizations.of(context)!.cancel,
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
+                            onTapLeft: () {
+                              estateOrder.estateOfferTypeId = 2;
                             },
-                          ),
-                        ],
-                        width: 400.w);
-                    return;
-                  }
-                  Navigator.pushNamed(context, NotificationScreen.id);
-                },
-              ),
-            ],
-          ),
-          body: Form(
-            key: _formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            child: Container(
-              padding: kMediumSymWidth,
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      kHe4,
-                      // Text(
-                      //   AppLocalizations.of(context)!.order_type + " :",
-                      // ),
-                      // kHe12,
-                      buildChoiceContainer(
-                          context: context,
-                          cubit: isRentCubit,
-                          textRight: AppLocalizations.of(context)!.buy,
-                          textLeft: AppLocalizations.of(context)!.rent,
-                          onTapRight: () {
-                            estateOrder.estateOfferTypeId = 1;
-                          },
-                          onTapLeft: () {
-                            estateOrder.estateOfferTypeId = 2;
-                          },
-                          paddingVertical: 5.h,
-                          paddingHorizontal: 0),
-                      kHe16,
-                      buildLocation(),
-                      EstateTypeWidget(
-                        searchData: estateOrder,
-                        isPressTypeCubit: isPressTypeCubit,
-                        removeSelect: false,
-                      ),
-                      PriceDomainWidget(
-                        isRentCubit: isRentCubit,
-                        searchData: estateOrder,
-                        startPriceCubit: startPriceCubit,
-                        endPriceCubit: endPriceCubit,
-                      ),
-                      //buildPriceDomain(isArabic, isDark),
-                      buildNote(),
-                      buildButton(),
-                      kHe8,
-                    ],
+                            paddingVertical: 5.h,
+                            paddingHorizontal: 0),
+                        kHe16,
+                        buildLocation(),
+                        EstateTypeWidget(
+                          searchData: estateOrder,
+                          isPressTypeCubit: isPressTypeCubit,
+                          removeSelect: false,
+                        ),
+                        PriceDomainWidget(
+                          isRentCubit: isRentCubit,
+                          searchData: estateOrder,
+                          startPriceCubit: startPriceCubit,
+                          endPriceCubit: endPriceCubit,
+                        ),
+                        //buildPriceDomain(isArabic, isDark),
+                        buildNote(),
+                        buildButton(),
+                        kHe8,
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          drawer: SizedBox(
-            width: getScreenWidth(context) * (75/100),
-            child: const Drawer(
-              child: MyDrawer(),
+            drawer: SizedBox(
+              width: getScreenWidth(context) * (75 / 100),
+              child: const Drawer(
+                child: MyDrawer(),
+              ),
             ),
           ),
         ),
-      ),),
+      ),
     );
   }
 

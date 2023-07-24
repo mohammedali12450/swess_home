@@ -7,6 +7,8 @@ import 'package:phone_number/phone_number.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/formatters.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
+import 'package:swesshome/modules/presentation/screens/home_screen.dart';
+import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 
@@ -86,12 +88,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 }
               }
               if (changeState is ChangePasswordComplete) {
-                if(changeState.successMessage != null) {
-                  showWonderfulAlertDialog(
-                      context,
-                      " ",
-                      changeState.successMessage!);
-                }
+                Navigator.pushNamed(context, ProfileScreen.id);
+
               }
             },
           ),
