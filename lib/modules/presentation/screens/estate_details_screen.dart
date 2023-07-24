@@ -68,6 +68,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
   List<String> streetImages = [];
   List<String> floorPlanImages = [];
   List<String> nearbyPlaces = [];
+  late bool isDark ;
 
   // Others:
   late String currency;
@@ -121,7 +122,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     currency = AppLocalizations.of(context)!.syrian_currency;
 
     int intPrice = int.parse(widget.estate.price!);
@@ -130,34 +131,42 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            AppLocalizations.of(context)!.estate_details,
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.share,
-                color: AppColors.white,
-              ),
-              onPressed: () {
-                Share.share('${AppLocalizations.of(context)!.estate_offers} :\n'
-                    '${widget.estate.estateType == null ? "" :  widget.estate.estateType!.name.split("|")[1]} لل'
-                    '${widget.estate.estateOfferType == null ? "" : widget.estate.estateOfferType!.name} '
-                    ' في ${widget.estate.locationS} \n'
-                    'https://www.swesshome.com/estate/${widget.estate.id} ');
-                if (UserSharedPreferences.getAccessToken() != null) {
-                  shareBloc.add(
-                    ShareStarted(
-                      estateId: widget.estate.id!,
-                      token: userToken,
-                    ),
-                  );
-                }
-              },
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(46.0),
+          child: AppBar(
+            iconTheme:
+            IconThemeData(color: isDark ? Colors.white : AppColors.black),
+            backgroundColor:
+            isDark ? const Color(0xff26282B) : AppColors.white,
+            centerTitle: true,
+            title: Text(
+              AppLocalizations.of(context)!.estate_details,
+              style:
+              TextStyle(color: isDark ? Colors.white : AppColors.black),
             ),
-          ],
+            actions: [
+              IconButton(
+                icon: const Icon(
+                  Icons.share,
+                ),
+                onPressed: () {
+                  Share.share('${AppLocalizations.of(context)!.estate_offers} :\n'
+                      '${widget.estate.estateType == null ? "" :  widget.estate.estateType!.name.split("|")[1]} لل'
+                      '${widget.estate.estateOfferType == null ? "" : widget.estate.estateOfferType!.name} '
+                      ' في ${widget.estate.locationS} \n'
+                      'https://www.swesshome.com/estate/${widget.estate.id} ');
+                  if (UserSharedPreferences.getAccessToken() != null) {
+                    shareBloc.add(
+                      ShareStarted(
+                        estateId: widget.estate.id!,
+                        token: userToken,
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
         body: Container(
           color: Theme.of(context).colorScheme.background,

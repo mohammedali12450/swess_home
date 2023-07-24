@@ -65,10 +65,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            AppLocalizations.of(context)!.notifications,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(46.0),
+          child: AppBar(
+            backgroundColor:
+            isDark ? const Color(0xff26282B) : AppColors.white,
+            iconTheme:
+            IconThemeData(color: isDark ? Colors.white : AppColors.black),
+            centerTitle: true,
+            title: Text(
+              AppLocalizations.of(context)!.notifications,
+              style: TextStyle(color: isDark ? Colors.white : AppColors.black),
+            ),
           ),
         ),
         body: RefreshIndicator(

@@ -21,6 +21,7 @@ import 'package:swesshome/modules/presentation/screens/create_property_screens/c
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
+import 'package:swesshome/modules/presentation/widgets/will-pop-scope.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -28,9 +29,14 @@ import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_bloc.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_event.dart';
+import '../../business_logic_components/cubits/notifications_cubit.dart';
 import '../../data/providers/theme_provider.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/estate_horizon_card.dart';
+import '../widgets/icone_badge.dart';
 import '../widgets/time_line.dart';
+import 'authentication_screen.dart';
+import 'notifications_screen.dart';
 
 class CreatedEstatesScreen extends StatefulWidget {
   static const String id = "CreatedEstatesScreen";
@@ -53,6 +59,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
   late AnimationController _animationController;
   late Animation _colorTween;
   List<Estate> estates = [];
+  late bool isDark;
 
   /// added now
   OfficeDetails? results;
@@ -114,205 +121,278 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     if (widget.estateId != null) {
       initAnimation(context);
     }
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          AppLocalizations.of(context)!.recent_created_estates,
-        ),
-      ),
-      body: RefreshIndicator(
-        color: Theme.of(context).colorScheme.primary,
-        onRefresh: () async {
-          _onRefresh();
-        },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: SizedBox(
-            width: 1.sw,
-            height: 1.sh - 100.h,
-            child: BlocConsumer<CreatedEstatesBloc, CreatedEstatesState>(
-              bloc: _createdEstatesBloc,
-              listener: (_, createdEstatesFetchState) async {
-                if (createdEstatesFetchState is CreatedEstatesFetchError) {
-                  var error = createdEstatesFetchState.isConnectionError
-                      ? AppLocalizations.of(context)!.no_internet_connection
-                      : createdEstatesFetchState.error;
-                  await showWonderfulAlertDialog(
-                      context, AppLocalizations.of(context)!.error, error);
-                }
-              },
-              builder: (_, createdEstatesFetchState) {
-                if (createdEstatesFetchState is CreatedEstatesFetchNone) {
-                  return FetchResult(
-                      content: AppLocalizations.of(context)!
-                          .have_not_created_estates);
-                }
-                if (createdEstatesFetchState is CreatedEstatesFetchProgress) {
-                  return const PropertyShimmer();
-                }
-                if (createdEstatesFetchState is! CreatedEstatesFetchComplete) {
-                  return FetchResult(
-                      content: AppLocalizations.of(context)!
-                          .error_happened_when_executing_operation);
-                }
-
-                estates = createdEstatesFetchState.createdEstates;
-
-
-                if (estates.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 0.3.sw,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary,
-                        ),
-                        kHe24,
-                        Text(
-                          AppLocalizations.of(context)!
-                              .have_not_created_estates,
-                          style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 16),
-                          textAlign: TextAlign.center,
-                        ),
-                        kHe24,
-                        Center(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: Size(180.w, 50.h),
-                              maximumSize: Size(200.w, 50.h),
-                            ),
-                            child: Center(
-                              child: Text(
-                                AppLocalizations.of(context)!.post_estate,
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            ),
-                            onPressed: () async {
-                              FocusScope.of(context).unfocus();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => CreatePropertyIntroductionScreen(officeId: estates[0].estateOffice!.id)));
-                            },
+    return SafeArea(
+      child: BackHomeScreen(
+        child: Scaffold(
+          drawer: SizedBox(
+            width: getScreenWidth(context) * (75 / 100),
+            child: const Drawer(
+              child: MyDrawer(),
+            ),
+          ),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(46.0),
+            child: AppBar(
+              iconTheme:
+              IconThemeData(color: isDark ? Colors.white : AppColors.black),
+              centerTitle: true,
+              title: Text(
+                AppLocalizations.of(context)!.recent_created_estates,
+                style:
+                TextStyle(color: isDark ? Colors.white : AppColors.black),
+              ),
+              backgroundColor:
+              isDark ? const Color(0xff26282B) : AppColors.white,
+              actions: [
+                InkWell(
+                  child: BlocBuilder<NotificationsCubit, int>(
+                    builder: (_, notificationsCount) {
+                      return Padding(
+                        padding: EdgeInsets.only(left: 0, right: 12.w),
+                        child: IconBadge(
+                          icon: const Icon(
+                            Icons.notifications_outlined,
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                bool find = false;
-                if (widget.estateId != null) {
-                  for (int i = 0; i < estates.length; i++) {
-                    if (estates.elementAt(i).id ==
-                        int.parse(widget.estateId!)) {
-                      find = true;
-                      break;
-                    }
-                  }
-
-                  if (find) {
-                    SchedulerBinding.instance!.addPostFrameCallback((_) {
-                      jumpToOrder(estates);
-                    });
-                  } else {
-                    Fluttertoast.showToast(
-                        msg: AppLocalizations.of(context)!.delete_estate_order);
-                  }
-                }
-
-                return RefreshIndicator(
-                  color: Theme.of(context).colorScheme.primary,
-                  onRefresh: () async {
-                    _onRefresh();
-                  },
-                  child: ScrollablePositionedList.builder(
-                    itemScrollController: scrollController,
-                    itemPositionsListener: itemPositionsListener,
-                    physics: const ClampingScrollPhysics(),
-                    // shrinkWrap: true,
-                    itemCount: estates.length,
-                    itemBuilder: (_, index) {
-                      int estateStatusId =
-                      estates.elementAt(index).estateStatus! == 3
-                          ? 1
-                          : estates.elementAt(index).estateStatus! == 1
-                          ? 3
-                          : 2;
-                      return (widget.estateId != null && find)
-                          ? AnimatedBuilder(
-                        animation: _colorTween,
-                        builder: (context, child) => Card(
-                          elevation: 5,
-                          margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              children: [
-                                kHe12,
-                                EstateHorizonCard(
-                                  color: (int.parse(widget.estateId!) ==
-                                      estates.elementAt(index).id)
-                                      ? _colorTween.value
-                                      : Theme.of(context)
-                                      .colorScheme
-                                      .background,
-                                  estate: estates.elementAt(index),
-                                  onClosePressed: () async {
-                                    await onClosePressed(index);
-                                  },
-                                  closeButton: true,
-                                ),
-                                buildEstateStatus(index),
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-                          : Card(
-                        elevation: 5,
-                        margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: Column(
-                            children: [
-                              kHe12,
-                              EstateHorizonCard(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .background,
-                                estate: estates.elementAt(index),
-                                onClosePressed: () async {
-                                  await onClosePressed(index);
-                                },
-                                closeButton: true,
-                              ),
-                              buildEstateStatus(index),
-                              // Padding(
-                              //   padding: EdgeInsets.only(
-                              //       bottom: 8.h, left: 8.w, right: 8.w),
-                              //   child: SizedBox(
-                              //       height: 70.h,
-                              //       width: getScreenWidth(context),
-                              //       child: ProcessTimelinePage(
-                              //         estateStatusId: estateStatusId,
-                              //       )),
-                              // ),
-                            ],
-                          ),
+                          itemCount: notificationsCount,
+                          right: 0,
+                          top: 5.h,
+                          hideZero: true,
                         ),
                       );
                     },
                   ),
-                );
-              },
+                  onTap: () async {
+                    if (UserSharedPreferences.getAccessToken() == null) {
+                      await showWonderfulAlertDialog(
+                          context,
+                          AppLocalizations.of(context)!.confirmation,
+                          AppLocalizations.of(context)!
+                              .this_features_require_login,
+                          removeDefaultButton: true,
+                          dialogButtons: [
+                            ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.sign_in,
+                              ),
+                              onPressed: () async {
+                                await Navigator.pushNamed(
+                                    context, AuthenticationScreen.id);
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.cancel,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                          width: 400.w);
+                      return;
+                    }
+                    Navigator.pushNamed(context, NotificationScreen.id);
+                  },
+                ),
+              ],
+            ),
+          ),
+          body: RefreshIndicator(
+            color: Theme.of(context).colorScheme.primary,
+            onRefresh: () async {
+              _onRefresh();
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                width: 1.sw,
+                height: 1.sh - 100.h,
+                child: BlocConsumer<CreatedEstatesBloc, CreatedEstatesState>(
+                  bloc: _createdEstatesBloc,
+                  listener: (_, createdEstatesFetchState) async {
+                    if (createdEstatesFetchState is CreatedEstatesFetchError) {
+                      var error = createdEstatesFetchState.isConnectionError
+                          ? AppLocalizations.of(context)!.no_internet_connection
+                          : createdEstatesFetchState.error;
+                      await showWonderfulAlertDialog(
+                          context, AppLocalizations.of(context)!.error, error);
+                    }
+                  },
+                  builder: (_, createdEstatesFetchState) {
+                    if (createdEstatesFetchState is CreatedEstatesFetchNone) {
+                      return FetchResult(
+                          content: AppLocalizations.of(context)!
+                              .have_not_created_estates);
+                    }
+                    if (createdEstatesFetchState is CreatedEstatesFetchProgress) {
+                      return const PropertyShimmer();
+                    }
+                    if (createdEstatesFetchState is! CreatedEstatesFetchComplete) {
+                      return FetchResult(
+                          content: AppLocalizations.of(context)!
+                              .error_happened_when_executing_operation);
+                    }
+
+                    estates = createdEstatesFetchState.createdEstates;
+
+
+                    if (estates.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 0.3.sw,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary,
+                            ),
+                            kHe24,
+                            Text(
+                              AppLocalizations.of(context)!
+                                  .have_not_created_estates,
+                              style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 16),
+                              textAlign: TextAlign.center,
+                            ),
+                            kHe24,
+                            Center(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: Size(180.w, 50.h),
+                                  maximumSize: Size(200.w, 50.h),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.post_estate,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  FocusScope.of(context).unfocus();
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => CreatePropertyIntroductionScreen(officeId: estates[0].estateOffice!.id)));
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    bool find = false;
+                    if (widget.estateId != null) {
+                      for (int i = 0; i < estates.length; i++) {
+                        if (estates.elementAt(i).id ==
+                            int.parse(widget.estateId!)) {
+                          find = true;
+                          break;
+                        }
+                      }
+
+                      if (find) {
+                        SchedulerBinding.instance!.addPostFrameCallback((_) {
+                          jumpToOrder(estates);
+                        });
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: AppLocalizations.of(context)!.delete_estate_order);
+                      }
+                    }
+
+                    return RefreshIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                      onRefresh: () async {
+                        _onRefresh();
+                      },
+                      child: ScrollablePositionedList.builder(
+                        itemScrollController: scrollController,
+                        itemPositionsListener: itemPositionsListener,
+                        physics: const ClampingScrollPhysics(),
+                        // shrinkWrap: true,
+                        itemCount: estates.length,
+                        itemBuilder: (_, index) {
+                          int estateStatusId =
+                          estates.elementAt(index).estateStatus! == 3
+                              ? 1
+                              : estates.elementAt(index).estateStatus! == 1
+                              ? 3
+                              : 2;
+                          return (widget.estateId != null && find)
+                              ? AnimatedBuilder(
+                            animation: _colorTween,
+                            builder: (context, child) => Card(
+                              elevation: 5,
+                              margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                child: Column(
+                                  children: [
+                                    kHe12,
+                                    EstateHorizonCard(
+                                      color: (int.parse(widget.estateId!) ==
+                                          estates.elementAt(index).id)
+                                          ? _colorTween.value
+                                          : Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      estate: estates.elementAt(index),
+                                      onClosePressed: () async {
+                                        await onClosePressed(index);
+                                      },
+                                      closeButton: true,
+                                    ),
+                                    buildEstateStatus(index),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                              : Card(
+                            elevation: 5,
+                            margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              child: Column(
+                                children: [
+                                  kHe12,
+                                  EstateHorizonCard(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
+                                    estate: estates.elementAt(index),
+                                    onClosePressed: () async {
+                                      await onClosePressed(index);
+                                    },
+                                    closeButton: true,
+                                  ),
+                                  buildEstateStatus(index),
+                                  // Padding(
+                                  //   padding: EdgeInsets.only(
+                                  //       bottom: 8.h, left: 8.w, right: 8.w),
+                                  //   child: SizedBox(
+                                  //       height: 70.h,
+                                  //       width: getScreenWidth(context),
+                                  //       child: ProcessTimelinePage(
+                                  //         estateStatusId: estateStatusId,
+                                  //       )),
+                                  // ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
         ),

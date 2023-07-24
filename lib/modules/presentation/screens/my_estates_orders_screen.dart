@@ -51,6 +51,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
   List<EstateOrder> orders = [];
   late AnimationController _animationController;
   late Animation _colorTween;
+  late bool isDark;
 
   //late Timer timer;
 
@@ -121,15 +122,25 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     if (widget.estateId != null) {
       initAnimation(context);
     }
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            AppLocalizations.of(context)!.recent_created_orders,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(46.0),
+          child: AppBar(
+            backgroundColor:
+            isDark ? const Color(0xff26282B) : AppColors.white,
+            iconTheme:
+            IconThemeData(color: isDark ? Colors.white : AppColors.black),
+            centerTitle: true,
+            title: Text(
+              AppLocalizations.of(context)!.recent_created_orders,
+              style:
+              TextStyle(color: isDark ? Colors.white : AppColors.black),
+            ),
           ),
         ),
         body: RefreshIndicator(

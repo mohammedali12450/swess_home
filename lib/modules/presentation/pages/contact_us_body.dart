@@ -108,12 +108,20 @@ class _ContacttUsBodyState extends State<ContacttUsBody> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: isDark ? const Color(0xff26282B) : Theme.of(context).colorScheme.primary,
-          title: Text(
-            AppLocalizations.of(context)!.contact_us,
-            style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.white),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(46.0),
+          child: AppBar(
+            backgroundColor:
+            isDark ? const Color(0xff26282B) : AppColors.white,
+            iconTheme:
+            IconThemeData(color: isDark ? Colors.white : AppColors.black),
+            centerTitle: true,
+            //backgroundColor: isDark ? const Color(0xff26282B) : Theme.of(context).colorScheme.primary,
+            title: Text(
+              AppLocalizations.of(context)!.contact_us,
+              style:
+              TextStyle(color: isDark ? Colors.white : AppColors.black),
+            ),
           ),
         ),
         body: SizedBox(
