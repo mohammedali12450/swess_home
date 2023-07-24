@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,7 +16,6 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
-import 'package:swesshome/modules/presentation/screens/logging_history_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -44,7 +41,6 @@ import 'change_password_screen.dart';
 import 'my_created_estates_screen.dart';
 import 'edit_profile_screen.dart';
 import 'languages_screen.dart';
-import 'my_immediately_rent_screen.dart';
 import 'navigation_bar_screen.dart';
 import 'notifications_screen.dart';
 
@@ -455,6 +451,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (_) => const CreatedEstatesScreen()));
           },
         ),
+
         /// logging history
         // buildListTile(
         //   icon: Padding(
@@ -528,7 +525,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             MaterialPageRoute(
                                 builder: (_) => EditProfileScreen(
                                       user: user!,
-                                      governorates: governoratesBloc.governorates,
+                                      governorates:
+                                          governoratesBloc.governorates,
                                     )),
                           );
                           if (value) {
@@ -556,9 +554,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 ResText(
                   "${user!.firstName!} ${user!.lastName!}",
-                  textStyle: Theme.of(context).textTheme.headline3!.copyWith(
-                      color: AppColors.white,
-                      fontSize: 20),
+                  textStyle: Theme.of(context)
+                      .textTheme
+                      .headline3!
+                      .copyWith(color: AppColors.white, fontSize: 20),
                 ),
                 // ResText(
                 //   user?.email ?? "",
@@ -579,7 +578,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             .textTheme
                             .headline6!
                             .copyWith(
-                                color: isDark ? AppColors.white : AppColors.white),
+                                color:
+                                    isDark ? AppColors.white : AppColors.white),
                       ),
                       ResText(
                         "${user!.country ?? ""} "
@@ -588,7 +588,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             .textTheme
                             .headline6!
                             .copyWith(
-                                color: isDark ? AppColors.white : AppColors.white,),
+                              color: isDark ? AppColors.white : AppColors.white,
+                            ),
                       ),
                     ],
                   ),

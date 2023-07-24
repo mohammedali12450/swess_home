@@ -21,7 +21,6 @@ import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
-import '../widgets/res_text.dart';
 import 'my_created_estates_screen.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -118,7 +117,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       children: [
                         Icon(
                           Icons.notifications_outlined,
-                          color: isDark ? AppColors.primaryDark : AppColors.primaryColor,
+                          color: isDark
+                              ? AppColors.primaryDark
+                              : AppColors.primaryColor,
                           size: 0.3.sw,
                         ),
                         kHe24,
@@ -127,7 +128,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               .you_have_not_notifications,
                           style:
                               Theme.of(context).textTheme.headline5!.copyWith(
-                                    color: isDark ? AppColors.white : AppColors.primaryColor,
+                                    color: isDark
+                                        ? AppColors.white
+                                        : AppColors.primaryColor,
                                   ),
                         ),
                       ],
