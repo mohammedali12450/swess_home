@@ -9,20 +9,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
-import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_state.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
-import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/repositories/estate_order_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_order_screen.dart';
-import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_order_card.dart';
-import 'package:swesshome/modules/presentation/widgets/icone_badge.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/clients_orders_shimmer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -32,7 +26,6 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_event.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_state.dart';
-import '../../data/models/user.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../data/providers/theme_provider.dart';
@@ -186,15 +179,16 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                             documentOutlineIconPath,
                             width: 0.2.sw,
                             height: 0.2.sw,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                           kHe24,
                           Text(
                             AppLocalizations.of(context)!
                                 .have_not_recent_orders,
-                            style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 16),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline4!
+                                .copyWith(fontSize: 16),
                             textAlign: TextAlign.center,
                           ),
                           kHe24,
@@ -216,8 +210,7 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                        const CreateOrderScreen()));
-
+                                            const CreateOrderScreen()));
                               },
                             ),
                           ),
@@ -257,16 +250,17 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                     child: BlocListener<DeleteEstatesBloc, DeleteEstatesState>(
                       listener: (_, deleteEstateOrderState) async {
                         if (deleteEstateOrderState
-                        is DeleteEstatesFetchComplete) {
+                            is DeleteEstatesFetchComplete) {
                           // await _onRefresh();
                           if (UserSharedPreferences.getAccessToken() != null) {
                             _recentEstatesOrdersBloc.add(
                               RecentEstatesOrdersFetchStarted(
-                                  token: UserSharedPreferences.getAccessToken()!),
+                                  token:
+                                      UserSharedPreferences.getAccessToken()!),
                             );
                           }
                         } else if (deleteEstateOrderState
-                        is DeleteEstatesFetchError) {}
+                            is DeleteEstatesFetchError) {}
                       },
                       child: Column(
                         children: [
@@ -278,36 +272,43 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                                 itemBuilder: (_, index) {
                                   return (widget.estateId != null && find)
                                       ? AnimatedBuilder(
-                                    animation: _colorTween,
-                                    builder: (context, _) => Padding(
-                                      padding: const EdgeInsets.only(top: 20,bottom: 10),
-                                      child: EstateOrderCard(
-                                        estateOrder: orders.elementAt(index),
-                                        //color: Theme.of(context).colorScheme.background,
-                                        color: (int.parse(widget.estateId!) ==
-                                            orders.elementAt(index).id)
-                                            ? _colorTween.value
-                                            : Theme.of(context)
-                                            .colorScheme
-                                            .background,
-                                        onTap: () async {
-                                          await deleteEstateOrder(index);
-                                        },
-                                      ),
-                                    ),
-                                  )
+                                          animation: _colorTween,
+                                          builder: (context, _) => Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 20, bottom: 10),
+                                            child: EstateOrderCard(
+                                              estateOrder:
+                                                  orders.elementAt(index),
+                                              //color: Theme.of(context).colorScheme.background,
+                                              color: (int.parse(
+                                                          widget.estateId!) ==
+                                                      orders
+                                                          .elementAt(index)
+                                                          .id)
+                                                  ? _colorTween.value
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .background,
+                                              onTap: () async {
+                                                await deleteEstateOrder(index);
+                                              },
+                                            ),
+                                          ),
+                                        )
                                       : Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: EstateOrderCard(
-                                      estateOrder: orders.elementAt(index),
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .background,
-                                      onTap: () async {
-                                        await deleteEstateOrder(index);
-                                      },
-                                    ),
-                                  );
+                                          padding:
+                                              const EdgeInsets.only(top: 20),
+                                          child: EstateOrderCard(
+                                            estateOrder:
+                                                orders.elementAt(index),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .background,
+                                            onTap: () async {
+                                              await deleteEstateOrder(index);
+                                            },
+                                          ),
+                                        );
                                 }),
                           ),
                           kHe24
@@ -379,8 +380,8 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
                   AppLocalizations.of(context)!.sign_in,
                 ),
                 onPressed: () async {
-                  await Navigator.pushNamed(context, AuthenticationScreen.id).then((value) {
-                  });
+                  await Navigator.pushNamed(context, AuthenticationScreen.id)
+                      .then((value) {});
                   Navigator.pop(context);
                   // _onRefresh();
                   if (UserSharedPreferences.getAccessToken() != null) {
@@ -395,6 +396,6 @@ class _RecentEstateOrdersScreenState extends State<RecentEstateOrdersScreen>
           ],
         ),
       ),
-    ) ;
+    );
   }
 }
