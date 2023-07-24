@@ -3,7 +3,7 @@ const String proNetImagesUrl = "https://backend-v2.swesshome.com/storage/";
 String baseUrl = proNetBaseUrl;
 String imagesBaseUrl = proNetImagesUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl";
-
+const String checkExistingcustomers="https://api-dev.swesshome.com/api/v2/customer/check-existing-customers";
 //new api
 
 const userRegisterURL = "customer/register";
