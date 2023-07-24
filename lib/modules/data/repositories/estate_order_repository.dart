@@ -31,7 +31,6 @@ class EstateOrderRepository {
 
   Future<List<EstateOrder>> getRecentEstateOrders(String? token) async {
     Response response = await estateOrderProvider.getRecentEstateOrders(token);
-
     if (response.statusCode != 200) {
       throw GeneralException(errorMessage: "حدث خطأ أثناءالاتصال مع السيرفر");
     }

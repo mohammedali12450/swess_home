@@ -12,7 +12,6 @@ import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/navigation_bar_screen.dart';
-import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -115,9 +114,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                           Icon(
                             Icons.error_outline,
                             size: 0.2.sw,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                           kHe24,
                           Text(
@@ -144,8 +141,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                        const NavigationBarScreen()));
-
+                                            const NavigationBarScreen()));
                               },
                             ),
                           ),
@@ -166,16 +162,19 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                             height: 50.h,
                             width: 1.sw,
                             decoration: BoxDecoration(
-                              borderRadius: lowBorderRadius,
-                              // border: Border.all(color: AppColors.primaryColor),
-                              color: isDark ? AppColors.lightblue : AppColors.primaryColor
-                            ),
+                                borderRadius: lowBorderRadius,
+                                // border: Border.all(color: AppColors.primaryColor),
+                                color: isDark
+                                    ? AppColors.lightblue
+                                    : AppColors.primaryColor),
                             child: ResText(
                               AppLocalizations.of(context)!.nearby,
                               textStyle: Theme.of(context)
                                   .textTheme
                                   .headline4!
-                                  .copyWith(fontWeight: FontWeight.w700,color: Colors.white),
+                                  .copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white),
                             ),
                           ),
                         ),
@@ -206,6 +205,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
       },
     );
   }
+
   Widget buildSignInRequired(context) {
     return SizedBox(
       height: 20,
@@ -227,8 +227,8 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                   AppLocalizations.of(context)!.sign_in,
                 ),
                 onPressed: () async {
-                  await Navigator.pushNamed(context, AuthenticationScreen.id).then((value) {
-                  });
+                  await Navigator.pushNamed(context, AuthenticationScreen.id)
+                      .then((value) {});
                   Navigator.pop(context);
                   // _onRefresh();
                   if (UserSharedPreferences.getAccessToken() != null) {
@@ -243,6 +243,6 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
           ],
         ),
       ),
-    ) ;
+    );
   }
 }

@@ -139,8 +139,12 @@ class _RecentEstateOrdersScreenNavBarState
     return BackHomeScreen(
       child: SafeArea(
         child: Scaffold(
-          floatingActionButton: AddOfferButton(),
-          backgroundColor: Color(0xffF2F2F6),
+          floatingActionButton: UserSharedPreferences.getAccessToken() != null
+              ? AddOfferButton()
+              : null,
+          backgroundColor: isDark
+              ? const Color(0xff26282B)
+              : AppColors.white, // Color(0xffF2F2F6),
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(46.0),
             child: AppBar(
@@ -460,7 +464,9 @@ class _RecentEstateOrdersScreenNavBarState
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(AppLocalizations.of(context)!.this_features_require_login),
+            Text(
+              AppLocalizations.of(context)!.this_features_require_login,
+            ),
             const SizedBox(height: 30),
             Center(
               child: ElevatedButton(
