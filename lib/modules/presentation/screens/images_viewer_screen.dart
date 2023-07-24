@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../../../constants/api_paths.dart';
+import '../../data/providers/theme_provider.dart';
 
 class ImagesViewerScreen extends StatefulWidget {
   final List<String> images;
@@ -27,7 +30,7 @@ class ImagesViewerScreen extends StatefulWidget {
 class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
   ChannelCubit currentImageCubit = ChannelCubit(0);
   YoutubePlayerController? _ytbPlayerController;
-
+  late bool isDark ;
   // Future<void> secureScreen() async {
   //   await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
   // }
@@ -52,13 +55,20 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
+          iconTheme:
+          IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          backgroundColor:
+          isDark ? const Color(0xff26282B) : AppColors.white,
           centerTitle: true,
           title: Text(
             widget.screenTitle,
+            style:
+            TextStyle(color: isDark ? Colors.white : AppColors.black),
           ),
           // bottom: TabBar(
           //   indicatorColor: AppColors.lightblue,

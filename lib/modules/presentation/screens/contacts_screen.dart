@@ -36,9 +36,18 @@ class _ContactsScreenState extends State<ContactsScreen> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.contacts,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: AppBar(
+          backgroundColor:
+          isDark ? const Color(0xff26282B) : AppColors.white,
+          iconTheme:
+          IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          title: Text(
+            AppLocalizations.of(context)!.contacts,
+            style:
+            TextStyle(color: isDark ? Colors.white : AppColors.black),
+          ),
         ),
       ),
       body: BlocBuilder<ContactsBloc, ContactsState>(builder: (context, state) {

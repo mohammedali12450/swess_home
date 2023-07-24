@@ -15,6 +15,7 @@ import 'package:swesshome/modules/data/repositories/estate_repository.dart';
 import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_introduction_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
+import 'package:swesshome/modules/presentation/widgets/will-pop-scope.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -22,7 +23,9 @@ import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_bloc.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_event.dart';
+import '../../business_logic_components/cubits/notifications_cubit.dart';
 import '../../data/providers/theme_provider.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/estate_horizon_card.dart';
 
 class CreatedEstatesScreen extends StatefulWidget {
@@ -46,6 +49,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
   late AnimationController _animationController;
   late Animation _colorTween;
   List<Estate> estates = [];
+  late bool isDark;
 
   /// added now
   OfficeDetails? results;
@@ -107,51 +111,26 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     if (widget.estateId != null) {
       initAnimation(context);
     }
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          AppLocalizations.of(context)!.recent_created_estates,
-        ),
-      ),
-      body: RefreshIndicator(
-        color: Theme.of(context).colorScheme.primary,
-        onRefresh: () async {
-          _onRefresh();
-        },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: SizedBox(
-            width: 1.sw,
-            height: 1.sh - 100.h,
-            child: BlocConsumer<CreatedEstatesBloc, CreatedEstatesState>(
-              bloc: _createdEstatesBloc,
-              listener: (_, createdEstatesFetchState) async {
-                if (createdEstatesFetchState is CreatedEstatesFetchError) {
-                  var error = createdEstatesFetchState.isConnectionError
-                      ? AppLocalizations.of(context)!.no_internet_connection
-                      : createdEstatesFetchState.error;
-                  await showWonderfulAlertDialog(
-                      context, AppLocalizations.of(context)!.error, error);
-                }
-              },
-              builder: (_, createdEstatesFetchState) {
-                if (createdEstatesFetchState is CreatedEstatesFetchNone) {
-                  return FetchResult(
-                      content: AppLocalizations.of(context)!
-                          .have_not_created_estates);
-                }
-                if (createdEstatesFetchState is CreatedEstatesFetchProgress) {
-                  return const PropertyShimmer();
-                }
-                if (createdEstatesFetchState is! CreatedEstatesFetchComplete) {
-                  return FetchResult(
-                      content: AppLocalizations.of(context)!
-                          .error_happened_when_executing_operation);
-                }
+    return SafeArea(
+      child: BackHomeScreen(
+        child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(46.0),
+            child: AppBar(
+              iconTheme:
+              IconThemeData(color: isDark ? Colors.white : AppColors.black),
+              centerTitle: true,
+              title: Text(
+                AppLocalizations.of(context)!.recent_created_estates,
+                style:
+                TextStyle(color: isDark ? Colors.white : AppColors.black),
+              ),
+              backgroundColor:
+              isDark ? const Color(0xff26282B) : AppColors.white,
 
                 estates = createdEstatesFetchState.createdEstates;
 

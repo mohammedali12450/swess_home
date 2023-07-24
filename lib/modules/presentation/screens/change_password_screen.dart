@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:phone_number/phone_number.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/formatters.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
@@ -18,6 +19,7 @@ import '../../business_logic_components/bloc/change_password_bloc/change_passwor
 import '../../business_logic_components/bloc/change_password_bloc/change_password_event.dart';
 import '../../business_logic_components/bloc/change_password_bloc/change_password_state.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
+import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/user_authentication_repository.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -45,6 +47,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   TextEditingController oldPasswordController = TextEditingController();
 
   // Other:
+  late bool isDark;
   late String phoneDialCode;
   PhoneNumber? phoneNumber;
   bool isForStore = false;
@@ -59,6 +62,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return MultiBlocProvider(
       providers: [
         BlocProvider<ChangePasswordBloc>(
@@ -85,43 +89,51 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         changeState.errorMessage!);
                   }
                 }
-                if (changeState is ChangePasswordComplete) {
-                  Navigator.pushNamed(context, ProfileScreen.id);
-                }
-              },
-            ),
-          ],
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: true,
-            appBar: AppBar(
+              }
+              if (changeState is ChangePasswordComplete) {
+                Navigator.pushNamed(context, ProfileScreen.id);
+
+              }
+            },
+          ),
+        ],
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(46.0),
+            child: AppBar(
+              iconTheme:
+              IconThemeData(color: isDark ? Colors.white : AppColors.black),
+              backgroundColor:
+              isDark ? const Color(0xff26282B) : AppColors.white,
               centerTitle: true,
-              title: Text(
-                AppLocalizations.of(context)!.change_password,
-                style: const TextStyle(color: AppColors.white),
+              title: Text(AppLocalizations.of(context)!.change_password,
+                style: TextStyle(color: isDark ? Colors.white : AppColors.black),
               ),
+
             ),
-            body: Container(
-              width: 1.sw,
-              height: 1.sh,
-              color: Theme.of(context).colorScheme.secondary,
-              child: Stack(
-                children: [
-                  ...kBackgroundDrawings(context),
-                  SingleChildScrollView(
-                    controller: scrollController,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        40.verticalSpace,
-                        SizedBox(
-                          width: 200.w,
-                          height: 200.w,
-                          child: CircleAvatar(
-                            child: Image.asset(swessHomeIconPath),
-                            backgroundColor: Colors.transparent,
-                            foregroundColor: Colors.transparent,
-                          ),
+          ),
+          body: Container(
+            width: 1.sw,
+            height: 1.sh,
+            color: Theme.of(context).colorScheme.secondary,
+            child: Stack(
+              children: [
+                ...kBackgroundDrawings(context),
+                SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      40.verticalSpace,
+                      SizedBox(
+                        width: 200.w,
+                        height: 200.w,
+                        child: CircleAvatar(
+                          child: Image.asset(swessHomeIconPath),
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.transparent,
                         ),
                         10.verticalSpace,
                         Padding(

@@ -36,9 +36,18 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(AppLocalizations.of(context)!.search),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: AppBar(
+          backgroundColor:
+          isDark ? const Color(0xff26282B) : AppColors.white,
+          iconTheme:
+          IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          centerTitle: true,
+          title: Text(AppLocalizations.of(context)!.search,
+            style:
+            TextStyle(color: isDark ? Colors.white : AppColors.black),),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(

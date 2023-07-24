@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_state.dart';
 import 'package:swesshome/modules/data/models/register.dart';
@@ -16,6 +17,7 @@ import '../../business_logic_components/bloc/user_edit_data_bloc/edit_user_data_
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/governorates.dart';
 import '../../data/models/user.dart';
+import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/user_authentication_repository.dart';
 import '../widgets/my_dropdown_list.dart';
 import '../widgets/res_text.dart';
@@ -59,6 +61,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late String phoneDialCodeLogin;
   String phoneNumber = "";
   String? token;
+  late bool isDark ;
 
   @override
   void initState() {
@@ -71,18 +74,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: Text(
-          AppLocalizations.of(context)!.edit_profile,
-        ),
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context, false);
-          },
-          child: const Icon(Icons.arrow_back),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: AppBar(
+          iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          title: Text(
+            AppLocalizations.of(context)!.edit_profile,
+            style: TextStyle(color: isDark ? Colors.white : AppColors.black),
+          ),
+          leading: InkWell(
+            onTap: () {
+              Navigator.pop(context, false);
+            },
+            child: const Icon(Icons.arrow_back),
+          ),
         ),
       ),
       body: Padding(
