@@ -88,7 +88,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         AppLocalizations.of(context)!.error,
                         changeState.errorMessage!);
                   }
-                }
+
+              }
               if (changeState is ChangePasswordComplete) {
                 Navigator.pushNamed(context, ProfileScreen.id);
 
