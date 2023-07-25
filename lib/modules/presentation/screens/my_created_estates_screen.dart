@@ -66,6 +66,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
     scrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
+
   }
 
   @override
@@ -420,3 +421,4 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     return -1;
   }
 }
+
