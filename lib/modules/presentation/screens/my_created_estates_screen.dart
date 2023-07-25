@@ -211,7 +211,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => CreatePropertyIntroductionScreen(officeId: estates[0].estateOffice!.id)));
+                                      builder: (context) => CreatePropertyIntroductionScreen(officeId:0)));
                             },
                           ),
                         ),
@@ -230,7 +230,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                   }
 
                   if (find) {
-                    SchedulerBinding.instance!.addPostFrameCallback((_) {
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
                       jumpToOrder(estates);
                     });
                   } else {
