@@ -20,7 +20,7 @@ class AddRating extends StatelessWidget {
       direction: Axis.horizontal,
       glow: false,
       itemCount: 5,
-      allowHalfRating: true,
+      allowHalfRating: false,
       itemPadding: EdgeInsets.symmetric(horizontal: 3.5.w),
       unratedColor: const Color(0xFF979797).withOpacity(0.3),
       itemSize: 35.sp,

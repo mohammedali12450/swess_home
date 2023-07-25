@@ -3,27 +3,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/core/storage/shared_preferences/application_shared_preferences.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
-import 'package:swesshome/modules/presentation/screens/estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/home_screen.dart';
-import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
+import 'package:swesshome/modules/presentation/screens/my_created_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen_nav_bar.dart';
 import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
-import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen_nav_bar.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import '../../../core/functions/screen_informations.dart';
-import 'chat_screen.dart';
-import 'create_order_screen.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-
-
 
 class NavigationBarScreen extends StatefulWidget {
   static const String id = "NavigationBarScreen";
@@ -46,12 +39,12 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
   GlobalKey keyBottomNavigation4 = GlobalKey();
   GlobalKey keyBottomNavigation5 = GlobalKey();
 
-
   @override
   void initState() {
     super.initState();
-    ApplicationSharedPreferences.isFirstLaunchForDefinitionTour().then((result) {
-      if(result) {
+    ApplicationSharedPreferences.isFirstLaunchForDefinitionTour()
+        .then((result) {
+      if (result) {
         createTutorial();
         Future.delayed(Duration.zero, showTutorial);
       }
@@ -67,7 +60,8 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
       targets: _createTargets(),
       colorShadow: AppColors.lastColor,
       textSkip: "SKIP",
-      textStyleSkip: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+      textStyleSkip:
+          const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
       paddingFocus: 0,
     );
   }
@@ -198,7 +192,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                  AppLocalizations.of(context)!.profile_definition_tour,
+                    AppLocalizations.of(context)!.profile_definition_tour,
                     style: const TextStyle(
                       color: Colors.white,
                     ),
@@ -212,7 +206,6 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
     );
     return targets;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -230,7 +223,9 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
         body: BlocBuilder<ChannelCubit, dynamic>(
           bloc: pageCubit,
           builder: (_, pageNum) {
-            return Directionality(textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr, child: callPage(pageNum));
+            return Directionality(
+                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                child: callPage(pageNum));
           },
         ),
         // floatingActionButton: Padding(
@@ -254,104 +249,133 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
             bloc: pageCubit,
             builder: (_, pageNum) {
               return Directionality(
-                textDirection: TextDirection.ltr,
-                child: Stack(
-                  children: [
-                    SizedBox(
-                      height: 50,
-                      child: Row(
-                        children: [
-                          Expanded(
-                              child: Center(
-                                child: SizedBox(
-                                  key: keyBottomNavigation1,
-                                  height: 50,
-                                  width: 50,
-                                ),
-                              )),
-                          Expanded(
-                              child: Center(
-                                child: SizedBox(
-                                  key: keyBottomNavigation2,
-                                  height: 50,
-                                  width: 50,
-                                ),
-                              )),
-                          Expanded(
-                            child: Center(
+                  textDirection: TextDirection.ltr,
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: Center(
                               child: SizedBox(
-                                key: keyBottomNavigation3,
+                                key: keyBottomNavigation1,
                                 height: 50,
                                 width: 50,
                               ),
+                            )),
+                            Expanded(
+                                child: Center(
+                              child: SizedBox(
+                                key: keyBottomNavigation2,
+                                height: 50,
+                                width: 50,
+                              ),
+                            )),
+                            Expanded(
+                              child: Center(
+                                child: SizedBox(
+                                  key: keyBottomNavigation3,
+                                  height: 50,
+                                  width: 50,
+                                ),
+                              ),
                             ),
-                          ),
-                          Expanded(
-                              child: Center(
-                                child: SizedBox(
-                                  key: keyBottomNavigation4,
-                                  height: 50,
-                                  width: 50,
-                                ),
-                              )),
-                          Expanded(
-                              child: Center(
-                                child: SizedBox(
-                                  key: keyBottomNavigation5,
-                                  height: 50,
-                                  width: 50,
-                                ),
-                              )),
-                        ],
+                            Expanded(
+                                child: Center(
+                              child: SizedBox(
+                                key: keyBottomNavigation4,
+                                height: 50,
+                                width: 50,
+                              ),
+                            )),
+                            Expanded(
+                                child: Center(
+                              child: SizedBox(
+                                key: keyBottomNavigation5,
+                                height: 50,
+                                width: 50,
+                              ),
+                            )),
+                          ],
+                        ),
                       ),
-                    ),
-                    BottomNavigationBar(
-                      backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
-                      type: BottomNavigationBarType.fixed,
-                      showSelectedLabels: true,
-                      showUnselectedLabels: true,
-                      unselectedLabelStyle: const TextStyle(fontSize: 10.5),
-                      selectedLabelStyle: const TextStyle(fontSize: 10.5,),
-                      selectedItemColor: AppColors.lastColor,
-                      unselectedItemColor: const Color(0xFF818283),
-                      items: [
-                        BottomNavigationBarItem(
-                          icon: SvgPicture.asset(searchPath,color: pageCubit.state == 0 ? AppColors.lastColor : const Color(0xFF818283),width: 22.0,height: 22.0,),
-                          label: AppLocalizations.of(context)!.search,
+                      BottomNavigationBar(
+                        backgroundColor:
+                            isDark ? const Color(0xff26282B) : AppColors.white,
+                        type: BottomNavigationBarType.fixed,
+                        showSelectedLabels: true,
+                        showUnselectedLabels: true,
+                        unselectedLabelStyle: const TextStyle(fontSize: 10.5),
+                        selectedLabelStyle: const TextStyle(
+                          fontSize: 10.5,
                         ),
-                        BottomNavigationBarItem(
-                          icon: SvgPicture.asset(orderPath,color: pageCubit.state == 1 ? AppColors.lastColor : const Color(0xFF818283),width: 22.0,height: 22.0),
-                          label: AppLocalizations.of(context)!.estate_offers2,
-                        ),
-                        BottomNavigationBarItem(
-                          icon: SvgPicture.asset(savedPath,color: pageCubit.state == 2 ? AppColors.lastColor : const Color(0xFF818283),width: 22.0,height: 22.0),
-                          label: AppLocalizations.of(context)!.saved,
-                        ),
-                        // BottomNavigationBarItem(
-                        //   icon: const Icon(Icons.house_outlined),
-                        //   label: AppLocalizations.of(context)!.estate_immediately,
-                        // ),
-                        BottomNavigationBarItem(
-                          icon: SvgPicture.asset(createEstatePath,color: pageCubit.state == 3 ? AppColors.lastColor : const Color(0xFF818283),width: 22.0,height: 22.0),
-                          label: AppLocalizations.of(context)!.estate_order,
-                        ),
-                        // BottomNavigationBarItem(
-                        //   icon: const Icon(Icons.chat_outlined),
-                        //   label: AppLocalizations.of(context)!.chat,
-                        // ),
-                        BottomNavigationBarItem(
-                          icon: Image.asset(profilePath,color: pageCubit.state == 4 ? AppColors.lastColor : const Color(0xFF818283), width: 22.0,height: 22.0                         ),
-                          label: AppLocalizations.of(context)!.profile,
-                        ),
-                      ],
-                      currentIndex: pageCubit.state,
-                      onTap: (index) {
-                        pageCubit.setState(index);
-                      },
-                    ),
-                  ],
-                )
-              );
+                        selectedItemColor: AppColors.lastColor,
+                        unselectedItemColor: const Color(0xFF818283),
+                        items: [
+                          BottomNavigationBarItem(
+                            icon: SvgPicture.asset(
+                              searchPath,
+                              color: pageCubit.state == 0
+                                  ? AppColors.lastColor
+                                  : const Color(0xFF818283),
+                              width: 22.0,
+                              height: 22.0,
+                            ),
+                            label: AppLocalizations.of(context)!.search,
+                          ),
+                          BottomNavigationBarItem(
+                            icon: SvgPicture.asset(orderPath,
+                                color: pageCubit.state == 1
+                                    ? AppColors.lastColor
+                                    : const Color(0xFF818283),
+                                width: 22.0,
+                                height: 22.0),
+                            label: AppLocalizations.of(context)!.estate_offers2,
+                          ),
+                          BottomNavigationBarItem(
+                            icon: SvgPicture.asset(savedPath,
+                                color: pageCubit.state == 2
+                                    ? AppColors.lastColor
+                                    : const Color(0xFF818283),
+                                width: 22.0,
+                                height: 22.0),
+                            label: AppLocalizations.of(context)!.saved,
+                          ),
+                          // BottomNavigationBarItem(
+                          //   icon: const Icon(Icons.house_outlined),
+                          //   label: AppLocalizations.of(context)!.estate_immediately,
+                          // ),
+                          BottomNavigationBarItem(
+                            icon: SvgPicture.asset(createEstatePath,
+                                color: pageCubit.state == 3
+                                    ? AppColors.lastColor
+                                    : const Color(0xFF818283),
+                                width: 22.0,
+                                height: 22.0),
+                            label: AppLocalizations.of(context)!.estate_order,
+                          ),
+                          // BottomNavigationBarItem(
+                          //   icon: const Icon(Icons.chat_outlined),
+                          //   label: AppLocalizations.of(context)!.chat,
+                          // ),
+                          BottomNavigationBarItem(
+                            icon: Image.asset(profilePath,
+                                color: pageCubit.state == 4
+                                    ? AppColors.lastColor
+                                    : const Color(0xFF818283),
+                                width: 22.0,
+                                height: 22.0),
+                            label: AppLocalizations.of(context)!.profile,
+                          ),
+                        ],
+                        currentIndex: pageCubit.state,
+                        onTap: (index) {
+                          pageCubit.setState(index);
+                        },
+                      ),
+                    ],
+                  ));
             }),
       ),
     );
@@ -369,11 +393,11 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
       //   return homeScreenState!.build(context);
       // }
       case 1:
-        return RecentEstateOrdersScreenNavBar();
+        return CreatedEstatesScreen(); // RecentEstateOrdersScreenNavBar();
       case 2:
         return SavedEstatesScreenNavBar();
       case 3:
-        return const CreateOrderScreen();
+        return RecentEstateOrdersScreenNavBar(); //const CreateOrderScreen();
       case 4:
         return ProfileScreen();
       default:

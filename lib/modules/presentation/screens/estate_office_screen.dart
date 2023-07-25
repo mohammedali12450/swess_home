@@ -84,17 +84,26 @@ class _EstateOfficeScreenState extends State<EstateOfficeScreen> {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          AppLocalizations.of(context)!.office_details,
-        ),
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context, true);
-          },
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: AppBar(
+          iconTheme:
+          IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          backgroundColor:
+          isDark ? const Color(0xff26282B) : AppColors.white,
+          centerTitle: true,
+          title: Text(
+            AppLocalizations.of(context)!.office_details,
+            style:
+            TextStyle(color: isDark ? Colors.white : AppColors.black),
+          ),
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+          ),
         ),
       ),
       body: RefreshIndicator(

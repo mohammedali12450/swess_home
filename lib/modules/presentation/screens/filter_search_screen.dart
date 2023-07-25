@@ -105,9 +105,16 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(AppLocalizations.of(context)!.search),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: AppBar(
+          iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
+          centerTitle: true,
+          title: Text(AppLocalizations.of(context)!.search,
+            style: TextStyle(color: isDark ? Colors.white : AppColors.black),),
+
+        ),
       ),
       body: SingleChildScrollView(
         child: BlocBuilder<ChannelCubit, dynamic>(

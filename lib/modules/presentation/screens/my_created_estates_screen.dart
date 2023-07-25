@@ -47,7 +47,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     with TickerProviderStateMixin {
   late CreatedEstatesBloc _createdEstatesBloc;
   DeleteUserNewEstateBloc deleteUserNewEstateBloc =
-      DeleteUserNewEstateBloc(EstateRepository());
+  DeleteUserNewEstateBloc(EstateRepository());
   late ItemScrollController scrollController;
   late ItemPositionsListener itemPositionsListener;
   late AnimationController _animationController;
@@ -56,6 +56,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
   /// added now
   OfficeDetails? results;
+  late bool isDark ;
 
   @override
   void initState() {
@@ -77,14 +78,14 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
   initAnimation(context) {
     bool isDark =
-        Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
+    Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
 
     if (widget.estateId != null) {
       _animationController = AnimationController(
           vsync: this, duration: const Duration(seconds: 1));
       _colorTween = ColorTween(
-              begin: AppColors.primaryDark,
-              end: isDark ? AppColors.secondaryDark : AppColors.white)
+          begin: AppColors.primaryDark,
+          end: isDark ? AppColors.secondaryDark : AppColors.white)
           .animate(_animationController);
       changeColors();
     }
@@ -114,14 +115,24 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     if (widget.estateId != null) {
       initAnimation(context);
     }
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          AppLocalizations.of(context)!.recent_created_estates,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: AppBar(
+          backgroundColor:
+          isDark ? const Color(0xff26282B) : AppColors.white,
+          iconTheme:
+          IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          centerTitle: true,
+          title: Text(
+            AppLocalizations.of(context)!.recent_created_estates,
+            style:
+            TextStyle(color: isDark ? Colors.white : AppColors.black),
+          ),
         ),
       ),
       body: RefreshIndicator(
@@ -328,33 +339,33 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
         children: [
           estates.elementAt(index).estateStatus! == 1
               ? Text(
-                  AppLocalizations.of(context)!.accepted_from_company,
-                  style: const TextStyle(color: Colors.green,fontSize: 12),
-                )
+            AppLocalizations.of(context)!.accepted_from_company,
+            style: const TextStyle(color: Colors.green,fontSize: 12),
+          )
               : estates.elementAt(index).estateStatus! == 2
-                  ? Text(
-                      AppLocalizations.of(context)!.rejected_from_company,
-                      style: const TextStyle(color: Colors.red,fontSize: 12),
-                    )
-                  : Text(
-                      AppLocalizations.of(context)!.on_progress_from_company,
-                      style: TextStyle(color: AppColors.yellowDarkColor,fontSize: 12),
-                    ),
+              ? Text(
+            AppLocalizations.of(context)!.rejected_from_company,
+            style: const TextStyle(color: Colors.red,fontSize: 12),
+          )
+              : Text(
+            AppLocalizations.of(context)!.on_progress_from_company,
+            style: TextStyle(color: AppColors.yellowDarkColor,fontSize: 12),
+          ),
           const Text(" | "),
           estates.elementAt(index).officeStatus! == 1
               ? Text(
-                  AppLocalizations.of(context)!.accepted_from_office,
-                  style: const TextStyle(color: Colors.green,fontSize: 12),
-                )
+            AppLocalizations.of(context)!.accepted_from_office,
+            style: const TextStyle(color: Colors.green,fontSize: 12),
+          )
               : estates.elementAt(index).officeStatus! == 2
-                  ? Text(
-                      AppLocalizations.of(context)!.rejected_from_office,
-                      style: const TextStyle(color: Colors.red,fontSize: 12),
-                    )
-                  : Text(
-                      AppLocalizations.of(context)!.on_progress_from_office,
-                      style: TextStyle(color: AppColors.yellowDarkColor,fontSize: 12),
-                    ),
+              ? Text(
+            AppLocalizations.of(context)!.rejected_from_office,
+            style: const TextStyle(color: Colors.red,fontSize: 12),
+          )
+              : Text(
+            AppLocalizations.of(context)!.on_progress_from_office,
+            style: TextStyle(color: AppColors.yellowDarkColor,fontSize: 12),
+          ),
         ],
       ),
     );

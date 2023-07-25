@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
@@ -13,7 +14,6 @@ import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_event.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/recent_estates_orders_bloc/recent_estates_orders_state.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/notifications_cubit.dart';
 import 'package:swesshome/modules/data/models/estate_order.dart';
 import 'package:swesshome/modules/data/repositories/estate_order_repository.dart';
@@ -32,7 +32,6 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_bloc.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_event.dart';
 import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/delete_recent_estate_order_state.dart';
-import '../../data/models/user.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../data/providers/theme_provider.dart';
@@ -43,13 +42,16 @@ class RecentEstateOrdersScreenNavBar extends StatefulWidget {
 
   final String? estateId;
 
-  const RecentEstateOrdersScreenNavBar({Key? key, this.estateId}) : super(key: key);
+  const RecentEstateOrdersScreenNavBar({Key? key, this.estateId})
+      : super(key: key);
 
   @override
-  _RecentEstateOrdersScreenNavBarState createState() => _RecentEstateOrdersScreenNavBarState();
+  _RecentEstateOrdersScreenNavBarState createState() =>
+      _RecentEstateOrdersScreenNavBarState();
 }
 
-class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScreenNavBar>
+class _RecentEstateOrdersScreenNavBarState
+    extends State<RecentEstateOrdersScreenNavBar>
     with TickerProviderStateMixin {
   late RecentEstatesOrdersBloc _recentEstatesOrdersBloc;
   late ItemScrollController scrollController;
@@ -134,90 +136,107 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
     if (widget.estateId != null) {
       initAnimation(context);
     }
-    return BackHomeScreen(child: SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
-          centerTitle: true,
-          backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
-          title: Text(
-            AppLocalizations.of(context)!.recent_created_orders,
-            style: TextStyle(color: isDark ? Colors.white : AppColors.black),
-          ),
-          actions: [
-            InkWell(
-              child: BlocBuilder<NotificationsCubit, int>(
-                builder: (_, notificationsCount) {
-                  return Padding(
-                    padding: EdgeInsets.only(
-                        left: 0, right:  12.w),
-                    child: IconBadge(
-                      icon: Icon(
-                          Icons.notifications_outlined,
-                          color: isDark ? Colors.white : AppColors.black
-                      ),
-                      itemCount: notificationsCount,
-                      right: 0,
-                      top: 5.h,
-                      hideZero: true,
-                    ),
-                  );
-                },
+    return BackHomeScreen(
+      child: SafeArea(
+        child: Scaffold(
+          floatingActionButton: UserSharedPreferences.getAccessToken() != null
+              ? AddOfferButton()
+              : null,
+          backgroundColor: isDark
+              ? const Color(0xff26282B)
+              : AppColors.white, // Color(0xffF2F2F6),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(46.0),
+            child: AppBar(
+              iconTheme:
+                  IconThemeData(color: isDark ? Colors.white : AppColors.black),
+              centerTitle: true,
+              backgroundColor:
+                  isDark ? const Color(0xff26282B) : AppColors.white,
+              title: Text(
+                AppLocalizations.of(context)!.estate_offers,
+                style: GoogleFonts.cairo(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white : const Color(0xff130D0D),
+                ),
               ),
-              onTap: () async {
-                if (UserSharedPreferences.getAccessToken() == null) {
-                  await showWonderfulAlertDialog(
-                      context,
-                      AppLocalizations.of(context)!.confirmation,
-                      AppLocalizations.of(context)!.this_features_require_login,
-                      removeDefaultButton: true,
-                      dialogButtons: [
-                        ElevatedButton(
-                          child: Text(
-                            AppLocalizations.of(context)!.sign_in,
+              actions: [
+                InkWell(
+                  child: BlocBuilder<NotificationsCubit, int>(
+                    builder: (_, notificationsCount) {
+                      return Padding(
+                        padding: EdgeInsets.only(left: 10, right: 12.w),
+                        child: IconBadge(
+                          icon: SvgPicture.asset(
+                            bellPath,
+                            width: 25,
+                            height: 25,
+                            color: isDark ? Colors.white : AppColors.black,
                           ),
-                          onPressed: () async {
-                            await Navigator.pushNamed(
-                                context, AuthenticationScreen.id);
-                            Navigator.pop(context);
-                          },
+                          itemCount: 2,
+                          right: 0,
+                          top: 10.h,
+                          badgeColor: Color(0xff2A84D1),
+                          hideZero: false,
                         ),
-                        ElevatedButton(
-                          child: Text(
-                            AppLocalizations.of(context)!.cancel,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                      width: 400.w);
-                  return;
-                }
-                Navigator.pushNamed(context, NotificationScreen.id);
-              },
+                      );
+                    },
+                  ),
+                  onTap: () async {
+                    if (UserSharedPreferences.getAccessToken() == null) {
+                      await showWonderfulAlertDialog(
+                          context,
+                          AppLocalizations.of(context)!.confirmation,
+                          AppLocalizations.of(context)!
+                              .this_features_require_login,
+                          removeDefaultButton: true,
+                          dialogButtons: [
+                            ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.sign_in,
+                              ),
+                              onPressed: () async {
+                                await Navigator.pushNamed(
+                                    context, AuthenticationScreen.id);
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.cancel,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                          width: 400.w);
+                      return;
+                    }
+                    Navigator.pushNamed(context, NotificationScreen.id);
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-        drawer: SizedBox(
-          width: getScreenWidth(context) * (75 / 100),
-          child: const Drawer(
-            child: MyDrawer(),
           ),
-        ),
-        body: RefreshIndicator(
-          color: Theme.of(context).colorScheme.primary,
-          onRefresh: () async {
-            // _onRefresh();
-            if (UserSharedPreferences.getAccessToken() != null) {
-              _recentEstatesOrdersBloc.add(
-                RecentEstatesOrdersFetchStarted(
-                    token: UserSharedPreferences.getAccessToken()!),
-              );
-            }
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+          drawer: SizedBox(
+            width: getScreenWidth(context) * (75 / 100),
+            child: const Drawer(
+              child: MyDrawer(),
+            ),
+          ),
+          body: RefreshIndicator(
+            color: Theme.of(context).colorScheme.primary,
+            onRefresh: () async {
+              // _onRefresh();
+              if (UserSharedPreferences.getAccessToken() != null) {
+                _recentEstatesOrdersBloc.add(
+                  RecentEstatesOrdersFetchStarted(
+                      token: UserSharedPreferences.getAccessToken()!),
+                );
+              }
+            },
             child: SizedBox(
               width: 1.sw,
               height: 1.sh - 75.h,
@@ -250,15 +269,16 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                             documentOutlineIconPath,
                             width: 0.2.sw,
                             height: 0.2.sw,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                           kHe24,
                           Text(
                             AppLocalizations.of(context)!
                                 .have_not_recent_orders,
-                            style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 16),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline4!
+                                .copyWith(fontSize: 16),
                             textAlign: TextAlign.center,
                           ),
                           kHe24,
@@ -280,8 +300,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                        const CreateOrderScreen()));
-
+                                            const CreateOrderScreen()));
                               },
                             ),
                           ),
@@ -299,7 +318,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                       }
                     }
                     if (find) {
-                      SchedulerBinding.instance!.addPostFrameCallback((_) {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
                         jumpToOrder(orders);
                       });
                     } else {
@@ -322,61 +341,73 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
                     child: BlocListener<DeleteEstatesBloc, DeleteEstatesState>(
                       listener: (_, deleteEstateOrderState) async {
                         if (deleteEstateOrderState
-                        is DeleteEstatesFetchComplete) {
+                            is DeleteEstatesFetchComplete) {
                           // await _onRefresh();
                           if (UserSharedPreferences.getAccessToken() != null) {
                             _recentEstatesOrdersBloc.add(
                               RecentEstatesOrdersFetchStarted(
-                                  token: UserSharedPreferences.getAccessToken()!),
+                                  token:
+                                      UserSharedPreferences.getAccessToken()!),
                             );
                           }
                         } else if (deleteEstateOrderState
-                        is DeleteEstatesFetchError) {}
+                            is DeleteEstatesFetchError) {}
                       },
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: ScrollablePositionedList.builder(
-                                itemScrollController: scrollController,
-                                itemPositionsListener: itemPositionsListener,
-                                itemCount: orders.length,
-                                itemBuilder: (_, index) {
-                                  return (widget.estateId != null && find)
-                                      ? AnimatedBuilder(
-                                    animation: _colorTween,
-                                    builder: (context, _) => Padding(
-                                      padding: const EdgeInsets.only(top: 20,bottom: 10),
-                                      child: EstateOrderCard(
-                                        estateOrder: orders.elementAt(index),
-                                        //color: Theme.of(context).colorScheme.background,
-                                        color: (int.parse(widget.estateId!) ==
-                                            orders.elementAt(index).id)
-                                            ? _colorTween.value
-                                            : Theme.of(context)
-                                            .colorScheme
-                                            .background,
-                                        onTap: () async {
-                                          await deleteEstateOrder(index);
-                                        },
-                                      ),
-                                    ),
-                                  )
-                                      : Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: EstateOrderCard(
-                                      estateOrder: orders.elementAt(index),
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .background,
-                                      onTap: () async {
-                                        await deleteEstateOrder(index);
-                                      },
-                                    ),
-                                  );
-                                }),
-                          ),
-                          const SizedBox(height: 75)
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: ScrollablePositionedList.builder(
+                                  itemScrollController: scrollController,
+                                  itemPositionsListener: itemPositionsListener,
+                                  itemCount: orders.length,
+                                  itemBuilder: (_, index) {
+                                    return (widget.estateId != null && find)
+                                        ? AnimatedBuilder(
+                                            animation: _colorTween,
+                                            builder: (context, _) => Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 20, bottom: 10),
+                                              child: EstateOrderCard(
+                                                estateOrder:
+                                                    orders.elementAt(index),
+                                                //color: Theme.of(context).colorScheme.background,
+                                                color: (int.parse(
+                                                            widget.estateId!) ==
+                                                        orders
+                                                            .elementAt(index)
+                                                            .id)
+                                                    ? _colorTween.value
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .background,
+                                                onTap: () async {
+                                                  await deleteEstateOrder(
+                                                      index);
+                                                },
+                                              ),
+                                            ),
+                                          )
+                                        : Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 10),
+                                            child: EstateOrderCard(
+                                              estateOrder:
+                                                  orders.elementAt(index),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .background,
+                                              onTap: () async {
+                                                await deleteEstateOrder(index);
+                                              },
+                                            ),
+                                          );
+                                  }),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -386,7 +417,7 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
           ),
         ),
       ),
-    ),);
+    );
   }
 
   deleteEstateOrder(index) async {
@@ -425,41 +456,85 @@ class _RecentEstateOrdersScreenNavBarState extends State<RecentEstateOrdersScree
 
   Widget buildSignInRequired(context) {
     return SizedBox(
-        height: 20,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: 60,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(AppLocalizations.of(context)!.this_features_require_login),
-              const SizedBox(height: 30),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(150.w, 50.h),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.sign_in,
-                  ),
-                  onPressed: () async {
-                    await Navigator.pushNamed(context, AuthenticationScreen.id).then((value) {
-                    });
-                    Navigator.pop(context);
-                    // _onRefresh();
-                    if (UserSharedPreferences.getAccessToken() != null) {
-                      _recentEstatesOrdersBloc.add(
-                        RecentEstatesOrdersFetchStarted(
-                            token: UserSharedPreferences.getAccessToken()!),
-                      );
-                    }
-                  },
+      height: 20,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 60,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.this_features_require_login,
+            ),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(180.w, 50.h),
                 ),
-              )
-            ],
-          ),
+                child: Text(
+                  AppLocalizations.of(context)!.sign_in,
+                ),
+                onPressed: () async {
+                  await Navigator.pushNamed(context, AuthenticationScreen.id)
+                      .then((value) {});
+                  Navigator.pop(context);
+                  // _onRefresh();
+                  if (UserSharedPreferences.getAccessToken() != null) {
+                    _recentEstatesOrdersBloc.add(
+                      RecentEstatesOrdersFetchStarted(
+                          token: UserSharedPreferences.getAccessToken()!),
+                    );
+                  }
+                },
+              ),
+            )
+          ],
         ),
-      ) ;
+      ),
+    );
+  }
+}
+
+class AddOfferButton extends StatelessWidget {
+  const AddOfferButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        FocusScope.of(context).unfocus();
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const CreateOrderScreen()));
+      },
+      child: Container(
+        alignment: Alignment.bottomLeft,
+        width: 108,
+        height: 45,
+        decoration: BoxDecoration(
+          color: Color(0xff2A84D1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: EdgeInsets.all(10.0),
+        child: Row(
+          children: [
+            SvgPicture.asset(material_symbols_searchPath,
+                width: 19, height: 25, color: Colors.white),
+            SizedBox(width: 10.0),
+            Text(
+              AppLocalizations.of(context)!.add_offer,
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

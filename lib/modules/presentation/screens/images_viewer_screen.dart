@@ -5,19 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/core/functions/screen_informations.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../../../constants/api_paths.dart';
+import '../../data/providers/theme_provider.dart';
 
 class ImagesViewerScreen extends StatefulWidget {
   final List<String> images;
   final String screenTitle;
   final String videoUrl;
 
-  const ImagesViewerScreen(this.images, this.screenTitle, this.videoUrl, {Key? key}) : super(key: key);
+  const ImagesViewerScreen(this.images, this.screenTitle, this.videoUrl,
+      {Key? key})
+      : super(key: key);
 
   @override
   _ImagesViewerScreenState createState() => _ImagesViewerScreenState();
@@ -26,7 +30,7 @@ class ImagesViewerScreen extends StatefulWidget {
 class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
   ChannelCubit currentImageCubit = ChannelCubit(0);
   YoutubePlayerController? _ytbPlayerController;
-
+  late bool isDark ;
   // Future<void> secureScreen() async {
   //   await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
   // }
@@ -51,29 +55,34 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
+          iconTheme:
+          IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          backgroundColor:
+          isDark ? const Color(0xff26282B) : AppColors.white,
           centerTitle: true,
           title: Text(
             widget.screenTitle,
+            style:
+            TextStyle(color: isDark ? Colors.white : AppColors.black),
           ),
-          bottom: TabBar(
-            indicatorColor: AppColors.lightblue,
-            tabs: [
-              Tab(text: AppLocalizations.of(context)!.image),
-              Tab(text: AppLocalizations.of(context)!.video),
-            ],
-          ),
+          // bottom: TabBar(
+          //   indicatorColor: AppColors.lightblue,
+          //   tabs: [
+          //     Tab(text: AppLocalizations.of(context)!.image),
+          //     Tab(text: AppLocalizations.of(context)!.video),
+          //   ],
+          // ),
         ),
-        body: TabBarView(
-          children: [
-            buildImageScreen(),
-            buildVideoScreen(),
-            //Icon(Icons.directions_car, size: 350),
-          ],
-        ),
+        body: buildImageScreen(),
+        //buildVideoScreen(),
+        //Icon(Icons.directions_car, size: 350),
+        //   ],
+        // ),
       ),
     );
   }
@@ -96,7 +105,12 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
             itemCount: image.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (BuildContext context, int index) {
-              image.elementAt(index).image.resolve(const ImageConfiguration()).addListener(ImageStreamListener((ImageInfo info, bool synchronousCall) {
+              image
+                  .elementAt(index)
+                  .image
+                  .resolve(const ImageConfiguration())
+                  .addListener(ImageStreamListener(
+                      (ImageInfo info, bool synchronousCall) {
                 if (!completer.isCompleted) {
                   completer.complete(info.image);
                 }
@@ -116,7 +130,10 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
           bloc: currentImageCubit,
           builder: (_, currentImage) {
             return Center(
-              child: Text(AppLocalizations.of(context)!.image_counting((currentImageCubit.state + 1).toString(), widget.images.length.toString()),
+              child: Text(
+                  AppLocalizations.of(context)!.image_counting(
+                      (currentImageCubit.state + 1).toString(),
+                      widget.images.length.toString()),
                   style: Theme.of(context).textTheme.titleSmall),
             );
           },
@@ -134,7 +151,9 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
           )
         : AspectRatio(
             aspectRatio: 16 / 9,
-            child: _ytbPlayerController != null ? YoutubePlayer(controller: _ytbPlayerController!) : const Center(child: CircularProgressIndicator()),
+            child: _ytbPlayerController != null
+                ? YoutubePlayer(controller: _ytbPlayerController!)
+                : const Center(child: CircularProgressIndicator()),
           );
   }
 
@@ -142,8 +161,10 @@ class _ImagesViewerScreenState extends State<ImagesViewerScreen> {
     if (!url.contains("http") && (url.length == 11)) return url;
 
     for (var exp in [
-      RegExp(r"^https:\/\/(?:www\.|m\.)?youtube\.com\/watch\?v=([_\-a-zA-Z0-9]{11}).*$"),
-      RegExp(r"^https:\/\/(?:www\.|m\.)?youtube(?:-nocookie)?\.com\/embed\/([_\-a-zA-Z0-9]{11}).*$"),
+      RegExp(
+          r"^https:\/\/(?:www\.|m\.)?youtube\.com\/watch\?v=([_\-a-zA-Z0-9]{11}).*$"),
+      RegExp(
+          r"^https:\/\/(?:www\.|m\.)?youtube(?:-nocookie)?\.com\/embed\/([_\-a-zA-Z0-9]{11}).*$"),
       RegExp(r"^https:\/\/youtu\.be\/([_\-a-zA-Z0-9]{11}).*$")
     ]) {
       Match? match = exp.firstMatch(url);

@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -68,6 +67,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
   List<String> streetImages = [];
   List<String> floorPlanImages = [];
   List<String> nearbyPlaces = [];
+  late bool isDark ;
 
   // Others:
   late String currency;
@@ -86,7 +86,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
         token: userToken,
         visitType: VisitType.estate));
     // switchers initializing:
-    if(widget.estate.estateType !=null || widget.estate.estateOfferType != null) {
+    if (widget.estate.estateType != null ||
+        widget.estate.estateOfferType != null) {
       isLands = widget.estate.estateType!.id == landsPropertyTypeNumber;
       isShops = widget.estate.estateType!.id == shopsPropertyTypeNumber;
       isSell = widget.estate.estateOfferType!.id == sellOfferTypeNumber;
@@ -95,7 +96,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
           (widget.estate.estateType!.id == farmsPropertyTypeNumber) ||
               (widget.estate.estateType!.id == vacationsPropertyTypeNumber);
     }
-    if(widget.estate.images != null) {
+    if (widget.estate.images != null) {
       estateImages = widget.estate.images!
           .where((element) => element.type == "estate_image")
           .map((e) => e.url)
@@ -115,13 +116,12 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
         nearbyPlaces.add(element);
       }
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     currency = AppLocalizations.of(context)!.syrian_currency;
 
     int intPrice = int.parse(widget.estate.price!);
@@ -130,34 +130,42 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            AppLocalizations.of(context)!.estate_details,
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.share,
-                color: AppColors.white,
-              ),
-              onPressed: () {
-                Share.share('${AppLocalizations.of(context)!.estate_offers} :\n'
-                    '${widget.estate.estateType == null ? "" :  widget.estate.estateType!.name.split("|")[1]} لل'
-                    '${widget.estate.estateOfferType == null ? "" : widget.estate.estateOfferType!.name} '
-                    ' في ${widget.estate.locationS} \n'
-                    'https://www.swesshome.com/estate/${widget.estate.id} ');
-                if (UserSharedPreferences.getAccessToken() != null) {
-                  shareBloc.add(
-                    ShareStarted(
-                      estateId: widget.estate.id!,
-                      token: userToken,
-                    ),
-                  );
-                }
-              },
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(46.0),
+          child: AppBar(
+            iconTheme:
+            IconThemeData(color: isDark ? Colors.white : AppColors.black),
+            backgroundColor:
+            isDark ? const Color(0xff26282B) : AppColors.white,
+            centerTitle: true,
+            title: Text(
+              AppLocalizations.of(context)!.estate_details,
+              style:
+              TextStyle(color: isDark ? Colors.white : AppColors.black),
             ),
-          ],
+            actions: [
+              IconButton(
+                icon: const Icon(
+                  Icons.share,
+                ),
+                onPressed: () {
+                  Share.share('${AppLocalizations.of(context)!.estate_offers} :\n'
+                      '${widget.estate.estateType == null ? "" :  widget.estate.estateType!.name.split("|")[1]} لل'
+                      '${widget.estate.estateOfferType == null ? "" : widget.estate.estateOfferType!.name} '
+                      ' في ${widget.estate.locationS} \n'
+                      'https://www.swesshome.com/estate/${widget.estate.id} ');
+                  if (UserSharedPreferences.getAccessToken() != null) {
+                    shareBloc.add(
+                      ShareStarted(
+                        estateId: widget.estate.id!,
+                        token: userToken,
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
         body: Container(
           color: Theme.of(context).colorScheme.background,
@@ -307,150 +315,154 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   padding: kTinyAllPadding,
                   child: Row(
                     children: [
-                      (UserSharedPreferences.getAccessToken()  == null) ?
-                      Padding(
-                        padding: EdgeInsets.only(
-                          right: (isArabic) ? 12.w : 0,
-                          left: (!isArabic) ? 12.w : 0,
-                        ),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: () async{
-                                await Navigator.pushNamed(context, AuthenticationScreen.id);
-                              },
-                              child: Container(
-                                width: 100.w,
-                                height: 30.h,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  borderRadius: veryLowBorderRadius,
-                                ),
-                                child: Center(
-                                  child: ResText(
-                                    AppLocalizations.of(context)!.sign_in,
-                                    textAlign: TextAlign.start,
-                                    textStyle: GoogleFonts.libreFranklin(
-                                        color: AppColors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15
+                      (UserSharedPreferences.getAccessToken() == null)
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                right: (isArabic) ? 12.w : 0,
+                                left: (!isArabic) ? 12.w : 0,
+                              ),
+                              child: Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () async {
+                                      await Navigator.pushNamed(
+                                          context, AuthenticationScreen.id);
+                                    },
+                                    child: Container(
+                                      width: 100.w,
+                                      height: 30.h,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.primaryColor,
+                                        borderRadius: veryLowBorderRadius,
+                                      ),
+                                      child: Center(
+                                        child: ResText(
+                                          AppLocalizations.of(context)!.sign_in,
+                                          textAlign: TextAlign.start,
+                                          textStyle: GoogleFonts.libreFranklin(
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 15),
+                                        ),
+                                      ),
                                     ),
                                   ),
+                                  kWi8,
+                                  ResText(
+                                    " ${AppLocalizations.of(context)!.first} ${AppLocalizations.of(context)!.get_price}",
+                                    textAlign: TextAlign.start,
+                                    textStyle: GoogleFonts.libreFranklin(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12.sp,
+                                        height: 1.3.h),
+                                  ),
+                                ],
+                              ),
+                            )
+                          :
+                          // Row(
+                          //   children: [
+                          //     InkWell(
+                          //       onTap: () async{
+                          //         await Navigator.pushNamed(context, AuthenticationScreen.id);
+                          //       },
+                          //       child: ResText(
+                          //         AppLocalizations.of(context)!.sign_in,
+                          //         textAlign: TextAlign.start,
+                          //         textStyle: GoogleFonts.libreFranklin(
+                          //             color: Theme.of(context).colorScheme.primary,
+                          //             fontWeight: FontWeight.w600,
+                          //           decoration: TextDecoration.underline
+                          //             ),
+                          //       ),
+                          //     ),
+                          //     ResText(
+                          //       " " +  AppLocalizations.of(context)!.first + " " +  AppLocalizations.of(context)!.get_price,
+                          //       textAlign: TextAlign.start,
+                          //       textStyle: GoogleFonts.libreFranklin(
+                          //           color: Theme.of(context).colorScheme.onBackground,
+                          //           fontWeight: FontWeight.w400,
+                          //         fontSize: 12.sp,
+                          //           height: 1.3.h
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ) :
+                          Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    right: (isArabic) ? 4.w : 0,
+                                    left: (!isArabic) ? 4.w : 0,
+                                  ),
+                                  child: ResText(
+                                    estatePrice,
+                                    textAlign: TextAlign.start,
+                                    textStyle: GoogleFonts.libreFranklin(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground,
+                                        fontSize: 24.sp,
+                                        fontWeight: FontWeight.w400,
+                                        height: 1.5.h),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            kWi8,
-                            ResText(
-                              " ${AppLocalizations.of(context)!.first} ${AppLocalizations.of(context)!.get_price}",
-                              textAlign: TextAlign.start,
-                              textStyle: GoogleFonts.libreFranklin(
-                                  color: Theme.of(context).colorScheme.onBackground,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12.sp,
-                                  height: 1.3.h
-                              ),
-                            ),
-                          ],
-                        ),
-                      ):
-                        // Row(
-                        //   children: [
-                        //     InkWell(
-                        //       onTap: () async{
-                        //         await Navigator.pushNamed(context, AuthenticationScreen.id);
-                        //       },
-                        //       child: ResText(
-                        //         AppLocalizations.of(context)!.sign_in,
-                        //         textAlign: TextAlign.start,
-                        //         textStyle: GoogleFonts.libreFranklin(
-                        //             color: Theme.of(context).colorScheme.primary,
-                        //             fontWeight: FontWeight.w600,
-                        //           decoration: TextDecoration.underline
-                        //             ),
-                        //       ),
-                        //     ),
-                        //     ResText(
-                        //       " " +  AppLocalizations.of(context)!.first + " " +  AppLocalizations.of(context)!.get_price,
-                        //       textAlign: TextAlign.start,
-                        //       textStyle: GoogleFonts.libreFranklin(
-                        //           color: Theme.of(context).colorScheme.onBackground,
-                        //           fontWeight: FontWeight.w400,
-                        //         fontSize: 12.sp,
-                        //           height: 1.3.h
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ) :
-                      Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                              right: (isArabic) ? 4.w : 0,
-                              left: (!isArabic) ? 4.w : 0,
-                            ),
-                            child: ResText(
-                              estatePrice,
-                              textAlign: TextAlign.start,
-                              textStyle: GoogleFonts.libreFranklin(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground,
-                                  fontSize: 24.sp,
-                                  fontWeight: FontWeight.w400,
-                                  height: 1.5.h),
-                            ),
-                          ),
-                         if(widget.estate.estateOfferType != null)  if (widget.estate.estateOfferType!.id !=
-                             rentOfferTypeNumber)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 5,
-                                right: (isArabic) ? 8.w : 0,
-                                left: (!isArabic) ? 8.w : 0,
-                              ),
-                              child: ResText(
-                                currency,
-                                textAlign: TextAlign.start,
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                      height: 1.8.h,
-                                      fontSize: 22.sp,
-                                      fontWeight: FontWeight.w400,
+                                if (widget.estate.estateOfferType != null)
+                                  if (widget.estate.estateOfferType!.id !=
+                                      rentOfferTypeNumber)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        top: 5,
+                                        right: (isArabic) ? 8.w : 0,
+                                        left: (!isArabic) ? 8.w : 0,
+                                      ),
+                                      child: ResText(
+                                        currency,
+                                        textAlign: TextAlign.start,
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(
+                                              height: 1.8.h,
+                                              fontSize: 22.sp,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                      ),
                                     ),
-                              ),
-                            ),
-                          if(widget.estate.estateOfferType != null) if (widget.estate.estateOfferType!.id ==
-                              rentOfferTypeNumber)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                right: (isArabic) ? 8.w : 0,
-                                left: (!isArabic) ? 8.w : 0,
-                              ),
-                              child: ResText(
-                                AppLocalizations.of(context)!
-                                    .currency_over_period(
-                                  currency,
-                                  widget.estate.periodType != null
-                                      ? widget.estate.periodType!.name
-                                          .split("|")
-                                          .first
-                                      : "",
-                                ),
-                                textAlign: TextAlign.start,
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                      height: 1.8.h,
-                                      fontSize: 22.sp,
-                                      fontWeight: FontWeight.w400,
+                                if (widget.estate.estateOfferType != null)
+                                  if (widget.estate.estateOfferType!.id ==
+                                      rentOfferTypeNumber)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        right: (isArabic) ? 8.w : 0,
+                                        left: (!isArabic) ? 8.w : 0,
+                                      ),
+                                      child: ResText(
+                                        AppLocalizations.of(context)!
+                                            .currency_over_period(
+                                          currency,
+                                          widget.estate.periodType != null
+                                              ? widget.estate.periodType!.name
+                                                  .split("|")
+                                                  .first
+                                              : "",
+                                        ),
+                                        textAlign: TextAlign.start,
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(
+                                              height: 1.8.h,
+                                              fontSize: 22.sp,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                      ),
                                     ),
-                              ),
+                              ],
                             ),
-                        ],
-                      ),
                       const Spacer(),
                       Padding(
                         padding: EdgeInsets.only(
@@ -458,15 +470,18 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           left: (isArabic) ? 8.w : 0,
                           right: (!isArabic) ? 8.w : 0,
                         ),
-                        child: (widget.estate.publishedAt != null) ? ResText(
-                          DateHelper.getDateByFormat(
-                              DateTime.parse(
-                                widget.estate.publishedAt.toString(),
-                              ),
-                              "yyyy/MM/dd"),
-                          textAlign: TextAlign.start,
-                          textStyle: Theme.of(context).textTheme.subtitle2,
-                        ) : const SizedBox.shrink(),
+                        child: (widget.estate.publishedAt != null)
+                            ? ResText(
+                                DateHelper.getDateByFormat(
+                                    DateTime.parse(
+                                      widget.estate.publishedAt.toString(),
+                                    ),
+                                    "yyyy/MM/dd"),
+                                textAlign: TextAlign.start,
+                                textStyle:
+                                    Theme.of(context).textTheme.subtitle2,
+                              )
+                            : const SizedBox.shrink(),
                       ),
                     ],
                   ),
@@ -490,20 +505,24 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                 left: (isArabic) ? 12.w : 0,
                                 right: (!isArabic) ? 12.w : 0,
                               ),
-                              child:  widget.estate.estateType == null ? const Center():
-                              ResText(
-                                AppLocalizations.of(context)!
-                                    .estate_offer_place_sentence(
-                                  widget.estate.estateType!.name.split('|').last,
-                                  widget.estate.estateOfferType!.name,
-                                  widget.estate.locationS!,
-                                ),
-                                textAlign: TextAlign.start,
-                                textStyle: Theme.of(context).textTheme.bodyText1,
-                                maxLines: 3,
-                              ),
+                              child: widget.estate.estateType == null
+                                  ? const Center()
+                                  : ResText(
+                                      AppLocalizations.of(context)!
+                                          .estate_offer_place_sentence(
+                                        widget.estate.estateType!.name
+                                            .split('|')
+                                            .last,
+                                        widget.estate.estateOfferType!.name,
+                                        widget.estate.locationS!,
+                                      ),
+                                      textAlign: TextAlign.start,
+                                      textStyle:
+                                          Theme.of(context).textTheme.bodyText1,
+                                      maxLines: 3,
+                                    ),
                             ),
-                            if (widget.estate.visitCount != null)
+                            /*if (widget.estate.visitCount != null)
                               Expanded(
                                 flex: 1,
                                 child: Container(
@@ -539,7 +558,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ),*/
                           ],
                         ),
                       ),
@@ -550,7 +569,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             await showDialog(
                                 context: context,
                                 builder: (_) => ImageDialog(
-                                    path: widget.estate.estateOffice == null ? "" : widget.estate.estateOffice!.logo!));
+                                    path: widget.estate.estateOffice == null
+                                        ? ""
+                                        : widget.estate.estateOffice!.logo!));
                           },
                           child: Column(
                             children: [
@@ -561,10 +582,14 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                   decoration: BoxDecoration(
                                     color: Colors.transparent,
                                     image: DecorationImage(
-                                      image: widget.estate.estateOffice == null ? const CachedNetworkImageProvider(swessHomeIconPath) :
-                                      CachedNetworkImageProvider(
-                                        imagesBaseUrl + widget.estate.estateOffice!.logo!,
-                                      ),
+                                      image: widget.estate.estateOffice == null
+                                          ? const CachedNetworkImageProvider(
+                                              swessHomeIconPath)
+                                          : CachedNetworkImageProvider(
+                                              imagesBaseUrl +
+                                                  widget.estate.estateOffice!
+                                                      .logo!,
+                                            ),
                                     ),
                                   ),
                                 ),
@@ -653,45 +678,46 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   onTap: () {},
                 ),
                 // Rent period :
-                if(widget.estate.estateOfferType != null) if (widget.estate.estateOfferType!.id == rentOfferTypeNumber)
-                  RowInformation(
-                    title:
-                        "${AppLocalizations.of(context)!.estate_rent_period} :",
-                    widgetContent: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: ResText(
-                            widget.estate.period.toString(),
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .headline6!
-                                .copyWith(fontSize: 16.sp),
+                if (widget.estate.estateOfferType != null)
+                  if (widget.estate.estateOfferType!.id == rentOfferTypeNumber)
+                    RowInformation(
+                      title:
+                          "${AppLocalizations.of(context)!.estate_rent_period} :",
+                      widgetContent: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: ResText(
+                              widget.estate.period.toString(),
+                              textStyle: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(fontSize: 16.sp),
+                            ),
                           ),
-                        ),
-                        6.horizontalSpace,
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: ResText(
-                            widget.estate.periodType != null
-                                ? widget.estate.periodType!.name
-                                    .split("|")
-                                    .elementAt(1)
-                                : "",
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .headline6!
-                                .copyWith(fontSize: 16.sp),
+                          6.horizontalSpace,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: ResText(
+                              widget.estate.periodType != null
+                                  ? widget.estate.periodType!.name
+                                      .split("|")
+                                      .elementAt(1)
+                                  : "",
+                              textStyle: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(fontSize: 16.sp),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      icon: Icon(
+                        Icons.access_time,
+                        size: 32.w,
+                      ),
+                      onTap: () {},
                     ),
-                    icon: Icon(
-                      Icons.access_time,
-                      size: 32.w,
-                    ),
-                    onTap: () {},
-                  ),
                 // EstateArea :
                 RowInformation(
                   title: "${AppLocalizations.of(context)!.estate_area} :",
@@ -705,14 +731,15 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             .copyWith(fontSize: 16.sp),
                       ),
                       8.horizontalSpace,
-                      widget.estate.areaUnit == null ? Center() :
-                      ResText(
-                        widget.estate.areaUnit!.name,
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(fontSize: 16.sp),
-                      ),
+                      widget.estate.areaUnit == null
+                          ? Center()
+                          : ResText(
+                              widget.estate.areaUnit!.name,
+                              textStyle: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(fontSize: 16.sp),
+                            ),
                     ],
                   ),
                   icon: SvgPicture.asset(
@@ -763,7 +790,8 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 if (isFarmsOrVacations) ...[
                   if (widget.estate.hasSwimmingPool != null)
                     RowInformation(
-                      title: "${AppLocalizations.of(context)!.has_swimming_pool} :",
+                      title:
+                          "${AppLocalizations.of(context)!.has_swimming_pool} :",
                       content: widget.estate.hasSwimmingPool!
                           ? AppLocalizations.of(context)!.yes
                           : AppLocalizations.of(context)!.no,
@@ -790,7 +818,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                 if (isSell)
                   RowInformation(
                     title: "${AppLocalizations.of(context)!.ownership_type} :",
-                    content:  widget.estate.ownershipType == null ? "" : widget.estate.ownershipType!.name,
+                    content: widget.estate.ownershipType == null
+                        ? ""
+                        : widget.estate.ownershipType!.name,
                     icon: SvgPicture.asset(
                       documentOutlineIconPath,
                       width: 28.w,
@@ -894,8 +924,10 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            EstateOfficeScreen(widget.estate.estateOffice == null ? -1 : widget.estate.estateOffice!.id),
+                        builder: (_) => EstateOfficeScreen(
+                            widget.estate.estateOffice == null
+                                ? -1
+                                : widget.estate.estateOffice!.id),
                       ),
                     );
                   },
@@ -904,22 +936,27 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                       SizedBox(
                         width: 120.w,
                         height: 120.h,
-                        child: widget.estate.estateOffice == null ?  CachedNetworkImage(imageUrl: swessHomeIconPath) :
-                        CachedNetworkImage(
-                            imageUrl: imagesBaseUrl + widget.estate.estateOffice!.logo!),
+                        child: widget.estate.estateOffice == null
+                            ? CachedNetworkImage(imageUrl: swessHomeIconPath)
+                            : CachedNetworkImage(
+                                imageUrl: imagesBaseUrl +
+                                    widget.estate.estateOffice!.logo!),
                       ),
                       kHe8,
-                      widget.estate.estateOffice == null ? Center() :
-                      ResText(
-                        widget.estate.estateOffice!.name!,
-                        textStyle: Theme.of(context).textTheme.headline4,
-                      ),
+                      widget.estate.estateOffice == null
+                          ? Center()
+                          : ResText(
+                              widget.estate.estateOffice!.name!,
+                              textStyle: Theme.of(context).textTheme.headline4,
+                            ),
                       kHe12,
-                      widget.estate.estateOffice == null ? Center() :
-                      ResText(
-                        widget.estate.estateOffice!.location!.getLocationName(),
-                        textStyle: Theme.of(context).textTheme.headline6,
-                      ),
+                      widget.estate.estateOffice == null
+                          ? Center()
+                          : ResText(
+                              widget.estate.estateOffice!.location!
+                                  .getLocationName(),
+                              textStyle: Theme.of(context).textTheme.headline6,
+                            ),
                       kHe8,
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -938,7 +975,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (_) => EstateOfficeScreen(
-                            widget.estate.estateOffice == null ? -1 : widget.estate.estateOffice!.id),
+                                  widget.estate.estateOffice == null
+                                      ? -1
+                                      : widget.estate.estateOffice!.id),
                             ),
                           );
                         },
@@ -970,9 +1009,11 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                           await myCupertinoActionSheet(
                             context,
                             elementsList: [
-                              widget.estate.estateOffice == null ? "" :
-                              widget.estate.estateOffice!.phone!.split("+")[1] +
-                                  "+"
+                              widget.estate.estateOffice == null
+                                  ? ""
+                                  : widget.estate.estateOffice!.phone!
+                                          .split("+")[1] +
+                                      "+"
                             ],
                             onPressed: [
                               () {
@@ -1045,7 +1086,10 @@ class RowInformation extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 5),
                     child: ResText(
                       title,
-                      textStyle: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 15),
+                      textStyle: Theme.of(context)
+                          .textTheme
+                          .headline6!
+                          .copyWith(fontSize: 15),
                     ),
                   ),
                   8.horizontalSpace,

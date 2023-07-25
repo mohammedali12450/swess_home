@@ -3,6 +3,9 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../../data/models/customer.dart';
+import '../../../../data/repositories/contacts_repository.dart';
+
 part 'contacts_event.dart';
 part 'contacts_state.dart';
 
@@ -18,9 +21,16 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
       }
 
       final contacts = await getContacts();
+      List<Customer> customers = [];
+      for (int i = 0; i < contacts.length; i++) {
+        customers
+            .add(Customer.fromContact(contacts.elementAt(i), i.toString()));
+      }
+      List<bool> isRegisteredList=await ContactsRepository().fetchData(customers);
 
       emit(
         ContactsData(
+          isRegistered: isRegisteredList,
           contacts: contacts.toList(),
         ),
       );
