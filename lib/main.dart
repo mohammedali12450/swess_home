@@ -21,6 +21,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bl
 import 'package:swesshome/modules/business_logic_components/bloc/estate_spacial_bloc/estate_spacial_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_view_bloc/estate_view_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/previous_search_results_bloc/previous_search_results_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/reports_bloc/reports_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/resend_code_bloc/resend_code_bloc.dart';
@@ -312,6 +313,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         BlocProvider(
           create: (_) => GovernoratesBloc(),
+        ),
+        BlocProvider(
+          create: (_) => PreviousSearchResultsBloc(),
         ),
         BlocProvider(
           create: (_) => RentEstateBloc(RentEstateRepository()),

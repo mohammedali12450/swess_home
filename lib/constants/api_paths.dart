@@ -9,7 +9,7 @@ String imagesBaseUrl = hostingerTestImageUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl";
 
 //new api
-
+const String previousResultsSearchZonesUrl="https://api-dev.swesshome.com/api/v2/searchs";
 const userRegisterURL = "customer/register";
 const userLoginURL = "customer/login";
 const userSocialLogin = "";

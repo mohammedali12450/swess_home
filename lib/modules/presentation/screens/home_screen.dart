@@ -25,6 +25,7 @@ import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_state.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
 import '../../business_logic_components/bloc/location_bloc/locations_bloc.dart';
+import '../../business_logic_components/bloc/previous_search_results_bloc/previous_search_results_bloc.dart';
 import '../../business_logic_components/bloc/rating_bloc/rating_bloc.dart';
 import '../../business_logic_components/bloc/rating_bloc/rating_event.dart';
 import '../../business_logic_components/bloc/rating_bloc/rating_state.dart';
@@ -47,8 +48,10 @@ import 'filter_search_screen.dart';
 import 'location_search_type.dart';
 import 'notifications_screen.dart';
 import 'office_search_screen.dart';
+import '../../data/models/previous_search_zone.dart';
 
 List<Estate> estateSearchList = [];
+
 ChannelCubit estateSearchCubit = ChannelCubit(estateSearchList);
 List<String>? estateSearchFilter = [];
 ChannelCubit estateSearchFilterCubit = ChannelCubit(estateSearchFilter);
@@ -74,6 +77,7 @@ class HomeScreenState extends State<HomeScreen> {
   String priceMaxMin = "";
   String estateOfferName = "";
   int? date;
+
   ChannelCubit locationNameCubit = ChannelCubit("");
   ChannelCubit isAreaSearchCubit = ChannelCubit(false);
   ChannelCubit selectedRatingCubit = ChannelCubit(-1);
@@ -84,6 +88,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    BlocProvider.of<PreviousSearchResultsBloc>(context).add(PreviousSearchResultsFetchStarted());
     automaticShowReview();
     getEstateSearch();
     RecentSearchesSharedPreferences.setDateRefreshRecent(
@@ -673,116 +678,26 @@ class HomeScreenState extends State<HomeScreen> {
           ),
           kHe8,
           /// new Api
-          Card(
-            color: isDark ? Colors.transparent : Colors.white,
-            child: InkWell(
-              onTap: () {
-                // todo
-              },
-              child: Padding(
-                padding: kLargeSymHeight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "دمشق القديمة، باب توما",
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline3!
-                                .copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: isDark ? AppColors.lightGrey2Color :  AppColors.black,
-                                fontSize: 16.sp),
-                          ),
-                          const SizedBox(height: 10,),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.7,
-                            child: Text(
-                              AppLocalizations.of(context)!.result_matching_search_page,
-                              maxLines: 2,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline3!
-                                  .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.lightGreyColor,
-                                  fontSize: 12.sp),
-                            ),
-                          ),
-                        ]),
-                    Column(
-                      children: [
-                        Icon(
-                          Icons.arrow_forward,
-                          size: 27.w,
-                          color: isDark ? AppColors.lightblue :  AppColors.primaryColor,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          BlocBuilder<PreviousSearchResultsBloc, PreviousSearchResultsState>(
+            builder: (context, state) {
+              if(state is PreviousSearchResultsFetchComplete){
+                return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: state.searchResults.zones.length,
+                    itemBuilder: (context, index) {
+                      return PreviousSearchResultWidget(
+                        isDark: isDark,
+                        zone: state.searchResults.zones[index],
+                      );
+                    });
+              }
+              return Container();
+
+            },
           ),
           /// new Api
-          kHe8,
-          Card(
-            color: isDark ? Colors.transparent : Colors.white,
-            child: InkWell(
-              onTap: () {
-                // todo
-              },
-              child: Padding(
-                padding: kLargeSymHeight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "دمشق القديمة، باب توما",
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline3!
-                                .copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: isDark ? AppColors.lightGrey2Color :  AppColors.black,
-                                fontSize: 16.sp),
-                          ),
-                          const SizedBox(height: 10,),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.7,
-                            child: Text(
-                              AppLocalizations.of(context)!.result_matching_search_page,
-                              maxLines: 2,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline3!
-                                  .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.lightGreyColor,
-                                  fontSize: 12.sp),
-                            ),
-                          ),
-                        ]),
-                    Column(
-                      children: [
-                        Icon(
-                          Icons.arrow_forward,
-                          size: 27.w,
-                          color: isDark ? AppColors.lightblue :  AppColors.primaryColor,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+
         ],
       ),
     );
@@ -942,6 +857,89 @@ class HomeScreenState extends State<HomeScreen> {
               },
             ),
             kHe40,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PreviousSearchResultWidget extends StatelessWidget {
+  const PreviousSearchResultWidget({
+    super.key,
+    required this.isDark,
+    required this.zone,
+  });
+
+  final bool isDark;
+  final Zone zone;
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: isDark ? Colors.transparent : Colors.white,
+      child: Padding(
+        padding: kLargeSymHeight,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    zone.location.locationFullName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3!
+                        .copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: isDark ? AppColors.lightGrey2Color :  AppColors.black,
+                        fontSize: 16.sp),
+                  ),
+                  const SizedBox(height: 10,),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: Text(
+                      AppLocalizations.of(context)!.result_matching_search_page,
+                      maxLines: 2,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline3!
+                          .copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.lightGreyColor,
+                          fontSize: 12.sp),
+                    ),
+                  ),
+                ]),
+            IconButton(onPressed: ()
+            {
+              SearchData searchData = SearchData(
+                  locationId: zone.locationId, estateTypeId: zone.estateTypeId,
+                  estateOfferTypeId: zone.estateOfferTypeId);
+
+
+              searchData.sortType = "desc";
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      EstatesScreen(
+                        searchData: searchData,
+                        locationName: zone.location.locationFullName,
+                        eventSearch: EstatesFetchStarted(
+                          searchData: searchData,
+                          isAdvanced: false,
+                          token: UserSharedPreferences.getAccessToken(),
+                        ),
+                      ),
+                ),
+              );
+
+            }, icon: Icon(
+              Icons.arrow_forward,
+              size: 27.w,
+              color: isDark ? AppColors.lightblue :  AppColors.primaryColor,
+            ),)
           ],
         ),
       ),
