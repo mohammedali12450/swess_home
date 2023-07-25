@@ -282,164 +282,164 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               }
             },
           ),
-            BlocListener<UserLoginBloc, UserLoginState>(
-              listener: (_, loginState) async {
-                if (loginState is UserLoginError) {
-                  if (loginState.isConnectionError) {
-                    showWonderfulAlertDialog(
+          BlocListener<UserLoginBloc, UserLoginState>(
+            listener: (_, loginState) async {
+              if (loginState is UserLoginError) {
+                if (loginState.isConnectionError) {
+                  showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.error,
+                    AppLocalizations.of(context)!.no_internet_connection,
+                  );
+                  return;
+                }
+                if (loginState.isUnauthorizedError) {
+                  await showWonderfulAlertDialog(
                       context,
-                      AppLocalizations.of(context)!.error,
-                      AppLocalizations.of(context)!.no_internet_connection,
-                    );
-                    return;
-                  }
-                  if (loginState.isUnauthorizedError) {
-                    await showWonderfulAlertDialog(
-                        context,
-                        AppLocalizations.of(context)!.confirmation,
-                        loginState.errorMessage!,
-                        removeDefaultButton: true,
-                        dialogButtons: [
-                          BlocProvider<ResendRegisterConfirmationLinkBloc>(
-                            create: (context) =>
-                                ResendRegisterConfirmationLinkBloc(),
-                            child: BlocConsumer<
-                                ResendRegisterConfirmationLinkBloc,
-                                ResendRegisterConfirmationLinkState>(
-                              listener: (_, resendCodeState) async {
-                                if (resendCodeState
-                                is ResendRegisterConfirmationLinkComplete) {
-                                  showWonderfulAlertDialog(
-                                      context,
-                                      " ",
-                                      resendCodeState.successMessage!);
-                                }
-                                if (resendCodeState is ResendRegisterConfirmationLinkError) {
-                                  await showWonderfulAlertDialog(
-                                      context,
-                                      " ",
-                                      resendCodeState.message);
-                                }
-                              },
-                              builder: (context, state) {
-                                return Column(
-                                  children: [
-                                    Center(
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            fixedSize: Size(180.w, 56.h),
-                                          ),
-                                          child: (state
-                                          is ResendRegisterConfirmationLinkProgress)
-                                              ? SpinKitWave(
-                                            color: AppColors.white,
-                                            size: 20.w,
-                                          )
-                                              : Text(
-                                              AppLocalizations.of(context)!
-                                                  .resend),
-                                          onPressed: () async {
-                                            BlocProvider.of<
-                                                ResendRegisterConfirmationLinkBloc>(
-                                                context)
-                                                .add(
-                                              ResendRegisterConfirmationLinkStarted(
-                                                  phoneNumber: phoneNumber),
-                                            );
-                                            if (_remainingSeconds > 0) {}
-                                            else {
-                                              _isTimerActive
-                                                  ? null
-                                                  : await _savePreferences();
-                                              setState(() {
-                                                _remainingSeconds = 900;
-                                                _startTimer();
-                                              });
-                                              FocusScope.of(context).unfocus();
-                                            }
-                                          },
+                      AppLocalizations.of(context)!.confirmation,
+                      loginState.errorMessage!,
+                      removeDefaultButton: true,
+                      dialogButtons: [
+                        BlocProvider<ResendRegisterConfirmationLinkBloc>(
+                          create: (context) =>
+                              ResendRegisterConfirmationLinkBloc(),
+                          child: BlocConsumer<
+                              ResendRegisterConfirmationLinkBloc,
+                              ResendRegisterConfirmationLinkState>(
+                            listener: (_, resendCodeState) async {
+                              if (resendCodeState
+                              is ResendRegisterConfirmationLinkComplete) {
+                                showWonderfulAlertDialog(
+                                    context,
+                                    " ",
+                                    resendCodeState.successMessage!);
+                              }
+                              if (resendCodeState is ResendRegisterConfirmationLinkError) {
+                                await showWonderfulAlertDialog(
+                                    context,
+                                    " ",
+                                    resendCodeState.message);
+                              }
+                            },
+                            builder: (context, state) {
+                              return Column(
+                                children: [
+                                  Center(
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          fixedSize: Size(180.w, 56.h),
+                                        ),
+                                        child: (state
+                                        is ResendRegisterConfirmationLinkProgress)
+                                            ? SpinKitWave(
+                                          color: AppColors.white,
+                                          size: 20.w,
                                         )
-                                    ),
-                                    15.verticalSpace,
-                                    _remainingSeconds > 0
-                                        ? _timerCountDown()
-                                        : const Center(),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: Size(180.w, 56.h),
-                            ),
-                            child: Text(AppLocalizations.of(context)!.cancel),
-                            onPressed: () {
-                            Navigator.pop(context);
+                                            : Text(
+                                            AppLocalizations.of(context)!
+                                                .resend),
+                                        onPressed: () async {
+                                          BlocProvider.of<
+                                              ResendRegisterConfirmationLinkBloc>(
+                                              context)
+                                              .add(
+                                            ResendRegisterConfirmationLinkStarted(
+                                                phoneNumber: phoneNumber),
+                                          );
+                                          if (_remainingSeconds > 0) {}
+                                          else {
+                                            _isTimerActive
+                                                ? null
+                                                : await _savePreferences();
+                                            setState(() {
+                                              _remainingSeconds = 900;
+                                              _startTimer();
+                                            });
+                                            FocusScope.of(context).unfocus();
+                                          }
+                                        },
+                                      )
+                                  ),
+                                  15.verticalSpace,
+                                  _remainingSeconds > 0
+                                      ? _timerCountDown()
+                                      : const Center(),
+                                ],
+                              );
                             },
                           ),
-                        ]);
-                    return;
-                  }
-                  // if (loginState.errorResponse != null) {
-                  //   loginErrorHandling(loginState.errorResponse);
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(180.w, 56.h),
+                          ),
+                          child: Text(AppLocalizations.of(context)!.cancel),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ]);
+                  return;
+                }
+                // if (loginState.errorResponse != null) {
+                //   loginErrorHandling(loginState.errorResponse);
+                // }
+                if (loginState.errorMessage != null) {
+                  // if (loginState.errorMessage!.contains("تم")) {
+                  //   // if (loginState.errorMessage!.contains("تم")) {
+                  //   //   Navigator.pushReplacement(context,
+                  //   //       MaterialPageRoute(builder: (_) => const HomeScreen()));
+                  //   // }
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (_) => VerificationLoginCodeScreen(
+                  //         phoneNumber: phoneNumber,
+                  //         message: loginState.errorMessage!,
+                  //       ),
+                  //     ),
+                  //   );
+                  //   return;
                   // }
-                  if (loginState.errorMessage != null) {
-                    // if (loginState.errorMessage!.contains("تم")) {
-                    //   // if (loginState.errorMessage!.contains("تم")) {
-                    //   //   Navigator.pushReplacement(context,
-                    //   //       MaterialPageRoute(builder: (_) => const HomeScreen()));
-                    //   // }
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (_) => VerificationLoginCodeScreen(
-                    //         phoneNumber: phoneNumber,
-                    //         message: loginState.errorMessage!,
-                    //       ),
-                    //     ),
-                    //   );
-                    //   return;
-                    // }
-                    // log(loginState.errorMessage!);
-                    showWonderfulAlertDialog(
-                      context,
-                      AppLocalizations.of(context)!.error,
-                      loginState.errorMessage!,
-                    );
-                  }
+                  // log(loginState.errorMessage!);
+                  showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.error,
+                    loginState.errorMessage!,
+                  );
                 }
-                if (loginState is UserLoginComplete) {
-                  if (loginState.successMessage != null) {
-                    if (UserSharedPreferences.getAccessToken() != null) {
-                      // BlocProvider.of<FcmBloc>(context).add(
-                      //   SendFcmTokenProcessStarted(
-                      //       userToken: UserSharedPreferences.getAccessToken()!),
-                      // );
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const NavigationBarScreen()),
-                              (route) => false);
-                    }
-                    // if (widget.popAfterFinish!) {
-                    //   showWonderfulAlertDialog(
-                    //     context,
-                    //     AppLocalizations.of(context)!.error,
-                    //     loginState.successMessage!,
-                    //   );
-                    //   // Navigator.pop(context);
-                    // } else {
-                    //   Navigator.pushAndRemoveUntil(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //           builder: (_) => const NavigationBarScreen()),
-                    //           (route) => false);
-                    // }
+              }
+              if (loginState is UserLoginComplete) {
+                if (loginState.successMessage != null) {
+                  if (UserSharedPreferences.getAccessToken() != null) {
+                    // BlocProvider.of<FcmBloc>(context).add(
+                    //   SendFcmTokenProcessStarted(
+                    //       userToken: UserSharedPreferences.getAccessToken()!),
+                    // );
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const NavigationBarScreen()),
+                            (route) => false);
                   }
+                  // if (widget.popAfterFinish!) {
+                  //   showWonderfulAlertDialog(
+                  //     context,
+                  //     AppLocalizations.of(context)!.error,
+                  //     loginState.successMessage!,
+                  //   );
+                  //   // Navigator.pop(context);
+                  // } else {
+                  //   Navigator.pushAndRemoveUntil(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (_) => const NavigationBarScreen()),
+                  //           (route) => false);
+                  // }
                 }
-              },
-            )
+              }
+            },
+          )
           // BlocListener<UserLoginBloc, UserLoginState>(
           //   listener: (_, loginState) async {
           //     if (loginState is UserLoginError) {
