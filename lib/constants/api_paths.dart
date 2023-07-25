@@ -5,7 +5,7 @@ String imagesBaseUrl = proNetImagesUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl";
 const String checkExistingcustomers="https://api-dev.swesshome.com/api/v2/customer/check-existing-customers";
 //new api
-
+const String previousResultsSearchZonesUrl="https://api-dev.swesshome.com/api/v2/searchs";
 const userRegisterURL = "customer/register";
 const userLoginURL = "customer/login";
 const userSocialLogin = "";
