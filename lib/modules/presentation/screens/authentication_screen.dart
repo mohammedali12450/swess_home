@@ -274,10 +274,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
               if (registerState is UserRegisterComplete) {
                 if (registerState.successsMessage != null) {
-                  showWonderfulAlertDialog(
-                      context,
-                      AppLocalizations.of(context)!.success,
-                      registerState.successsMessage!);
+                  _isLoginSelected.setState(true);
                 }
               }
             },
