@@ -6,6 +6,8 @@ import 'package:swesshome/core/walk_through/introduction_screen4.dart';
 import 'package:swesshome/modules/presentation/widgets/current_step_viewer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../modules/presentation/screens/authentication_screen.dart';
+
 class IntroductionScreen3 extends StatefulWidget {
   static const String id = "IntroductionScreen3";
 
@@ -41,15 +43,15 @@ class _IntroductionScreen3State extends State<IntroductionScreen3> {
                     width: inf,
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushNamed(context, IntroductionScreen2.id);
-                        // Navigator.pushAndRemoveUntil(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (_) => const AuthenticationScreen(
-                        //         popAfterFinish: false,
-                        //       ),
-                        //     ),
-                        //         (route) => false);
+                        //Navigator.pushNamed(context, IntroductionScreen2.id);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AuthenticationScreen(
+                                popAfterFinish: false,
+                              ),
+                            ),
+                                (route) => false);
                       },
                       child: Container(
                         width: 80.w,
