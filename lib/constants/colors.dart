@@ -12,7 +12,7 @@ class AppColors {
   static Color whiteBackgroundColor = Colors.white.withOpacity(0.8);
   static Color blackBackgroundLayer = Colors.black.withOpacity(0.72);
   static const Color primaryDark = Color(0xff90B8F8);
-  static  Color secondaryDark = const Color(0xff353941);
+  static Color secondaryDark = const Color(0xff353941);
   static Color yellowColor = const Color(0xfff6d13f);
   static Color yellowDarkColor = const Color(0xfff6c400);
   static Color lightGreyColor = const Color(0xffBDBDBD);
