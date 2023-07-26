@@ -12,6 +12,7 @@ class AppFlushbar {
 
   static Future<void> show({
     required String message,
+    //required bool isDark,
     IconData icon = FluentIcons.warning_24_regular,
     bool isTop = true,
   }) async {
@@ -22,9 +23,7 @@ class AppFlushbar {
       titleText: const SizedBox.shrink(),
       messageText: Text(
         message,
-        style: TextStyle(
-          fontSize: 16.sp,
-        ),
+        style: TextStyle(fontSize: 16.sp, color: AppColors.secondaryDark),
       ),
       padding: EdgeInsets.symmetric(
         horizontal: 15.w,

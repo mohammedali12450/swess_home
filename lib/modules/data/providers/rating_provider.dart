@@ -6,6 +6,7 @@ import 'package:swesshome/utils/services/network_helper.dart';
 class RatingProvider {
   Future sendRate(String? token, String? notes, String rate) async {
     NetworkHelper helper = NetworkHelper();
+    print("Token : $token");
     Response response;
     try {
       response = await helper.post(
