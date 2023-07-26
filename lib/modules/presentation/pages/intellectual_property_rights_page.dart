@@ -41,8 +41,12 @@ class _IntellectualPropertyRightsPageState
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(46.0),
         child: AppBar(
-          backgroundColor:
-          isDark ? const Color(0xff26282B) : AppColors.white,
+          title: Text(
+            AppLocalizations.of(context)!.intellectual_property_rights,
+            style: TextStyle(color: isDark ? Colors.white : AppColors.black),
+          ),
+          centerTitle: true,
+          backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
           iconTheme:
           IconThemeData(color: isDark ? Colors.white : AppColors.black),
         ),
