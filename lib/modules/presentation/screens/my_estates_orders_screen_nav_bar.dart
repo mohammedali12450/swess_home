@@ -118,14 +118,14 @@ class _RecentEstateOrdersScreenNavBarState
 
   initAnimation(context) {
     bool isDark =
-    Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
 
     if (widget.estateId != null) {
       _animationController = AnimationController(
           vsync: this, duration: const Duration(seconds: 2));
       _colorTween = ColorTween(
-          begin: AppColors.primaryDark,
-          end: isDark ? AppColors.secondaryDark : AppColors.white)
+              begin: AppColors.primaryDark,
+              end: isDark ? AppColors.secondaryDark : AppColors.white)
           .animate(_animationController);
       changeColors();
     }
@@ -140,15 +140,27 @@ class _RecentEstateOrdersScreenNavBarState
     return BackHomeScreen(
       child: SafeArea(
         child: Scaffold(
-          floatingActionButton: UserSharedPreferences.getAccessToken() != null
-              && orders.isNotEmpty ? AddOfferButton()
-              : null,
+          floatingActionButton: UserSharedPreferences.getAccessToken() == null
+              ? null
+              : BlocBuilder<RecentEstatesOrdersBloc, RecentEstatesOrdersState>(
+                  bloc: _recentEstatesOrdersBloc,
+                  builder: (context, state) {
+                    if (state is RecentEstatesOrdersFetchComplete) {
+                      if (state.estateOrders.isNotEmpty) {
+                        return AddOfferButton();
+                      }
+                    }
+                    return SizedBox();
+                  },
+                ),
           backgroundColor: isDark
               ? const Color(0xff26282B)
               : AppColors.white, // Color(0xffF2F2F6),
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(46.0),
-            child: GlobalAppbarWidget(isDark: isDark,title: AppLocalizations.of(context)!.estate_offers),
+            child: GlobalAppbarWidget(
+                isDark: isDark,
+                title: AppLocalizations.of(context)!.estate_offers),
           ),
           drawer: SizedBox(
             width: getScreenWidth(context) * (75 / 100),
@@ -230,7 +242,7 @@ class _RecentEstateOrdersScreenNavBarState
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                        const CreateOrderScreen()));
+                                            const CreateOrderScreen()));
                               },
                             ),
                           ),
@@ -271,17 +283,17 @@ class _RecentEstateOrdersScreenNavBarState
                     child: BlocListener<DeleteEstatesBloc, DeleteEstatesState>(
                       listener: (_, deleteEstateOrderState) async {
                         if (deleteEstateOrderState
-                        is DeleteEstatesFetchComplete) {
+                            is DeleteEstatesFetchComplete) {
                           // await _onRefresh();
                           if (UserSharedPreferences.getAccessToken() != null) {
                             _recentEstatesOrdersBloc.add(
                               RecentEstatesOrdersFetchStarted(
                                   token:
-                                  UserSharedPreferences.getAccessToken()!),
+                                      UserSharedPreferences.getAccessToken()!),
                             );
                           }
                         } else if (deleteEstateOrderState
-                        is DeleteEstatesFetchError) {}
+                            is DeleteEstatesFetchError) {}
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(top: 20),
@@ -296,44 +308,44 @@ class _RecentEstateOrdersScreenNavBarState
                                   itemBuilder: (_, index) {
                                     return (widget.estateId != null && find)
                                         ? AnimatedBuilder(
-                                      animation: _colorTween,
-                                      builder: (context, _) => Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 20, bottom: 10),
-                                        child: EstateOrderCard(
-                                          estateOrder:
-                                          orders.elementAt(index),
-                                          //color: Theme.of(context).colorScheme.background,
-                                          color: (int.parse(
-                                              widget.estateId!) ==
-                                              orders
-                                                  .elementAt(index)
-                                                  .id)
-                                              ? _colorTween.value
-                                              : Theme.of(context)
-                                              .colorScheme
-                                              .background,
-                                          onTap: () async {
-                                            await deleteEstateOrder(
-                                                index);
-                                          },
-                                        ),
-                                      ),
-                                    )
+                                            animation: _colorTween,
+                                            builder: (context, _) => Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 20, bottom: 10),
+                                              child: EstateOrderCard(
+                                                estateOrder:
+                                                    orders.elementAt(index),
+                                                //color: Theme.of(context).colorScheme.background,
+                                                color: (int.parse(
+                                                            widget.estateId!) ==
+                                                        orders
+                                                            .elementAt(index)
+                                                            .id)
+                                                    ? _colorTween.value
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .background,
+                                                onTap: () async {
+                                                  await deleteEstateOrder(
+                                                      index);
+                                                },
+                                              ),
+                                            ),
+                                          )
                                         : Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 10),
-                                      child: EstateOrderCard(
-                                        estateOrder:
-                                        orders.elementAt(index),
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .background,
-                                        onTap: () async {
-                                          await deleteEstateOrder(index);
-                                        },
-                                      ),
-                                    );
+                                            padding: const EdgeInsets.only(
+                                                bottom: 10),
+                                            child: EstateOrderCard(
+                                              estateOrder:
+                                                  orders.elementAt(index),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .background,
+                                              onTap: () async {
+                                                await deleteEstateOrder(index);
+                                              },
+                                            ),
+                                          );
                                   }),
                             ),
                           ],
@@ -352,7 +364,7 @@ class _RecentEstateOrdersScreenNavBarState
 
   deleteEstateOrder(index) async {
     DeleteEstatesBloc deleteEstatesBloc =
-    DeleteEstatesBloc(EstateOrderRepository());
+        DeleteEstatesBloc(EstateOrderRepository());
     deleteEstatesBloc.add(DeleteEstatesFetchStarted(
         token: UserSharedPreferences.getAccessToken(),
         orderId: orders.elementAt(index).id!));

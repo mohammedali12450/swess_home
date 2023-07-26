@@ -90,27 +90,37 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${AppLocalizations.of(context)!.estate_location}: ${widget.estateOrder.location!.getLocationName()}",
-                      style: cairoTextStyle,
-                    ),
+                        "${AppLocalizations.of(context)!.estate_location}: ${widget.estateOrder.location!.getLocationName()}",
+                        style: cairoTextStyle.copyWith(
+                            fontSize: 15,
+                            color:
+                                isDark ? AppColors.white : Color(0xff5A5A5A))),
                     kHe8,
                     Row(
                       children: [
                         Text(
-                          "${AppLocalizations.of(context)!.order_type}: ${widget.estateOrder.estateOfferType!.name}",
-                          style: cairoTextStyle,
-                        ),
+                            "${AppLocalizations.of(context)!.order_type}: ${widget.estateOrder.estateOfferType!.name}",
+                            style: cairoTextStyle.copyWith(
+                                fontSize: 15,
+                                color: isDark
+                                    ? AppColors.white
+                                    : Color(0xff5A5A5A))),
                         Spacer(),
                         Text(
-                          "${AppLocalizations.of(context)!.estate_type}: ${widget.estateOrder.estateType!.name}",
-                          style: cairoTextStyle,
-                        )
+                            "${AppLocalizations.of(context)!.estate_type}: ${widget.estateOrder.estateType!.name}",
+                            style: cairoTextStyle.copyWith(
+                                fontSize: 15,
+                                color: isDark
+                                    ? AppColors.white
+                                    : Color(0xff5A5A5A)))
                       ],
                     ),
                     kHe8,
                     Text(
                       "${AppLocalizations.of(context)!.price_domain}: ${AppLocalizations.of(context)!.between} ${widget.estateOrder.priceMin ?? AppLocalizations.of(context)!.undefined}  , ${widget.estateOrder.priceMax ?? AppLocalizations.of(context)!.undefined} ${AppLocalizations.of(context)!.syrian_currency} ",
-                      style: cairoTextStyle,
+                      style: cairoTextStyle.copyWith(
+                          fontSize: 15,
+                          color: isDark ? AppColors.white : Color(0xff5A5A5A)),
                     ),
                     kHe8,
                     Text(
@@ -118,12 +128,12 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: cairoTextStyle.copyWith(
-                        fontSize: 12,
-                        color: Color(0xff5A5A5A),
+                        fontSize: 15,
+                        color: isDark ? AppColors.white : Color(0xff5A5A5A),
                       ),
                     ),
                     kHe8,
-                    buildEstateStatus()
+                    buildEstateStatus(isDark)
                   ],
                 ),
               ),
@@ -132,29 +142,28 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
         ));
   }
 
-  Widget buildEstateStatus() {
+  Widget buildEstateStatus(bool isDark) {
     return Row(
       children: [
         Text(
           "${AppLocalizations.of(context)!.request_status} : ",
           style: cairoTextStyle.copyWith(
-            fontSize: 12.sp,
-          ),
+              fontSize: 12.sp,
+              color: isDark ? AppColors.white : Color(0xff5A5A5A)),
         ),
         Expanded(
           child: Text(
             " ${widget.estateOrder.orderStatus}",
             overflow: TextOverflow.ellipsis,
             style: cairoTextStyle.copyWith(
-              fontSize: 12.sp,
-              color: widget.estateOrder.orderStatus ==
-                      AppLocalizations.of(context)!.rejected
-                  ? Color(0xffFF0000)
-                  : widget.estateOrder.orderStatus ==
-                          AppLocalizations.of(context)!.accepted
-                      ? Color(0xff00720B)
-                      : Colors.black,
-            ),
+                fontSize: 12.sp,
+                color: widget.estateOrder.orderStatus ==
+                        AppLocalizations.of(context)!.rejected
+                    ? Color(0xffFF0000)
+                    : widget.estateOrder.orderStatus ==
+                            AppLocalizations.of(context)!.accepted
+                        ? Color(0xff00720B)
+                        : (isDark ? AppColors.white : Color(0xff5A5A5A))),
           ),
         ),
         Column(
@@ -162,7 +171,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
             if (widget.estateOrder.orderStatus ==
                 AppLocalizations.of(context)!.in_progress) ...[
               // DeleteRequestWidget(),
-              DeleteRequestWidget(onTapYes: widget.onTap),
+              DeleteRequestWidget(onTapYes: widget.onTap, isDark: isDark),
             ],
             if (widget.estateOrder.orderStatus ==
                 AppLocalizations.of(context)!.rejected) ...[
@@ -201,9 +210,11 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
 
 class DeleteRequestWidget extends StatelessWidget {
   final Function onTapYes;
+  final bool isDark;
   const DeleteRequestWidget({
     super.key,
     required this.onTapYes,
+    required this.isDark,
   });
 
   @override
@@ -243,7 +254,7 @@ class DeleteRequestWidget extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: Color(0xffA60000),
+              color: isDark ? Color(0xffff3835) : AppColors.red,
               width: 1,
             ),
           ),
@@ -252,12 +263,14 @@ class DeleteRequestWidget extends StatelessWidget {
           children: [
             SvgPicture.asset(
               trashPath,
+              height: 20.r,
             ),
             SizedBox(width: 10),
             Text(
               AppLocalizations.of(context)!.delete_request,
               style: cairoTextStyle.copyWith(
-                  fontSize: 12, color: Color(0xffA60000)),
+                  fontSize: 15,
+                  color: isDark ? Color(0xffff3835) : AppColors.red),
             ),
           ],
         ),
