@@ -29,6 +29,8 @@ import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_bloc.dart';
 import '../../business_logic_components/bloc/delete_user_new_estate_bloc/delete_user_new_estate_event.dart';
 import '../../data/providers/theme_provider.dart';
+import '../widgets/app/global_app_bar.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/estate_horizon_card.dart';
 import '../widgets/time_line.dart';
 
@@ -123,17 +125,12 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(46.0),
-        child: AppBar(
-          backgroundColor:
-          isDark ? const Color(0xff26282B) : AppColors.white,
-          iconTheme:
-          IconThemeData(color: isDark ? Colors.white : AppColors.black),
-          centerTitle: true,
-          title: Text(
-            AppLocalizations.of(context)!.recent_created_estates,
-            style:
-            TextStyle(color: isDark ? Colors.white : AppColors.black),
-          ),
+        child: GlobalAppbarWidget(isDark: isDark,title: AppLocalizations.of(context)!.recent_created_estates),
+      ),
+      drawer: SizedBox(
+        width: getScreenWidth(context) * (75 / 100),
+        child: const Drawer(
+          child: MyDrawer(),
         ),
       ),
       body: RefreshIndicator(
