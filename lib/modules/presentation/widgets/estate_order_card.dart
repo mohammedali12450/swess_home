@@ -236,7 +236,7 @@ class DeleteRequestWidget extends StatelessWidget {
                     ),
                     onPressed: () async {
                       Navigator.pop(context);
-                      onTapYes;
+                      onTapYes();
                     }),
                 ElevatedButton(
                   child: Text(
