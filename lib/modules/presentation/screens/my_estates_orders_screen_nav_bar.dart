@@ -160,7 +160,7 @@ class _RecentEstateOrdersScreenNavBarState
             preferredSize: Size.fromHeight(46.0),
             child: GlobalAppbarWidget(
                 isDark: isDark,
-                title: AppLocalizations.of(context)!.estate_offers),
+                title: AppLocalizations.of(context)!.estate_orders),
           ),
           drawer: SizedBox(
             width: getScreenWidth(context) * (75 / 100),
@@ -467,7 +467,7 @@ class AddOfferButton extends StatelessWidget {
                 width: 19, height: 25, color: Colors.white),
             SizedBox(width: 10.0),
             Text(
-              AppLocalizations.of(context)!.add_offer,
+              AppLocalizations.of(context)!.add_order,
               style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
