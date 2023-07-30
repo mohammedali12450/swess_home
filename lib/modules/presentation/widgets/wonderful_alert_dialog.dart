@@ -7,6 +7,7 @@ Future<void> showWonderfulAlertDialog(
   BuildContext context,
   String title,
   String body, {
+  bool? errorPassword,
   String? defaultButtonContent,
   double? defaultButtonWidth,
   double? defaultButtonHeight,
@@ -54,8 +55,8 @@ Future<void> showWonderfulAlertDialog(
                 body,
                 style: bodyTextStyle ??
                     Theme.of(context).textTheme.bodyText2!.copyWith(
-                      height: 1.8,
-                    ),
+                          height: 1.8,
+                        ),
                 maxLines: 50,
                 textAlign: TextAlign.center,
               ),
@@ -66,30 +67,39 @@ Future<void> showWonderfulAlertDialog(
                 spacing: 12.h,
                 runSpacing: 12.w,
                 children: [
-                  (removeDefaultButton)
-                      ? Container()
-                      : ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: Size(88.w, 56.h),
-                        maximumSize: Size(100.w, 56.h),
-                        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w)),
-                    onPressed: () {
-                      if (onDefaultButtonPressed != null) {
-                        onDefaultButtonPressed();
-                        return;
-                      }
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      defaultButtonContent ?? AppLocalizations.of(context)!.ok,
-                      style: defaultButtonContentStyle ??
-                          Theme.of(context)
-                              .textTheme
-                              .subtitle2!
-                              .copyWith(color: AppColors.white),
-                    ),
-                  ),
-                ] +
+                      (removeDefaultButton)
+                          ? Container()
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  minimumSize: Size(88.w, 56.h),
+                                  maximumSize: Size(100.w, 56.h),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 8.h, horizontal: 12.w)),
+                              onPressed: () {
+                                if (onDefaultButtonPressed != null) {
+                                  onDefaultButtonPressed();
+                                  return;
+                                }
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                defaultButtonContent == null &&
+                                        errorPassword == null
+                                    ? AppLocalizations.of(context)!.ok
+                                    : defaultButtonContent ??
+                                        AppLocalizations.of(context)!
+                                            .change_password,
+                                textAlign: TextAlign.center,
+                                style: defaultButtonContentStyle ??
+                                    Theme.of(context)
+                                        .textTheme
+                                        .subtitle2!
+                                        .copyWith(
+                                            color: AppColors.white,
+                                            fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                    ] +
                     (dialogButtons ?? []),
               ),
             ],

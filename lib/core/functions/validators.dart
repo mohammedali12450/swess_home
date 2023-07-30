@@ -39,9 +39,9 @@ String confirmPasswordValidator(
 String? passwordValidator1(String? password, BuildContext context) {
   if (password!.isEmpty) {
     return AppLocalizations.of(context)!.enter_password;
-  } else if (password.length < 8) {
+  } /*else if (password.length < 8) {
     return AppLocalizations.of(context)!.password_least;
-  }
+  }*/
 
   return null;
 }

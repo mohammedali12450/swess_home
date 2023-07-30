@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:swesshome/core/exceptions/failed_password_exception.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
@@ -77,6 +78,13 @@ class UserAuthenticationRepository {
       throw GeneralException(
           errorMessage: jsonDecode(response.toString())["message"]);
     }
+    if (response.statusCode == 405) {
+      print('405');
+
+      throw FailedPasswordException(
+          errorMessage: jsonDecode(response.toString())['message'],
+          statusCode: response.statusCode);
+    }
 
     if (response.statusCode == 200) {
       UserSharedPreferences.setAccessToken(
@@ -89,14 +97,14 @@ class UserAuthenticationRepository {
 
     UserSharedPreferences.setAccessToken(
         jsonDecode(response.toString())["data"]["token"]);
-
     return user;
   }
 
   Future resendRegisterConfirmationLink(String phone) async {
     Response response;
     try {
-      response = await userAuthenticationProvider.resendRegisterConfirmationLink(phone);
+      response = await userAuthenticationProvider
+          .resendRegisterConfirmationLink(phone);
     } catch (e) {
       rethrow;
     }
