@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/modules/presentation/screens/filter_search_screen.dart';
+import 'package:swesshome/modules/presentation/screens/select_location_by_hand.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
@@ -100,20 +101,25 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
   }
 
   Widget buildListLocation() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h,horizontal: 10),
-      child: Container(
-        height: 50.h,
-        width: 1.sw,
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
-        decoration: BoxDecoration(
-          border: Border.all(
-              color: isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
-              width: 1),
-          borderRadius: lowBorderRadius,
+    return InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectLocationByHand()));
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12.h,horizontal: 10),
+        child: Container(
+          height: 50.h,
+          width: 1.sw,
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+          decoration: BoxDecoration(
+            border: Border.all(
+                color: isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
+                width: 1),
+            borderRadius: lowBorderRadius,
+          ),
+          child: Text(AppLocalizations.of(context)!.select_location_manual),
         ),
-        child: Text(AppLocalizations.of(context)!.select_location_manual),
       ),
     );
   }

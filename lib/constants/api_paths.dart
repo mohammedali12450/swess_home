@@ -69,6 +69,7 @@ const searchOfficeLocURL = "estate-offices/search-by-region";
 const notificationsURL = "notifications";
 const getRegionsURL = "locations/regions";
 const getLocationURL = "locations/sub-locations";
+const getZoneUrl = "zone";
 const multiLoginURL = "customer/check-login-code";
 const getEstateDetailsURL = "estate/details/";
 const downloadURL = "download-url";
