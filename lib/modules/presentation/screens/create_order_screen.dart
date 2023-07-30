@@ -353,10 +353,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 ),
                 child: TextField(
                     onTap: (){
-                      setState(() {
-                        isTextFormFieldPressed.setState(true) ;
-                        reversedscroll.setState(true);
-                      });
+                      isTextFormFieldPressed.setState(true) ;
+                      reversedscroll.setState(true);
                     },
                     maxLength: 600,
                     controller: notesController,

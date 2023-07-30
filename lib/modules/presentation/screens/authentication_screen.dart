@@ -603,10 +603,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                             builder: (_,ischecked)=>GestureDetector(
                               onTap: (){
                                 FocusScope.of(context).requestFocus(new FocusNode());
-                                setState(() {
-                                  reversedscroll.setState(true) ;
-                                  isTextFormFieldPressed.setState(false) ;
-                                });
+                                reversedscroll.setState(true) ;
+                                isTextFormFieldPressed.setState(false) ;
 
                               },
                               child: SingleChildScrollView(
@@ -1126,10 +1124,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   bloc: isTextFormFieldPressed,
                   builder: (_,ischecked)=>TextField(
                     onTap: (){
-                      setState(() {
-                        reversedscroll.setState(true);
-                        isTextFormFieldPressed.setState(true) ;
-                      });
+                      reversedscroll.setState(true);
+                      isTextFormFieldPressed.setState(true) ;
                     },
                     onChanged: (_) {
                       firstNameError.setState(null);
@@ -1165,10 +1161,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   bloc: isTextFormFieldPressed,
                   builder: (_,ischecked)=>TextField(
                     onTap: (){
-                      setState(() {
-                        reversedscroll.setState(true) ;
-                        isTextFormFieldPressed.setState(true) ;
-                      });
+                      reversedscroll.setState(true) ;
+                      isTextFormFieldPressed.setState(true) ;
                     },
                     onChanged: (_) {
                       lastNameError.setState(null);
