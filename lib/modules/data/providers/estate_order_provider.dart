@@ -9,8 +9,8 @@ class EstateOrderProvider {
     NetworkHelper helper = NetworkHelper();
     Response response;
     try {
-      response =
-          await helper.post(createEstateOrderURL, order.toJson(false), token: token);
+      response = await helper.post(createEstateOrderURL, order.toJson(false),
+          token: token);
     } catch (e) {
       rethrow;
     }
