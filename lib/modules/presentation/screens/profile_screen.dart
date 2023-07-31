@@ -511,30 +511,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 kHe16,
                 Directionality(
                   textDirection: TextDirection.ltr,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ResText(
-                        user!.authentication!,
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(
-                                color:
-                                    isDark ? AppColors.white : AppColors.white),
-                      ),
-                      ResText(
-                        "${user!.country ?? ""} "
-                        "${user?.governorate == null ? " , ${user!.governorate}" : ""}",
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(
-                              color: isDark ? AppColors.white : AppColors.white,
-                            ),
-                      ),
-                    ],
+
+                  child: ResText(
+                    user!.authentication!,
+                    textStyle: Theme.of(context).textTheme.headline6!.copyWith(
+                        color: isDark ? AppColors.white : AppColors.white),
                   ),
+                  //ResText(
+                  // "${user!.country ?? ""} "
+                  // "${user?.governorate == null ? " , ${user!.governorate}" : ""}",
+                  // textStyle: Theme.of(context)
+                  //    .textTheme
+                  //   .headline6!
+                  //   .copyWith(
+                  //     color: isDark ? AppColors.white : AppColors.white,
+                  //   ),
+                  // ),
                 ),
               ],
             ),
