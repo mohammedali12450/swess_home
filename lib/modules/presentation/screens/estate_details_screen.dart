@@ -957,31 +957,6 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                                   .getLocationName(),
                               textStyle: Theme.of(context).textTheme.headline6,
                             ),
-                      kHe8,
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(160.w, 50.h)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ResText(
-                              AppLocalizations.of(context)!.office_page,
-                              textStyle: TextStyle(fontSize: 12.sp),
-                            )
-                          ],
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => EstateOfficeScreen(
-                                  widget.estate.estateOffice == null
-                                      ? -1
-                                      : widget.estate.estateOffice!.id),
-                            ),
-                          );
-                        },
-                      ),
                       kHe24,
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
