@@ -70,6 +70,25 @@ class EstateOffice {
           jsonMap["estates_count"] == null ? null : jsonMap["estates_count"],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'logo': logo,
+      'longitude': longitude,
+      'latitude': latitude,
+      'telephone': telephone,
+      'mobile': mobile,
+      'location': location?.toJson(),
+      'locationS': locationS,
+      'rating': rating,
+      'contractId': contractId,
+      'isLiked': isLiked,
+      'workHours': workHours,
+      'estateLength': estateLength,
+      'phone': phone,
+    };
+  }
 }
 
 class CommunicationMedias {

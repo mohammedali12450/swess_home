@@ -611,7 +611,7 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
                 // kHe12,
                 Container(
-                  height: !isArabic ? 350.h : 320.h,
+                  height: 350.h,
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: ListView.builder(
                     reverse: isArabic ? true : false,

@@ -14,4 +14,11 @@ class MyImage {
       id : json["id"] ?? 1,
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'type': type,
+      'id': id,
+    };
+  }
 }
