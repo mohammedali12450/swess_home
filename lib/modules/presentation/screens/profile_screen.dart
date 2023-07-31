@@ -88,10 +88,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     isEnglish = ApplicationSharedPreferences.getLanguageCode() == "en";
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return BackHomeScreen(child: Scaffold(
-      appBar:  PreferredSize(
+    return BackHomeScreen(
+        child: Scaffold(
+      appBar: PreferredSize(
         preferredSize: Size.fromHeight(46.0),
-        child: GlobalAppbarWidget(isDark: isDark,title: AppLocalizations.of(context)!.settings),
+        child: GlobalAppbarWidget(
+            isDark: isDark, title: AppLocalizations.of(context)!.settings),
       ),
       drawer: SizedBox(
         width: getScreenWidth(context) * (75 / 100),
@@ -342,7 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         6.verticalSpace,
         const Divider(thickness: 0.2),
         6.verticalSpace,
-        buildListTile(
+        /*       buildListTile(
           icon: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: const Icon(Icons.bookmark_border_outlined),
@@ -391,7 +393,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (_) => const CreatedEstatesScreen()));
           },
         ),
-
+*/
         /// logging history
         // buildListTile(
         //   icon: Padding(
