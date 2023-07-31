@@ -14,7 +14,7 @@ class BackHomeScreen extends StatelessWidget {
       onWillPop: () async {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (_) => const NavigationBarScreen()),
+            MaterialPageRoute(builder: (_) => NavigationBarScreen()),
             (route) => false);
         return true;
       },

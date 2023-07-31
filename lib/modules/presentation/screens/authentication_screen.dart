@@ -418,7 +418,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const NavigationBarScreen()),
+                            builder: (_) => NavigationBarScreen()),
                         (route) => false);
                   }
                   // if (widget.popAfterFinish!) {
@@ -611,8 +611,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) =>
-                                            const NavigationBarScreen()),
+                                        builder: (_) => NavigationBarScreen()),
                                     (route) => false);
                                 int visitNum = ApplicationSharedPreferences
                                     .getVisitNumber();

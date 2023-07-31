@@ -7,17 +7,14 @@ class EstateType {
     return EstateType(id: estateType.id, name: estateType.name);
   }
 
-  factory EstateType.init(){
-    return EstateType(id: -1, name: "default" ) ;
+  factory EstateType.init() {
+    return EstateType(id: -1, name: "default");
   }
 
   EstateType({required this.id, required this.name});
 
   factory EstateType.fromJson(json) {
-    return EstateType(
-      id: json['id']??0,
-      name: json['name']
-    );
+    return EstateType(id: json['id'] ?? 0, name: json['name']);
   }
   Map<String, dynamic> toJson() {
     return {

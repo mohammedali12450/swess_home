@@ -7,8 +7,9 @@ import 'package:swesshome/constants/colors.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen_nav_bar.dart';
+import 'package:swesshome/modules/presentation/screens/navigation_bar_screen.dart';
 
-import 'navigation_bar_screen.dart';
 import 'my_estates_orders_screen.dart';
 
 class AfterEstateOrderScreen extends StatefulWidget {
@@ -93,7 +94,9 @@ class _AfterEstateOrderScreenState extends State<AfterEstateOrderScreen> {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => const NavigationBarScreen()),
+                        builder: (_) => NavigationBarScreen(
+                              pageNumber: 3,
+                            )),
                     ModalRoute.withName('/'),
                   );
                 },

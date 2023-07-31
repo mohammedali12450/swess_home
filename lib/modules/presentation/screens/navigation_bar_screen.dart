@@ -20,15 +20,16 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class NavigationBarScreen extends StatefulWidget {
   static const String id = "NavigationBarScreen";
+  int? pageNumber;
 
-  const NavigationBarScreen({Key? key}) : super(key: key);
+  NavigationBarScreen({this.pageNumber, Key? key}) : super(key: key);
 
   @override
   _NavigationBarScreenState createState() => _NavigationBarScreenState();
 }
 
 class _NavigationBarScreenState extends State<NavigationBarScreen> {
-  final ChannelCubit pageCubit = ChannelCubit(0);
+  late ChannelCubit pageCubit;
   late bool isArabic;
 
   late TutorialCoachMark tutorialCoachMark;
@@ -42,6 +43,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
   @override
   void initState() {
     super.initState();
+    pageCubit = ChannelCubit(widget.pageNumber ?? 0);
     ApplicationSharedPreferences.isFirstLaunchForDefinitionTour()
         .then((result) {
       if (result) {
