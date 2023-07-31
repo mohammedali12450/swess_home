@@ -54,7 +54,6 @@ class Estate {
   int? officeStatus;
   String? phone;
   String? viewer;
-
   String? firstImage;
   String? estateTypeName;
   String? estateOfferTypeName;
@@ -300,45 +299,44 @@ class Estate {
     }
 
     return Estate(
-      id: json["id"] == null ? null : json["id"],
-      price: json["price"] == null ? null : json["price"],
-      area: json["area"] == null ? null : json["area"],
+      id: json["id"],
+      price: json["price"],
+      area: json["area"],
       estateType: estateType,
       estateOfferType: estateOfferType,
-      location: location == null ? null : location,
-      locationS: locationS == null ? null : locationS,
+      location: location,
+      locationS: locationS,
       officeId: (estateOffice != null) ? estateOffice.id : null,
-      estateOffice: estateOffice == null ? null : estateOffice,
-      areaUnit: areaUnit == null ? null : areaUnit,
+      estateOffice: estateOffice,
+      areaUnit: areaUnit,
       estateImages: [],
       streetImages: [],
       images: images,
-      longitude: json["longitude"] == null ? null : json["longitude"],
-      latitude: json["latitude"] == null ? null : json["latitude"],
-      locationId: json["location_id"] == null ? null : json["location_id"],
-      contractId: json["contract_id"] == null ? null : json["contract_id"],
-      floor: json['floor'] == null ? null : json['floor'],
-      roomsCount: json["rooms_count"] == null ? null : json["rooms_count"],
-      createdAt: json["created_at"] == null ? null : json["created_at"],
-      publishedAt: json["published_at"] == null ? null : json["published_at"],
-      nearbyPlaces:
-          json["nearby_places"] == null ? null : json["nearby_places"],
-      description: json["description"] == null ? null : json["description"],
-      period: json["period_number"] == null ? null : json["period_number"],
-      floorPlanImages: json["floor_plan"] == null ? null : json["floor_plan"],
-      isLiked: json["is_liked"] == null ? null : json["is_liked"],
-      isSaved: json['is_saved'] == null ? null : json['is_saved'],
-      likesCount: json["likes_count"] == null ? null : json["likes_count"],
-      visitCount: json["visits_count"] == null ? null : json["visits_count"],
-      ownershipType: ownershipTypes == null ? null : ownershipTypes,
-      interiorStatus: interiorStatus == null ? null : interiorStatus,
-      periodType: periodType == null ? null : periodType,
-      hasSwimmingPool: hasSwimmingPool == null ? null : hasSwimmingPool,
-      isFurnished: isFurnished == null ? null : isFurnished,
-      isOnBeach: isOnBeach == null ? null : isOnBeach,
-      videoUrl: json['video_url'] == null ? "" : json['video_url'],
-      phone: json["phone"] == null ? "" : json["phone"],
-      viewer: json["viewer_count"] == null ? null : json["viewer_count"],
+      longitude: json["longitude"],
+      latitude: json["latitude"],
+      locationId: json["location_id"],
+      contractId: json["contract_id"],
+      floor: json['floor'],
+      roomsCount: json["rooms_count"],
+      createdAt: json["created_at"],
+      publishedAt: json["published_at"],
+      nearbyPlaces: json["nearby_places"],
+      description: json["description"],
+      period: json["period_number"],
+      floorPlanImages: json["floor_plan"],
+      isLiked: json["is_liked"],
+      isSaved: json['is_saved'],
+      likesCount: json["likes_count"],
+      visitCount: json["visits_count"],
+      ownershipType: ownershipTypes,
+      interiorStatus: interiorStatus,
+      periodType: periodType,
+      hasSwimmingPool: hasSwimmingPool,
+      isFurnished: isFurnished,
+      isOnBeach: isOnBeach,
+      videoUrl: json['video_url'] ?? "",
+      phone: json["phone"] ?? "",
+      viewer: json["viewer_count"],
       estateStatus: json['system_estate_status'] == null
           ? null
           : json['system_estate_status']['id'],
@@ -494,8 +492,6 @@ class SpecialEstate {
   SpecialEstate({this.imageUrl, this.estateId});
 
   factory SpecialEstate.fromJson(Map<String, dynamic> json) {
-    return SpecialEstate(
-        imageUrl: json["images"] == null ? null : json["images"],
-        estateId: json["id"] == null ? null : json["id"]);
+    return SpecialEstate(imageUrl: json["images"], estateId: json["id"]);
   }
 }

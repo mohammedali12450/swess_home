@@ -638,5 +638,6 @@
   "request_status":"Request status",
   "delete_request":"Delete request",
   "add_offer":"add offer",
-  "between":"between"
+  "between":"between",
+  "add_order":"add_order"
 }

@@ -636,5 +636,6 @@
   "request_status":"حالة الطلب",
   "delete_request":"حذف الطلب",
   "add_offer":"إضافة عرض",
-  "between":"بين"
+  "between":"بين",
+  "add_order":"إضافة طلب"
 }
