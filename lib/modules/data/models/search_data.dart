@@ -20,7 +20,7 @@ class SearchData {
 
   String? sortBy;
   String? sortType;
-
+  String? notes;
   String? description;
 
   SearchData(
@@ -47,6 +47,7 @@ class SearchData {
       "min_price": priceMin,
       "max_price": priceMax,
       "sort_by": sortBy,
+      "notes": description,
       "sort_type": sortType,
       if (isAdvanced) "ownership_type_id": ownershipId,
       if (isAdvanced) "interior_status_id": interiorStatusId,
