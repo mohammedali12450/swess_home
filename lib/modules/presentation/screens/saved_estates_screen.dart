@@ -57,15 +57,13 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(46.0),
           child: AppBar(
-            backgroundColor:
-            isDark ? const Color(0xff26282B) : AppColors.white,
+            backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
             iconTheme:
-            IconThemeData(color: isDark ? Colors.white : AppColors.black),
+                IconThemeData(color: isDark ? Colors.white : AppColors.black),
             centerTitle: true,
             title: Text(
               AppLocalizations.of(context)!.saved_estates,
-              style:
-              TextStyle(color: isDark ? Colors.white : AppColors.black),
+              style: TextStyle(color: isDark ? Colors.white : AppColors.black),
             ),
           ),
         ),
@@ -150,7 +148,7 @@ class _SavedEstatesScreenState extends State<SavedEstatesScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const NavigationBarScreen()));
+                                            NavigationBarScreen()));
                               },
                             ),
                           ),

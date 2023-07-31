@@ -70,7 +70,9 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
           ),
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(46.0),
-            child: GlobalAppbarWidget(isDark: isDark,title: AppLocalizations.of(context)!.saved_estates),
+            child: GlobalAppbarWidget(
+                isDark: isDark,
+                title: AppLocalizations.of(context)!.saved_estates),
           ),
           body: RefreshIndicator(
             color: Theme.of(context).colorScheme.primary,
@@ -153,7 +155,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const NavigationBarScreen()));
+                                              NavigationBarScreen()));
                                 },
                               ),
                             ),

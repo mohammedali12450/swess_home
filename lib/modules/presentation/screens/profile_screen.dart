@@ -816,8 +816,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     UserSharedPreferences.removeAccessToken();
     ApplicationSharedPreferences.setLoginPassed(false);
     //_userLoginBloc.user = null;
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (_) => const NavigationBarScreen()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (_) => NavigationBarScreen()));
     //Navigator.pushNamedAndRemoveUntil(context, AuthenticationScreen.id, (route) => false);
     return;
   }
