@@ -512,7 +512,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Directionality(
                   textDirection: TextDirection.ltr,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ResText(
                         user!.authentication!,
