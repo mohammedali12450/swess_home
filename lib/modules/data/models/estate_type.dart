@@ -15,8 +15,14 @@ class EstateType {
 
   factory EstateType.fromJson(json) {
     return EstateType(
-      id: json['id'],
+      id: json['id']??0,
       name: json['name']
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
   }
 }

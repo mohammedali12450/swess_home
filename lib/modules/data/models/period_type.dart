@@ -11,9 +11,15 @@ class PeriodType {
         name: periodType.name,);
   }
 
-  factory PeriodType.fromJson(json) {
+  factory PeriodType.fromJson( json) {
     return PeriodType(
-        id: json['id'],
-        name: json['name'] == null ? "" : json['name']);
+        id:json['id'],
+        name:  json['name']??"");
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
   }
 }

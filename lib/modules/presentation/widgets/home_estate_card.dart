@@ -122,10 +122,11 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                         ),
                         color: Theme.of(context).colorScheme.background,
                       ),
-                      child: widget.estate.firstImage!.isNotEmpty
+                      child: widget.estate.images!=null && widget.estate.images!.isNotEmpty
+
                           ? CachedNetworkImage(
                               imageUrl:
-                                  imagesBaseUrl + widget.estate.firstImage!,
+                                  imagesBaseUrl + widget.estate.images![0].url,
                               fit: BoxFit.cover,
                             )
                           : Image.asset(swessHomeIconPath),
