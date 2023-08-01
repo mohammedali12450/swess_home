@@ -133,7 +133,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                       ),
                     ),
                     kHe8,
-                    buildEstateStatus(isDark)
+                    buildEstateStatus(isDark),
                   ],
                 ),
               ),

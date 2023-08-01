@@ -196,12 +196,16 @@ class _RecentEstateOrdersScreenNavBarState
                 },
                 builder: (BuildContext context, recentOrdersState) {
                   if (recentOrdersState is RecentEstatesOrdersFetchProgress) {
+                    print("HHHH");
                     return const ClientsOrdersShimmer();
                   }
                   if (recentOrdersState is! RecentEstatesOrdersFetchComplete) {
+                    print("HHH");
                     return buildSignInRequired(context);
                   }
+
                   orders = recentOrdersState.estateOrders;
+
                   if (orders.isEmpty) {
                     return Center(
                       child: Column(
@@ -250,15 +254,18 @@ class _RecentEstateOrdersScreenNavBarState
                       ),
                     );
                   }
+
                   bool find = false;
                   if (widget.estateId != null) {
                     for (int i = 0; i < orders.length; i++) {
                       if (orders.elementAt(i).id ==
                           int.parse(widget.estateId!)) {
                         find = true;
+
                         break;
                       }
                     }
+
                     if (find) {
                       SchedulerBinding.instance.addPostFrameCallback((_) {
                         jumpToOrder(orders);
@@ -268,6 +275,7 @@ class _RecentEstateOrdersScreenNavBarState
                           msg: AppLocalizations.of(context)!.delete_request);
                     }
                   }
+
                   return RefreshIndicator(
                     color: Theme.of(context).colorScheme.primary,
                     onRefresh: () async {
@@ -312,38 +320,53 @@ class _RecentEstateOrdersScreenNavBarState
                                             builder: (context, _) => Padding(
                                               padding: const EdgeInsets.only(
                                                   top: 20, bottom: 10),
-                                              child: EstateOrderCard(
-                                                estateOrder:
-                                                    orders.elementAt(index),
-                                                //color: Theme.of(context).colorScheme.background,
-                                                color: (int.parse(
-                                                            widget.estateId!) ==
-                                                        orders
-                                                            .elementAt(index)
-                                                            .id)
-                                                    ? _colorTween.value
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .background,
-                                                onTap: () async {
-                                                  await deleteEstateOrder(
-                                                      index);
-                                                },
+                                              child: Column(
+                                                children: [
+                                                  EstateOrderCard(
+                                                    estateOrder:
+                                                        orders.elementAt(index),
+                                                    //color: Theme.of(context).colorScheme.background,
+                                                    color: (int.parse(widget
+                                                                .estateId!) ==
+                                                            orders
+                                                                .elementAt(
+                                                                    index)
+                                                                .id)
+                                                        ? _colorTween.value
+                                                        : Theme.of(context)
+                                                            .colorScheme
+                                                            .background,
+                                                    onTap: () async {
+                                                      await deleteEstateOrder(
+                                                          index);
+                                                    },
+                                                  ),
+                                                  if (index ==
+                                                      orders.length - 1)
+                                                    kHe60
+                                                ],
                                               ),
                                             ),
                                           )
                                         : Padding(
                                             padding: const EdgeInsets.only(
                                                 bottom: 10),
-                                            child: EstateOrderCard(
-                                              estateOrder:
-                                                  orders.elementAt(index),
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .background,
-                                              onTap: () async {
-                                                await deleteEstateOrder(index);
-                                              },
+                                            child: Column(
+                                              children: [
+                                                EstateOrderCard(
+                                                  estateOrder:
+                                                      orders.elementAt(index),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .background,
+                                                  onTap: () async {
+                                                    await deleteEstateOrder(
+                                                        index);
+                                                  },
+                                                ),
+                                                if (index == orders.length - 1)
+                                                  kHe60
+                                              ],
                                             ),
                                           );
                                   }),
