@@ -533,82 +533,7 @@ class HomeScreenState extends State<HomeScreen> {
             color: isDark ? Colors.transparent : Colors.white,
             child: Column(
               children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => EstatesScreen(
-                          searchData: searchData,
-                          locationName:
-                              estateSearchFilterCubit.state.elementAt(0),
-                          eventSearch: EstatesFetchStarted(
-                            searchData: searchData,
-                            isAdvanced: false,
-                            token: UserSharedPreferences.getAccessToken(),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: kLargeSymHeight,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                estateSearchFilterCubit.state.elementAt(0),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline3!
-                                    .copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        color: isDark
-                                            ? AppColors.lightGrey2Color
-                                            : AppColors.black,
-                                        fontSize: 16.sp),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.7,
-                                child: Text(
-                                  // estateTypeName +
-                                  //     " ${isArabic ? "لل" : ""}" +
-                                  //     estateOfferName +
-                                  //     priceMaxMin,
-                                  AppLocalizations.of(context)!
-                                      .result_matching_search_page,
-                                  maxLines: 2,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline3!
-                                      .copyWith(
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.lightGreyColor,
-                                          fontSize: 12.sp),
-                                ),
-                              ),
-                            ]),
-                        Column(
-                          children: [
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 27.w,
-                              color: isDark
-                                  ? AppColors.lightblue
-                                  : AppColors.primaryColor,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+
                 // kHe12,
                 Container(
                   height: 425.h,
@@ -640,11 +565,11 @@ class HomeScreenState extends State<HomeScreen> {
                 return ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: state.searchResults.zones.length,
+                    itemCount: state.zones.length,
                     itemBuilder: (context, index) {
                       return PreviousSearchResultWidget(
                         isDark: isDark,
-                        zone: state.searchResults.zones[index],
+                        zone: state.zones[index],
                       );
                     });
               }
@@ -843,7 +768,7 @@ class PreviousSearchResultWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    zone.location.locationFullName,
+                    zone.locationFullName,
                     style: Theme.of(context)
                         .textTheme
                         .headline3!
@@ -872,7 +797,7 @@ class PreviousSearchResultWidget extends StatelessWidget {
             {
               SearchData searchData = SearchData(
                   locationId: zone.locationId, estateTypeId: zone.estateTypeId,
-                  estateOfferTypeId: zone.estateOfferTypeId);
+                  estateOfferTypeId: zone.estateOfferTypeId,priceMax: zone.priceMax,priceMin: zone.priceMin);
 
 
               searchData.sortType = "desc";
@@ -882,7 +807,7 @@ class PreviousSearchResultWidget extends StatelessWidget {
                   builder: (_) =>
                       EstatesScreen(
                         searchData: searchData,
-                        locationName: zone.location.locationFullName,
+                        locationName: zone.locationFullName,
                         eventSearch: EstatesFetchStarted(
                           searchData: searchData,
                           isAdvanced: false,

@@ -4,9 +4,9 @@ part of 'previous_search_results_bloc.dart';
 abstract class PreviousSearchResultsState {}
 
 class PreviousSearchResultsFetchComplete extends PreviousSearchResultsState{
-  final SearchResults searchResults;
+  final List<Zone> zones;
 
-  PreviousSearchResultsFetchComplete({required this.searchResults});
+  PreviousSearchResultsFetchComplete({required this.zones});
 
 }
 class PreviousSearchResultsFetchError extends PreviousSearchResultsState{}
