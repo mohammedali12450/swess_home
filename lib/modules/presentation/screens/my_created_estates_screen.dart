@@ -49,7 +49,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     with TickerProviderStateMixin {
   late CreatedEstatesBloc _createdEstatesBloc;
   DeleteUserNewEstateBloc deleteUserNewEstateBloc =
-  DeleteUserNewEstateBloc(EstateRepository());
+      DeleteUserNewEstateBloc(EstateRepository());
   late ItemScrollController scrollController;
   late ItemPositionsListener itemPositionsListener;
   late AnimationController _animationController;
@@ -58,7 +58,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
   /// added now
   OfficeDetails? results;
-  late bool isDark ;
+  late bool isDark;
 
   @override
   void initState() {
@@ -68,7 +68,6 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
     scrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
-
   }
 
   @override
@@ -81,14 +80,14 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
   initAnimation(context) {
     bool isDark =
-    Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode(context);
 
     if (widget.estateId != null) {
       _animationController = AnimationController(
           vsync: this, duration: const Duration(seconds: 1));
       _colorTween = ColorTween(
-          begin: AppColors.primaryDark,
-          end: isDark ? AppColors.secondaryDark : AppColors.white)
+              begin: AppColors.primaryDark,
+              end: isDark ? AppColors.secondaryDark : AppColors.white)
           .animate(_animationController);
       changeColors();
     }
@@ -125,7 +124,9 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(46.0),
-        child: GlobalAppbarWidget(isDark: isDark,title: AppLocalizations.of(context)!.recent_created_estates),
+        child: GlobalAppbarWidget(
+            isDark: isDark,
+            title: AppLocalizations.of(context)!.recent_created_estates),
       ),
       drawer: SizedBox(
         width: getScreenWidth(context) * (75 / 100),
@@ -171,7 +172,6 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
 
                 estates = createdEstatesFetchState.createdEstates;
 
-
                 if (estates.isEmpty) {
                   return Center(
                     child: Column(
@@ -180,15 +180,16 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                         Icon(
                           Icons.error_outline,
                           size: 0.3.sw,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         kHe24,
                         Text(
                           AppLocalizations.of(context)!
                               .have_not_created_estates,
-                          style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 16),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(fontSize: 16),
                           textAlign: TextAlign.center,
                         ),
                         kHe24,
@@ -209,7 +210,9 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => CreatePropertyIntroductionScreen(officeId:0)));
+                                      builder: (context) =>
+                                          CreatePropertyIntroductionScreen(
+                                              officeId: 0)));
                             },
                           ),
                         ),
@@ -250,74 +253,78 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                     itemCount: estates.length,
                     itemBuilder: (_, index) {
                       int estateStatusId =
-                      estates.elementAt(index).estateStatus! == 3
-                          ? 1
-                          : estates.elementAt(index).estateStatus! == 1
-                          ? 3
-                          : 2;
+                          estates.elementAt(index).estateStatus! == 3
+                              ? 1
+                              : estates.elementAt(index).estateStatus! == 1
+                                  ? 3
+                                  : 2;
                       return (widget.estateId != null && find)
                           ? AnimatedBuilder(
-                        animation: _colorTween,
-                        builder: (context, child) => Card(
-                          elevation: 5,
-                          margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              children: [
-                                kHe12,
-                                EstateHorizonCard(
-                                  color: (int.parse(widget.estateId!) ==
-                                      estates.elementAt(index).id)
-                                      ? _colorTween.value
-                                      : Theme.of(context)
-                                      .colorScheme
-                                      .background,
-                                  estate: estates.elementAt(index),
-                                  onClosePressed: () async {
-                                    await onClosePressed(index);
-                                  },
-                                  closeButton: true,
+                              animation: _colorTween,
+                              builder: (context, child) => Card(
+                                elevation: 5,
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Column(
+                                    children: [
+                                      kHe12,
+                                      EstateHorizonCard(
+                                        color: (int.parse(widget.estateId!) ==
+                                                estates.elementAt(index).id)
+                                            ? _colorTween.value
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .background,
+                                        estate: estates.elementAt(index),
+                                        onClosePressed: () async {
+                                          await onClosePressed(index);
+                                        },
+                                        closeButton: true,
+                                      ),
+                                      buildEstateStatus(index),
+                                    ],
+                                  ),
                                 ),
-                                buildEstateStatus(index),
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-                          : Card(
-                        elevation: 5,
-                        margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: Column(
-                            children: [
-                              kHe12,
-                              EstateHorizonCard(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .background,
-                                estate: estates.elementAt(index),
-                                onClosePressed: () async {
-                                  await onClosePressed(index);
-                                },
-                                closeButton: true,
                               ),
-                              buildEstateStatus(index),
-                              // Padding(
-                              //   padding: EdgeInsets.only(
-                              //       bottom: 8.h, left: 8.w, right: 8.w),
-                              //   child: SizedBox(
-                              //       height: 70.h,
-                              //       width: getScreenWidth(context),
-                              //       child: ProcessTimelinePage(
-                              //         estateStatusId: estateStatusId,
-                              //       )),
-                              // ),
-                            ],
-                          ),
-                        ),
-                      );
+                            )
+                          : Card(
+                              elevation: 5,
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                child: Column(
+                                  children: [
+                                    kHe12,
+                                    EstateHorizonCard(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      estate: estates.elementAt(index),
+                                      onClosePressed: () async {
+                                        await onClosePressed(index);
+                                      },
+                                      closeButton: true,
+                                    ),
+                                    buildEstateStatus(index),
+                                    // Padding(
+                                    //   padding: EdgeInsets.only(
+                                    //       bottom: 8.h, left: 8.w, right: 8.w),
+                                    //   child: SizedBox(
+                                    //       height: 70.h,
+                                    //       width: getScreenWidth(context),
+                                    //       child: ProcessTimelinePage(
+                                    //         estateStatusId: estateStatusId,
+                                    //       )),
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                            );
                     },
                   ),
                 );
@@ -337,33 +344,35 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
         children: [
           estates.elementAt(index).estateStatus! == 1
               ? Text(
-            AppLocalizations.of(context)!.accepted_from_company,
-            style: const TextStyle(color: Colors.green,fontSize: 12),
-          )
+                  AppLocalizations.of(context)!.accepted_from_company,
+                  style: const TextStyle(color: Colors.green, fontSize: 12),
+                )
               : estates.elementAt(index).estateStatus! == 2
-              ? Text(
-            AppLocalizations.of(context)!.rejected_from_company,
-            style: const TextStyle(color: Colors.red,fontSize: 12),
-          )
-              : Text(
-            AppLocalizations.of(context)!.on_progress_from_company,
-            style: TextStyle(color: AppColors.yellowDarkColor,fontSize: 12),
-          ),
+                  ? Text(
+                      AppLocalizations.of(context)!.rejected_from_company,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    )
+                  : Text(
+                      AppLocalizations.of(context)!.on_progress_from_company,
+                      style: TextStyle(
+                          color: AppColors.yellowDarkColor, fontSize: 12),
+                    ),
           const Text(" | "),
           estates.elementAt(index).officeStatus! == 1
               ? Text(
-            AppLocalizations.of(context)!.accepted_from_office,
-            style: const TextStyle(color: Colors.green,fontSize: 12),
-          )
+                  AppLocalizations.of(context)!.accepted_from_office,
+                  style: const TextStyle(color: Colors.green, fontSize: 12),
+                )
               : estates.elementAt(index).officeStatus! == 2
-              ? Text(
-            AppLocalizations.of(context)!.rejected_from_office,
-            style: const TextStyle(color: Colors.red,fontSize: 12),
-          )
-              : Text(
-            AppLocalizations.of(context)!.on_progress_from_office,
-            style: TextStyle(color: AppColors.yellowDarkColor,fontSize: 12),
-          ),
+                  ? Text(
+                      AppLocalizations.of(context)!.rejected_from_office,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    )
+                  : Text(
+                      AppLocalizations.of(context)!.on_progress_from_office,
+                      style: TextStyle(
+                          color: AppColors.yellowDarkColor, fontSize: 12),
+                    ),
         ],
       ),
     );
@@ -418,4 +427,3 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     return -1;
   }
 }
-
