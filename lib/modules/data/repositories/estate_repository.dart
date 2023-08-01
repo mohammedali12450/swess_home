@@ -186,7 +186,7 @@ class EstateRepository {
     }
 
     if (response.statusCode != 200) {
-      throw GeneralException(errorMessage: "! لا يمكن الاتصال بالسيرفر");
+      throw GeneralException(errorMessage: response.toString());
     }
 
     dynamic jsonEstates = jsonDecode(response.toString())["data"];
