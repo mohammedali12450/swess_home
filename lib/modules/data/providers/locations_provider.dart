@@ -9,4 +9,9 @@ class LocationsProvider{
     Response response = await helper.get(getLocationURL) ;
     return response ;
   }
+  Future getZone() async {
+    NetworkHelper helper = NetworkHelper();
+    Response response = await helper.get(getZoneUrl) ;
+    return response ;
+  }
 }
