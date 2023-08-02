@@ -90,9 +90,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     isEnglish = ApplicationSharedPreferences.getLanguageCode() == "en";
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return BackHomeScreen(child: Scaffold(
+    return BackHomeScreen(
+        child: Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
+        iconTheme:
+            IconThemeData(color: isDark ? Colors.white : AppColors.black),
         centerTitle: true,
         backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
         title: Text(
@@ -106,10 +108,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return Padding(
                   padding: EdgeInsets.only(left: 0, right: 12.w),
                   child: IconBadge(
-                    icon: Icon(
-                        Icons.notifications_outlined,
-                        color: isDark ? Colors.white : AppColors.black
-                    ),
+                    icon: Icon(Icons.notifications_outlined,
+                        color: isDark ? Colors.white : AppColors.black),
                     itemCount: notificationsCount,
                     right: 0,
                     top: 5.h,
@@ -422,6 +422,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (_) => const CreatedEstatesScreen()));
           },
         ),
+
         /// logging history
         // buildListTile(
         //   icon: Padding(
@@ -485,7 +486,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return Align(
                       alignment: Alignment.topRight,
                       child: IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.edit_outlined,
                           color: AppColors.white,
                         ),
@@ -523,9 +524,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 ResText(
                   "${user!.firstName!} ${user!.lastName!}",
-                  textStyle: Theme.of(context).textTheme.headline3!.copyWith(
-                      color: AppColors.white,
-                      fontSize: 20),
+                  textStyle: Theme.of(context)
+                      .textTheme
+                      .headline3!
+                      .copyWith(color: AppColors.white, fontSize: 20),
                 ),
                 // ResText(
                 //   user?.email ?? "",
@@ -546,7 +548,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             .textTheme
                             .headline6!
                             .copyWith(
-                                color: isDark ? AppColors.white : AppColors.white),
+                                color:
+                                    isDark ? AppColors.white : AppColors.white),
                       ),
                       ResText(
                         "${user!.country ?? ""} "
@@ -555,7 +558,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             .textTheme
                             .headline6!
                             .copyWith(
-                                color: isDark ? AppColors.white : AppColors.white,),
+                              color: isDark ? AppColors.white : AppColors.white,
+                            ),
                       ),
                     ],
                   ),
