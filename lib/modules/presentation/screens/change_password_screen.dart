@@ -88,9 +88,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         AppLocalizations.of(context)!.error,
                         changeState.errorMessage!);
                   }
+                  else{
+                    showWonderfulAlertDialog(
+                        context,
+                        AppLocalizations.of(context)!.error,
+                        AppLocalizations.of(context)!.wrong_old_password);
+                  }
 
               }
               if (changeState is ChangePasswordComplete) {
+                
                 Navigator.pushNamed(context, ProfileScreen.id);
 
               }

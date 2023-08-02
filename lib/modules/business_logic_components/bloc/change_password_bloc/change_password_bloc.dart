@@ -5,6 +5,8 @@ import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/modules/data/models/user.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 
+import '../../../../core/exceptions/failed_password_exception.dart';
+import '../../../../core/exceptions/unauthorized_exception.dart';
 import 'change_password_event.dart';
 import 'change_password_state.dart';
 
@@ -39,6 +41,10 @@ class ChangePasswordBloc
       } on ConnectionException catch (e) {
         emit(ChangePasswordError(
             errorMessage: e.errorMessage, isConnectionError: true));
+      } on FailedPasswordException catch (_) {
+        emit(ChangePasswordError());
+      } on UnauthorizedException catch (e) {
+        emit(ChangePasswordError(errorMessage: e.message));
       }
     });
   }
