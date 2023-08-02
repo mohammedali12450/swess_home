@@ -49,6 +49,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   ChannelCubit startPriceCubit = ChannelCubit(0);
   ChannelCubit endPriceCubit = ChannelCubit(0);
   ChannelCubit isRentCubit = ChannelCubit(false);
+  ChannelCubit reversedscroll = ChannelCubit(false);
+  ChannelCubit isTextFormFieldPressed = ChannelCubit(false);
   ChannelCubit isPressTypeCubit = ChannelCubit(0);
 
   // Controllers :
@@ -61,14 +63,16 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   PriceDomain? priceDomains;
   late SearchData estateOrder;
   late bool isDark;
-
+  //late bool isTextFormFieldPressed ;
+  //late bool reversedscroll ;
   LocationViewer? selectedLocation;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-
+    //isTextFormFieldPressed = false ;
+    //reversedscroll = false ;
     estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
     priceDomains = BlocProvider.of<PriceDomainsBloc>(context).priceDomains!;
 
@@ -80,7 +84,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   @override
   Widget build(BuildContext context) {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-
     return BlocListener<EstateOrderBloc, EstateOrderState>(
       listener: (_, estateOrderState) async {
         if (estateOrderState is SendEstateOrderComplete) {
@@ -96,6 +99,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       child: BackHomeScreen(
         child: SafeArea(
           child: Scaffold(
+            resizeToAvoidBottomInset: true,
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(46.0),
               child: AppBar(
@@ -164,58 +168,76 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 ],
               ),
             ),
-            body: Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Container(
-                padding: kMediumSymWidth,
+            body: BlocBuilder<ChannelCubit,dynamic>(
+              bloc: reversedscroll,
+              builder: (_,ischecked) =>
+                  BlocBuilder<ChannelCubit,dynamic>(
+                    bloc: isTextFormFieldPressed,
+                    builder: (_,ispressed) =>GestureDetector(
+                onTap: (){
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    reversedscroll.setState(false);
+                    isTextFormFieldPressed.setState(false);
+                },
                 child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        kHe4,
-                        // Text(
-                        //   AppLocalizations.of(context)!.order_type + " :",
-                        // ),
-                        // kHe12,
-                        buildChoiceContainer(
-                            context: context,
-                            cubit: isRentCubit,
-                            textRight: AppLocalizations.of(context)!.buy,
-                            textLeft: AppLocalizations.of(context)!.rent,
-                            onTapRight: () {
-                              estateOrder.estateOfferTypeId = 1;
-                            },
-                            onTapLeft: () {
-                              estateOrder.estateOfferTypeId = 2;
-                            },
-                            paddingVertical: 5.h,
-                            paddingHorizontal: 0),
-                        kHe16,
-                        buildLocation(),
-                        EstateTypeWidget(
-                          searchData: estateOrder,
-                          isPressTypeCubit: isPressTypeCubit,
-                          removeSelect: false,
+                    reverse: ischecked,
+                    child: Form(
+                      key: _formKey,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      child: Container(
+                        padding: kMediumSymWidth,
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                kHe4,
+                                // Text(
+                                //   AppLocalizations.of(context)!.order_type + " :",
+                                // ),
+                                // kHe12,
+                                buildChoiceContainer(
+                                    context: context,
+                                    cubit: isRentCubit,
+                                    textRight: AppLocalizations.of(context)!.buy,
+                                    textLeft: AppLocalizations.of(context)!.rent,
+                                    onTapRight: () {
+                                      estateOrder.estateOfferTypeId = 1;
+                                    },
+                                    onTapLeft: () {
+                                      estateOrder.estateOfferTypeId = 2;
+                                    },
+                                    paddingVertical: 5.h,
+                                    paddingHorizontal: 0),
+                                kHe16,
+                                buildLocation(),
+                                EstateTypeWidget(
+                                  searchData: estateOrder,
+                                  isPressTypeCubit: isPressTypeCubit,
+                                  removeSelect: false,
+                                ),
+                                PriceDomainWidget(
+                                  isRentCubit: isRentCubit,
+                                  searchData: estateOrder,
+                                  startPriceCubit: startPriceCubit,
+                                  endPriceCubit: endPriceCubit,
+                                ),
+                                //buildPriceDomain(isArabic, isDark),
+                                buildNote(),
+                                buildButton(),
+                                kHe8,
+                                ispressed ? SizedBox(height: 260,) : SizedBox()
+                              ],
+                            ),
+                          ),
                         ),
-                        PriceDomainWidget(
-                          isRentCubit: isRentCubit,
-                          searchData: estateOrder,
-                          startPriceCubit: startPriceCubit,
-                          endPriceCubit: endPriceCubit,
-                        ),
-                        //buildPriceDomain(isArabic, isDark),
-                        buildNote(),
-                        buildButton(),
-                        kHe8,
-                      ],
+                      ),
                     ),
-                  ),
                 ),
               ),
+                  ),
             ),
             drawer: SizedBox(
               width: getScreenWidth(context) * (75 / 100),
@@ -314,33 +336,44 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         BlocBuilder<ChannelCubit, dynamic>(
           bloc: noteErrorCubit,
           builder: (_, errorMessage) {
-            return Container(
-              width: inf,
-              padding: kSmallSymWidth,
-              height: 150.h,
-              decoration: BoxDecoration(
-                borderRadius: smallBorderRadius,
-                border: Border.all(
-                  color: !isDark ? Colors.black38 : AppColors.lightGrey2Color,
+            return BlocBuilder<ChannelCubit,dynamic>(
+              bloc: isTextFormFieldPressed,
+              builder: (_,ischecked)=>
+                  BlocBuilder(
+                    bloc: reversedscroll,
+                    builder: (_,ispressed)=>Container(
+                width: inf,
+                padding: kSmallSymWidth,
+                height: 150.h,
+                decoration: BoxDecoration(
+                    borderRadius: smallBorderRadius,
+                    border: Border.all(
+                      color: !isDark ? Colors.black38 : AppColors.lightGrey2Color,
+                    ),
+                ),
+                child: TextField(
+                    onTap: (){
+                      isTextFormFieldPressed.setState(true) ;
+                      reversedscroll.setState(true);
+                    },
+                    maxLength: 600,
+                    controller: notesController,
+                    textDirection: TextDirection.rtl,
+                    onChanged: (value) {
+                      estateOrder.description = value;
+                    },
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      hintText: AppLocalizations.of(context)!
+                          .order_create_notes_descriptions,
+                      errorText: errorMessage,
+                    ),
+                    maxLines: 8,
                 ),
               ),
-              child: TextField(
-                maxLength: 600,
-                controller: notesController,
-                textDirection: TextDirection.rtl,
-                onChanged: (value) {
-                  estateOrder.description = value;
-                },
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  hintText: AppLocalizations.of(context)!
-                      .order_create_notes_descriptions,
-                  errorText: errorMessage,
-                ),
-                maxLines: 8,
-              ),
+                  ),
             );
           },
         ),

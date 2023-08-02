@@ -80,7 +80,7 @@ class _SelectLocationByHandState extends State<SelectLocationByHand> {
   }
 
   Future<BitmapDescriptor> createCustomMarkerBitmap(String text) async {
-    const double fontSize = 27.0;
+    const double fontSize = 35.0;
 
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
@@ -96,9 +96,9 @@ class _SelectLocationByHandState extends State<SelectLocationByHand> {
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    final double width = textPainter.width + 10.0;
+    final double width = textPainter.width + 15.0;
     const double height = 40.0;
-    final Paint paint = Paint()..color = Colors.grey.withOpacity(0.5);
+    final Paint paint = Paint()..color = Colors.white.withOpacity(0.5);
     final RRect rRect = RRect.fromRectAndRadius(
       Rect.fromLTWH(0, 0, width, height),
       const Radius.circular(20),

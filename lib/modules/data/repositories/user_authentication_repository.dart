@@ -205,14 +205,23 @@ class UserAuthenticationRepository {
     } catch (e) {
       rethrow;
     }
-
     if (response.statusCode == 401) {
-      return jsonDecode(response.toString())["message"];
+      throw FailedPasswordException();
     }
-    if (response.statusCode == 200) {
-      return jsonDecode(response.toString())["message"];
-      // throw GeneralException(errorMessage: jsonDecode(response.toString())["message"]);
+    if (response.statusCode == 422) {
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
+
+    if (response.statusCode == 403) {
+      throw UnauthorizedException(
+          message: jsonDecode(response.toString())["message"]);
+    }
+
+    if (response.statusCode != 200) {
+      throw GeneralException(
+          errorMessage: jsonDecode(response.toString())["message"]);
+    }
+
     // User user = User.fromJson(jsonDecode(response.toString())["data"]);
     // return user;
   }

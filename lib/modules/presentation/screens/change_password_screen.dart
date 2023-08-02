@@ -89,12 +89,41 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         AppLocalizations.of(context)!.error,
                         changeState.errorMessage!);
                   }
-                }
-                if (changeState is ChangePasswordComplete) {
-                  MySnackBar.show(context, "${changeState.successMessage}");
-                  Navigator.pushNamed(context, ProfileScreen.id);
-                }
-              },
+<<<<<<< lib/modules/presentation/screens/change_password_screen.dart
+               
+=======
+                  else{
+                    showWonderfulAlertDialog(
+                        context,
+                        AppLocalizations.of(context)!.error,
+                        AppLocalizations.of(context)!.wrong_old_password);
+                  }
+
+              }
+              if (changeState is ChangePasswordComplete) {
+                MySnackBar.show(context, "${changeState.successMessage}");
+                Navigator.pushNamed(context, ProfileScreen.id);
+
+              }
+            },
+          ),
+        ],
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(46.0),
+            child: AppBar(
+              iconTheme:
+              IconThemeData(color: isDark ? Colors.white : AppColors.black),
+              backgroundColor:
+              isDark ? const Color(0xff26282B) : AppColors.white,
+              centerTitle: true,
+              title: Text(AppLocalizations.of(context)!.change_password,
+                style: TextStyle(color: isDark ? Colors.white : AppColors.black),
+              ),
+
+>>>>>>> lib/modules/presentation/screens/change_password_screen.dart
             ),
           ],
           child: Scaffold(
