@@ -637,5 +637,6 @@
   "delete_request":"حذف الطلب",
   "add_offer":"إضافة عرض",
   "between":"بين",
-  "add_order":"إضافة طلب"
+  "add_order":"إضافة طلب",
+  "wrong_old_password":"كلمة المرور القديمة خاطئة"
 }
