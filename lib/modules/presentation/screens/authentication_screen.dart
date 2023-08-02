@@ -67,6 +67,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   final ChannelCubit _repeatPasswordVisibleCubit = ChannelCubit(false);
   final ChannelCubit _isLoginSelected = ChannelCubit(true);
   final ChannelCubit _termsIsCheckedCubit = ChannelCubit(false);
+  final ChannelCubit isTextFormFieldPressed = ChannelCubit(false);
+  final ChannelCubit reversedscroll = ChannelCubit(false);
   ChannelCubit authenticationError = ChannelCubit(null);
   ChannelCubit authenticationErrorLogin = ChannelCubit(null);
   ChannelCubit passwordError = ChannelCubit(null);
@@ -107,7 +109,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   bool isForStore = false;
   late bool isDark;
   List<Contact>? contacts;
-
+  //late bool isTextFormFieldPressed ;
+  //late bool reversedscroll ;
   late SharedPreferences _prefs;
   Timer? _timer;
   int _remainingSeconds = 0;
@@ -118,6 +121,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   @override
   void initState() {
     super.initState();
+    //isTextFormFieldPressed = false ;
+    //reversedscroll = false ;
     ApplicationSharedPreferences.setWalkThroughPassState(true);
     userRegisterBloc = UserRegisterBloc(UserAuthenticationRepository());
     userLoginBloc = BlocProvider.of<UserLoginBloc>(context);
@@ -585,40 +590,80 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             body: Stack(
               children: [
                 Builder(
-                  builder: (context) => Container(
-                    width: 1.sw,
-                    height: 1.sh,
-                    padding: kSmallSymWidth,
-                    color: Theme.of(context).colorScheme.secondary,
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 1.sw,
-                            alignment:
-                                Provider.of<LocaleProvider>(context).isArabic()
-                                    ? Alignment.centerRight
-                                    : Alignment.centerLeft,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.close,
-                                color:
-                                    Theme.of(context).colorScheme.onBackground,
-                              ),
-                              onPressed: () {
-                                Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => NavigationBarScreen()),
-                                    (route) => false);
-                                int visitNum = ApplicationSharedPreferences
-                                    .getVisitNumber();
-                                //print("ghina : $visitNum");
-                                ApplicationSharedPreferences.setVisitNumber(
-                                    visitNum + 1);
+                  builder: (context) =>
+                      Container(
+                        width: 1.sw,
+                        height: 1.sh,
+                        padding: kSmallSymWidth,
+                        color: Theme
+                            .of(context)
+                            .colorScheme
+                            .secondary,
+                        child: BlocBuilder<ChannelCubit,dynamic>(
+                          bloc: reversedscroll,
+                          builder: (_,ispressed) => BlocBuilder<ChannelCubit,dynamic>(
+                            bloc: isTextFormFieldPressed,
+                            builder: (_,ischecked)=>GestureDetector(
+                              onTap: (){
+                                FocusScope.of(context).requestFocus(new FocusNode());
+                                reversedscroll.setState(true) ;
+                                isTextFormFieldPressed.setState(false) ;
+
                               },
+                              child: SingleChildScrollView(
+                                reverse: ispressed,
+                                controller: scrollController,
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minHeight: MediaQuery.of(context).size.height,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 1.sw,
+                                        alignment:
+                                        Provider.of<LocaleProvider>(context).isArabic()
+                                            ? Alignment.centerRight
+                                            : Alignment.centerLeft,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.close,
+                                            color:
+                                            Theme
+                                                .of(context)
+                                                .colorScheme
+                                                .onBackground,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (_) =>
+                                                    const NavigationBarScreen()),
+                                                    (route) => false);
+                                            int visitNum = ApplicationSharedPreferences
+                                                .getVisitNumber();
+                                            //print("ghina : $visitNum");
+                                            ApplicationSharedPreferences.setVisitNumber(
+                                                visitNum + 1);
+                                          },
+                                        ),
+                                      ),
+                                      BlocBuilder<ChannelCubit, dynamic>(
+                                        bloc: _isLoginSelected,
+                                        builder: (_, isLoginSelected) {
+                                          if (isLoginSelected) {
+                                            return buildLoginScreen();
+                                          }
+                                          return buildSignupScreen();
+                                        },
+                                      ),
+                                      ischecked ? SizedBox(height: 280,):SizedBox()
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                           BlocBuilder<ChannelCubit, dynamic>(
@@ -645,6 +690,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
   SingleChildScrollView buildLoginScreen() {
     return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -862,6 +908,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     //bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
     bool isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
       controller: scrollController,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1041,17 +1088,27 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           BlocBuilder<ChannelCubit, dynamic>(
             bloc: firstNameError,
             builder: (_, errorMessage) {
-              return TextField(
-                onChanged: (_) {
-                  firstNameError.setState(null);
-                },
-                controller: firstNameController,
-                decoration: InputDecoration(
-                  errorText: errorMessage,
-                  hintText: AppLocalizations.of(context)!.enter_first_name,
-                  suffix: null,
-                  suffixIcon: null,
-                  isCollapsed: false,
+              return BlocBuilder<ChannelCubit,dynamic>(
+                bloc: reversedscroll,
+                builder: (_,ispressed)=> BlocBuilder<ChannelCubit,dynamic>(
+                  bloc: isTextFormFieldPressed,
+                  builder: (_,ischecked)=>TextField(
+                    onTap: (){
+                      reversedscroll.setState(true);
+                      isTextFormFieldPressed.setState(true) ;
+                    },
+                    onChanged: (_) {
+                      firstNameError.setState(null);
+                    },
+                    controller: firstNameController,
+                    decoration: InputDecoration(
+                      errorText: errorMessage,
+                      hintText: AppLocalizations.of(context)!.enter_first_name,
+                      suffix: null,
+                      suffixIcon: null,
+                      isCollapsed: false,
+                    ),
+                  ),
                 ),
               );
             },
@@ -1065,15 +1122,25 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           BlocBuilder<ChannelCubit, dynamic>(
             bloc: lastNameError,
             builder: (_, errorMessage) {
-              return TextField(
-                onChanged: (_) {
-                  lastNameError.setState(null);
-                },
-                controller: lastNameController,
-                decoration: InputDecoration(
-                  errorText: errorMessage,
-                  hintText: AppLocalizations.of(context)!.enter_last_name,
-                  isCollapsed: false,
+              return BlocBuilder<ChannelCubit,dynamic>(
+                bloc: reversedscroll,
+                builder: (_,ispressed)=> BlocBuilder(
+                  bloc: isTextFormFieldPressed,
+                  builder: (_,ischecked)=>TextField(
+                    onTap: (){
+                      reversedscroll.setState(true) ;
+                      isTextFormFieldPressed.setState(true) ;
+                    },
+                    onChanged: (_) {
+                      lastNameError.setState(null);
+                    },
+                    controller: lastNameController,
+                    decoration: InputDecoration(
+                      errorText: errorMessage,
+                      hintText: AppLocalizations.of(context)!.enter_last_name,
+                      isCollapsed: false,
+                    ),
+                  ),
                 ),
               );
             },
