@@ -170,7 +170,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                           .error_happened_when_executing_operation);
                 }
 
-                //estates = createdEstatesFetchState.createdEstates;
+                estates = createdEstatesFetchState.createdEstates;
 
                 if (estates.isEmpty) {
                   return Center(

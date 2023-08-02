@@ -57,6 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //late UserLoginBloc _userLoginBloc;
   late GovernoratesBloc governoratesBloc;
   UserDataBloc? _userDataBloc;
+  UserLoginBloc? _userLoginBloc;
   final ChannelCubit isLogoutLoadingCubit = ChannelCubit(false);
   List<Governorate>? governorates;
   User? user;
@@ -680,10 +681,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future _logoutAfterDelete() async {
+    String? messageDeleted;
     UserAuthenticationRepository userRep = UserAuthenticationRepository();
     if (UserSharedPreferences.getAccessToken() != null) {
       try {
-        await userRep.deleteUser(UserSharedPreferences.getAccessToken()!);
+        messageDeleted =
+            await userRep.deleteUser(UserSharedPreferences.getAccessToken()!);
       } on ConnectionException {
         Navigator.pop(context);
         showWonderfulAlertDialog(
@@ -696,7 +699,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     UserSharedPreferences.removeAccessToken();
     //_userLoginBloc.user = null;
-    MySnackBar.show(context, "تم حذف الحساب بنجاح");
+    MySnackBar.show(context, "$messageDeleted");
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -710,7 +713,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget buildLogout() {
     return BlocBuilder<UserLoginBloc, UserLoginState>(
-      //bloc: ,
+      bloc: _userLoginBloc,
       builder: (context, userLoginState) {
         if (UserSharedPreferences.getAccessToken() != null) {
           return Padding(
@@ -789,6 +792,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future _logout() async {
+    String? messageLogout;
     UserAuthenticationRepository userRep = UserAuthenticationRepository();
     if (UserSharedPreferences.getAccessToken() == null) {
       Navigator.pop(context);
@@ -801,7 +805,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     } else if (UserSharedPreferences.getAccessToken() != null) {
       try {
-        await userRep.logout(UserSharedPreferences.getAccessToken()!);
+        messageLogout =
+            await userRep.logout(UserSharedPreferences.getAccessToken()!);
       } on ConnectionException {
         Navigator.pop(context);
         showWonderfulAlertDialog(
@@ -814,7 +819,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     UserSharedPreferences.removeAccessToken();
     ApplicationSharedPreferences.setLoginPassed(false);
-    MySnackBar.show(context, " تم تسجيل الخروج بنجاح");
+    MySnackBar.show(context, "$messageLogout");
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (_) => NavigationBarScreen()));
     //_userLoginBloc.user = null;
