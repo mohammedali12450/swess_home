@@ -17,6 +17,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/visit_estate_bl
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/models/estate_office.dart';
 import 'package:swesshome/modules/data/repositories/estate_repository.dart';
+import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_introduction_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
@@ -156,18 +157,19 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                 }
               },
               builder: (_, createdEstatesFetchState) {
-                if (createdEstatesFetchState is CreatedEstatesFetchNone) {
-                  return FetchResult(
-                      content: AppLocalizations.of(context)!
-                          .have_not_created_estates);
-                }
+                // if (createdEstatesFetchState is CreatedEstatesFetchNone) {
+                //   return FetchResult(
+                //       content: AppLocalizations.of(context)!
+                //           .have_not_created_estates);
+                // }
                 if (createdEstatesFetchState is CreatedEstatesFetchProgress) {
                   return const PropertyShimmer();
                 }
                 if (createdEstatesFetchState is! CreatedEstatesFetchComplete) {
-                  return FetchResult(
-                      content: AppLocalizations.of(context)!
-                          .error_happened_when_executing_operation);
+                  return buildSignInRequired(context);
+                  // return FetchResult(
+                  //     content: AppLocalizations.of(context)!
+                  //         .error_happened_when_executing_operation);
                 }
 
                 estates = createdEstatesFetchState.createdEstates;
@@ -331,6 +333,48 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildSignInRequired(context) {
+    return SizedBox(
+      height: 20,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 60,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.this_features_require_login,
+            ),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(180.w, 50.h),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.sign_in,
+                ),
+                onPressed: () async {
+                  await Navigator.pushNamed(context, AuthenticationScreen.id)
+                      .then((value) {});
+                  Navigator.pop(context);
+                  // _onRefresh();
+                  if (UserSharedPreferences.getAccessToken() != null) {
+                    _createdEstatesBloc.add(
+                      CreatedEstatesFetchStarted(
+                          token: UserSharedPreferences.getAccessToken()!),
+                    );
+                  }
+                },
+              ),
+            )
+          ],
         ),
       ),
     );
