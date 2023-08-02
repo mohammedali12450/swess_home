@@ -89,9 +89,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         AppLocalizations.of(context)!.error,
                         changeState.errorMessage!);
                   }
-<<<<<<< lib/modules/presentation/screens/change_password_screen.dart
-               
-=======
                   else{
                     showWonderfulAlertDialog(
                         context,
