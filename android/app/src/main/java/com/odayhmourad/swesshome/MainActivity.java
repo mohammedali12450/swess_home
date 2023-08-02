@@ -1,4 +1,4 @@
-package com.real_estate.realestatecustomer;
+package com.odayhmourad.swesshome;
 
 import io.flutter.embedding.android.FlutterActivity;
 
