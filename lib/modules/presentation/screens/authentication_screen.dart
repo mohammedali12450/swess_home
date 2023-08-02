@@ -584,106 +584,95 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           // ),
         ],
         child: BackHomeScreen(
-            child: SafeArea(
-          child: Scaffold(
-            resizeToAvoidBottomInset: true,
-            body: Stack(
-              children: [
+          child: SafeArea(
+            child: Scaffold(
+              resizeToAvoidBottomInset: true,
+              body: Stack(children: [
                 Builder(
-                  builder: (context) =>
-                      Container(
-                        width: 1.sw,
-                        height: 1.sh,
-                        padding: kSmallSymWidth,
-                        color: Theme
-                            .of(context)
-                            .colorScheme
-                            .secondary,
-                        child: BlocBuilder<ChannelCubit,dynamic>(
-                          bloc: reversedscroll,
-                          builder: (_,ispressed) => BlocBuilder<ChannelCubit,dynamic>(
-                            bloc: isTextFormFieldPressed,
-                            builder: (_,ischecked)=>GestureDetector(
-                              onTap: (){
-                                FocusScope.of(context).requestFocus(new FocusNode());
-                                reversedscroll.setState(true) ;
-                                isTextFormFieldPressed.setState(false) ;
-
-                              },
-                              child: SingleChildScrollView(
-                                reverse: ispressed,
-                                controller: scrollController,
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    minHeight: MediaQuery.of(context).size.height,
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: 1.sw,
-                                        alignment:
-                                        Provider.of<LocaleProvider>(context).isArabic()
+                  builder: (context) => Container(
+                    width: 1.sw,
+                    height: 1.sh,
+                    padding: kSmallSymWidth,
+                    color: Theme.of(context).colorScheme.secondary,
+                    child: BlocBuilder<ChannelCubit, dynamic>(
+                      bloc: reversedscroll,
+                      builder: (_, ispressed) =>
+                          BlocBuilder<ChannelCubit, dynamic>(
+                        bloc: isTextFormFieldPressed,
+                        builder: (_, ischecked) => GestureDetector(
+                          onTap: () {
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
+                            reversedscroll.setState(true);
+                            isTextFormFieldPressed.setState(false);
+                          },
+                          child: SingleChildScrollView(
+                            reverse: ispressed,
+                            controller: scrollController,
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: MediaQuery.of(context).size.height,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 1.sw,
+                                    alignment:
+                                        Provider.of<LocaleProvider>(context)
+                                                .isArabic()
                                             ? Alignment.centerRight
                                             : Alignment.centerLeft,
-                                        child: IconButton(
-                                          icon: Icon(
-                                            Icons.close,
-                                            color:
-                                            Theme
-                                                .of(context)
-                                                .colorScheme
-                                                .onBackground,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pushAndRemoveUntil(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (_) =>
-                                                    const NavigationBarScreen()),
-                                                    (route) => false);
-                                            int visitNum = ApplicationSharedPreferences
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    NavigationBarScreen()),
+                                            (route) => false);
+                                        int visitNum =
+                                            ApplicationSharedPreferences
                                                 .getVisitNumber();
-                                            //print("ghina : $visitNum");
-                                            ApplicationSharedPreferences.setVisitNumber(
-                                                visitNum + 1);
-                                          },
-                                        ),
-                                      ),
-                                      BlocBuilder<ChannelCubit, dynamic>(
-                                        bloc: _isLoginSelected,
-                                        builder: (_, isLoginSelected) {
-                                          if (isLoginSelected) {
-                                            return buildLoginScreen();
-                                          }
-                                          return buildSignupScreen();
-                                        },
-                                      ),
-                                      ischecked ? SizedBox(height: 280,):SizedBox()
-                                    ],
+                                        //print("ghina : $visitNum");
+                                        ApplicationSharedPreferences
+                                            .setVisitNumber(visitNum + 1);
+                                      },
+                                    ),
                                   ),
-                                ),
+                                  BlocBuilder<ChannelCubit, dynamic>(
+                                    bloc: _isLoginSelected,
+                                    builder: (_, isLoginSelected) {
+                                      if (isLoginSelected) {
+                                        return buildLoginScreen();
+                                      }
+                                      return buildSignupScreen();
+                                    },
+                                  ),
+                                  ischecked
+                                      ? SizedBox(
+                                          height: 280,
+                                        )
+                                      : SizedBox()
+                                ],
                               ),
                             ),
                           ),
-                          BlocBuilder<ChannelCubit, dynamic>(
-                            bloc: _isLoginSelected,
-                            builder: (_, isLoginSelected) {
-                              if (isLoginSelected) {
-                                return buildLoginScreen();
-                              }
-                              return buildSignupScreen();
-                            },
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ],
+              ]),
             ),
           ),
-        )),
+        ),
       ),
     );
   }
@@ -1088,14 +1077,14 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           BlocBuilder<ChannelCubit, dynamic>(
             bloc: firstNameError,
             builder: (_, errorMessage) {
-              return BlocBuilder<ChannelCubit,dynamic>(
+              return BlocBuilder<ChannelCubit, dynamic>(
                 bloc: reversedscroll,
-                builder: (_,ispressed)=> BlocBuilder<ChannelCubit,dynamic>(
+                builder: (_, ispressed) => BlocBuilder<ChannelCubit, dynamic>(
                   bloc: isTextFormFieldPressed,
-                  builder: (_,ischecked)=>TextField(
-                    onTap: (){
+                  builder: (_, ischecked) => TextField(
+                    onTap: () {
                       reversedscroll.setState(true);
-                      isTextFormFieldPressed.setState(true) ;
+                      isTextFormFieldPressed.setState(true);
                     },
                     onChanged: (_) {
                       firstNameError.setState(null);
@@ -1122,14 +1111,14 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           BlocBuilder<ChannelCubit, dynamic>(
             bloc: lastNameError,
             builder: (_, errorMessage) {
-              return BlocBuilder<ChannelCubit,dynamic>(
+              return BlocBuilder<ChannelCubit, dynamic>(
                 bloc: reversedscroll,
-                builder: (_,ispressed)=> BlocBuilder(
+                builder: (_, ispressed) => BlocBuilder(
                   bloc: isTextFormFieldPressed,
-                  builder: (_,ischecked)=>TextField(
-                    onTap: (){
-                      reversedscroll.setState(true) ;
-                      isTextFormFieldPressed.setState(true) ;
+                  builder: (_, ischecked) => TextField(
+                    onTap: () {
+                      reversedscroll.setState(true);
+                      isTextFormFieldPressed.setState(true);
                     },
                     onChanged: (_) {
                       lastNameError.setState(null);
