@@ -97,15 +97,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
               }
               if (changeState is ChangePasswordComplete) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
-                    AppLocalizations.of(context)!.password_change_successfully,
-                  style: TextStyle(
-                    color: isDark? Colors.black:Colors.white
-                  ),
-                ),
-                  backgroundColor: isDark? Colors.white:Colors.black,
-                )
-                );
+                
                 Navigator.pushNamed(context, ProfileScreen.id);
 
               }
