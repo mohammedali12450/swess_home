@@ -289,8 +289,6 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
     return BlocBuilder<EstateViewBloc, EstateViewState>(
       bloc: estateViewBloc,
       builder: (context, state) {
-        print('ooooooooooooooooo');
-        print(state);
         if (state is EstateMostViewFetchProgress) {
           const Center(
             child: CircularProgressIndicator(),
