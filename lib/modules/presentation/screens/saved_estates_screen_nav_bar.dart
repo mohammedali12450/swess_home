@@ -222,7 +222,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const NavigationBarScreen()));
+                                              NavigationBarScreen()));
                                 },
                               ),
                             ),
