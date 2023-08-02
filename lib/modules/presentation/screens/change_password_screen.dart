@@ -11,6 +11,7 @@ import 'package:swesshome/core/storage/shared_preferences/user_shared_preference
 import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
+import 'package:swesshome/utils/helpers/my_snack_bar.dart';
 
 import '../../../constants/assets_paths.dart';
 import '../../../constants/design_constants.dart';
@@ -88,53 +89,54 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         AppLocalizations.of(context)!.error,
                         changeState.errorMessage!);
                   }
-
-              }
-              if (changeState is ChangePasswordComplete) {
-                Navigator.pushNamed(context, ProfileScreen.id);
-
-              }
-            },
-          ),
-        ],
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(46.0),
-            child: AppBar(
-              iconTheme:
-              IconThemeData(color: isDark ? Colors.white : AppColors.black),
-              backgroundColor:
-              isDark ? const Color(0xff26282B) : AppColors.white,
-              centerTitle: true,
-              title: Text(AppLocalizations.of(context)!.change_password,
-                style: TextStyle(color: isDark ? Colors.white : AppColors.black),
-              ),
-
+                }
+                if (changeState is ChangePasswordComplete) {
+                  MySnackBar.show(context, "تم تغيير كلمة المرور بنجاح");
+                  Navigator.pushNamed(context, ProfileScreen.id);
+                }
+              },
             ),
-          ),
-          body: Container(
-            width: 1.sw,
-            height: 1.sh,
-            color: Theme.of(context).colorScheme.secondary,
-            child: Stack(
-              children: [
-                ...kBackgroundDrawings(context),
-                SingleChildScrollView(
-                  controller: scrollController,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      40.verticalSpace,
-                      SizedBox(
-                        width: 200.w,
-                        height: 200.w,
-                        child: CircleAvatar(
-                          child: Image.asset(swessHomeIconPath),
-                          backgroundColor: Colors.transparent,
-                          foregroundColor: Colors.transparent,
-                        ),),
+          ],
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            resizeToAvoidBottomInset: true,
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(46.0),
+              child: AppBar(
+                iconTheme: IconThemeData(
+                    color: isDark ? Colors.white : AppColors.black),
+                backgroundColor:
+                    isDark ? const Color(0xff26282B) : AppColors.white,
+                centerTitle: true,
+                title: Text(
+                  AppLocalizations.of(context)!.change_password,
+                  style:
+                      TextStyle(color: isDark ? Colors.white : AppColors.black),
+                ),
+              ),
+            ),
+            body: Container(
+              width: 1.sw,
+              height: 1.sh,
+              color: Theme.of(context).colorScheme.secondary,
+              child: Stack(
+                children: [
+                  ...kBackgroundDrawings(context),
+                  SingleChildScrollView(
+                    controller: scrollController,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        40.verticalSpace,
+                        SizedBox(
+                          width: 200.w,
+                          height: 200.w,
+                          child: CircleAvatar(
+                            child: Image.asset(swessHomeIconPath),
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.transparent,
+                          ),
+                        ),
                         10.verticalSpace,
                         Padding(
                           padding: const EdgeInsets.only(left: 15, right: 15),

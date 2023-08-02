@@ -9,6 +9,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_
 import 'package:swesshome/modules/business_logic_components/bloc/user_edit_data_bloc/edit_user_data_state.dart';
 import 'package:swesshome/modules/data/models/register.dart';
 import 'package:swesshome/modules/presentation/screens/profile_screen.dart';
+import 'package:swesshome/utils/helpers/my_snack_bar.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
@@ -61,7 +62,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late String phoneDialCodeLogin;
   String phoneNumber = "";
   String? token;
-  late bool isDark ;
+  late bool isDark;
 
   @override
   void initState() {
@@ -79,7 +80,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(46.0),
         child: AppBar(
-          iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          iconTheme:
+              IconThemeData(color: isDark ? Colors.white : AppColors.black),
           backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
           centerTitle: true,
           automaticallyImplyLeading: false,
@@ -175,51 +177,54 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               //     );
               //   },
               // ),
-              widget.governorates != null ?
-                Column(
-                  children: [
-                    kHe24,
-                    Row(
+              widget.governorates != null
+                  ? Column(
                       children: [
-                        ResText(
-                          AppLocalizations.of(context)!.governorate + " :",
-                          textStyle: Theme.of(context).textTheme.headline6,
+                        kHe24,
+                        Row(
+                          children: [
+                            ResText(
+                              AppLocalizations.of(context)!.governorate + " :",
+                              textStyle: Theme.of(context).textTheme.headline6,
+                            ),
+                          ],
+                        ),
+                        kHe8,
+                        BlocBuilder<ChannelCubit, dynamic>(
+                          bloc: countryError,
+                          builder: (_, errorMessage) {
+                            for (int i = 0;
+                                i < widget.governorates!.length;
+                                i++) {
+                              // print(governorates!.elementAt(i).name);
+                              if (widget.governorates!.elementAt(i).name ==
+                                  widget.user.governorate) {
+                                selectedGovernorateId = i + 1;
+                                print(widget.governorates!.elementAt(i).name);
+                                print(selectedGovernorateId);
+                              }
+                            }
+                            return MyDropdownList(
+                              elementsList: widget.governorates!
+                                  .map((e) => e.name)
+                                  .toList(),
+                              onSelect: (index) {
+                                selectedGovernorateId = index + 1;
+                                widget.user.governorate =
+                                    widget.governorates!.elementAt(index).name;
+                                isEditCubit.setState(true);
+                              },
+                              validator: (value) => value == null
+                                  ? AppLocalizations.of(context)!
+                                      .this_field_is_required
+                                  : null,
+                              selectedItem: widget.user.governorate,
+                            );
+                          },
                         ),
                       ],
-                    ),
-                    kHe8,
-                    BlocBuilder<ChannelCubit, dynamic>(
-                      bloc: countryError,
-                      builder: (_, errorMessage) {
-                        for (int i = 0; i < widget.governorates!.length; i++) {
-                          // print(governorates!.elementAt(i).name);
-                          if (widget.governorates!.elementAt(i).name ==
-                              widget.user.governorate) {
-                            selectedGovernorateId = i + 1;
-                            print(widget.governorates!.elementAt(i).name);
-                            print(selectedGovernorateId);
-                          }
-                        }
-                        return MyDropdownList(
-                          elementsList:
-                              widget.governorates!.map((e) => e.name).toList(),
-                          onSelect: (index) {
-                            selectedGovernorateId = index + 1;
-                            widget.user.governorate =
-                                widget.governorates!.elementAt(index).name;
-                            isEditCubit.setState(true);
-                          },
-                          validator: (value) => value == null
-                              ? AppLocalizations.of(context)!
-                                  .this_field_is_required
-                              : null,
-                          selectedItem: widget.user.governorate,
-                        );
-                      },
-                    ),
-                  ],
-                ) :
-              SizedBox(),
+                    )
+                  : SizedBox(),
               // kHe24,
               // ResText(
               //   AppLocalizations.of(context)!.date_of_birth + " :",
@@ -306,10 +311,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     ),
                                   );
                                   //FocusScope.of(context).unfocus();
-                                  if (sendState is UserEditDataComplete)
-                                    {
-                                      Navigator.push(context,MaterialPageRoute(builder: (_)=> ProfileScreen()));
-                                    }
+                                  if (sendState is UserEditDataComplete) {
+                                    MySnackBar.show(
+                                        context, "تم التعديل بنجاح");
+
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => ProfileScreen()));
+                                  }
                                 },
                               );
                             },

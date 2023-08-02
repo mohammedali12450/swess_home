@@ -161,8 +161,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           if (forgetState.successMessage != null) {
             showWonderfulAlertDialog(
               context,
-              " ",
               forgetState.successMessage!,
+              "",
               defaultButtonContent: AppLocalizations.of(context)!.ok,
             );
           }
