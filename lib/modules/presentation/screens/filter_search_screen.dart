@@ -26,7 +26,9 @@ import 'search_location_screen.dart';
 import 'search_region_screen.dart';
 
 class FilterSearchScreen extends StatefulWidget {
-  const FilterSearchScreen({Key? key}) : super(key: key);
+  const FilterSearchScreen({Key? key,this.name,this.id}) : super(key: key);
+  final int? id;
+  final String? name;
 
   @override
   State<FilterSearchScreen> createState() => _SearchScreenState();
@@ -36,7 +38,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   // Blocs and cubits:
   ChannelCubit patternCubit = ChannelCubit(null);
   ChannelCubit locationIdCubit = ChannelCubit(0);
-  ChannelCubit locationNameCubit = ChannelCubit("");
+  late ChannelCubit locationNameCubit;
 
   ChannelCubit isRentCubit = ChannelCubit(false);
   ChannelCubit isAreaSearchCubit = ChannelCubit(false);
@@ -97,6 +99,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     if (user != null) {
       userToken = UserSharedPreferences.getAccessToken();
     }
+    locationNameCubit = ChannelCubit(widget.name ?? "");
   }
 
   @override
@@ -105,9 +108,16 @@ class _SearchScreenState extends State<FilterSearchScreen> {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(AppLocalizations.of(context)!.search),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: AppBar(
+          iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
+          centerTitle: true,
+          title: Text(AppLocalizations.of(context)!.search,
+            style: TextStyle(color: isDark ? Colors.white : AppColors.black),),
+
+        ),
       ),
       body: SingleChildScrollView(
         child: BlocBuilder<ChannelCubit, dynamic>(
@@ -171,6 +181,9 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           ],
                         ),
                         onPressed: () {
+                          if (widget.id != null) {
+                            searchData.locationId = widget.id;
+                          }
                           if (searchData.locationId == 0) {
                             searchData.locationId = null;
                           }

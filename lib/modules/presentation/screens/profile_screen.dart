@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,7 +16,6 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
-import 'package:swesshome/modules/presentation/screens/logging_history_screen.dart';
 import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
 import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -34,6 +31,7 @@ import '../../business_logic_components/bloc/user_login_bloc/user_login_state.da
 import '../../business_logic_components/cubits/notifications_cubit.dart';
 import '../../data/models/governorates.dart';
 import '../../data/models/user.dart';
+import '../widgets/app/global_app_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/icone_badge.dart';
@@ -44,7 +42,6 @@ import 'change_password_screen.dart';
 import 'my_created_estates_screen.dart';
 import 'edit_profile_screen.dart';
 import 'languages_screen.dart';
-import 'my_immediately_rent_screen.dart';
 import 'navigation_bar_screen.dart';
 import 'notifications_screen.dart';
 
@@ -76,6 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     _onRefresh();
     governoratesBloc = BlocProvider.of<GovernoratesBloc>(context);
+    BlocProvider.of<GovernoratesBloc>(context).add(GovernoratesFetchStarted());
   }
 
   _onRefresh() {
@@ -90,68 +88,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     isEnglish = ApplicationSharedPreferences.getLanguageCode() == "en";
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return BackHomeScreen(child: Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
-        centerTitle: true,
-        backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
-        title: Text(
-          AppLocalizations.of(context)!.settings,
-          style: TextStyle(color: isDark ? Colors.white : AppColors.black),
-        ),
-        actions: [
-          InkWell(
-            child: BlocBuilder<NotificationsCubit, int>(
-              builder: (_, notificationsCount) {
-                return Padding(
-                  padding: EdgeInsets.only(left: 0, right: 12.w),
-                  child: IconBadge(
-                    icon: Icon(
-                        Icons.notifications_outlined,
-                        color: isDark ? Colors.white : AppColors.black
-                    ),
-                    itemCount: notificationsCount,
-                    right: 0,
-                    top: 5.h,
-                    hideZero: true,
-                  ),
-                );
-              },
-            ),
-            onTap: () async {
-              if (UserSharedPreferences.getAccessToken() == null) {
-                await showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.confirmation,
-                    AppLocalizations.of(context)!.this_features_require_login,
-                    removeDefaultButton: true,
-                    dialogButtons: [
-                      ElevatedButton(
-                        child: Text(
-                          AppLocalizations.of(context)!.sign_in,
-                        ),
-                        onPressed: () async {
-                          await Navigator.pushNamed(
-                              context, AuthenticationScreen.id);
-                          Navigator.pop(context);
-                        },
-                      ),
-                      ElevatedButton(
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                    width: 400.w);
-                return;
-              }
-              Navigator.pushNamed(context, NotificationScreen.id);
-            },
-          ),
-        ],
+    return BackHomeScreen(
+        child: Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: GlobalAppbarWidget(
+            isDark: isDark, title: AppLocalizations.of(context)!.settings),
       ),
       drawer: SizedBox(
         width: getScreenWidth(context) * (75 / 100),
@@ -164,91 +106,120 @@ class _ProfileScreenState extends State<ProfileScreen> {
         onRefresh: () async {
           _onRefresh();
         },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              if (UserSharedPreferences.getAccessToken() == null) ...[
-                // buildLanguageSetting,
-                kHe8,
-                buildListTile(
-                  icon: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: const Icon(Icons.language_outlined),
-                  ),
-                  title: Row(
-                    children: [
-                      ResText(
-                        AppLocalizations.of(context)!.language_word,
-                        textAlign: TextAlign.start,
-                        textStyle: Theme.of(context).textTheme.headline6,
-                      ),
-                      const Spacer(),
-                      ResText(
-                        AppLocalizations.of(context)!.language,
-                        textAlign: TextAlign.start,
-                        textStyle: Theme.of(context).textTheme.headline6,
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.pushNamed(context, LanguagesScreen.id);
-                  },
-                  trailing: Icon((isEnglish)
-                      ? Icons.keyboard_arrow_right
-                      : Icons.keyboard_arrow_left),
-                ),
+        child: UserSharedPreferences.getAccessToken() != null
+            ? SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    // buildLanguageSetting,
 
-                6.verticalSpace,
-                const Divider(),
-                10.verticalSpace,
-                buildThemeModeSetting(),
-              ],
-              if (UserSharedPreferences.getAccessToken() != null) ...[
-                BlocBuilder<UserDataBloc, UserDataState>(
-                    bloc: _userDataBloc,
-                    builder: (_, UserDataState userEditState) {
-                      if (userEditState is UserDataError) {
-                        return SizedBox(
-                            width: 1.sw,
-                            height: 1.sh - 75.h,
-                            child: FetchResult(
-                                content: AppLocalizations.of(context)!
-                                    .error_happened_when_executing_operation));
-                      }
-                      if (userEditState is UserDataProgress) {
-                        return const ProfileShimmer();
-                      }
-                      if (userEditState is UserDataComplete) {
-                        user = userEditState.user;
-                        if (user!.country != null &&
-                            user!.country == "Syrian Arab Republic") {
-                          governoratesBloc.add(GovernoratesFetchStarted());
-                        }
-                        return buildUserProfile();
-                      }
-                      return Container();
-                    })
-              ],
-              //Spacer(),
-              UserSharedPreferences.getAccessToken() != null ? kHe4 : kHe16,
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: ResText(
-                  "version 2.0 (Demo)",
-                  // "version ${ApplicationSharedPreferences.getVersionAppState()}",
-                  textAlign: TextAlign.center,
-                  textStyle: Theme.of(context)
-                      .textTheme
-                      .headline6!
-                      .copyWith(color: Colors.grey),
+                    BlocBuilder<UserDataBloc, UserDataState>(
+                        bloc: _userDataBloc,
+                        builder: (_, UserDataState userEditState) {
+                          if (userEditState is UserDataError) {
+                            return SizedBox(
+                                width: 1.sw,
+                                height: 1.sh - 75.h,
+                                child: FetchResult(
+                                    content: AppLocalizations.of(context)!
+                                        .error_happened_when_executing_operation));
+                          }
+                          if (userEditState is UserDataProgress) {
+                            return const ProfileShimmer();
+                          }
+                          if (userEditState is UserDataComplete) {
+                            user = userEditState.user;
+                            if (user!.country != null &&
+                                user!.country == "Syrian Arab Republic") {
+                              governoratesBloc.add(GovernoratesFetchStarted());
+                            }
+                            return buildUserProfile();
+                          }
+                          return Container();
+                        }),
+
+                    //Spacer(),
+
+                    kHe4,
+
+                    const VersionWidget(),
+                    // kHe20,
+                    kHe36,
+                  ],
                 ),
+              )
+            : Column(
+                children: [
+                  kHe8,
+                  buildListTile(
+                    icon: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: const Icon(Icons.language_outlined),
+                    ),
+                    title: Row(
+                      children: [
+                        ResText(
+                          AppLocalizations.of(context)!.language_word,
+                          textAlign: TextAlign.start,
+                          textStyle: Theme.of(context).textTheme.headline6,
+                        ),
+                        const Spacer(),
+                        ResText(
+                          AppLocalizations.of(context)!.language,
+                          textAlign: TextAlign.start,
+                          textStyle: Theme.of(context).textTheme.headline6,
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.pushNamed(context, LanguagesScreen.id);
+                    },
+                    trailing: Icon((isEnglish)
+                        ? Icons.keyboard_arrow_right
+                        : Icons.keyboard_arrow_left),
+                  ),
+                  6.verticalSpace,
+                  const Divider(),
+                  10.verticalSpace,
+                  buildThemeModeSetting(),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              fixedSize: Size(double.infinity, 50.h),
+                              primary: isDark
+                                  ? AppColors.primaryDark
+                                  : Theme.of(context).colorScheme.secondary),
+                          child: Text(
+                            AppLocalizations.of(context)!.sign_in,
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle1!
+                                .copyWith(color: AppColors.black),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AuthenticationScreen(
+                                  popAfterFinish: true,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  kHe16,
+                  const VersionWidget(),
+                  kHe16,
+                ],
               ),
-              // kHe20,
-              kHe36,
-            ],
-          ),
-        ),
       ),
     ));
   }
@@ -373,7 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         6.verticalSpace,
         const Divider(thickness: 0.2),
         6.verticalSpace,
-        buildListTile(
+        /*       buildListTile(
           icon: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: const Icon(Icons.bookmark_border_outlined),
@@ -422,6 +393,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (_) => const CreatedEstatesScreen()));
           },
         ),
+*/
         /// logging history
         // buildListTile(
         //   icon: Padding(
@@ -485,7 +457,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return Align(
                       alignment: Alignment.topRight,
                       child: IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.edit_outlined,
                           color: AppColors.white,
                         ),
@@ -495,7 +467,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             MaterialPageRoute(
                                 builder: (_) => EditProfileScreen(
                                       user: user!,
-                                      governorates: governorates,
+                                      governorates:
+                                          governoratesBloc.governorates,
                                     )),
                           );
                           if (value) {
@@ -523,9 +496,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 ResText(
                   "${user!.firstName!} ${user!.lastName!}",
-                  textStyle: Theme.of(context).textTheme.headline3!.copyWith(
-                      color: AppColors.white,
-                      fontSize: 20),
+                  textStyle: Theme.of(context)
+                      .textTheme
+                      .headline3!
+                      .copyWith(color: AppColors.white, fontSize: 20),
                 ),
                 // ResText(
                 //   user?.email ?? "",
@@ -537,28 +511,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 kHe16,
                 Directionality(
                   textDirection: TextDirection.ltr,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ResText(
-                        user!.authentication!,
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(
-                                color: isDark ? AppColors.white : AppColors.white),
-                      ),
-                      ResText(
-                        "${user!.country ?? ""} "
-                        "${user?.governorate == null ? " , ${user!.governorate}" : ""}",
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(
-                                color: isDark ? AppColors.white : AppColors.white,),
-                      ),
-                    ],
+
+                  child: ResText(
+                    user!.authentication!,
+                    textStyle: Theme.of(context).textTheme.headline6!.copyWith(
+                        color: isDark ? AppColors.white : AppColors.white),
                   ),
+                  //ResText(
+                  // "${user!.country ?? ""} "
+                  // "${user?.governorate == null ? " , ${user!.governorate}" : ""}",
+                  // textStyle: Theme.of(context)
+                  //    .textTheme
+                  //   .headline6!
+                  //   .copyWith(
+                  //     color: isDark ? AppColors.white : AppColors.white,
+                  //   ),
+                  // ),
                 ),
               ],
             ),
@@ -848,8 +816,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     UserSharedPreferences.removeAccessToken();
     ApplicationSharedPreferences.setLoginPassed(false);
     //_userLoginBloc.user = null;
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (_) => const NavigationBarScreen()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (_) => NavigationBarScreen()));
     //Navigator.pushNamedAndRemoveUntil(context, AuthenticationScreen.id, (route) => false);
     return;
   }
@@ -866,6 +834,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: title,
           trailing: trailing,
         ),
+      ),
+    );
+  }
+}
+
+class VersionWidget extends StatelessWidget {
+  const VersionWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: ResText(
+        "version 2.0 (Demo)",
+        // "version ${ApplicationSharedPreferences.getVersionAppState()}",
+        textAlign: TextAlign.center,
+        textStyle:
+            Theme.of(context).textTheme.headline6!.copyWith(color: Colors.grey),
       ),
     );
   }

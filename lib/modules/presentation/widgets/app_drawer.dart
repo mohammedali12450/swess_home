@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,7 +19,6 @@ import 'package:swesshome/modules/data/repositories/user_authentication_reposito
 import 'package:swesshome/modules/presentation/pages/terms_of_use_page.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/screens/contacts_screen.dart';
-import 'package:swesshome/modules/presentation/screens/create_estate_immediately_screen.dart';
 import 'package:swesshome/modules/presentation/screens/faq_screen.dart';
 import 'package:swesshome/modules/presentation/pages/contact_us_body.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -325,9 +322,7 @@ class _MyDrawerState extends State<MyDrawer> {
             iconData: Icons.people_outline,
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => ContacttUsBody()));
+                  context, MaterialPageRoute(builder: (_) => ContacttUsBody()));
             },
           ),
           RowInformation(
@@ -415,8 +410,8 @@ class _MyDrawerState extends State<MyDrawer> {
     }
     UserSharedPreferences.removeAccessToken();
     _userLoginBloc.user = null;
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (_) => const NavigationBarScreen()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (_) => NavigationBarScreen()));
     ApplicationSharedPreferences.setLoginPassed(false);
     // Navigator.pushNamedAndRemoveUntil(
     //     context, NavigationBarScreen.id, ModalRoute.withName('/'));

@@ -21,7 +21,6 @@ import 'package:swesshome/utils/helpers/date_helper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
-import '../widgets/res_text.dart';
 import 'my_created_estates_screen.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -65,10 +64,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            AppLocalizations.of(context)!.notifications,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(46.0),
+          child: AppBar(
+            backgroundColor:
+            isDark ? const Color(0xff26282B) : AppColors.white,
+            iconTheme:
+            IconThemeData(color: isDark ? Colors.white : AppColors.black),
+            centerTitle: true,
+            title: Text(
+              AppLocalizations.of(context)!.notifications,
+              style: TextStyle(color: isDark ? Colors.white : AppColors.black),
+            ),
           ),
         ),
         body: RefreshIndicator(
@@ -110,7 +117,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       children: [
                         Icon(
                           Icons.notifications_outlined,
-                          color: isDark ? AppColors.primaryDark : AppColors.primaryColor,
+                          color: isDark
+                              ? AppColors.primaryDark
+                              : AppColors.primaryColor,
                           size: 0.3.sw,
                         ),
                         kHe24,
@@ -119,7 +128,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               .you_have_not_notifications,
                           style:
                               Theme.of(context).textTheme.headline5!.copyWith(
-                                    color: isDark ? AppColors.white : AppColors.primaryColor,
+                                    color: isDark
+                                        ? AppColors.white
+                                        : AppColors.primaryColor,
                                   ),
                         ),
                       ],

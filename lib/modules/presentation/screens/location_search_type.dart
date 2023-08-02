@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/modules/presentation/screens/filter_search_screen.dart';
+import 'package:swesshome/modules/presentation/screens/select_location_by_hand.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
@@ -36,9 +37,18 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(AppLocalizations.of(context)!.search),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: AppBar(
+          backgroundColor:
+          isDark ? const Color(0xff26282B) : AppColors.white,
+          iconTheme:
+          IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          centerTitle: true,
+          title: Text(AppLocalizations.of(context)!.search,
+            style:
+            TextStyle(color: isDark ? Colors.white : AppColors.black),),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -100,20 +110,25 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
   }
 
   Widget buildListLocation() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h,horizontal: 10),
-      child: Container(
-        height: 50.h,
-        width: 1.sw,
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
-        decoration: BoxDecoration(
-          border: Border.all(
-              color: isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
-              width: 1),
-          borderRadius: lowBorderRadius,
+    return InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectLocationByHand()));
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12.h,horizontal: 10),
+        child: Container(
+          height: 50.h,
+          width: 1.sw,
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+          decoration: BoxDecoration(
+            border: Border.all(
+                color: isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
+                width: 1),
+            borderRadius: lowBorderRadius,
+          ),
+          child: Text(AppLocalizations.of(context)!.select_location_manual),
         ),
-        child: Text(AppLocalizations.of(context)!.select_location_manual),
       ),
     );
   }

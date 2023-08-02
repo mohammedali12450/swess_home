@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:swesshome/core/exceptions/failed_password_exception.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/general_exception.dart';
 import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
@@ -77,6 +78,13 @@ class UserAuthenticationRepository {
       throw GeneralException(
           errorMessage: jsonDecode(response.toString())["message"]);
     }
+    if (response.statusCode == 405) {
+      print('405');
+
+      throw FailedPasswordException(
+          errorMessage: jsonDecode(response.toString())['message'],
+          statusCode: response.statusCode);
+    }
 
     if (response.statusCode == 200) {
       UserSharedPreferences.setAccessToken(
@@ -89,15 +97,14 @@ class UserAuthenticationRepository {
 
     UserSharedPreferences.setAccessToken(
         jsonDecode(response.toString())["data"]["token"]);
-
     return user;
   }
 
   Future resendRegisterConfirmationLink(String phone) async {
     Response response;
     try {
-      response = await userAuthenticationProvider.resendRegisterConfirmationLink(phone);
-      print(jsonDecode(response.toString())["message"]);
+      response = await userAuthenticationProvider
+          .resendRegisterConfirmationLink(phone);
     } catch (e) {
       rethrow;
     }
@@ -198,14 +205,23 @@ class UserAuthenticationRepository {
     } catch (e) {
       rethrow;
     }
-
     if (response.statusCode == 401) {
-      return jsonDecode(response.toString())["message"];
+      throw FailedPasswordException();
     }
-    if (response.statusCode == 200) {
-      return jsonDecode(response.toString())["message"];
-      // throw GeneralException(errorMessage: jsonDecode(response.toString())["message"]);
+    if (response.statusCode == 422) {
+      throw FieldsException(jsonErrorFields: jsonDecode(response.toString()));
     }
+
+    if (response.statusCode == 403) {
+      throw UnauthorizedException(
+          message: jsonDecode(response.toString())["message"]);
+    }
+
+    if (response.statusCode != 200) {
+      throw GeneralException(
+          errorMessage: jsonDecode(response.toString())["message"]);
+    }
+
     // User user = User.fromJson(jsonDecode(response.toString())["data"]);
     // return user;
   }
@@ -273,7 +289,6 @@ class UserAuthenticationRepository {
     try {
       response = await userAuthenticationProvider.sendVerificationLoginCode(
           phone, code);
-      print(response);
     } catch (e) {
       rethrow;
     }

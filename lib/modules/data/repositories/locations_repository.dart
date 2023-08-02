@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:swesshome/modules/data/models/location.dart';
-import 'package:swesshome/modules/data/providers/locations_provider.dart';
+import 'package:swesshome/modules/data/models/zone_model.dart';
+import '../providers/locations_provider.dart';
 
 class LocationsRepository {
 
@@ -13,5 +15,12 @@ class LocationsRepository {
     List<Location> locations = jsonLocations.map<Location>((locationJson) =>
         Location.fromJson(locationJson)).toList();
     return locations ;
+  }
+
+  Future<List<Zone>> getZone() async {
+    Response response = await _locationsProvider.getZone();
+    var jsonZones = jsonDecode(response.data)['data'];
+    List<Zone> zones = jsonZones.map<Zone>((e) => Zone.fromJson(e)).toList();
+    return zones ;
   }
 }

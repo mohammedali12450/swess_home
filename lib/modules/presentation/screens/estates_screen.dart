@@ -86,20 +86,26 @@ class _EstatesScreenState extends State<EstatesScreen> {
       child: Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            AppLocalizations.of(context)!.search_results,
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(46.0),
+          child: AppBar(
+            iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
+            backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
+            centerTitle: true,
+            title: Text(
+              AppLocalizations.of(context)!.search_results,
+              style: TextStyle(color: isDark ? Colors.white : AppColors.black),
             ),
-            kWi8,
-          ],
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              kWi8,
+            ],
+          ),
         ),
         body: BlocProvider<EstateBloc>(
           create: (_) => estateBloc..add(widget.eventSearch),

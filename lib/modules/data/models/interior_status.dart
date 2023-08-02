@@ -15,4 +15,10 @@ class InteriorStatus {
   factory InteriorStatus.fromJson(json) {
     return InteriorStatus(id: json['id'], name: json['name']);
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
+  }
 }

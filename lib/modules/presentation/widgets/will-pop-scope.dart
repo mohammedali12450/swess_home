@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/navigation_bar_screen.dart';
 
+// ignore: must_be_immutable
 class BackHomeScreen extends StatelessWidget {
   Widget child;
 
@@ -13,7 +14,7 @@ class BackHomeScreen extends StatelessWidget {
       onWillPop: () async {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (_) => const NavigationBarScreen()),
+            MaterialPageRoute(builder: (_) => NavigationBarScreen()),
             (route) => false);
         return true;
       },

@@ -131,7 +131,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                             size: 0.2.sw,
                           )
                         : SingleChildScrollView(
-                          child: Column(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox(
@@ -169,7 +169,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                   height: 64.h,
                                 ),
                                 BlocProvider(
-                                  create: (context) => SendVerificationCodeBloc(),
+                                  create: (context) =>
+                                      SendVerificationCodeBloc(),
                                   child: BlocConsumer<SendVerificationCodeBloc,
                                       SendVerificationCodeState>(
                                     listener: (context, sendCodeState) async {
@@ -197,13 +198,14 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                                 userToken: UserSharedPreferences
                                                     .getAccessToken()!),
                                           );
-                                          BlocProvider.of<UserLoginBloc>(context)
+                                          BlocProvider.of<UserLoginBloc>(
+                                                  context)
                                               .user = sendCodeState.user;
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (_) =>
-                                                  const NavigationBarScreen(),
+                                                  NavigationBarScreen(),
                                             ),
                                           );
                                         }
@@ -237,15 +239,18 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                             child: (sendCodeState
                                                     is! SendVerificationCodeProgress)
                                                 ? Text(
-                                                    AppLocalizations.of(context)!
+                                                    AppLocalizations.of(
+                                                            context)!
                                                         .send,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodyText2!
                                                         .copyWith(
                                                             color: isActive
-                                                                ? AppColors.white
-                                                                : AppColors.white
+                                                                ? AppColors
+                                                                    .white
+                                                                : AppColors
+                                                                    .white
                                                                     .withOpacity(
                                                                         0.64)),
                                                   )
@@ -317,7 +322,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                                           context,
                                                           MaterialPageRoute(
                                                               builder: (_) =>
-                                                                  const NavigationBarScreen()));
+                                                                  NavigationBarScreen()));
                                                     }
                                                   } on ConnectionException catch (_) {
                                                     showWonderfulAlertDialog(
@@ -389,13 +394,14 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                 30.verticalSpace,
                                 Center(
                                     child: Text(
-                                      AppLocalizations.of(context)!.time_of_receive_code,
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context).textTheme.bodyText2,
-                                    )),
+                                  AppLocalizations.of(context)!
+                                      .time_of_receive_code,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                )),
                               ],
                             ),
-                        );
+                          );
                   },
                 ),
               ),

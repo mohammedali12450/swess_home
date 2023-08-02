@@ -19,13 +19,13 @@ import 'package:swesshome/modules/presentation/screens/authentication_screen.dar
 import 'package:swesshome/modules/presentation/screens/navigation_bar_screen.dart';
 import 'package:swesshome/modules/presentation/screens/notifications_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
-import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
 import 'package:swesshome/modules/presentation/widgets/icone_badge.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../widgets/app/global_app_bar.dart';
 import '../widgets/estate_horizon_card.dart';
 import '../widgets/res_text.dart';
 import '../widgets/will-pop-scope.dart';
@@ -347,7 +347,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  fixedSize: Size(150.w, 50.h),
+                  fixedSize: Size(180.w, 50.h),
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.sign_in,
