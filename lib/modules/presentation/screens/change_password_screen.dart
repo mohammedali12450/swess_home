@@ -119,8 +119,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               title: Text(AppLocalizations.of(context)!.change_password,
                 style: TextStyle(color: isDark ? Colors.white : AppColors.black),
               ),
-
->>>>>>> lib/modules/presentation/screens/change_password_screen.dart
             ),
           ],
           child: Scaffold(
