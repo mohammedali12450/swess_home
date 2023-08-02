@@ -710,6 +710,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget buildLogout() {
     return BlocBuilder<UserLoginBloc, UserLoginState>(
+      //bloc: ,
       builder: (context, userLoginState) {
         if (UserSharedPreferences.getAccessToken() != null) {
           return Padding(
