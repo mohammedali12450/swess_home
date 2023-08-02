@@ -410,8 +410,8 @@ class _MyDrawerState extends State<MyDrawer> {
     }
     UserSharedPreferences.removeAccessToken();
     _userLoginBloc.user = null;
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (_) => const NavigationBarScreen()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (_) => NavigationBarScreen()));
     ApplicationSharedPreferences.setLoginPassed(false);
     // Navigator.pushNamedAndRemoveUntil(
     //     context, NavigationBarScreen.id, ModalRoute.withName('/'));

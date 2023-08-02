@@ -17,8 +17,8 @@ class PreviousSearchResultsBloc extends Bloc<PreviousSearchResultsEvent, Previou
       {
         emit(PreviousSearchResultsFetchProgress());
         try {
-          SearchResults searchResults = await previousSearchResultsRepository.fetchData();
-          emit(PreviousSearchResultsFetchComplete(searchResults: searchResults));
+          List<Zone> zones = await previousSearchResultsRepository.fetchData();
+          emit(PreviousSearchResultsFetchComplete(zones: zones));
         } catch (e, stack) {
           debugPrint(e.toString());
           debugPrint(stack.toString());

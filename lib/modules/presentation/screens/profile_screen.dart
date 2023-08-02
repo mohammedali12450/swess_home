@@ -31,6 +31,7 @@ import '../../business_logic_components/bloc/user_login_bloc/user_login_state.da
 import '../../business_logic_components/cubits/notifications_cubit.dart';
 import '../../data/models/governorates.dart';
 import '../../data/models/user.dart';
+import '../widgets/app/global_app_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/fetch_result.dart';
 import '../widgets/icone_badge.dart';
@@ -87,71 +88,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     isEnglish = ApplicationSharedPreferences.getLanguageCode() == "en";
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return BackHomeScreen(child: Scaffold(
+    return BackHomeScreen(
+        child: Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(46.0),
-        child: AppBar(
-          iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
-          centerTitle: true,
-          backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
-          title: Text(
-            AppLocalizations.of(context)!.settings,
-            style: TextStyle(color: isDark ? Colors.white : AppColors.black),
-          ),
-          actions: [
-            InkWell(
-              child: BlocBuilder<NotificationsCubit, int>(
-                builder: (_, notificationsCount) {
-                  return Padding(
-                    padding: EdgeInsets.only(left: 0, right: 12.w),
-                    child: IconBadge(
-                      icon: Icon(
-                          Icons.notifications_outlined,
-                          color: isDark ? Colors.white : AppColors.black
-                      ),
-                      itemCount: notificationsCount,
-                      right: 0,
-                      top: 5.h,
-                      hideZero: true,
-                    ),
-                  );
-                },
-              ),
-              onTap: () async {
-                if (UserSharedPreferences.getAccessToken() == null) {
-                  await showWonderfulAlertDialog(
-                      context,
-                      AppLocalizations.of(context)!.confirmation,
-                      AppLocalizations.of(context)!.this_features_require_login,
-                      removeDefaultButton: true,
-                      dialogButtons: [
-                        ElevatedButton(
-                          child: Text(
-                            AppLocalizations.of(context)!.sign_in,
-                          ),
-                          onPressed: () async {
-                            await Navigator.pushNamed(
-                                context, AuthenticationScreen.id);
-                            Navigator.pop(context);
-                          },
-                        ),
-                        ElevatedButton(
-                          child: Text(
-                            AppLocalizations.of(context)!.cancel,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                      width: 400.w);
-                  return;
-                }
-                Navigator.pushNamed(context, NotificationScreen.id);
-              },
-            ),
-          ],
-        ),
+        child: GlobalAppbarWidget(
+            isDark: isDark, title: AppLocalizations.of(context)!.settings),
       ),
       drawer: SizedBox(
         width: getScreenWidth(context) * (75 / 100),
@@ -402,7 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         6.verticalSpace,
         const Divider(thickness: 0.2),
         6.verticalSpace,
-        buildListTile(
+        /*       buildListTile(
           icon: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: const Icon(Icons.bookmark_border_outlined),
@@ -451,7 +393,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (_) => const CreatedEstatesScreen()));
           },
         ),
-
+*/
         /// logging history
         // buildListTile(
         //   icon: Padding(
@@ -569,30 +511,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 kHe16,
                 Directionality(
                   textDirection: TextDirection.ltr,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ResText(
-                        user!.authentication!,
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(
-                                color:
-                                    isDark ? AppColors.white : AppColors.white),
-                      ),
-                      ResText(
-                        "${user!.country ?? ""} "
-                        "${user?.governorate == null ? " , ${user!.governorate}" : ""}",
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(
-                              color: isDark ? AppColors.white : AppColors.white,
-                            ),
-                      ),
-                    ],
+
+                  child: ResText(
+                    user!.authentication!,
+                    textStyle: Theme.of(context).textTheme.headline6!.copyWith(
+                        color: isDark ? AppColors.white : AppColors.white),
                   ),
+                  //ResText(
+                  // "${user!.country ?? ""} "
+                  // "${user?.governorate == null ? " , ${user!.governorate}" : ""}",
+                  // textStyle: Theme.of(context)
+                  //    .textTheme
+                  //   .headline6!
+                  //   .copyWith(
+                  //     color: isDark ? AppColors.white : AppColors.white,
+                  //   ),
+                  // ),
                 ),
               ],
             ),
@@ -882,8 +816,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     UserSharedPreferences.removeAccessToken();
     ApplicationSharedPreferences.setLoginPassed(false);
     //_userLoginBloc.user = null;
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (_) => const NavigationBarScreen()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (_) => NavigationBarScreen()));
     //Navigator.pushNamedAndRemoveUntil(context, AuthenticationScreen.id, (route) => false);
     return;
   }

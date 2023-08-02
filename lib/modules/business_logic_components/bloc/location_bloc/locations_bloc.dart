@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swesshome/modules/data/models/location.dart';
 import 'package:swesshome/modules/data/repositories/locations_repository.dart';
+import '../../../data/models/zone_model.dart';
 import 'locations_event.dart';
 import 'locations_state.dart';
 
@@ -9,13 +10,15 @@ import 'locations_state.dart';
 class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
   LocationsRepository locationsRepository = LocationsRepository();
   List<Location>? locations;
+  List<Zone>? zones;
 
   LocationsBloc() : super(LocationsFetchNone()) {
     on<LocationsFetchStarted>((event, emit) async {
       emit(LocationsFetchProgress());
       try {
         locations = await locationsRepository.getLocations();
-        emit(LocationsFetchComplete(locations: locations!));
+        zones = await locationsRepository.getZone();
+        emit(LocationsFetchComplete(locations: locations!,zones: zones!));
       } catch (e, stack) {
         debugPrint(e.toString());
         debugPrint(stack.toString());

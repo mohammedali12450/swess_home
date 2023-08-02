@@ -5,7 +5,7 @@ String imagesBaseUrl = proNetImagesUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl";
 const String checkExistingcustomers="https://api-dev.swesshome.com/api/v2/customer/check-existing-customers";
 //new api
-const String previousResultsSearchZonesUrl="https://api-dev.swesshome.com/api/v2/searchs";
+const String previousResultsSearchZonesUrl="https://api-dev.swesshome.com/api/v2/get_last_five_searches_details";
 const userRegisterURL = "customer/register";
 const userLoginURL = "customer/login";
 const userSocialLogin = "";
@@ -69,6 +69,7 @@ const searchOfficeLocURL = "estate-offices/search-by-region";
 const notificationsURL = "notifications";
 const getRegionsURL = "locations/regions";
 const getLocationURL = "locations/sub-locations";
+const getZoneUrl = "zone";
 const multiLoginURL = "customer/check-login-code";
 const getEstateDetailsURL = "estate/details/";
 const downloadURL = "download-url";

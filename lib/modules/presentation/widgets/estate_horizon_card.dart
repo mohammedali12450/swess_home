@@ -13,6 +13,7 @@ import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
+import 'package:swesshome/modules/presentation/widgets/row_information_widget.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/utils/helpers/date_helper.dart';
@@ -152,18 +153,15 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                     widget.estate.locationS!,
                                     maxLines: 2,
                                     textAlign: TextAlign.start,
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .headline3!
-                                        .copyWith(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 12.sp,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                    textStyle: getSubtitleTextStyle(isDark).copyWith(
+                                        overflow: TextOverflow.ellipsis,
+                                      fontSize: 12
+                                    )
                                   ),
                                 ),
                                 if (isSell)
-                                  RowInformation(
+                                  RowInformation2(
+                                    isDark:isDark,
                                     title: AppLocalizations.of(context)!
                                             .ownership_type +
                                         " :",
@@ -174,45 +172,36 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                   ),
                                 // Estate interior status :
                                 if (!isLands)
-                                  RowInformation(
+                                  RowInformation2(
+                                    isDark:isDark,
                                     title:
                                         "${AppLocalizations.of(context)!.interior_status} :",
                                     content: widget.estate.interiorStatus!.name,
                                     onTap: () {},
                                   ),
-                                RowInformation(
+                                RowInformation2(
+                                  isDark:isDark,
                                   title:
                                       "${AppLocalizations.of(context)!.estate_area} :",
                                   widgetContent: Row(
                                     children: [
                                       ResText(
                                         widget.estate.area!,
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headline3!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 10.sp),
+                                        textStyle: getSubtitleTextStyle(isDark),
                                       ),
                                       5.horizontalSpace,
                                       widget.estate.areaUnit == null
                                           ? const Center()
                                           : ResText(
                                               widget.estate.areaUnit!.name,
-                                              textStyle: Theme.of(context)
-                                                  .textTheme
-                                                  .headline3!
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 10.sp),
-                                            ),
+                                              textStyle: getSubtitleTextStyle(isDark),),
                                     ],
                                   ),
                                   onTap: () {},
                                 ),
                                 if (widget.estate.publishedAt != null)
-                                  RowInformation(
+                                  RowInformation2(
+                                    isDark:isDark,
                                     title:
                                         "${AppLocalizations.of(context)!.adding_date} :",
                                     content: DateHelper.getDateByFormat(
@@ -262,7 +251,8 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                           ),
                                         ],
                                       )
-                                    : RowInformation(
+                                    : RowInformation2(
+                                      isDark: isDark,
                                         title:
                                             "${AppLocalizations.of(context)!.estate_price} :",
                                         content: NumbersHelper.getMoneyFormat(
@@ -382,73 +372,6 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                       ),
                     ),
                   ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class RowInformation extends StatelessWidget {
-  final Function() onTap;
-
-  final String title;
-
-  final String? content;
-
-  final Widget? widgetContent;
-
-  final bool withBottomDivider;
-
-  const RowInformation({
-    Key? key,
-    required this.onTap,
-    required this.title,
-    this.widgetContent,
-    this.withBottomDivider = true,
-    this.content,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.h),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 0.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ResText(
-                    title,
-                    textStyle: Theme.of(context)
-                        .textTheme
-                        .headline3!
-                        .copyWith(fontWeight: FontWeight.w600, fontSize: 10.sp),
-                  ),
-                  5.horizontalSpace,
-                  (widgetContent != null)
-                      ? widgetContent!
-                      : Expanded(
-                          child: ResText(
-                            content ?? "",
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .headline3!
-                                .copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 10.sp),
-                            textAlign: TextAlign.start,
-                            maxLines: 8,
-                          ),
-                        ),
-                ],
-              ),
-            ),
           ),
         ],
       ),

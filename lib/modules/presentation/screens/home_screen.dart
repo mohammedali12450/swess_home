@@ -36,6 +36,7 @@ import '../../data/providers/locale_provider.dart';
 import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_repository.dart';
 import '../../data/repositories/rating_repository.dart';
+import '../widgets/app/global_app_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/icone_badge.dart';
 import '../widgets/wonderful_alert_dialog.dart';
@@ -183,69 +184,7 @@ class HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.grey.withOpacity(0.1),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(46.0),
-        child: AppBar(
-          iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
-          centerTitle: true,
-          backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
-          title: Text(
-            AppLocalizations.of(context)!.search,
-            style: TextStyle(color: isDark ? Colors.white : AppColors.black),
-          ),
-          actions: [
-            InkWell(
-              child: BlocBuilder<NotificationsCubit, int>(
-                builder: (_, notificationsCount) {
-                  return Padding(
-                    padding: EdgeInsets.only(
-                        left: isArabic ? 12.w : 0, right: isArabic ? 0 : 12.w),
-                    child: IconBadge(
-                      icon: Icon(
-                        Icons.notifications_outlined,
-                          color: isDark ? Colors.white : AppColors.black
-                      ),
-                      itemCount: notificationsCount,
-                      right: 0,
-                      top: 5.h,
-                      hideZero: true,
-                    ),
-                  );
-                },
-              ),
-              onTap: () async {
-                if (UserSharedPreferences.getAccessToken() == null) {
-                  await showWonderfulAlertDialog(
-                      context,
-                      AppLocalizations.of(context)!.confirmation,
-                      AppLocalizations.of(context)!.this_features_require_login,
-                      removeDefaultButton: true,
-                      dialogButtons: [
-                        ElevatedButton(
-                          child: Text(
-                            AppLocalizations.of(context)!.sign_in,
-                          ),
-                          onPressed: () async {
-                            await Navigator.pushNamed(
-                                context, AuthenticationScreen.id);
-                            Navigator.pop(context);
-                          },
-                        ),
-                        ElevatedButton(
-                          child: Text(
-                            AppLocalizations.of(context)!.cancel,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                      width: 400.w);
-                  return;
-                }
-                Navigator.pushNamed(context, NotificationScreen.id);
-              },
-            ),
-          ],
-        ),
+        child: GlobalAppbarWidget(isDark: isDark,title: AppLocalizations.of(context)!.search),
       ),
       body: Column(
         children: [
@@ -594,85 +533,10 @@ class HomeScreenState extends State<HomeScreen> {
             color: isDark ? Colors.transparent : Colors.white,
             child: Column(
               children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => EstatesScreen(
-                          searchData: searchData,
-                          locationName:
-                              estateSearchFilterCubit.state.elementAt(0),
-                          eventSearch: EstatesFetchStarted(
-                            searchData: searchData,
-                            isAdvanced: false,
-                            token: UserSharedPreferences.getAccessToken(),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: kLargeSymHeight,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                estateSearchFilterCubit.state.elementAt(0),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline3!
-                                    .copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        color: isDark
-                                            ? AppColors.lightGrey2Color
-                                            : AppColors.black,
-                                        fontSize: 16.sp),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.7,
-                                child: Text(
-                                  // estateTypeName +
-                                  //     " ${isArabic ? "لل" : ""}" +
-                                  //     estateOfferName +
-                                  //     priceMaxMin,
-                                  AppLocalizations.of(context)!
-                                      .result_matching_search_page,
-                                  maxLines: 2,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline3!
-                                      .copyWith(
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.lightGreyColor,
-                                          fontSize: 12.sp),
-                                ),
-                              ),
-                            ]),
-                        Column(
-                          children: [
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 27.w,
-                              color: isDark
-                                  ? AppColors.lightblue
-                                  : AppColors.primaryColor,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+
                 // kHe12,
                 Container(
-                  height: !isArabic ? 350.h : 320.h,
+                  height: 425.h,
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: ListView.builder(
                     reverse: isArabic ? true : false,
@@ -701,11 +565,11 @@ class HomeScreenState extends State<HomeScreen> {
                 return ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: state.searchResults.zones.length,
+                    itemCount: state.zones.length,
                     itemBuilder: (context, index) {
                       return PreviousSearchResultWidget(
                         isDark: isDark,
-                        zone: state.searchResults.zones[index],
+                        zone: state.zones[index],
                       );
                     });
               }
@@ -904,7 +768,7 @@ class PreviousSearchResultWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    zone.location.locationFullName,
+                    zone.locationFullName,
                     style: Theme.of(context)
                         .textTheme
                         .headline3!
@@ -933,7 +797,7 @@ class PreviousSearchResultWidget extends StatelessWidget {
             {
               SearchData searchData = SearchData(
                   locationId: zone.locationId, estateTypeId: zone.estateTypeId,
-                  estateOfferTypeId: zone.estateOfferTypeId);
+                  estateOfferTypeId: zone.estateOfferTypeId,priceMax: zone.priceMax,priceMin: zone.priceMin);
 
 
               searchData.sortType = "desc";
@@ -943,7 +807,7 @@ class PreviousSearchResultWidget extends StatelessWidget {
                   builder: (_) =>
                       EstatesScreen(
                         searchData: searchData,
-                        locationName: zone.location.locationFullName,
+                        locationName: zone.locationFullName,
                         eventSearch: EstatesFetchStarted(
                           searchData: searchData,
                           isAdvanced: false,

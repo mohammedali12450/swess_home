@@ -199,7 +199,7 @@ class _VerificationLoginCodeScreenState
                                             context,
                                             MaterialPageRoute(
                                                 builder: (_) =>
-                                                    const NavigationBarScreen()));
+                                                    NavigationBarScreen()));
                                       }
                                     }
                                     if (sendCodeState
@@ -304,7 +304,7 @@ class _VerificationLoginCodeScreenState
                                                         context,
                                                         MaterialPageRoute(
                                                             builder: (_) =>
-                                                                const NavigationBarScreen()),
+                                                                NavigationBarScreen()),
                                                         (route) => false);
                                                   }
                                                 } on ConnectionException catch (_) {

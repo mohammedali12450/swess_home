@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
+import 'package:swesshome/core/exceptions/failed_password_exception.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
 import 'package:swesshome/core/exceptions/unauthorized_exception.dart';
 import 'package:swesshome/core/exceptions/unknown_exception.dart';
@@ -35,19 +36,18 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
         if (e is FieldsException) {
           emit(
             UserLoginError(
-                errorResponse: (e.jsonErrorFields["errors"] != null)
-                    ? e.jsonErrorFields["errors"] as Map<String, dynamic>
-                    : null,
-                errorMessage: (e.jsonErrorFields["message"] != null)
-                    ? e.jsonErrorFields["message"]
-                    : null),
+              errorResponse: (e.jsonErrorFields["errors"] != null)
+                  ? e.jsonErrorFields["errors"] as Map<String, dynamic>
+                  : null,
+              errorMessage: (e.jsonErrorFields["message"] != null)
+                  ? e.jsonErrorFields["message"]
+                  : null,
+            ),
           );
         }
-
         if (e is GeneralException) {
           emit(UserLoginError(errorMessage: e.errorMessage));
         }
-
         if (e is UnauthorizedException) {
           emit(
             UserLoginError(errorMessage: e.message, isUnauthorizedError: true),
@@ -58,12 +58,15 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
             UserLoginError(errorMessage: "خطأ غير معروف"),
           );
         }
+        if (e is FailedPasswordException) {
+          emit(UserLoginError(
+              errorMessage: e.errorMessage, statusCode: e.statusCode));
+        }
         print(e);
         print(stack);
       }
     });
   }
-
 
   Future<void> loginGoogle() async {
     final googleSignInService = locator.get<GoogleSignInService>();

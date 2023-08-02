@@ -11,7 +11,7 @@ import '../providers/previous_search_results_provider.dart';
 class PreviousSearchResultsRepository {
   PreviousSearchResultsProvider previousSearchResultsProvider = PreviousSearchResultsProvider();
 
-  Future<SearchResults> fetchData() async {
+  Future<List<Zone>> fetchData() async {
     Response response = await previousSearchResultsProvider.fetchData();
 
     if (response.statusCode != 200) {
@@ -19,7 +19,7 @@ class PreviousSearchResultsRepository {
     }
 
 
-    SearchResults searchResults=SearchResults.fromJson(response.data);
-    return searchResults;
+    List<Zone> zones=List<Zone>.from(response.data.map((x) => Zone.fromJson(x)));
+    return zones;
   }
 }

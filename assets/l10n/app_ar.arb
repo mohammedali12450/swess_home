@@ -530,7 +530,7 @@
   "please_select": "الرجاء تحديد اختيار",
   "please_select_here": "الرجاء الاختيار",
   "search_neighborhood": "الحي",
-  "enter_neighborhood_name": "ادخل اسم الحي",
+  "enter_neighborhood_name": "أدخل اسم الحي",
   "processing": "يتم المعالجة",
   "are_you_sure": "هل انت متأكد من أنك تريد حذف حسابك؟",
   "delete_my_account": "حذف حسابي",
@@ -636,5 +636,6 @@
   "request_status":"حالة الطلب",
   "delete_request":"حذف الطلب",
   "add_offer":"إضافة عرض",
-  "between":"بين"
+  "between":"بين",
+  "add_order":"إضافة طلب"
 }

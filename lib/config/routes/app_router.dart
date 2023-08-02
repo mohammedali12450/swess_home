@@ -166,8 +166,8 @@ class AppRouter {
                       ? !(isLogin)
                           ? (visitNum == 0)
                               ? const AuthenticationScreen()
-                              : const NavigationBarScreen()
-                          : const NavigationBarScreen()
+                              : NavigationBarScreen()
+                          : NavigationBarScreen()
                       : const IntroductionScreen1();
                 },
               );

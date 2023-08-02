@@ -103,8 +103,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(46.0),
               child: AppBar(
-                iconTheme:
-                    IconThemeData(color: isDark ? Colors.white : AppColors.black),
+                iconTheme: IconThemeData(
+                    color: isDark ? Colors.white : AppColors.black),
                 centerTitle: true,
                 backgroundColor:
                     isDark ? const Color(0xff26282B) : AppColors.white,

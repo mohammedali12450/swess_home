@@ -35,6 +35,7 @@ import '../../business_logic_components/bloc/delete_recent_estate_order_bloc/del
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../data/providers/theme_provider.dart';
+import '../widgets/app/global_app_bar.dart';
 import '../widgets/will-pop-scope.dart';
 
 class RecentEstateOrdersScreenNavBar extends StatefulWidget {
@@ -139,86 +140,27 @@ class _RecentEstateOrdersScreenNavBarState
     return BackHomeScreen(
       child: SafeArea(
         child: Scaffold(
-          floatingActionButton: UserSharedPreferences.getAccessToken() != null
-              ? AddOfferButton()
-              : null,
+          floatingActionButton: UserSharedPreferences.getAccessToken() == null
+              ? null
+              : BlocBuilder<RecentEstatesOrdersBloc, RecentEstatesOrdersState>(
+                  bloc: _recentEstatesOrdersBloc,
+                  builder: (context, state) {
+                    if (state is RecentEstatesOrdersFetchComplete) {
+                      if (state.estateOrders.isNotEmpty) {
+                        return AddOfferButton();
+                      }
+                    }
+                    return SizedBox();
+                  },
+                ),
           backgroundColor: isDark
               ? const Color(0xff26282B)
               : AppColors.white, // Color(0xffF2F2F6),
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(46.0),
-            child: AppBar(
-              iconTheme:
-                  IconThemeData(color: isDark ? Colors.white : AppColors.black),
-              centerTitle: true,
-              backgroundColor:
-                  isDark ? const Color(0xff26282B) : AppColors.white,
-              title: Text(
-                AppLocalizations.of(context)!.estate_offers,
-                style: GoogleFonts.cairo(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.white : const Color(0xff130D0D),
-                ),
-              ),
-              actions: [
-                InkWell(
-                  child: BlocBuilder<NotificationsCubit, int>(
-                    builder: (_, notificationsCount) {
-                      return Padding(
-                        padding: EdgeInsets.only(left: 10, right: 12.w),
-                        child: IconBadge(
-                          icon: SvgPicture.asset(
-                            bellPath,
-                            width: 25,
-                            height: 25,
-                            color: isDark ? Colors.white : AppColors.black,
-                          ),
-                          itemCount: 2,
-                          right: 0,
-                          top: 10.h,
-                          badgeColor: Color(0xff2A84D1),
-                          hideZero: false,
-                        ),
-                      );
-                    },
-                  ),
-                  onTap: () async {
-                    if (UserSharedPreferences.getAccessToken() == null) {
-                      await showWonderfulAlertDialog(
-                          context,
-                          AppLocalizations.of(context)!.confirmation,
-                          AppLocalizations.of(context)!
-                              .this_features_require_login,
-                          removeDefaultButton: true,
-                          dialogButtons: [
-                            ElevatedButton(
-                              child: Text(
-                                AppLocalizations.of(context)!.sign_in,
-                              ),
-                              onPressed: () async {
-                                await Navigator.pushNamed(
-                                    context, AuthenticationScreen.id);
-                                Navigator.pop(context);
-                              },
-                            ),
-                            ElevatedButton(
-                              child: Text(
-                                AppLocalizations.of(context)!.cancel,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                          width: 400.w);
-                      return;
-                    }
-                    Navigator.pushNamed(context, NotificationScreen.id);
-                  },
-                ),
-              ],
-            ),
+            child: GlobalAppbarWidget(
+                isDark: isDark,
+                title: AppLocalizations.of(context)!.estate_orders),
           ),
           drawer: SizedBox(
             width: getScreenWidth(context) * (75 / 100),
@@ -254,12 +196,16 @@ class _RecentEstateOrdersScreenNavBarState
                 },
                 builder: (BuildContext context, recentOrdersState) {
                   if (recentOrdersState is RecentEstatesOrdersFetchProgress) {
+                    print("HHHH");
                     return const ClientsOrdersShimmer();
                   }
                   if (recentOrdersState is! RecentEstatesOrdersFetchComplete) {
+                    print("HHH");
                     return buildSignInRequired(context);
                   }
+
                   orders = recentOrdersState.estateOrders;
+
                   if (orders.isEmpty) {
                     return Center(
                       child: Column(
@@ -308,15 +254,18 @@ class _RecentEstateOrdersScreenNavBarState
                       ),
                     );
                   }
+
                   bool find = false;
                   if (widget.estateId != null) {
                     for (int i = 0; i < orders.length; i++) {
                       if (orders.elementAt(i).id ==
                           int.parse(widget.estateId!)) {
                         find = true;
+
                         break;
                       }
                     }
+
                     if (find) {
                       SchedulerBinding.instance.addPostFrameCallback((_) {
                         jumpToOrder(orders);
@@ -326,6 +275,7 @@ class _RecentEstateOrdersScreenNavBarState
                           msg: AppLocalizations.of(context)!.delete_request);
                     }
                   }
+
                   return RefreshIndicator(
                     color: Theme.of(context).colorScheme.primary,
                     onRefresh: () async {
@@ -370,38 +320,53 @@ class _RecentEstateOrdersScreenNavBarState
                                             builder: (context, _) => Padding(
                                               padding: const EdgeInsets.only(
                                                   top: 20, bottom: 10),
-                                              child: EstateOrderCard(
-                                                estateOrder:
-                                                    orders.elementAt(index),
-                                                //color: Theme.of(context).colorScheme.background,
-                                                color: (int.parse(
-                                                            widget.estateId!) ==
-                                                        orders
-                                                            .elementAt(index)
-                                                            .id)
-                                                    ? _colorTween.value
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .background,
-                                                onTap: () async {
-                                                  await deleteEstateOrder(
-                                                      index);
-                                                },
+                                              child: Column(
+                                                children: [
+                                                  EstateOrderCard(
+                                                    estateOrder:
+                                                        orders.elementAt(index),
+                                                    //color: Theme.of(context).colorScheme.background,
+                                                    color: (int.parse(widget
+                                                                .estateId!) ==
+                                                            orders
+                                                                .elementAt(
+                                                                    index)
+                                                                .id)
+                                                        ? _colorTween.value
+                                                        : Theme.of(context)
+                                                            .colorScheme
+                                                            .background,
+                                                    onTap: () async {
+                                                      await deleteEstateOrder(
+                                                          index);
+                                                    },
+                                                  ),
+                                                  if (index ==
+                                                      orders.length - 1)
+                                                    kHe60
+                                                ],
                                               ),
                                             ),
                                           )
                                         : Padding(
                                             padding: const EdgeInsets.only(
                                                 bottom: 10),
-                                            child: EstateOrderCard(
-                                              estateOrder:
-                                                  orders.elementAt(index),
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .background,
-                                              onTap: () async {
-                                                await deleteEstateOrder(index);
-                                              },
+                                            child: Column(
+                                              children: [
+                                                EstateOrderCard(
+                                                  estateOrder:
+                                                      orders.elementAt(index),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .background,
+                                                  onTap: () async {
+                                                    await deleteEstateOrder(
+                                                        index);
+                                                  },
+                                                ),
+                                                if (index == orders.length - 1)
+                                                  kHe60
+                                              ],
                                             ),
                                           );
                                   }),
@@ -525,7 +490,7 @@ class AddOfferButton extends StatelessWidget {
                 width: 19, height: 25, color: Colors.white),
             SizedBox(width: 10.0),
             Text(
-              AppLocalizations.of(context)!.add_offer,
+              AppLocalizations.of(context)!.add_order,
               style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,

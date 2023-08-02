@@ -27,6 +27,7 @@ import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_repository.dart';
 import '../screens/authentication_screen.dart';
 import '../screens/estate_details_screen.dart';
+import 'row_information_widget.dart';
 
 class HomeEstateCard extends StatefulWidget {
   final Estate estate;
@@ -122,10 +123,11 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                         ),
                         color: Theme.of(context).colorScheme.background,
                       ),
-                      child: widget.estate.firstImage!.isNotEmpty
+                      child: widget.estate.images!=null && widget.estate.images!.isNotEmpty
+
                           ? CachedNetworkImage(
                               imageUrl:
-                                  imagesBaseUrl + widget.estate.firstImage!,
+                                  imagesBaseUrl + widget.estate.images![0].url,
                               fit: BoxFit.cover,
                             )
                           : Image.asset(swessHomeIconPath),
@@ -263,11 +265,10 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                             maxLines: 2,
                             textAlign: TextAlign.start,
                             textStyle:
-                                Theme.of(context).textTheme.headline3!.copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12.sp,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                getSubtitleTextStyle(isDark).copyWith(
+                                  fontSize: 12,
+                                  overflow: TextOverflow.ellipsis,
+                                )
                           ),
                         ),
                         BlocConsumer<SaveAndUnSaveEstateBloc,
@@ -378,7 +379,8 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                       ],
                     ),
                     if (isSell)
-                      RowInformation(
+                      RowInformation2(
+                        isDark: isDark,
                         title:
                             "${AppLocalizations.of(context)!.ownership_type} :",
                         content: widget.estate.ownershipType == null
@@ -388,43 +390,36 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                       ),
                     // Estate interior status :
                     if (!isLands)
-                      RowInformation(
+                      RowInformation2(
+                        isDark: isDark,
                         title:
                             "${AppLocalizations.of(context)!.interior_status} :",
                         content: widget.estate.interiorStatus!.name,
                         onTap: () {},
                       ),
-                    RowInformation(
+                    RowInformation2(
+                      isDark: isDark,
                       title: "${AppLocalizations.of(context)!.estate_area} :",
                       widgetContent: Row(
                         children: [
                           ResText(
                             widget.estate.area!,
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .headline3!
-                                .copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 10.sp),
+                            textStyle: getSubtitleTextStyle(isDark),
                           ),
                           5.horizontalSpace,
                           widget.estate.areaUnit == null
                               ? const Center()
                               : ResText(
                                   widget.estate.areaUnit!.name,
-                                  textStyle: Theme.of(context)
-                                      .textTheme
-                                      .headline3!
-                                      .copyWith(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 10.sp),
+                                  textStyle: getSubtitleTextStyle(isDark),
                                 ),
                         ],
                       ),
                       onTap: () {},
                     ),
                     if (widget.estate.publishedAt != null)
-                      RowInformation(
+                      RowInformation2(
+                        isDark: isDark,
                         title: "${AppLocalizations.of(context)!.adding_date} :",
                         content: DateHelper.getDateByFormat(
                             DateTime.parse(
@@ -433,7 +428,8 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                             "yyyy/MM/dd"),
                         onTap: () {},
                       ),
-                    RowInformation(
+                    RowInformation2(
+                      isDark: isDark,
                       title: "${AppLocalizations.of(context)!.estate_price} :",
                       content: NumbersHelper.getMoneyFormat(intPrice) +
                           " " +
@@ -534,69 +530,3 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
   }
 }
 
-class RowInformation extends StatelessWidget {
-  final Function() onTap;
-
-  final String title;
-
-  final String? content;
-
-  final Widget? widgetContent;
-
-  final bool withBottomDivider;
-
-  const RowInformation({
-    Key? key,
-    required this.onTap,
-    required this.title,
-    this.widgetContent,
-    this.withBottomDivider = true,
-    this.content,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.h),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 0.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ResText(
-                    title,
-                    textStyle: Theme.of(context)
-                        .textTheme
-                        .headline3!
-                        .copyWith(fontWeight: FontWeight.w600, fontSize: 10.sp),
-                  ),
-                  5.horizontalSpace,
-                  (widgetContent != null)
-                      ? widgetContent!
-                      : Expanded(
-                          child: ResText(
-                            content ?? "",
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .headline3!
-                                .copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 10.sp),
-                            textAlign: TextAlign.start,
-                            maxLines: 8,
-                          ),
-                        ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

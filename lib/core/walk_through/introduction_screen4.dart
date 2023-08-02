@@ -41,15 +41,15 @@ class _IntroductionScreen4State extends State<IntroductionScreen4> {
                     width: inf,
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushNamed(context, IntroductionScreen3.id);
-                        // Navigator.pushAndRemoveUntil(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (_) => const AuthenticationScreen(
-                        //         popAfterFinish: false,
-                        //       ),
-                        //     ),
-                        //         (route) => false);
+                        //Navigator.pushNamed(context, IntroductionScreen3.id);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AuthenticationScreen(
+                                popAfterFinish: false,
+                              ),
+                            ),
+                                (route) => false);
                       },
                       child: Container(
                         width: 80.w,
