@@ -91,7 +91,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   }
                 }
                 if (changeState is ChangePasswordComplete) {
-                  MySnackBar.show(context, "تم تغيير كلمة المرور بنجاح");
+                  MySnackBar.show(context, "${changeState.successMessage}");
                   Navigator.pushNamed(context, ProfileScreen.id);
                 }
               },
