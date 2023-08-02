@@ -70,6 +70,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:596503096403:android:48965be21eff4240386aa6",
+        "android_client_info": {
+          "package_name": "com.real_estate.realestatecustomer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "596503096403-dbol3dnpgs4vg7l6mvt1e8an0srhd5n0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCie979nLqx0pZNqfDcIbUd1i7nzlDdUq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "596503096403-dbol3dnpgs4vg7l6mvt1e8an0srhd5n0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
