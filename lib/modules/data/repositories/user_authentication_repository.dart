@@ -266,6 +266,7 @@ class UserAuthenticationRepository {
     if (response.statusCode != 200) {
       throw UnknownException();
     }
+    return jsonDecode(response.toString())["message"];
   }
 
   Future sendVerificationCode(String phone, String code) async {
@@ -356,5 +357,6 @@ class UserAuthenticationRepository {
     if (response.statusCode != 200) {
       throw UnauthorizedException(message: "Unauthorized error !");
     }
+    return jsonDecode(response.toString())["message"];
   }
 }

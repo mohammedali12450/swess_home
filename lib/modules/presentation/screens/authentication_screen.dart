@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:phone_number/phone_number.dart';
@@ -274,6 +275,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               if (registerState is UserRegisterComplete) {
                 if (registerState.successsMessage != null) {
                   _isLoginSelected.setState(true);
+                  //////////////////////////////////////////
                 }
               }
             },
@@ -420,11 +422,18 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     //   SendFcmTokenProcessStarted(
                     //       userToken: UserSharedPreferences.getAccessToken()!),
                     // );
+                    MySnackBar.show(context, "${loginState.successMessage}");
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                             builder: (_) => NavigationBarScreen()),
                         (route) => false);
+                    /*Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => NavigationBarScreen()),
+                        (route) => false);
+                  */
                   }
                   // if (widget.popAfterFinish!) {
                   //   showWonderfulAlertDialog(
