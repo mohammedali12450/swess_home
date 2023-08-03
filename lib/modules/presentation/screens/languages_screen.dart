@@ -34,7 +34,7 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
   ChannelCubit isLanguageChangingCubit = ChannelCubit(false);
   EstateBloc estateBloc = EstateBloc(EstateRepository());
   List<Estate>? allEstates;
-  late bool isDark ;
+  late bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +72,16 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(46.0),
               child: AppBar(
-                iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
-                backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
+                iconTheme: IconThemeData(
+                    color: isDark ? Colors.white : AppColors.black),
+                backgroundColor:
+                    isDark ? const Color(0xff26282B) : AppColors.white,
                 centerTitle: true,
-                title: Text(AppLocalizations.of(context)!.language_word,
-                  style: TextStyle(color: isDark ? Colors.white : AppColors.black),),
-
+                title: Text(
+                  AppLocalizations.of(context)!.language_word,
+                  style:
+                      TextStyle(color: isDark ? Colors.white : AppColors.black),
+                ),
               ),
             ),
             body: Padding(
@@ -182,8 +186,8 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
                 int.tryParse(estateSearchFilterCubit.state.elementAt(3)),
             estateOfferTypeId:
                 int.tryParse(estateSearchFilterCubit.state.elementAt(4)),
-            priceMax: int.tryParse(estateSearchFilterCubit.state.elementAt(1)),
-            priceMin: int.tryParse(estateSearchFilterCubit.state.elementAt(2)),
+            priceMax: (estateSearchFilterCubit.state.elementAt(1)),
+            priceMin: (estateSearchFilterCubit.state.elementAt(2)),
             sortType: "desc"),
         token: UserSharedPreferences.getAccessToken(),
         isAdvanced: false));

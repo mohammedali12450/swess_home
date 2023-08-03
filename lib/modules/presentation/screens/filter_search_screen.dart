@@ -26,7 +26,7 @@ import 'search_location_screen.dart';
 import 'search_region_screen.dart';
 
 class FilterSearchScreen extends StatefulWidget {
-  const FilterSearchScreen({Key? key,this.name,this.id}) : super(key: key);
+  const FilterSearchScreen({Key? key, this.name, this.id}) : super(key: key);
   final int? id;
   final String? name;
 
@@ -111,12 +111,14 @@ class _SearchScreenState extends State<FilterSearchScreen> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(46.0),
         child: AppBar(
-          iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          iconTheme:
+              IconThemeData(color: isDark ? Colors.white : AppColors.black),
           backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
           centerTitle: true,
-          title: Text(AppLocalizations.of(context)!.search,
-            style: TextStyle(color: isDark ? Colors.white : AppColors.black),),
-
+          title: Text(
+            AppLocalizations.of(context)!.search,
+            style: TextStyle(color: isDark ? Colors.white : AppColors.black),
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -159,12 +161,13 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       flex: 3,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: isDark ? AppColors.primaryColor : null,
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size(20.w, 60.h),
-                          maximumSize: Size(20.w, 60.h),
-                            backgroundColor: isDark ? AppColors.lightblue : AppColors.primaryColor
-                        ),
+                            primary: isDark ? AppColors.primaryColor : null,
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size(20.w, 60.h),
+                            maximumSize: Size(20.w, 60.h),
+                            backgroundColor: isDark
+                                ? AppColors.lightblue
+                                : AppColors.primaryColor),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -220,12 +223,13 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       flex: 1,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: isDark ? AppColors.primaryColor : null,
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size(20.w, 60.h),
-                          maximumSize: Size(20.w, 60.h),
-                          backgroundColor: isDark ? AppColors.lightblue : AppColors.primaryColor
-                        ),
+                            primary: isDark ? AppColors.primaryColor : null,
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size(20.w, 60.h),
+                            maximumSize: Size(20.w, 60.h),
+                            backgroundColor: isDark
+                                ? AppColors.lightblue
+                                : AppColors.primaryColor),
                         child: Text(
                           AppLocalizations.of(context)!.clear,
                           style: const TextStyle(color: AppColors.white),
@@ -323,8 +327,9 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                 height: 55.h,
                 decoration: BoxDecoration(
                   border: Border.all(
-                      color:
-                          !isDark ? AppColors.lightGrey2Color : AppColors.lightblue,
+                      color: !isDark
+                          ? AppColors.lightGrey2Color
+                          : AppColors.lightblue,
                       width: 1),
                   borderRadius: lowBorderRadius,
                 ),
