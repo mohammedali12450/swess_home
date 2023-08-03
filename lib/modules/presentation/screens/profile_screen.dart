@@ -88,10 +88,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return BackHomeScreen(
         child: Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(46.0),
-        child: GlobalAppbarWidget(
-            isDark: isDark, title: AppLocalizations.of(context)!.settings),
+      appBar: AppBar(
+        iconTheme:
+            IconThemeData(color: isDark ? Colors.white : AppColors.black),
+        centerTitle: true,
+        backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
+        title: Text(
+          AppLocalizations.of(context)!.settings,
+          style: TextStyle(color: isDark ? Colors.white : AppColors.black),
+        ),
+        actions: [
+          InkWell(
+            child: BlocBuilder<NotificationsCubit, int>(
+              builder: (_, notificationsCount) {
+                return Padding(
+                  padding: EdgeInsets.only(left: 0, right: 12.w),
+                  child: IconBadge(
+                    icon: Icon(Icons.notifications_outlined,
+                        color: isDark ? Colors.white : AppColors.black),
+                    itemCount: notificationsCount,
+                    right: 0,
+                    top: 5.h,
+                    hideZero: true,
+                  ),
+                );
+              },
+            ),
+            onTap: () async {
+              if (UserSharedPreferences.getAccessToken() == null) {
+                await showWonderfulAlertDialog(
+                    context,
+                    AppLocalizations.of(context)!.confirmation,
+                    AppLocalizations.of(context)!.this_features_require_login,
+                    removeDefaultButton: true,
+                    dialogButtons: [
+                      ElevatedButton(
+                        child: Text(
+                          AppLocalizations.of(context)!.sign_in,
+                        ),
+                        onPressed: () async {
+                          await Navigator.pushNamed(
+                              context, AuthenticationScreen.id);
+                          Navigator.pop(context);
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                    width: 400.w);
+                return;
+              }
+              Navigator.pushNamed(context, NotificationScreen.id);
+            },
+          ),
+        ],
       ),
       drawer: SizedBox(
         width: getScreenWidth(context) * (75 / 100),
@@ -229,60 +285,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
         buildProfileImage(),
         const Divider(thickness: 0.2),
         // buildNotification
-        buildListTile(
-          icon: BlocBuilder<NotificationsCubit, int>(
-              builder: (_, notificationsCount) {
-            return IconBadge(
-              icon: const Icon(
-                Icons.notifications_outlined,
-              ),
-              itemCount: notificationsCount,
-              right: 0,
-              top: 5.h,
-              hideZero: true,
-            );
-          }),
-          title: ResText(
-            AppLocalizations.of(context)!.notifications,
-            textAlign: TextAlign.start,
-            textStyle: Theme.of(context).textTheme.headline6,
-          ),
-          onTap: () async {
-            if (BlocProvider.of<UserLoginBloc>(context).user == null) {
-              await showWonderfulAlertDialog(
-                  context,
-                  AppLocalizations.of(context)!.confirmation,
-                  AppLocalizations.of(context)!.this_features_require_login,
-                  removeDefaultButton: true,
-                  dialogButtons: [
-                    ElevatedButton(
-                      child: Text(
-                        AppLocalizations.of(context)!.sign_in,
-                      ),
-                      onPressed: () async {
-                        await Navigator.pushNamed(
-                            context, AuthenticationScreen.id);
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ElevatedButton(
-                      child: Text(
-                        AppLocalizations.of(context)!.cancel,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                  width: 400.w);
-              return;
-            }
-            Navigator.pushNamed(context, NotificationScreen.id);
-          },
-          trailing: Icon((isEnglish)
-              ? Icons.keyboard_arrow_right
-              : Icons.keyboard_arrow_left),
-        ),
+        // buildListTile(
+        //   icon: BlocBuilder<NotificationsCubit, int>(
+        //       builder: (_, notificationsCount) {
+        //     return IconBadge(
+        //       icon: const Icon(
+        //         Icons.notifications_outlined,
+        //       ),
+        //       itemCount: notificationsCount,
+        //       right: 0,
+        //       top: 5.h,
+        //       hideZero: true,
+        //     );
+        //   }),
+        //   title: ResText(
+        //     AppLocalizations.of(context)!.notifications,
+        //     textAlign: TextAlign.start,
+        //     textStyle: Theme.of(context).textTheme.headline6,
+        //   ),
+        //   onTap: () async {
+        //     if (BlocProvider.of<UserLoginBloc>(context).user == null) {
+        //       await showWonderfulAlertDialog(
+        //           context,
+        //           AppLocalizations.of(context)!.confirmation,
+        //           AppLocalizations.of(context)!.this_features_require_login,
+        //           removeDefaultButton: true,
+        //           dialogButtons: [
+        //             ElevatedButton(
+        //               child: Text(
+        //                 AppLocalizations.of(context)!.sign_in,
+        //               ),
+        //               onPressed: () async {
+        //                 await Navigator.pushNamed(
+        //                     context, AuthenticationScreen.id);
+        //                 Navigator.pop(context);
+        //               },
+        //             ),
+        //             ElevatedButton(
+        //               child: Text(
+        //                 AppLocalizations.of(context)!.cancel,
+        //               ),
+        //               onPressed: () {
+        //                 Navigator.pop(context);
+        //               },
+        //             ),
+        //           ],
+        //           width: 400.w);
+        //       return;
+        //     }
+        //     Navigator.pushNamed(context, NotificationScreen.id);
+        //   },
+        //   trailing: Icon((isEnglish)
+        //       ? Icons.keyboard_arrow_right
+        //       : Icons.keyboard_arrow_left),
+        // ),
         // buildLanguageSetting,
         buildListTile(
           icon: Padding(
@@ -392,7 +448,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (_) => const CreatedEstatesScreen()));
           },
         ),
-*/
+
         /// logging history
         // buildListTile(
         //   icon: Padding(
@@ -510,11 +566,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 kHe16,
                 Directionality(
                   textDirection: TextDirection.ltr,
-
-                  child: ResText(
-                    user!.authentication!,
-                    textStyle: Theme.of(context).textTheme.headline6!.copyWith(
-                        color: isDark ? AppColors.white : AppColors.white),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ResText(
+                        user!.authentication!,
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .headline6!
+                            .copyWith(
+                                color:
+                                    isDark ? AppColors.white : AppColors.white),
+                      ),
+                      ResText(
+                        "${user!.country ?? ""} "
+                        "${user?.governorate == null ? " , ${user!.governorate}" : ""}",
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .headline6!
+                            .copyWith(
+                              color: isDark ? AppColors.white : AppColors.white,
+                            ),
+                      ),
+                    ],
                   ),
                   //ResText(
                   // "${user!.country ?? ""} "
