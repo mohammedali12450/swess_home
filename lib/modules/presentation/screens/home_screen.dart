@@ -85,7 +85,8 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PreviousSearchResultsBloc>(context).add(PreviousSearchResultsFetchStarted());
+    BlocProvider.of<PreviousSearchResultsBloc>(context)
+        .add(PreviousSearchResultsFetchStarted());
     automaticShowReview();
     getEstateSearch();
     RecentSearchesSharedPreferences.setDateRefreshRecent(
@@ -184,7 +185,8 @@ class HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.grey.withOpacity(0.1),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(46.0),
-        child: GlobalAppbarWidget(isDark: isDark,title: AppLocalizations.of(context)!.search),
+        child: GlobalAppbarWidget(
+            isDark: isDark, title: AppLocalizations.of(context)!.search),
       ),
       body: Column(
         children: [
@@ -533,7 +535,6 @@ class HomeScreenState extends State<HomeScreen> {
             color: isDark ? Colors.transparent : Colors.white,
             child: Column(
               children: [
-
                 // kHe12,
                 Container(
                   height: 425.h,
@@ -561,7 +562,7 @@ class HomeScreenState extends State<HomeScreen> {
           /// new Api
           BlocBuilder<PreviousSearchResultsBloc, PreviousSearchResultsState>(
             builder: (context, state) {
-              if(state is PreviousSearchResultsFetchComplete){
+              if (state is PreviousSearchResultsFetchComplete) {
                 return ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
@@ -574,12 +575,10 @@ class HomeScreenState extends State<HomeScreen> {
                     });
               }
               return Container();
-
             },
           ),
 
           /// new Api
-
         ],
       ),
     );
@@ -764,64 +763,60 @@ class PreviousSearchResultWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    zone.locationFullName,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3!
-                        .copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: isDark ? AppColors.lightGrey2Color :  AppColors.black,
-                        fontSize: 16.sp),
-                  ),
-                  const SizedBox(height: 10,),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: Text(
-                      AppLocalizations.of(context)!.result_matching_search_page,
-                      maxLines: 2,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline3!
-                          .copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.lightGreyColor,
-                          fontSize: 12.sp),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                zone.locationFullName,
+                style: Theme.of(context).textTheme.headline3!.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: isDark ? AppColors.lightGrey2Color : AppColors.black,
+                    fontSize: 16.sp),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: Text(
+                  AppLocalizations.of(context)!.result_matching_search_page,
+                  maxLines: 2,
+                  style: Theme.of(context).textTheme.headline3!.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.lightGreyColor,
+                      fontSize: 12.sp),
+                ),
+              ),
+            ]),
+            IconButton(
+              onPressed: () {
+                SearchData searchData = SearchData(
+                    locationId: zone.locationId,
+                    estateTypeId: zone.estateTypeId,
+                    estateOfferTypeId: zone.estateOfferTypeId,
+                    priceMax: zone.priceMax,
+                    priceMin: zone.priceMin);
+
+                searchData.sortType = "desc";
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => EstatesScreen(
+                      searchData: searchData,
+                      locationName: zone.locationFullName,
+                      eventSearch: EstatesFetchStarted(
+                        searchData: searchData,
+                        isAdvanced: false,
+                        token: UserSharedPreferences.getAccessToken(),
+                      ),
                     ),
                   ),
-                ]),
-            IconButton(onPressed: ()
-            {
-              SearchData searchData = SearchData(
-                  locationId: zone.locationId, estateTypeId: zone.estateTypeId,
-                  estateOfferTypeId: zone.estateOfferTypeId,priceMax: zone.priceMax,priceMin: zone.priceMin);
-
-
-              searchData.sortType = "desc";
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      EstatesScreen(
-                        searchData: searchData,
-                        locationName: zone.locationFullName,
-                        eventSearch: EstatesFetchStarted(
-                          searchData: searchData,
-                          isAdvanced: false,
-                          token: UserSharedPreferences.getAccessToken(),
-                        ),
-                      ),
-                ),
-              );
-
-            }, icon: Icon(
-              Icons.arrow_forward,
-              size: 27.w,
-              color: isDark ? AppColors.lightblue :  AppColors.primaryColor,
-            ),)
+                );
+              },
+              icon: Icon(
+                Icons.arrow_forward,
+                size: 27.w,
+                color: isDark ? AppColors.lightblue : AppColors.primaryColor,
+              ),
+            )
           ],
         ),
       ),

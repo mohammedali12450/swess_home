@@ -29,9 +29,9 @@ class EstateOrder {
 
   int? estateOfferId;
 
-  int? priceMin;
+  String? priceMin;
 
-  int? priceMax;
+  String? priceMax;
 
   // Both states:
 
@@ -74,6 +74,8 @@ class EstateOrder {
       priceDomain: (json["price_domain"] != null)
           ? PriceDomain.fromJson(json["price_domain"])
           : null,
+      priceMin: json["min_price"],
+      priceMax: json["max_price"],
       description: json["notes"] ?? "",
       createdAt: json["created_at"],
       location: Location.fromJson(json["location"]),

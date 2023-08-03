@@ -196,11 +196,9 @@ class _RecentEstateOrdersScreenNavBarState
                 },
                 builder: (BuildContext context, recentOrdersState) {
                   if (recentOrdersState is RecentEstatesOrdersFetchProgress) {
-                    print("HHHH");
                     return const ClientsOrdersShimmer();
                   }
                   if (recentOrdersState is! RecentEstatesOrdersFetchComplete) {
-                    print("HHH");
                     return buildSignInRequired(context);
                   }
 

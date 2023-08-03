@@ -92,34 +92,26 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                     Text(
                         "${AppLocalizations.of(context)!.estate_location}: ${widget.estateOrder.location!.getLocationName()}",
                         style: cairoTextStyle.copyWith(
-                            
-                            color:
-                                isDark ? AppColors.white : Colors.black)),
+                            color: isDark ? AppColors.white : Colors.black)),
                     kHe8,
                     Row(
                       children: [
                         Text(
                             "${AppLocalizations.of(context)!.order_type}: ${widget.estateOrder.estateOfferType!.name}",
                             style: cairoTextStyle.copyWith(
-
-                                color: isDark
-                                    ? AppColors.white
-                                    : Colors.black)),
+                                color:
+                                    isDark ? AppColors.white : Colors.black)),
                         Spacer(),
                         Text(
                             "${AppLocalizations.of(context)!.estate_type}: ${widget.estateOrder.estateType!.name}",
                             style: cairoTextStyle.copyWith(
-
-                                color: isDark
-                                    ? AppColors.white
-                                    : Colors.black))
+                                color: isDark ? AppColors.white : Colors.black))
                       ],
                     ),
                     kHe8,
                     Text(
                       "${AppLocalizations.of(context)!.price_domain}: ${AppLocalizations.of(context)!.between} ${widget.estateOrder.priceMin ?? AppLocalizations.of(context)!.undefined}  , ${widget.estateOrder.priceMax ?? AppLocalizations.of(context)!.undefined} ${AppLocalizations.of(context)!.syrian_currency} ",
                       style: cairoTextStyle.copyWith(
-
                           color: isDark ? AppColors.white : Colors.black),
                     ),
                     kHe8,
@@ -148,7 +140,6 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
         Text(
           "${AppLocalizations.of(context)!.request_status} : ",
           style: cairoTextStyle.copyWith(
-
               color: isDark ? AppColors.white : Colors.black),
         ),
         Expanded(
@@ -156,7 +147,6 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
             " ${widget.estateOrder.orderStatus}",
             overflow: TextOverflow.ellipsis,
             style: cairoTextStyle.copyWith(
-
                 color: widget.estateOrder.orderStatus ==
                         AppLocalizations.of(context)!.rejected
                     ? Color(0xffFF0000)
@@ -269,7 +259,6 @@ class DeleteRequestWidget extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.delete_request,
               style: cairoTextStyle.copyWith(
-
                   color: isDark ? Color(0xffff3835) : AppColors.red),
             ),
           ],
