@@ -259,60 +259,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
         buildProfileImage(),
         const Divider(thickness: 0.2),
         // buildNotification
-        buildListTile(
-          icon: BlocBuilder<NotificationsCubit, int>(
-              builder: (_, notificationsCount) {
-            return IconBadge(
-              icon: const Icon(
-                Icons.notifications_outlined,
-              ),
-              itemCount: notificationsCount,
-              right: 0,
-              top: 5.h,
-              hideZero: true,
-            );
-          }),
-          title: ResText(
-            AppLocalizations.of(context)!.notifications,
-            textAlign: TextAlign.start,
-            textStyle: Theme.of(context).textTheme.headline6,
-          ),
-          onTap: () async {
-            if (BlocProvider.of<UserLoginBloc>(context).user == null) {
-              await showWonderfulAlertDialog(
-                  context,
-                  AppLocalizations.of(context)!.confirmation,
-                  AppLocalizations.of(context)!.this_features_require_login,
-                  removeDefaultButton: true,
-                  dialogButtons: [
-                    ElevatedButton(
-                      child: Text(
-                        AppLocalizations.of(context)!.sign_in,
-                      ),
-                      onPressed: () async {
-                        await Navigator.pushNamed(
-                            context, AuthenticationScreen.id);
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ElevatedButton(
-                      child: Text(
-                        AppLocalizations.of(context)!.cancel,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                  width: 400.w);
-              return;
-            }
-            Navigator.pushNamed(context, NotificationScreen.id);
-          },
-          trailing: Icon((isEnglish)
-              ? Icons.keyboard_arrow_right
-              : Icons.keyboard_arrow_left),
-        ),
+        // buildListTile(
+        //   icon: BlocBuilder<NotificationsCubit, int>(
+        //       builder: (_, notificationsCount) {
+        //     return IconBadge(
+        //       icon: const Icon(
+        //         Icons.notifications_outlined,
+        //       ),
+        //       itemCount: notificationsCount,
+        //       right: 0,
+        //       top: 5.h,
+        //       hideZero: true,
+        //     );
+        //   }),
+        //   title: ResText(
+        //     AppLocalizations.of(context)!.notifications,
+        //     textAlign: TextAlign.start,
+        //     textStyle: Theme.of(context).textTheme.headline6,
+        //   ),
+        //   onTap: () async {
+        //     if (BlocProvider.of<UserLoginBloc>(context).user == null) {
+        //       await showWonderfulAlertDialog(
+        //           context,
+        //           AppLocalizations.of(context)!.confirmation,
+        //           AppLocalizations.of(context)!.this_features_require_login,
+        //           removeDefaultButton: true,
+        //           dialogButtons: [
+        //             ElevatedButton(
+        //               child: Text(
+        //                 AppLocalizations.of(context)!.sign_in,
+        //               ),
+        //               onPressed: () async {
+        //                 await Navigator.pushNamed(
+        //                     context, AuthenticationScreen.id);
+        //                 Navigator.pop(context);
+        //               },
+        //             ),
+        //             ElevatedButton(
+        //               child: Text(
+        //                 AppLocalizations.of(context)!.cancel,
+        //               ),
+        //               onPressed: () {
+        //                 Navigator.pop(context);
+        //               },
+        //             ),
+        //           ],
+        //           width: 400.w);
+        //       return;
+        //     }
+        //     Navigator.pushNamed(context, NotificationScreen.id);
+        //   },
+        //   trailing: Icon((isEnglish)
+        //       ? Icons.keyboard_arrow_right
+        //       : Icons.keyboard_arrow_left),
+        // ),
         // buildLanguageSetting,
         buildListTile(
           icon: Padding(
