@@ -16,6 +16,8 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/data/repositories/user_authentication_repository.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/my_estates_orders_screen.dart';
+import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/my_snack_bar.dart';
 import '../../../constants/assets_paths.dart';
@@ -37,6 +39,7 @@ import '../widgets/res_text.dart';
 import '../widgets/shimmers/profile_shimmer.dart';
 import '../widgets/will-pop-scope.dart';
 import 'change_password_screen.dart';
+import 'my_created_estates_screen.dart';
 import 'edit_profile_screen.dart';
 import 'languages_screen.dart';
 import 'navigation_bar_screen.dart';
@@ -57,7 +60,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //late UserLoginBloc _userLoginBloc;
   late GovernoratesBloc governoratesBloc;
   UserDataBloc? _userDataBloc;
-  UserLoginBloc? _userLoginBloc;
   final ChannelCubit isLogoutLoadingCubit = ChannelCubit(false);
   List<Governorate>? governorates;
   User? user;
@@ -88,66 +90,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     return BackHomeScreen(
         child: Scaffold(
-      appBar: AppBar(
-        iconTheme:
-            IconThemeData(color: isDark ? Colors.white : AppColors.black),
-        centerTitle: true,
-        backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
-        title: Text(
-          AppLocalizations.of(context)!.settings,
-          style: TextStyle(color: isDark ? Colors.white : AppColors.black),
-        ),
-        actions: [
-          InkWell(
-            child: BlocBuilder<NotificationsCubit, int>(
-              builder: (_, notificationsCount) {
-                return Padding(
-                  padding: EdgeInsets.only(left: 0, right: 12.w),
-                  child: IconBadge(
-                    icon: Icon(Icons.notifications_outlined,
-                        color: isDark ? Colors.white : AppColors.black),
-                    itemCount: notificationsCount,
-                    right: 0,
-                    top: 5.h,
-                    hideZero: true,
-                  ),
-                );
-              },
-            ),
-            onTap: () async {
-              if (UserSharedPreferences.getAccessToken() == null) {
-                await showWonderfulAlertDialog(
-                    context,
-                    AppLocalizations.of(context)!.confirmation,
-                    AppLocalizations.of(context)!.this_features_require_login,
-                    removeDefaultButton: true,
-                    dialogButtons: [
-                      ElevatedButton(
-                        child: Text(
-                          AppLocalizations.of(context)!.sign_in,
-                        ),
-                        onPressed: () async {
-                          await Navigator.pushNamed(
-                              context, AuthenticationScreen.id);
-                          Navigator.pop(context);
-                        },
-                      ),
-                      ElevatedButton(
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                    width: 400.w);
-                return;
-              }
-              Navigator.pushNamed(context, NotificationScreen.id);
-            },
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: GlobalAppbarWidget(
+            isDark: isDark, title: AppLocalizations.of(context)!.settings),
       ),
       drawer: SizedBox(
         width: getScreenWidth(context) * (75 / 100),
@@ -166,7 +112,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   children: [
                     // buildLanguageSetting,
-                    //MySnackBar.show(context, "تم التعديل بنجاح");
 
                     BlocBuilder<UserDataBloc, UserDataState>(
                         bloc: _userDataBloc,
@@ -448,7 +393,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (_) => const CreatedEstatesScreen()));
           },
         ),
-
+*/
         /// logging history
         // buildListTile(
         //   icon: Padding(
@@ -566,29 +511,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 kHe16,
                 Directionality(
                   textDirection: TextDirection.ltr,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ResText(
-                        user!.authentication!,
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(
-                                color:
-                                    isDark ? AppColors.white : AppColors.white),
-                      ),
-                      ResText(
-                        "${user!.country ?? ""} "
-                        "${user?.governorate == null ? " , ${user!.governorate}" : ""}",
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(
-                              color: isDark ? AppColors.white : AppColors.white,
-                            ),
-                      ),
-                    ],
+
+                  child: ResText(
+                    user!.authentication!,
+                    textStyle: Theme.of(context).textTheme.headline6!.copyWith(
+                        color: isDark ? AppColors.white : AppColors.white),
                   ),
                   //ResText(
                   // "${user!.country ?? ""} "
@@ -755,12 +682,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future _logoutAfterDelete() async {
-    String? messageDeleted;
     UserAuthenticationRepository userRep = UserAuthenticationRepository();
     if (UserSharedPreferences.getAccessToken() != null) {
       try {
-        messageDeleted =
-            await userRep.deleteUser(UserSharedPreferences.getAccessToken()!);
+        await userRep.deleteUser(UserSharedPreferences.getAccessToken()!);
       } on ConnectionException {
         Navigator.pop(context);
         showWonderfulAlertDialog(
@@ -773,7 +698,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     UserSharedPreferences.removeAccessToken();
     //_userLoginBloc.user = null;
-    MySnackBar.show(context, "$messageDeleted");
+    MySnackBar.show(context, "User deleted");
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -787,7 +712,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget buildLogout() {
     return BlocBuilder<UserLoginBloc, UserLoginState>(
-      bloc: _userLoginBloc,
       builder: (context, userLoginState) {
         if (UserSharedPreferences.getAccessToken() != null) {
           return Padding(
@@ -866,7 +790,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future _logout() async {
-    String? messageLogout;
     UserAuthenticationRepository userRep = UserAuthenticationRepository();
     if (UserSharedPreferences.getAccessToken() == null) {
       Navigator.pop(context);
@@ -879,8 +802,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     } else if (UserSharedPreferences.getAccessToken() != null) {
       try {
-        messageLogout =
-            await userRep.logout(UserSharedPreferences.getAccessToken()!);
+        await userRep.logout(UserSharedPreferences.getAccessToken()!);
       } on ConnectionException {
         Navigator.pop(context);
         showWonderfulAlertDialog(
@@ -893,10 +815,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     UserSharedPreferences.removeAccessToken();
     ApplicationSharedPreferences.setLoginPassed(false);
-    MySnackBar.show(context, "$messageLogout");
+    //_userLoginBloc.user = null;
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (_) => NavigationBarScreen()));
-    //_userLoginBloc.user = null;
     //Navigator.pushNamedAndRemoveUntil(context, AuthenticationScreen.id, (route) => false);
     return;
   }
