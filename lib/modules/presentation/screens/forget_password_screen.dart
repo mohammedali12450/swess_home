@@ -15,6 +15,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/forget_password
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/system_variables_bloc/system_variables_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
+import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:swesshome/utils/helpers/numbers_helper.dart';
 import '../../business_logic_components/bloc/forget_password_bloc/forget_password_event.dart';
@@ -158,14 +159,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           }
         }
         if (forgetState is ForgetPasswordComplete) {
-          if (forgetState.successMessage != null) {
-            showWonderfulAlertDialog(
-              context,
-              " ",
-              forgetState.successMessage!,
-              defaultButtonContent: AppLocalizations.of(context)!.ok,
-            );
-          }
+          Navigator.of(context).pushNamedAndRemoveUntil(AuthenticationScreen.id, (route) => false) ;
         }
       },
       child: Scaffold(
@@ -272,7 +266,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         56.verticalSpace,
         StreamBuilder<int>(builder: (context, snapshot) {
           return Center(
-            child: ElevatedButton(
+            child: 
+            ElevatedButton(
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(180.w, 60.h),
                 maximumSize: Size(200.w, 60.h),
@@ -282,21 +277,25 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 if (!await signInFieldsValidation()) {
                   return;
                 }
-                forgetPasswordBloc.add(
-                  ForgetPasswordStarted(
-                    mobile:
-                        "+${phoneNumber!.countryCode}${phoneNumber!.nationalNumber}",
-                  ),
-                );
+
                 if (_remainingSeconds > 0) {
+                  forgetPasswordBloc.add(ForgetPasswordBeforeEndTimer(mobile: "+${phoneNumber!.countryCode}${phoneNumber!.nationalNumber}",));
                 } else {
+                  forgetPasswordBloc.add(
+                    ForgetPasswordStarted(
+                      mobile:
+                      "+${phoneNumber!.countryCode}${phoneNumber!.nationalNumber}",
+                    ),
+                  );
                   _isTimerActive ? null : await _savePreferences();
                   setState(() {
                     _remainingSeconds = 900;
                     _startTimer();
                   });
                   FocusScope.of(context).unfocus();
+
                 }
+
               },
               child: BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
                 builder: (_, forgetState) {
