@@ -9,12 +9,14 @@ import 'package:swesshome/core/storage/shared_preferences/user_shared_preference
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/providers/locale_provider.dart';
 
+import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/recent_searches_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_state.dart';
 import '../../data/models/estate.dart';
 import '../../data/models/search_data.dart';
+import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_repository.dart';
 import 'home_screen.dart';
 
@@ -32,9 +34,11 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
   ChannelCubit isLanguageChangingCubit = ChannelCubit(false);
   EstateBloc estateBloc = EstateBloc(EstateRepository());
   List<Estate>? allEstates;
+  late bool isDark ;
 
   @override
   Widget build(BuildContext context) {
+    isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
     selectedLanguageCubit = ChannelCubit(
         Provider.of<LocaleProvider>(context).getLocale().languageCode == "ar"
             ? 0
@@ -65,9 +69,16 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
             );
           }
           return Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text(AppLocalizations.of(context)!.language_word),
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(46.0),
+              child: AppBar(
+                iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
+                backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
+                centerTitle: true,
+                title: Text(AppLocalizations.of(context)!.language_word,
+                  style: TextStyle(color: isDark ? Colors.white : AppColors.black),),
+
+              ),
             ),
             body: Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),

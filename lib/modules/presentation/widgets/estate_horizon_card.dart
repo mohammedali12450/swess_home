@@ -9,11 +9,11 @@ import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
-import 'package:swesshome/modules/business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
+import 'package:swesshome/modules/presentation/widgets/row_information_widget.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swesshome/utils/helpers/date_helper.dart';
@@ -66,7 +66,8 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
         .systemVariables!
         .isForStore;
 
-    if(widget.estate.estateType !=null || widget.estate.estateOfferType != null) {
+    if (widget.estate.estateType != null ||
+        widget.estate.estateOfferType != null) {
       isSell = widget.estate.estateOfferType!.id == sellOfferTypeNumber;
       isLands = widget.estate.estateType!.id == landsPropertyTypeNumber;
     }
@@ -83,7 +84,9 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => EstateDetailsScreen(estate: widget.estate,),
+            builder: (_) => EstateDetailsScreen(
+              estate: widget.estate,
+            ),
           ),
         );
       },
@@ -111,7 +114,9 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                           decoration: BoxDecoration(
                             border: Border.all(
                               width: 1,
-                              color: isDark ? AppColors.secondaryDark : AppColors.white,
+                              color: isDark
+                                  ? AppColors.secondaryDark
+                                  : AppColors.white,
                             ),
                             color: Theme.of(context).colorScheme.background,
                           ),
@@ -130,8 +135,7 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                     flex: 2,
                     child: Padding(
                       padding: EdgeInsets.only(
-                          left: isArabic ? 0 : 5.w,
-                          right: !isArabic ? 0 : 5.w),
+                          left: isArabic ? 0 : 5.w, right: !isArabic ? 0 : 5.w),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -143,113 +147,123 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.5,
-                                  child: ResText(widget.estate.locationS!,
-                                  maxLines: 2,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  child: ResText(
+                                    widget.estate.locationS!,
+                                    maxLines: 2,
                                     textAlign: TextAlign.start,
-                                    textStyle: Theme.of(context).textTheme.headline3!.copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 12.sp,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                    textStyle: getSubtitleTextStyle(isDark).copyWith(
+                                        overflow: TextOverflow.ellipsis,
+                                      fontSize: 12
+                                    )
                                   ),
                                 ),
                                 if (isSell)
-                                  RowInformation(
-                                    title: AppLocalizations.of(context)!.ownership_type + " :",
-                                    content:  widget.estate.ownershipType == null ? "" : widget.estate.ownershipType!.name,
+                                  RowInformation2(
+                                    isDark:isDark,
+                                    title: AppLocalizations.of(context)!
+                                            .ownership_type +
+                                        " :",
+                                    content: widget.estate.ownershipType == null
+                                        ? ""
+                                        : widget.estate.ownershipType!.name,
                                     onTap: () {},
                                   ),
                                 // Estate interior status :
                                 if (!isLands)
-                                  RowInformation(
-                                    title: "${AppLocalizations.of(context)!.interior_status} :",
+                                  RowInformation2(
+                                    isDark:isDark,
+                                    title:
+                                        "${AppLocalizations.of(context)!.interior_status} :",
                                     content: widget.estate.interiorStatus!.name,
                                     onTap: () {},
                                   ),
-                                RowInformation(
-                                  title: "${AppLocalizations.of(context)!.estate_area} :",
+                                RowInformation2(
+                                  isDark:isDark,
+                                  title:
+                                      "${AppLocalizations.of(context)!.estate_area} :",
                                   widgetContent: Row(
                                     children: [
                                       ResText(
                                         widget.estate.area!,
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headline3!
-                                            .copyWith(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 10.sp),
+                                        textStyle: getSubtitleTextStyle(isDark),
                                       ),
                                       5.horizontalSpace,
-                                      widget.estate.areaUnit == null ? const Center() :
-                                      ResText(
-                                        widget.estate.areaUnit!.name,
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headline3!
-                                            .copyWith(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 10.sp),
-                                      ),
+                                      widget.estate.areaUnit == null
+                                          ? const Center()
+                                          : ResText(
+                                              widget.estate.areaUnit!.name,
+                                              textStyle: getSubtitleTextStyle(isDark),),
                                     ],
                                   ),
                                   onTap: () {},
                                 ),
                                 if (widget.estate.publishedAt != null)
-                                RowInformation(
-                                  title: "${AppLocalizations.of(context)!.adding_date} :",
-                                  content: DateHelper.getDateByFormat(
-                                      DateTime.parse(
-                                        widget.estate.publishedAt.toString(),
-                                      ),
-                                      "yyyy/MM/dd"),
-
-                                  onTap: () {},
-                                ),
-                                (UserSharedPreferences.getAccessToken()  == null) ?
-                                Row(
-                                  children: [
-                                    Center(
-                                      child: TextButton(
-                                        style: ElevatedButton.styleFrom(
-                                          minimumSize: Size(80.w, 25.h),
-                                          maximumSize: Size(80.w, 25.h),
-                                          backgroundColor: AppColors.primaryColor
+                                  RowInformation2(
+                                    isDark:isDark,
+                                    title:
+                                        "${AppLocalizations.of(context)!.adding_date} :",
+                                    content: DateHelper.getDateByFormat(
+                                        DateTime.parse(
+                                          widget.estate.publishedAt.toString(),
                                         ),
-                                        child: Center(
-                                          child: Text(
-                                            AppLocalizations.of(context)!.sign_in,
-                                            style: const TextStyle(fontSize: 10,color: AppColors.white),
+                                        "yyyy/MM/dd"),
+                                    onTap: () {},
+                                  ),
+                                (UserSharedPreferences.getAccessToken() == null)
+                                    ? Row(
+                                        children: [
+                                          Center(
+                                            child: TextButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  minimumSize: Size(80.w, 25.h),
+                                                  maximumSize: Size(80.w, 25.h),
+                                                  backgroundColor:
+                                                      AppColors.primaryColor),
+                                              child: Center(
+                                                child: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .sign_in,
+                                                  style: const TextStyle(
+                                                      fontSize: 10,
+                                                      color: AppColors.white),
+                                                ),
+                                              ),
+                                              onPressed: () async {
+                                                await Navigator.pushNamed(
+                                                    context,
+                                                    AuthenticationScreen.id);
+                                              },
+                                            ),
                                           ),
-                                        ),
-                                        onPressed: () async {
-                                          await Navigator.pushNamed(context, AuthenticationScreen.id);
-                                        },
+                                          ResText(
+                                            " ${AppLocalizations.of(context)!.first} ${AppLocalizations.of(context)!.get_price}",
+                                            textAlign: TextAlign.start,
+                                            textStyle:
+                                                GoogleFonts.libreFranklin(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onBackground,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 12.sp,
+                                                    height: 1.3.h),
+                                          ),
+                                        ],
+                                      )
+                                    : RowInformation2(
+                                      isDark: isDark,
+                                        title:
+                                            "${AppLocalizations.of(context)!.estate_price} :",
+                                        content: NumbersHelper.getMoneyFormat(
+                                                intPrice) +
+                                            " " +
+                                            (isForStore
+                                                ? "L.L"
+                                                : AppLocalizations.of(context)!
+                                                    .syrian_bound),
+                                        onTap: () {},
                                       ),
-                                    ),
-                                    ResText(
-                                      " ${AppLocalizations.of(context)!.first} ${AppLocalizations.of(context)!.get_price}",
-                                      textAlign: TextAlign.start,
-                                      textStyle: GoogleFonts.libreFranklin(
-                                          color: Theme.of(context).colorScheme.onBackground,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 12.sp,
-                                          height: 1.3.h
-                                      ),
-                                    ),
-                                  ],
-                                ) :
-                                RowInformation(
-                                  title: "${AppLocalizations.of(context)!.estate_price} :",
-                                  content: NumbersHelper.getMoneyFormat(intPrice) +
-                                      " " +
-                                      (isForStore
-                                          ? "L.L"
-                                          : AppLocalizations.of(context)!
-                                          .syrian_bound),
-
-                                  onTap: () {},
-                                ),
                                 // ResText(
                                 //   "${widget.estate.estateType!.name.split("|").first}"
                                 //   " ${isArabic ? "لل" : "for "}"
@@ -334,8 +348,8 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                     },
                   )
                 : Padding(
-                  padding: kTinyAllPadding,
-                  child: Container(
+                    padding: kTinyAllPadding,
+                    child: Container(
                       decoration: BoxDecoration(
                         color: AppColors.black.withOpacity(0.64),
                         borderRadius: const BorderRadius.all(
@@ -357,77 +371,7 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                         },
                       ),
                     ),
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class RowInformation extends StatelessWidget {
-  final Function() onTap;
-
-  final String title;
-
-  final String? content;
-
-  final Widget? widgetContent;
-
-
-  final bool withBottomDivider;
-
-  const RowInformation({
-    Key? key,
-    required this.onTap,
-    required this.title,
-    this.widgetContent,
-    this.withBottomDivider = true,
-    this.content,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.h),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 0.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ResText(
-                    title,
-                      textStyle: Theme.of(context)
-                          .textTheme
-                          .headline3!
-                          .copyWith(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 10.sp),
                   ),
-                  5.horizontalSpace,
-                  (widgetContent != null)
-                      ? widgetContent!
-                      : Expanded(
-                    child: ResText(
-                      content ?? "",
-                      textStyle: Theme.of(context)
-                          .textTheme
-                          .headline3!
-                          .copyWith(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 10.sp),
-                      textAlign: TextAlign.start,
-                      maxLines: 8,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
         ],
       ),

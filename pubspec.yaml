@@ -83,7 +83,7 @@ dependencies:
   shared_preferences: ^2.0.11
 
   #Map
-  google_maps_flutter: ^2.1.1  
+  google_maps_flutter: ^2.1.1
 
 
   #Tools  
@@ -103,6 +103,7 @@ dependencies:
   device_preview: ^1.0.0
   flutter_phoenix: ^1.0.0
   share_plus: ^6.3.1
+  hexcolor: ^3.0.1
   #package_info_plus: ^1.0.6
 
 

@@ -51,7 +51,7 @@ class Register {
     map["last_name"] = lastName;
     // map["email"] = email;
     //map["dob"] = birthdate;
-    map["governorate"] = governorate;
+    map["location_id"] = governorate;
     map["_method"] = "PUT";
     return map;
   }

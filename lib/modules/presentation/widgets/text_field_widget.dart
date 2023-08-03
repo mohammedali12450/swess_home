@@ -2,12 +2,9 @@ import 'package:floating_bottom_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 
-
 class TextFieldWidget extends StatelessWidget {
-
   final double width;
   final double height;
   final EdgeInsets? padding;
@@ -18,18 +15,18 @@ class TextFieldWidget extends StatelessWidget {
   final int? maxLength;
   final int? maxLines;
 
-  const TextFieldWidget({
-    Key? key,
-    required this.width,
-    required this.height,
-    this.padding,
-    required this.textEditingController,
-    required this.hintText,
-    required this.onChanged,
-    required this.onTap,
-    this.maxLength,
-    this.maxLines
-  }) : super(key: key);
+  const TextFieldWidget(
+      {Key? key,
+      required this.width,
+      required this.height,
+      this.padding,
+      required this.textEditingController,
+      required this.hintText,
+      required this.onChanged,
+      required this.onTap,
+      this.maxLength,
+      this.maxLines})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

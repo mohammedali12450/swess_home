@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class IconBadge extends StatelessWidget {
-  final Icon icon;
+  final Widget icon;
   final VoidCallback? onTap;
   final int itemCount;
   final bool hideZero;
@@ -29,67 +29,61 @@ class IconBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return itemCount == 0 && hideZero
         ? GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                icon,
-              ],
-            ),
-          ],
-        ),
-      ),
-    )
-        : GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                icon,
-              ],
-            ),
-            Positioned(
-              top: top,
-              right: right,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50.0),
-                  color: badgeColor,
-                ),
+            onTap: onTap,
+            child: Container(
+              width: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Stack(
                 alignment: Alignment.center,
-                child: itemCount > maxCount
-                    ? Text(
-                  '$maxCount+',
-                  style: TextStyle(
-                    color: itemColor,
-                    fontSize: 12.sp,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      icon,
+                    ],
                   ),
-                )
-                    : Text(
-                  '$itemCount',
-                  style: TextStyle(
-                    color: itemColor,
-                    fontSize: 12.sp,
-                  ),
-                ),
+                ],
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          )
+        : GestureDetector(
+            onTap: onTap,
+            child: Container(
+              width: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      icon,
+                    ],
+                  ),
+                  Positioned(
+                    top: top,
+                    right: right,
+                    child: CircleAvatar(
+                      radius: 7,
+                      backgroundColor: badgeColor,
+                      child: Center(
+                        child: itemCount > maxCount
+                            ? Text('$maxCount+',
+                                style: numberStyle.copyWith(color: itemColor))
+                            : Text(
+                                "$itemCount",
+                                style: numberStyle.copyWith(color: itemColor),
+                              ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
   }
 }
+
+TextStyle numberStyle = GoogleFonts.abhayaLibre(
+  fontSize: 9,
+);

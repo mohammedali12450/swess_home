@@ -11,7 +11,6 @@ import 'package:swesshome/modules/business_logic_components/bloc/estate_spacial_
 import 'package:swesshome/modules/business_logic_components/cubits/channel_cubit.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import '../../../constants/application_constants.dart';
-import '../../../core/storage/shared_preferences/application_shared_preferences.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_newest_bloc/estate_newest_bloc.dart';
 import '../../business_logic_components/bloc/estate_newest_bloc/estate_newest_event.dart';

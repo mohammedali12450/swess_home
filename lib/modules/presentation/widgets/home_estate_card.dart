@@ -15,13 +15,9 @@ import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.da
 import '../../../constants/api_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
-import '../../../constants/enums.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../../utils/helpers/date_helper.dart';
 import '../../../utils/helpers/numbers_helper.dart';
-import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_bloc.dart';
-import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_event.dart';
-import '../../business_logic_components/bloc/like_and_unlike_bloc/like_and_unlike_state.dart';
 import '../../business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_bloc.dart';
 import '../../business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_event.dart';
 import '../../business_logic_components/bloc/save_and_un_save_estate_bloc/save_and_un_save_estate_state.dart';
@@ -31,6 +27,7 @@ import '../../data/providers/theme_provider.dart';
 import '../../data/repositories/estate_repository.dart';
 import '../screens/authentication_screen.dart';
 import '../screens/estate_details_screen.dart';
+import 'row_information_widget.dart';
 
 class HomeEstateCard extends StatefulWidget {
   final Estate estate;
@@ -50,7 +47,6 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
   bool isSell = true;
   bool isLands = true;
 
-
   @override
   void initState() {
     super.initState();
@@ -58,7 +54,8 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
         .systemVariables!
         .isForStore;
 
-    if(widget.estate.estateType !=null || widget.estate.estateOfferType != null) {
+    if (widget.estate.estateType != null ||
+        widget.estate.estateOfferType != null) {
       isSell = widget.estate.estateOfferType!.id == sellOfferTypeNumber;
       isLands = widget.estate.estateType!.id == landsPropertyTypeNumber;
     }
@@ -89,11 +86,13 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
         );
       },
       child: Container(
-        padding: const EdgeInsets.only(top: 10,left: 10,right: 10),
+        padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
         decoration: BoxDecoration(
           border: Border.all(
             width: 1,
-            color: isDark ? const Color(0xff26282B) : AppColors.lightGreyColor.withOpacity(0.5),
+            color: isDark
+                ? const Color(0xff26282B)
+                : AppColors.lightGreyColor.withOpacity(0.5),
           ),
           color: Theme.of(context).colorScheme.background,
           borderRadius: veryLowBorderRadius,
@@ -124,10 +123,11 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                         ),
                         color: Theme.of(context).colorScheme.background,
                       ),
-                      child: widget.estate.firstImage!.isNotEmpty
+                      child: widget.estate.images!=null && widget.estate.images!.isNotEmpty
+
                           ? CachedNetworkImage(
                               imageUrl:
-                                  imagesBaseUrl + widget.estate.firstImage!,
+                                  imagesBaseUrl + widget.estate.images![0].url,
                               fit: BoxFit.cover,
                             )
                           : Image.asset(swessHomeIconPath),
@@ -260,24 +260,26 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                       children: [
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.5,
-                          child: ResText(widget.estate.locationS?? "",
+                          child: ResText(
+                            widget.estate.locationS ?? "",
                             maxLines: 2,
                             textAlign: TextAlign.start,
-                            textStyle: Theme.of(context).textTheme.headline3!.copyWith(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12.sp,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            textStyle:
+                                getSubtitleTextStyle(isDark).copyWith(
+                                  fontSize: 12,
+                                  overflow: TextOverflow.ellipsis,
+                                )
                           ),
                         ),
                         BlocConsumer<SaveAndUnSaveEstateBloc,
                             SaveAndUnSaveEstateState>(
                           bloc: _saveAndUnSaveEstateBloc,
                           listener: (_, saveAndUnSaveState) async {
-                            if (saveAndUnSaveState is EstateSaveAndUnSaveError) {
+                            if (saveAndUnSaveState
+                                is EstateSaveAndUnSaveError) {
                               var error = saveAndUnSaveState.isConnectionError
                                   ? AppLocalizations.of(context)!
-                                  .no_internet_connection
+                                      .no_internet_connection
                                   : saveAndUnSaveState.error;
                               await showWonderfulAlertDialog(context,
                                   AppLocalizations.of(context)!.error, error);
@@ -322,14 +324,14 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (_) =>
-                                              const AuthenticationScreen(
+                                                  const AuthenticationScreen(
                                                 popAfterFinish: true,
                                               ),
                                             ),
                                           );
                                           Navigator.pop(context);
                                           if (UserSharedPreferences
-                                              .getAccessToken() !=
+                                                  .getAccessToken() !=
                                               null) {
                                             userToken = UserSharedPreferences
                                                 .getAccessToken();
@@ -342,95 +344,98 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
                                   return;
                                 }
                                 if (saveAndUnSaveState is EstateSaved) {
-                                  _saveAndUnSaveEstateBloc.add(UnSaveEventStarted(
-                                      token: userToken,
-                                      estateId: widget.estate.id!));
+                                  _saveAndUnSaveEstateBloc.add(
+                                      UnSaveEventStarted(
+                                          token: userToken,
+                                          estateId: widget.estate.id!));
                                 }
                                 if (saveAndUnSaveState is EstateUnSaved) {
-                                  _saveAndUnSaveEstateBloc.add(EstateSaveStarted(
-                                      token: userToken,
-                                      estateId: widget.estate.id!));
+                                  _saveAndUnSaveEstateBloc.add(
+                                      EstateSaveStarted(
+                                          token: userToken,
+                                          estateId: widget.estate.id!));
                                 }
                               },
                               child: (saveAndUnSaveState
-                              is EstateSaveAndUnSaveProgress)
+                                      is EstateSaveAndUnSaveProgress)
                                   ? SpinKitWave(
-                                color: isDark ? AppColors.lightblue : AppColors.primaryColor,
-                                size: 15.w,
-                              )
+                                      color: isDark
+                                          ? AppColors.lightblue
+                                          : AppColors.primaryColor,
+                                      size: 15.w,
+                                    )
                                   : Icon(
-                                (saveAndUnSaveState is EstateSaved)
-                                    ? Icons.bookmark
-                                    : Icons.bookmark_border_outlined,
-                                color: isDark ? AppColors.lightblue : AppColors.primaryColor,
-                                size: 30,
-                              ),
+                                      (saveAndUnSaveState is EstateSaved)
+                                          ? Icons.bookmark
+                                          : Icons.bookmark_border_outlined,
+                                      color: isDark
+                                          ? AppColors.lightblue
+                                          : AppColors.primaryColor,
+                                      size: 30,
+                                    ),
                             );
                           },
                         ),
                       ],
                     ),
                     if (isSell)
-                      RowInformation(
-                        title: "${AppLocalizations.of(context)!.ownership_type} :",
-                        content:  widget.estate.ownershipType == null ? "" : widget.estate.ownershipType!.name,
+                      RowInformation2(
+                        isDark: isDark,
+                        title:
+                            "${AppLocalizations.of(context)!.ownership_type} :",
+                        content: widget.estate.ownershipType == null
+                            ? ""
+                            : widget.estate.ownershipType!.name,
                         onTap: () {},
                       ),
                     // Estate interior status :
                     if (!isLands)
-                      RowInformation(
-                        title: "${AppLocalizations.of(context)!.interior_status} :",
+                      RowInformation2(
+                        isDark: isDark,
+                        title:
+                            "${AppLocalizations.of(context)!.interior_status} :",
                         content: widget.estate.interiorStatus!.name,
                         onTap: () {},
                       ),
-                    RowInformation(
+                    RowInformation2(
+                      isDark: isDark,
                       title: "${AppLocalizations.of(context)!.estate_area} :",
                       widgetContent: Row(
                         children: [
                           ResText(
                             widget.estate.area!,
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .headline3!
-                                .copyWith(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 10.sp),
+                            textStyle: getSubtitleTextStyle(isDark),
                           ),
                           5.horizontalSpace,
-                          widget.estate.areaUnit == null ? const Center() :
-                          ResText(
-                            widget.estate.areaUnit!.name,
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .headline3!
-                                .copyWith(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 10.sp),
-                          ),
+                          widget.estate.areaUnit == null
+                              ? const Center()
+                              : ResText(
+                                  widget.estate.areaUnit!.name,
+                                  textStyle: getSubtitleTextStyle(isDark),
+                                ),
                         ],
                       ),
                       onTap: () {},
                     ),
                     if (widget.estate.publishedAt != null)
-                      RowInformation(
+                      RowInformation2(
+                        isDark: isDark,
                         title: "${AppLocalizations.of(context)!.adding_date} :",
                         content: DateHelper.getDateByFormat(
                             DateTime.parse(
                               widget.estate.publishedAt.toString(),
                             ),
                             "yyyy/MM/dd"),
-
                         onTap: () {},
                       ),
-                    RowInformation(
+                    RowInformation2(
+                      isDark: isDark,
                       title: "${AppLocalizations.of(context)!.estate_price} :",
                       content: NumbersHelper.getMoneyFormat(intPrice) +
                           " " +
                           (isForStore
                               ? "L.L"
-                              : AppLocalizations.of(context)!
-                              .syrian_bound),
-
+                              : AppLocalizations.of(context)!.syrian_bound),
                       onTap: () {},
                     ),
                     // kHe12,
@@ -525,72 +530,3 @@ class _HomeEstateCardState extends State<HomeEstateCard> {
   }
 }
 
-class RowInformation extends StatelessWidget {
-  final Function() onTap;
-
-  final String title;
-
-  final String? content;
-
-  final Widget? widgetContent;
-
-
-  final bool withBottomDivider;
-
-  const RowInformation({
-    Key? key,
-    required this.onTap,
-    required this.title,
-    this.widgetContent,
-    this.withBottomDivider = true,
-    this.content,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.h),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 0.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ResText(
-                    title,
-                    textStyle: Theme.of(context)
-                        .textTheme
-                        .headline3!
-                        .copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 10.sp),
-                  ),
-                  5.horizontalSpace,
-                  (widgetContent != null)
-                      ? widgetContent!
-                      : Expanded(
-                    child: ResText(
-                      content ?? "",
-                      textStyle: Theme.of(context)
-                          .textTheme
-                          .headline3!
-                          .copyWith(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 10.sp),
-                      textAlign: TextAlign.start,
-                      maxLines: 8,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

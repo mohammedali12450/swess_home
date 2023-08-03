@@ -47,7 +47,7 @@ class RatingDialog extends StatelessWidget {
                     duration: const Duration(milliseconds: 400),
                     child: Container(
                       width: 0.8.sw,
-                      height: value ? 0.25.sh : 0.3.sh,
+                      
                       padding: EdgeInsets.symmetric(
                         horizontal: 0.05.sw,
                       ),
