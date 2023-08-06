@@ -4,6 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/estate_types_by_location/estate_types_by_location_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/estate_types_by_location/estate_types_by_location_event.dart';
+import 'package:swesshome/modules/data/repositories/estate_types_repository.dart';
 import '../../../constants/colors.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
@@ -45,6 +48,8 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   ChannelCubit isPressTypeCubit = ChannelCubit(0);
   ChannelCubit startPriceCubit = ChannelCubit(0);
   ChannelCubit endPriceCubit = ChannelCubit(4);
+  EstateTypesByLocationBloc estateTypesByLocationBloc =
+      EstateTypesByLocationBloc(EstateTypesRepository());
 
   // others:
   List<EstateType>? estatesTypes;
@@ -243,7 +248,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           //searchData = SearchData.init();
                           startPriceCubit.setState(0);
                           endPriceCubit.setState(4);
-
                         },
                       ),
                     ),
@@ -279,6 +283,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
             searchData: searchData,
             isPressTypeCubit: isPressTypeCubit,
             removeSelect: true,
+            estateTypesByLocationBloc: estateTypesByLocationBloc,
           ),
           PriceDomainWidget(
             isRentCubit: isRentCubit,
@@ -356,6 +361,8 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                         searchData.locationId = selectedRegion!.id;
                         locationNameCubit
                             .setState(selectedRegion!.getLocationName());
+                        estateTypesByLocationBloc.add(
+                            EstateTypeFetchByLocation(searchData.locationId!));
                       }
                       return;
                     } else {
@@ -371,6 +378,8 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                         searchData.locationId = selectedLocation!.id;
                         locationNameCubit
                             .setState(selectedLocation!.getLocationName());
+                        estateTypesByLocationBloc.add(
+                            EstateTypeFetchByLocation(searchData.locationId!));
                       }
                       return;
                     }

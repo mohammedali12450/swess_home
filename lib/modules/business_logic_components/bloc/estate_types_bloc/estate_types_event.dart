@@ -1,5 +1,3 @@
+abstract class EstateTypesEvent {}
 
-
-
-abstract class EstateTypesEvent{}
-class EstateTypesFetchStarted extends EstateTypesEvent{}
+class EstateTypesFetchStarted extends EstateTypesEvent {}

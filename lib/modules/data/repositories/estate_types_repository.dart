@@ -16,9 +16,22 @@ class EstateTypesRepository {
     }
 
     var estateTypesJson = jsonDecode(response.toString())['data'] as List;
-    List<EstateType> estateTypes = estateTypesJson
-        .map<EstateType>((e) => EstateType.fromJson(e))
-        .toList();
+    List<EstateType> estateTypes =
+        estateTypesJson.map<EstateType>((e) => EstateType.fromJson(e)).toList();
+    return estateTypes;
+  }
+
+  Future<List<EstateType>> fetchDataByLocation(int locationId) async {
+    Response response =
+        await estateTypesProvider.fetchDataByLocation(locationId);
+
+    if (response.statusCode != 200) {
+      throw UnknownException();
+    }
+
+    var estateTypesJson = jsonDecode(response.toString())['data'] as List;
+    List<EstateType> estateTypes =
+        estateTypesJson.map<EstateType>((e) => EstateType.fromJson(e)).toList();
     return estateTypes;
   }
 }
