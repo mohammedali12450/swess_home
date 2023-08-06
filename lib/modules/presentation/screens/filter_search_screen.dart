@@ -44,7 +44,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   ChannelCubit isAreaSearchCubit = ChannelCubit(false);
   ChannelCubit isPressTypeCubit = ChannelCubit(0);
   ChannelCubit startPriceCubit = ChannelCubit(0);
-  ChannelCubit endPriceCubit = ChannelCubit(0);
+  ChannelCubit endPriceCubit = ChannelCubit(4);
 
   // others:
   List<EstateType>? estatesTypes;
@@ -238,9 +238,12 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           locationNameCubit.setState(
                               AppLocalizations.of(context)!
                                   .enter_location_name);
-                          isRentCubit.setState(true);
-                          isAreaSearchCubit.setState(true);
-                          searchData = SearchData.init();
+                          isRentCubit.setState(false);
+                          isAreaSearchCubit.setState(false);
+                          //searchData = SearchData.init();
+                          startPriceCubit.setState(0);
+                          endPriceCubit.setState(4);
+
                         },
                       ),
                     ),

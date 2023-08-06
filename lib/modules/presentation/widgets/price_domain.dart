@@ -48,8 +48,8 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
     // widget.searchData.priceMin = 1;
     // widget.searchData.priceMax =
     //     priceDomains!.sale.max[priceDomains!.sale.max.length - 1];
-    widget.startPriceCubit.setState(0);
-    widget.endPriceCubit.setState(priceDomains!.sale.max.length - 1);
+    //widget.startPriceCubit.setState(0);
+    //widget.endPriceCubit.setState(priceDomains!.sale.max.length - 1);
 
     minPrice = PriceDomainSearch.getPriceListFormat(priceDomains!.sale.min);
     maxPrice = PriceDomainSearch.getPriceListFormat(priceDomains!.sale.max);
@@ -167,6 +167,11 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                 child: BlocBuilder<ChannelCubit, dynamic>(
                                   bloc: widget.startPriceCubit,
                                   builder: (_, state) {
+                                    widget.searchData.priceMin = !priceState
+                                        ? priceDomains!.sale
+                                        .min[widget.startPriceCubit.state]
+                                        : priceDomains!.rent.min[
+                                    widget.startPriceCubit.state];
                                     return Container(
                                       alignment: isArabic
                                           ? Alignment.centerRight
@@ -261,6 +266,11 @@ class _PriceDomainWidgetState extends State<PriceDomainWidget> {
                                 child: BlocBuilder<ChannelCubit, dynamic>(
                                     bloc: widget.endPriceCubit,
                                     builder: (_, state) {
+                                      widget.searchData.priceMax = !priceState
+                                          ? priceDomains!.sale
+                                          .max[widget.endPriceCubit.state]
+                                          : priceDomains!.rent
+                                          .max[widget.endPriceCubit.state];
                                       return Container(
                                         alignment: isArabic
                                             ? Alignment.centerRight
