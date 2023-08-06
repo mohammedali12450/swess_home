@@ -77,69 +77,11 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
               child: MyDrawer(),
             ),
           ),
-          appBar: AppBar(
-            iconTheme:
-                IconThemeData(color: isDark ? Colors.white : AppColors.black),
-            centerTitle: true,
-            backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
-            title: Text(
-              AppLocalizations.of(context)!.saved_estates,
-              style: TextStyle(color: isDark ? Colors.white : AppColors.black),
-            ),
-            actions: [
-              InkWell(
-                child: BlocBuilder<NotificationsCubit, int>(
-                  builder: (_, notificationsCount) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                          left: isArabic ? 12.w : 0,
-                          right: isArabic ? 0 : 12.w),
-                      child: IconBadge(
-                        icon: Icon(Icons.notifications_outlined,
-                            color: isDark ? Colors.white : AppColors.black),
-                        itemCount: notificationsCount,
-                        right: 0,
-                        top: 5.h,
-                        hideZero: true,
-                      ),
-                    );
-                  },
-                ),
-                onTap: () async {
-                  if (UserSharedPreferences.getAccessToken() == null) {
-                    await showWonderfulAlertDialog(
-                        context,
-                        AppLocalizations.of(context)!.confirmation,
-                        AppLocalizations.of(context)!
-                            .this_features_require_login,
-                        removeDefaultButton: true,
-                        dialogButtons: [
-                          ElevatedButton(
-                            child: Text(
-                              AppLocalizations.of(context)!.sign_in,
-                            ),
-                            onPressed: () async {
-                              await Navigator.pushNamed(
-                                  context, AuthenticationScreen.id);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ElevatedButton(
-                            child: Text(
-                              AppLocalizations.of(context)!.cancel,
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                        width: 400.w);
-                    return;
-                  }
-                  Navigator.pushNamed(context, NotificationScreen.id);
-                },
-              ),
-            ],
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(46.0),
+            child: GlobalAppbarWidget(
+                isDark: isDark,
+                title: AppLocalizations.of(context)!.saved_estates),
           ),
           body: RefreshIndicator(
             color: Theme.of(context).colorScheme.primary,
