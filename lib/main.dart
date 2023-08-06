@@ -339,6 +339,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             final localeProvider = Provider.of<LocaleProvider>(context);
 
             return ScreenUtilInit(
+              useInheritedMediaQuery: true,
               designSize: const Size(428, 926),
               minTextAdapt: true,
               splitScreenMode: false,

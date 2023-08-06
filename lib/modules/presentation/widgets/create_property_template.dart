@@ -61,7 +61,7 @@ class _CreatePropertyTemplateState extends State<CreatePropertyTemplate> {
             ),
             AnimatedPositioned(
               duration: const Duration(milliseconds: 200),
-              top: (isKeyboardOpened) ? 0 : 330.h,
+              top: (isKeyboardOpened) ? 20.h : 330.h,
               child: Container(
                 width: 1.sw,
                 height: 1.sh - 330.h,
