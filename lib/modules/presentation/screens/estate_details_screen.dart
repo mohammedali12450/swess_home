@@ -67,7 +67,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
   List<String> streetImages = [];
   List<String> floorPlanImages = [];
   List<String> nearbyPlaces = [];
-  late bool isDark ;
+  late bool isDark;
 
   // Others:
   late String currency;
@@ -134,14 +134,12 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
           preferredSize: Size.fromHeight(46.0),
           child: AppBar(
             iconTheme:
-            IconThemeData(color: isDark ? Colors.white : AppColors.black),
-            backgroundColor:
-            isDark ? const Color(0xff26282B) : AppColors.white,
+                IconThemeData(color: isDark ? Colors.white : AppColors.black),
+            backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
             centerTitle: true,
             title: Text(
               AppLocalizations.of(context)!.estate_details,
-              style:
-              TextStyle(color: isDark ? Colors.white : AppColors.black),
+              style: TextStyle(color: isDark ? Colors.white : AppColors.black),
             ),
             actions: [
               IconButton(
@@ -149,8 +147,9 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                   Icons.share,
                 ),
                 onPressed: () {
-                  Share.share('${AppLocalizations.of(context)!.estate_offers} :\n'
-                      '${widget.estate.estateType == null ? "" :  widget.estate.estateType!.name.split("|")[1]} لل'
+                  Share.share(
+                      '${AppLocalizations.of(context)!.estate_offers} :\n'
+                      '${widget.estate.estateType == null ? "" : widget.estate.estateType!.name.split("|")[1]} لل'
                       '${widget.estate.estateOfferType == null ? "" : widget.estate.estateOfferType!.name} '
                       ' في ${widget.estate.locationS} \n'
                       'https://www.swesshome.com/estate/${widget.estate.id} ');
@@ -295,7 +294,7 @@ class _EstateDetailsScreenState extends State<EstateDetailsScreen> {
                               constraints: const BoxConstraints(),
                               padding: EdgeInsets.zero,
                               icon: Icon(
-                                Icons.close,
+                                Icons.report_sharp,
                                 size: 22.w,
                                 color: AppColors.white,
                               ),
