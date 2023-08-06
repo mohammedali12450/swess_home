@@ -616,61 +616,50 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                             isTextFormFieldPressed.setState(false);
                           },
                           child: SingleChildScrollView(
-                            reverse: ispressed,
                             controller: scrollController,
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minHeight: MediaQuery.of(context).size.height,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 1.sw,
-                                    alignment:
-                                        Provider.of<LocaleProvider>(context)
-                                                .isArabic()
-                                            ? Alignment.centerRight
-                                            : Alignment.centerLeft,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onBackground,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (_) =>
-                                                    NavigationBarScreen()),
-                                            (route) => false);
-                                        int visitNum =
-                                            ApplicationSharedPreferences
-                                                .getVisitNumber();
-                                        //print("ghina : $visitNum");
-                                        ApplicationSharedPreferences
-                                            .setVisitNumber(visitNum + 1);
-                                      },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 1.sw,
+                                  alignment:
+                                      Provider.of<LocaleProvider>(context)
+                                              .isArabic()
+                                          ? Alignment.centerRight
+                                          : Alignment.centerLeft,
+                                  child: IconButton(
+                                    icon: Icon(
+                                      Icons.close,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground,
                                     ),
-                                  ),
-                                  BlocBuilder<ChannelCubit, dynamic>(
-                                    bloc: _isLoginSelected,
-                                    builder: (_, isLoginSelected) {
-                                      if (isLoginSelected) {
-                                        return buildLoginScreen();
-                                      }
-                                      return buildSignupScreen();
+                                    onPressed: () {
+                                      Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) =>
+                                                  NavigationBarScreen()),
+                                          (route) => false);
+                                      int visitNum =
+                                          ApplicationSharedPreferences
+                                              .getVisitNumber();
+                                      //print("ghina : $visitNum");
+                                      ApplicationSharedPreferences
+                                          .setVisitNumber(visitNum + 1);
                                     },
                                   ),
-                                  ischecked
-                                      ? SizedBox(
-                                          height: 280,
-                                        )
-                                      : SizedBox()
-                                ],
-                              ),
+                                ),
+                                BlocBuilder<ChannelCubit, dynamic>(
+                                  bloc: _isLoginSelected,
+                                  builder: (_, isLoginSelected) {
+                                    if (isLoginSelected) {
+                                      return buildLoginScreen();
+                                    }
+                                    return buildSignupScreen();
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -688,7 +677,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
   SingleChildScrollView buildLoginScreen() {
     return SingleChildScrollView(
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
