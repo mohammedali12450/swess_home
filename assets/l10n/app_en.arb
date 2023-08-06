@@ -374,6 +374,7 @@
   "undefined": "undefined",
   "advanced_search": "Advanced search",
   "search": "Search",
+  "map_location_search": "Search for a location",
   "search_by":"Search by ",
   "select_place_first": "Select place first",
   "enter_office_name": "Enter office name",
