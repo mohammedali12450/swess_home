@@ -546,7 +546,7 @@ class HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
                         padding: EdgeInsets.only(
-                            left: 8.w, right: 3.w, bottom: 20.h,top: 20.h),
+                            left: 8.w, right: 3.w, bottom: 20.h, top: 20.h),
                         child: HomeEstateCard(
                             estate: estateSearchCubit.state.elementAt(index)),
                       );
@@ -792,9 +792,8 @@ class PreviousSearchResultWidget extends StatelessWidget {
                     locationId: zone.locationId,
                     estateTypeId: zone.estateTypeId,
                     estateOfferTypeId: zone.estateOfferTypeId,
-                    priceMax: zone.priceMax,
-                    priceMin: zone.priceMin);
-
+                    priceMax: int.tryParse(zone.priceMax!),
+                    priceMin: int.tryParse(zone.priceMin!));
                 searchData.sortType = "desc";
                 Navigator.push(
                   context,

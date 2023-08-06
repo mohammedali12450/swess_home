@@ -30,6 +30,7 @@ const sendReportURL = "report";
 const areaUnitsURL = "area-units";
 const estateOfferTypesURL = "offer-types";
 const estateTypesURL = "estate-types";
+const estateTypeByLocation = "estate-types-by-location";
 const interiorStatusesURL = "interior-statuses";
 const ownershipTypesURL = "ownership-types";
 const searchResultEstateURL = "estate/search";

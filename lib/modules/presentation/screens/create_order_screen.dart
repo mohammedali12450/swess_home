@@ -168,18 +168,17 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 ],
               ),
             ),
-            body: BlocBuilder<ChannelCubit,dynamic>(
+            body: BlocBuilder<ChannelCubit, dynamic>(
               bloc: reversedscroll,
-              builder: (_,ischecked) =>
-                  BlocBuilder<ChannelCubit,dynamic>(
-                    bloc: isTextFormFieldPressed,
-                    builder: (_,ispressed) =>GestureDetector(
-                onTap: (){
+              builder: (_, ischecked) => BlocBuilder<ChannelCubit, dynamic>(
+                bloc: isTextFormFieldPressed,
+                builder: (_, ispressed) => GestureDetector(
+                  onTap: () {
                     FocusScope.of(context).requestFocus(new FocusNode());
                     reversedscroll.setState(false);
                     isTextFormFieldPressed.setState(false);
-                },
-                child: SingleChildScrollView(
+                  },
+                  child: SingleChildScrollView(
                     reverse: ischecked,
                     child: Form(
                       key: _formKey,
@@ -201,8 +200,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                 buildChoiceContainer(
                                     context: context,
                                     cubit: isRentCubit,
-                                    textRight: AppLocalizations.of(context)!.buy,
-                                    textLeft: AppLocalizations.of(context)!.rent,
+                                    textRight:
+                                        AppLocalizations.of(context)!.buy,
+                                    textLeft:
+                                        AppLocalizations.of(context)!.rent,
                                     onTapRight: () {
                                       estateOrder.estateOfferTypeId = 1;
                                     },
@@ -217,6 +218,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                   searchData: estateOrder,
                                   isPressTypeCubit: isPressTypeCubit,
                                   removeSelect: false,
+                                  estateTypesByLocationBloc: null,
                                 ),
                                 PriceDomainWidget(
                                   isRentCubit: isRentCubit,
@@ -235,9 +237,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                         ),
                       ),
                     ),
+                  ),
                 ),
               ),
-                  ),
             ),
             drawer: SizedBox(
               width: getScreenWidth(context) * (75 / 100),
@@ -325,24 +327,24 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         BlocBuilder<ChannelCubit, dynamic>(
           bloc: noteErrorCubit,
           builder: (_, errorMessage) {
-            return BlocBuilder<ChannelCubit,dynamic>(
+            return BlocBuilder<ChannelCubit, dynamic>(
               bloc: isTextFormFieldPressed,
-              builder: (_,ischecked)=>
-                  BlocBuilder(
-                    bloc: reversedscroll,
-                    builder: (_,ispressed)=>Container(
-                width: inf,
-                padding: kSmallSymWidth,
-                height: 150.h,
-                decoration: BoxDecoration(
+              builder: (_, ischecked) => BlocBuilder(
+                bloc: reversedscroll,
+                builder: (_, ispressed) => Container(
+                  width: inf,
+                  padding: kSmallSymWidth,
+                  height: 150.h,
+                  decoration: BoxDecoration(
                     borderRadius: smallBorderRadius,
                     border: Border.all(
-                      color: !isDark ? Colors.black38 : AppColors.lightGrey2Color,
+                      color:
+                          !isDark ? Colors.black38 : AppColors.lightGrey2Color,
                     ),
-                ),
-                child: TextField(
-                    onTap: (){
-                      isTextFormFieldPressed.setState(true) ;
+                  ),
+                  child: TextField(
+                    onTap: () {
+                      isTextFormFieldPressed.setState(true);
                       reversedscroll.setState(true);
                     },
                     maxLength: 600,
@@ -360,9 +362,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       errorText: errorMessage,
                     ),
                     maxLines: 8,
+                  ),
                 ),
               ),
-                  ),
             );
           },
         ),

@@ -1,12 +1,11 @@
-
 class Zone {
   int locationId;
   String locationFullName;
   int estateTypeId;
   int estateOfferTypeId;
   int? priceDomainId;
-  int? priceMin;
-  int? priceMax;
+  String? priceMin;
+  String? priceMax;
 
   Zone({
     required this.locationId,
@@ -24,7 +23,7 @@ class Zone {
       locationFullName: json['location_full_name'],
       estateTypeId: json['estate_type_id'],
       estateOfferTypeId: json['estate_offer_type_id'],
-      priceDomainId: json['price_domain_id']??1,
+      priceDomainId: json['price_domain_id'] ?? 1,
       priceMin: json['price_min'],
       priceMax: json['price_max'],
     );

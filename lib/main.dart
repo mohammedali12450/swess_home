@@ -19,6 +19,7 @@ import 'package:swesshome/modules/business_logic_components/bloc/contact_us/cont
 import 'package:swesshome/modules/business_logic_components/bloc/estate_bloc/estate_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_order_bloc/estate_order_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_spacial_bloc/estate_spacial_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/estate_types_by_location/estate_types_by_location_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_view_bloc/estate_view_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/forget_password_bloc/forget_password_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/previous_search_results_bloc/previous_search_results_bloc.dart';
@@ -229,6 +230,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
         ),
         BlocProvider(
+            create: (_) => EstateTypesByLocationBloc(EstateTypesRepository())),
+        BlocProvider(
           create: (_) => InteriorStatusesBloc(
             InteriorStatusesRepository(),
           ),
@@ -321,8 +324,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (_) => RentEstateBloc(RentEstateRepository()),
         ),
         BlocProvider(
-          create: (_) => ContactUsBloc(
-              contactUsRepository: ContactUsRepository()),
+          create: (_) =>
+              ContactUsBloc(contactUsRepository: ContactUsRepository()),
         ),
       ],
       child: MultiProvider(
