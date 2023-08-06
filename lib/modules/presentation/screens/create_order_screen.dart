@@ -268,46 +268,35 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         BlocBuilder<ChannelCubit, dynamic>(
           bloc: locationErrorCubit,
           builder: (_, errorMessage) {
-            return Container(
-              decoration: BoxDecoration(
+            return TextField(
+              textDirection: TextDirection.rtl,
+              onTap: () async {
+                selectedLocation = await Navigator.of(context)
+                    .pushNamed(SearchLocationScreen.id) as LocationViewer?;
+                if (selectedLocation != null) {
+                  officeAddressController.text =
+                      selectedLocation!.getLocationName();
+                  estateOrder.locationId = selectedLocation!.id;
+                  locationErrorCubit.setState(null);
+                } else {
+                  officeAddressController.clear();
+                }
+              },
+              controller: officeAddressController,
+              keyboardType: TextInputType.text,
+              readOnly: true,
+              decoration: InputDecoration(
+                errorText: errorMessage,
+                hintText: AppLocalizations.of(context)!.estate_location_hint,
+                contentPadding: kSmallSymWidth,
+                errorBorder: kOutlinedBorderRed,
+                border: InputBorder.none,
+                enabledBorder: OutlineInputBorder(
                   borderRadius: smallBorderRadius,
-                  border: Border.all(
+                  borderSide: BorderSide(
                     color: isDark
                         ? AppColors.lightGrey2Color
                         : AppColors.lightblue,
-                    width: 1,
-                  )),
-              child: TextField(
-                textDirection: TextDirection.rtl,
-                onTap: () async {
-                  selectedLocation = await Navigator.of(context)
-                      .pushNamed(SearchLocationScreen.id) as LocationViewer?;
-                  if (selectedLocation != null) {
-                    officeAddressController.text =
-                        selectedLocation!.getLocationName();
-                    estateOrder.locationId = selectedLocation!.id;
-                    locationErrorCubit.setState(null);
-                  } else {
-                    officeAddressController.clear();
-                  }
-                },
-                controller: officeAddressController,
-                keyboardType: TextInputType.text,
-                readOnly: true,
-                decoration: InputDecoration(
-                  errorText: errorMessage,
-                  hintText: AppLocalizations.of(context)!.estate_location_hint,
-                  contentPadding: kSmallSymWidth,
-                  errorBorder: kOutlinedBorderRed,
-                  border: InputBorder.none,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: smallBorderRadius,
-                    borderSide: BorderSide(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onBackground
-                          .withOpacity(0),
-                    ),
                   ),
                 ),
               ),
