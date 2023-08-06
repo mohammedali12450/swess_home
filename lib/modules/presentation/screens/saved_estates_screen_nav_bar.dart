@@ -21,6 +21,7 @@ import 'package:swesshome/modules/presentation/screens/notifications_screen.dart
 import 'package:swesshome/modules/presentation/widgets/app_drawer.dart';
 import 'package:swesshome/modules/presentation/widgets/icone_badge.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
+import 'package:swesshome/modules/presentation/widgets/shimmers/saved_estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/colors.dart';
@@ -176,7 +177,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
                     // }
 
                     if (savedEstatesState is SavedEstatesFetchProgress) {
-                      return const PropertyShimmer();
+                      return const SavedEstatesShimmer();
                     }
                     if (savedEstatesState is! SavedEstatesFetchComplete) {
                       return buildSignInRequired(context);
