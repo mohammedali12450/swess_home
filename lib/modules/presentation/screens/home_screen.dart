@@ -537,7 +537,7 @@ class HomeScreenState extends State<HomeScreen> {
               children: [
                 // kHe12,
                 Container(
-                  height: 425.h,
+                  height: 425,
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: ListView.builder(
                     reverse: isArabic ? true : false,
@@ -546,7 +546,7 @@ class HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
                         padding: EdgeInsets.only(
-                            left: 8.w, right: 3.w, bottom: 20.h),
+                            left: 8.w, right: 3.w, bottom: 20.h,top: 20.h),
                         child: HomeEstateCard(
                             estate: estateSearchCubit.state.elementAt(index)),
                       );
