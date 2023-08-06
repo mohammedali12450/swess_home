@@ -186,7 +186,7 @@ class ContactButton extends StatelessWidget {
               },
         child: Text(isRegistered
             ? AppLocalizations.of(context)!.registered
-            : AppLocalizations.of(context)!.send_invitation),
+            : AppLocalizations.of(context)!.send_invitation,style: TextStyle(fontSize: 14.sp),),
       ),
     );
   }

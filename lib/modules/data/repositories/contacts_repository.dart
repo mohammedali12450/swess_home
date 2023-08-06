@@ -30,7 +30,10 @@ class ContactsRepository {
 }
 
 Future<String> convertToInternational(String localNumber) async {
-  PhoneNumber phoneNumber = await PhoneNumberUtil().parse(localNumber,regionCode: "SY");
-
-  return phoneNumber.e164;
+  bool valid = await PhoneNumberUtil().validate(localNumber,regionCode: "SY");
+  if(valid){
+    PhoneNumber phoneNumber = await PhoneNumberUtil().parse(localNumber,regionCode: "SY");
+    return phoneNumber.e164;
+  }
+  return localNumber;
 }
