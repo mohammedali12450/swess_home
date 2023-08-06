@@ -57,7 +57,7 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
           child: Column(
             children: [
               searchForEstate(),
-              buildGPSLocation(),
+              //buildGPSLocation(),
               buildListLocation(),
               buildRecentSearchedPlaces()
             ],
@@ -91,7 +91,7 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
     );
   }
 
-  Widget buildGPSLocation() {
+  /*Widget buildGPSLocation() {
     return InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectCurrentLocation()));
@@ -113,7 +113,7 @@ class _LocationSearchTypeState extends State<LocationSearchType> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget buildListLocation() {
     return InkWell(
