@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:swesshome/modules/presentation/screens/filter_search_screen.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../constants/colors.dart';
 import '../../business_logic_components/bloc/location_bloc/locations_bloc.dart';
 import '../../business_logic_components/bloc/location_bloc/locations_state.dart';
 
@@ -21,16 +23,15 @@ class SelectLocationByHand extends StatefulWidget {
 
 class _SelectLocationByHandState extends State<SelectLocationByHand> {
   Position? _currentPosition;
-  late final LatLng _initialPosition =
-      LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
-
+  CameraPosition? _cameraPosition;
+  late GoogleMapController _mapController;
+  final GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: 'AIzaSyDHy4EQDxFt3S9pJynYC-ovSJylUaONzZs');
   late Set<Polygon> polygons = {};
   late Set<Marker> markers = {};
   List regionsNames = [];
-  List<Map<String, dynamic>> neighborhoodNames = [];
-  CameraPosition? _cameraPosition;
-  late GoogleMapController _mapController;
   late List<BitmapDescriptor> customMarker = [];
+  List<Map<String, dynamic>> neighborhoodNames = [];
+  final TextEditingController searchController = TextEditingController();
 
   Future<bool> handleLocationPermission() async {
     bool serviceEnabled;
@@ -129,6 +130,20 @@ class _SelectLocationByHandState extends State<SelectLocationByHand> {
     }
   }
 
+  void searchPlaces(String query) async {
+    PlacesSearchResponse response = await _places.searchByText(query);
+
+    PlacesSearchResult result = response.results[0];
+
+    PlacesDetailsResponse details =
+    await _places.getDetailsByPlaceId(result.placeId);
+
+    LatLng position =
+    LatLng(details.result.geometry!.location.lat, details.result.geometry!.location.lng);
+
+    _mapController.animateCamera(CameraUpdate.newLatLng(position));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -163,12 +178,11 @@ class _SelectLocationByHandState extends State<SelectLocationByHand> {
       }
       return Scaffold(
         body: SafeArea(
-          child: Center(
+          child: _cameraPosition == null ?
+          const Center(child: CircularProgressIndicator()) : Center(
             child: Stack(
               children: [
-                _cameraPosition == null
-                    ? const Center(child: CircularProgressIndicator())
-                    : Center(
+                Center(
                         child: GoogleMap(
                           mapType: MapType.terrain,
                           minMaxZoomPreference: const MinMaxZoomPreference(16.0, 17.5),
@@ -190,6 +204,38 @@ class _SelectLocationByHandState extends State<SelectLocationByHand> {
                           },
                         ),
                       ),
+                Positioned(
+                  top: 25.0,
+                  left: 16.0,
+                  right: 16.0,
+                  child: TextFormField(
+                  controller: searchController,
+                  onFieldSubmitted: (String query){
+                    searchPlaces(query);
+                  },
+                    style: const TextStyle(
+                      color: AppColors.black
+                    ),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                      contentPadding: const EdgeInsets.all(15),
+                      fillColor: AppColors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: AppColors.lastColor),
+                        borderRadius: BorderRadius.circular(11.0),
+                      ),
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.white),
+
+                      ),
+                      prefixIcon: const Icon(Icons.search,color: AppColors.lastColor,),
+                      hintText: AppLocalizations.of(context)!.map_location_search,
+                      hintStyle: TextStyle(
+                        color: AppColors.lightGreyColor,
+                      )),
+                ),
+                ),
               ],
             ),
           ),

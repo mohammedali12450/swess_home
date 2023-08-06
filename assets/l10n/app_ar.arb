@@ -360,6 +360,7 @@
   "undefined": "غير محدد",
   "advanced_search": "بحث متقدم",
   "search": "ابحث",
+  "map_location_search": "بحث عن موقع",
   "select_place_first": "قم بتحديد مكان العقار أولا",
   "enter_office_name": "أدخل اسم المكتب العقاري",
   "enter_area_name": "أدخل اسم المنطقة",
