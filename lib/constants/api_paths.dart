@@ -9,9 +9,11 @@ String baseUrl = proNetBaseUrl;
 //String imagesBaseUrl = hostingerTestImageUrl;
 String imagesBaseUrl = proNetImagesUrl;
 const fetchBaseUrlUrl = "api/fetchBaseUrl";
-const String checkExistingcustomers="https://api-dev.swesshome.com/api/v2/customer/check-existing-customers";
+const String checkExistingcustomers =
+    "https://api-dev.swesshome.com/api/v2/customer/check-existing-customers";
 //new api
-const String previousResultsSearchZonesUrl="https://api-dev.swesshome.com/api/v2/get_last_five_searches_details";
+const String previousResultsSearchZonesUrl =
+    "https://api-dev.swesshome.com/api/v2/get_last_five_searches_details";
 const userRegisterURL = "customer/register";
 const userLoginURL = "customer/login";
 const userSocialLogin = "";
@@ -49,7 +51,7 @@ const deleteEstateOrderURL = "estate-orders/";
 const termsAndConditionsURL = "termsandconditions/get/";
 const createEstateOfferURL = "estate/create";
 const getEstateOfferURL = "estate/customer-estates";
-const deleteUserEstateOfferURL = "estate/delete/";
+const deleteUserEstateOfferURL = "estate/delete";
 const visitOfficeURL = "office/visit";
 const visitEstateURL = "estate/visit";
 const getSavedEstatesURL = "saves";

@@ -191,6 +191,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                 }
 
                 estates = createdEstatesFetchState.createdEstates;
+                print("Estates : ${estates.length}");
 
                 if (estates.isEmpty) {
                   return Center(
