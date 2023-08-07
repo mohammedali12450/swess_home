@@ -17,12 +17,16 @@ class EstateTypesByLocationBloc
       emit(EstateTypesFetchProgress());
       try {
         estateTypes =
-            await estateTypesRepository.fetchDataByLocation(event.location_id);
+        await estateTypesRepository.fetchDataByLocation(event.location_id);
         emit(EstateTypesFetchComplete(estateTypes));
       } catch (e, stack) {
         debugPrint(e.toString());
         debugPrint(stack.toString());
       }
+    });
+    on<EstateTypeReset>((event,emit) async {
+      estateTypes = [] ;
+      emit(EstateTypesFetchNone());
     });
   }
 }
