@@ -795,6 +795,7 @@ class PreviousSearchResultWidget extends StatelessWidget {
                     priceMax: int.tryParse(zone.priceMax!),
                     priceMin: int.tryParse(zone.priceMin!));
                 searchData.sortType = "desc";
+                searchData.sortBy="price";
                 Navigator.push(
                   context,
                   MaterialPageRoute(
