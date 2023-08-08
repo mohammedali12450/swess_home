@@ -24,6 +24,7 @@ import 'package:swesshome/modules/presentation/screens/authentication_screen.dar
 import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_introduction_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/estate_card.dart';
 import 'package:swesshome/modules/presentation/widgets/fetch_result.dart';
+import 'package:swesshome/modules/presentation/widgets/shimmers/created_estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/shimmers/estates_shimmer.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -181,7 +182,7 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                 //           .have_not_created_estates);
                 // }
                 if (createdEstatesFetchState is CreatedEstatesFetchProgress) {
-                  return const PropertyShimmer();
+                  return const CreatedEstatesShimmer();
                 }
                 if (createdEstatesFetchState is! CreatedEstatesFetchComplete) {
                   return buildSignInRequired(context);
