@@ -24,8 +24,8 @@ class Zone {
       estateTypeId: json['estate_type_id'],
       estateOfferTypeId: json['estate_offer_type_id'],
       priceDomainId: json['price_domain_id'] ?? 1,
-      priceMin: json['price_min'],
-      priceMax: json['price_max'],
+      priceMin: json['search_min_price'],
+      priceMax: json['search_max_price'],
     );
   }
 }

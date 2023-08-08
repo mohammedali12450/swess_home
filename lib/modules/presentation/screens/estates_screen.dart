@@ -23,6 +23,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../core/storage/shared_preferences/recent_searches_shared_preferences.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
+import '../../business_logic_components/bloc/previous_search_results_bloc/previous_search_results_bloc.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/models/search_data.dart';
 import '../../data/providers/theme_provider.dart';
@@ -125,6 +126,8 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       ..addAll(estateFetchState.estateSearch.identicalEstates);
 
                 if (!estateBloc.isFetching) {
+                  BlocProvider.of<PreviousSearchResultsBloc>(context)
+                      .add(PreviousSearchResultsFetchStarted());
                   await RecentSearchesSharedPreferences.removeSearches();
                   RecentSearchesSharedPreferences.setSearches(
                       allEstates.take(5).toList());
