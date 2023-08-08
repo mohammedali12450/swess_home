@@ -111,8 +111,7 @@ class _EstateOrderCardState extends State<EstateOrderCard> {
                     kHe8,
                     Text(
                       "${AppLocalizations.of(context)!.price_domain}: ${AppLocalizations.of(context)!.between}"
-                          "${widget.estateOrder.priceMin ==  "0"? AppLocalizations.of(context)!.undefined : widget.estateOrder.priceMin}  , ${widget.estateOrder.priceMax == "999,999,999,999,999,999" ?
-        AppLocalizations.of(context)!.undefined : widget.estateOrder.priceMax} ${AppLocalizations.of(context)!.syrian_currency} ",
+                      "${widget.estateOrder.priceMin == "0" ? AppLocalizations.of(context)!.undefined : widget.estateOrder.priceMin}  , ${widget.estateOrder.priceMax == "999999999999999999" ? AppLocalizations.of(context)!.undefined : widget.estateOrder.priceMax} ${AppLocalizations.of(context)!.syrian_currency} ",
                       style: cairoTextStyle.copyWith(
                           color: isDark ? AppColors.white : Colors.black),
                     ),
