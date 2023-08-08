@@ -49,7 +49,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   ChannelCubit startPriceCubit = ChannelCubit(0);
   ChannelCubit endPriceCubit = ChannelCubit(4);
   EstateTypesByLocationBloc estateTypesByLocationBloc =
-      EstateTypesByLocationBloc(EstateTypesRepository());
+  EstateTypesByLocationBloc(EstateTypesRepository());
 
   // others:
   List<EstateType>? estatesTypes;
@@ -117,7 +117,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
         preferredSize: Size.fromHeight(46.0),
         child: AppBar(
           iconTheme:
-              IconThemeData(color: isDark ? Colors.white : AppColors.black),
+          IconThemeData(color: isDark ? Colors.white : AppColors.black),
           backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
           centerTitle: true,
           title: Text(
@@ -179,7 +179,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                             ResText(
                               AppLocalizations.of(context)!.search,
                               textStyle:
-                                  const TextStyle(color: AppColors.white),
+                              const TextStyle(color: AppColors.white),
                             ),
                             kWi16,
                             const Icon(
@@ -248,6 +248,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                           //searchData = SearchData.init();
                           startPriceCubit.setState(0);
                           endPriceCubit.setState(4);
+                          estateTypesByLocationBloc.add(EstateTypeReset());
                         },
                       ),
                     ),
@@ -393,7 +394,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                             ResText(
                               locationName == ""
                                   ? AppLocalizations.of(context)!
-                                      .enter_neighborhood_name
+                                  .enter_neighborhood_name
                                   : locationName,
                               textStyle: Theme.of(context).textTheme.headline6,
                             ),

@@ -66,6 +66,9 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
             return BlocBuilder<EstateTypesByLocationBloc, EstateTypesState>(
                 bloc: widget.estateTypesByLocationBloc,
                 builder: (context, estateType) {
+                  if (estateType is EstateTypesFetchNone ){
+                    return SizedBox();
+                  }
                   if (estateType is EstateTypesFetchError) {
                     return SizedBox();
                   } else if (estateType is EstateTypesFetchProgress) {
@@ -84,36 +87,36 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                           itemCount: estateType.estateTypes!.length,
                           itemBuilder: (context, index) {
                             var iconPath = estateType.estateTypes![index].name
-                                            .toString()
-                                            .split("|")
-                                            .first ==
-                                        "House" ||
-                                    estateType.estateTypes![index].name.toString().split("|").first ==
-                                        "بيت"
+                                .toString()
+                                .split("|")
+                                .first ==
+                                "House" ||
+                                estateType.estateTypes![index].name.toString().split("|").first ==
+                                    "بيت"
                                 ? buildIconPath
                                 : estateType.estateTypes![index].name.toString().split("|").first == "Shop" ||
-                                        estateType.estateTypes![index].name
-                                                .toString()
-                                                .split("|")
-                                                .first ==
-                                            "محل"
-                                    ? shopIconPath
-                                    : estateType.estateTypes![index].name.toString().split("|").first == "Farm" ||
-                                            estateType.estateTypes![index].name
-                                                    .toString()
-                                                    .split("|")
-                                                    .first ==
-                                                "مزرعة"
-                                        ? farmIconPath
-                                        : estateType.estateTypes![index].name.toString().split("|").first == "Land" ||
-                                                estateType.estateTypes![index]
-                                                        .name
-                                                        .toString()
-                                                        .split("|")
-                                                        .first ==
-                                                    "أرض"
-                                            ? landIconPath
-                                            : villaIconPath;
+                                estateType.estateTypes![index].name
+                                    .toString()
+                                    .split("|")
+                                    .first ==
+                                    "محل"
+                                ? shopIconPath
+                                : estateType.estateTypes![index].name.toString().split("|").first == "Farm" ||
+                                estateType.estateTypes![index].name
+                                    .toString()
+                                    .split("|")
+                                    .first ==
+                                    "مزرعة"
+                                ? farmIconPath
+                                : estateType.estateTypes![index].name.toString().split("|").first == "Land" ||
+                                estateType.estateTypes![index]
+                                    .name
+                                    .toString()
+                                    .split("|")
+                                    .first ==
+                                    "أرض"
+                                ? landIconPath
+                                : villaIconPath;
 
                             return Expanded(
                               child: InkWell(
@@ -139,63 +142,68 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                                             color: pressState == index
                                                 ? AppColors.lightblue
                                                 : isDark
-                                                    ? AppColors.lightGrey2Color
-                                                    : AppColors.primaryColor),
+                                                ? AppColors.lightGrey2Color
+                                                : AppColors.primaryColor),
                                       ),
-                                      child: Image.asset(iconPath,
-                                          color: AppColors.primaryColor),
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.transparent,
+                                        child: Image.asset(iconPath,
+                                            color: AppColors.primaryColor),
+                                      ),
+                                      /*child: Image.asset(iconPath,
+                                          color: AppColors.primaryColor),*/
                                     ),
                                     ResText(
                                       estateType.estateTypes![index].name.toString().split("|").first ==
-                                                  "House" ||
-                                              estateType.estateTypes![index].name
-                                                      .toString()
-                                                      .split("|")
-                                                      .first ==
-                                                  "بيت"
+                                          "House" ||
+                                          estateType.estateTypes![index].name
+                                              .toString()
+                                              .split("|")
+                                              .first ==
+                                              "بيت"
                                           ? AppLocalizations.of(context)!.house
                                           : estateType.estateTypes![index].name
-                                                          .toString()
-                                                          .split("|")
-                                                          .first ==
-                                                      "Shop" ||
-                                                  estateType.estateTypes![index].name
-                                                          .toString()
-                                                          .split("|")
-                                                          .first ==
-                                                      "محل"
-                                              ? AppLocalizations.of(context)!
-                                                  .shop
-                                              : estateType.estateTypes![index].name
-                                                              .toString()
-                                                              .split("|")
-                                                              .first ==
-                                                          "Farm" ||
-                                                      estateType
-                                                              .estateTypes![index]
-                                                              .name
-                                                              .toString()
-                                                              .split("|")
-                                                              .first ==
-                                                          "مزرعة"
-                                                  ? AppLocalizations.of(context)!.farm
-                                                  : estateType.estateTypes![index].name.toString().split("|").first == "Land" || estateType.estateTypes![index].name.toString().split("|").first == "أرض"
-                                                      ? AppLocalizations.of(context)!.land
-                                                      : AppLocalizations.of(context)!.villa,
+                                          .toString()
+                                          .split("|")
+                                          .first ==
+                                          "Shop" ||
+                                          estateType.estateTypes![index].name
+                                              .toString()
+                                              .split("|")
+                                              .first ==
+                                              "محل"
+                                          ? AppLocalizations.of(context)!
+                                          .shop
+                                          : estateType.estateTypes![index].name
+                                          .toString()
+                                          .split("|")
+                                          .first ==
+                                          "Farm" ||
+                                          estateType
+                                              .estateTypes![index]
+                                              .name
+                                              .toString()
+                                              .split("|")
+                                              .first ==
+                                              "مزرعة"
+                                          ? AppLocalizations.of(context)!.farm
+                                          : estateType.estateTypes![index].name.toString().split("|").first == "Land" || estateType.estateTypes![index].name.toString().split("|").first == "أرض"
+                                          ? AppLocalizations.of(context)!.land
+                                          : AppLocalizations.of(context)!.villa,
                                       textStyle: TextStyle(
                                           color: !isDark
                                               ? pressState == index
-                                                  ? AppColors.lightblue
-                                                  : isDark
-                                                      ? AppColors
-                                                          .lightGrey2Color
-                                                      : AppColors.primaryColor
+                                              ? AppColors.lightblue
+                                              : isDark
+                                              ? AppColors
+                                              .lightGrey2Color
+                                              : AppColors.primaryColor
                                               : pressState == index
-                                                  ? AppColors.lightblue
-                                                  : isDark
-                                                      ? AppColors
-                                                          .lightGrey2Color
-                                                      : AppColors.primaryColor),
+                                              ? AppColors.lightblue
+                                              : isDark
+                                              ? AppColors
+                                              .lightGrey2Color
+                                              : AppColors.primaryColor),
                                     ),
                                   ],
                                 ),
