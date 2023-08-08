@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.odayhmourad.swesshome">
+    package="com.real_estate.realestatecustomer">
 
 
     <uses-permission android:name="android.permission.INTERNET" />
