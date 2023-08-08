@@ -9,9 +9,14 @@ import 'package:swesshome/constants/application_constants.dart';
 import 'package:swesshome/constants/assets_paths.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:swesshome/core/storage/shared_preferences/user_shared_preferences.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/estate_view_bloc/estate_view_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_bloc.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/saved_estates_bloc/saved_estates_state.dart';
 import 'package:swesshome/modules/data/models/estate.dart';
 import 'package:swesshome/modules/data/providers/theme_provider.dart';
 import 'package:swesshome/modules/presentation/screens/authentication_screen.dart';
+import 'package:swesshome/modules/presentation/screens/saved_estates_screen.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:swesshome/modules/presentation/widgets/row_information_widget.dart';
 import 'package:swesshome/modules/presentation/widgets/wonderful_alert_dialog.dart';
@@ -33,12 +38,14 @@ class EstateHorizonCard extends StatefulWidget {
   final Function? onClosePressed;
   final bool closeButton;
   final Color? color;
+  final VoidCallback? onRemove;
 
   const EstateHorizonCard(
       {Key? key,
       required this.estate,
       this.onClosePressed,
       required this.closeButton,
+      this.onRemove,
       this.color})
       : super(key: key);
 
@@ -149,19 +156,17 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.5,
-                                  child: ResText(
-                                    widget.estate.locationS!,
-                                    maxLines: 2,
-                                    textAlign: TextAlign.start,
-                                    textStyle: getSubtitleTextStyle(isDark).copyWith(
-                                        overflow: TextOverflow.ellipsis,
-                                      fontSize: 12
-                                    )
-                                  ),
+                                  child: ResText(widget.estate.locationS!,
+                                      maxLines: 2,
+                                      textAlign: TextAlign.start,
+                                      textStyle: getSubtitleTextStyle(isDark)
+                                          .copyWith(
+                                              overflow: TextOverflow.ellipsis,
+                                              fontSize: 12)),
                                 ),
                                 if (isSell)
                                   RowInformation2(
-                                    isDark:isDark,
+                                    isDark: isDark,
                                     title: AppLocalizations.of(context)!
                                             .ownership_type +
                                         " :",
@@ -173,14 +178,14 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                 // Estate interior status :
                                 if (!isLands)
                                   RowInformation2(
-                                    isDark:isDark,
+                                    isDark: isDark,
                                     title:
                                         "${AppLocalizations.of(context)!.interior_status} :",
                                     content: widget.estate.interiorStatus!.name,
                                     onTap: () {},
                                   ),
                                 RowInformation2(
-                                  isDark:isDark,
+                                  isDark: isDark,
                                   title:
                                       "${AppLocalizations.of(context)!.estate_area} :",
                                   widgetContent: Row(
@@ -194,14 +199,16 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                           ? const Center()
                                           : ResText(
                                               widget.estate.areaUnit!.name,
-                                              textStyle: getSubtitleTextStyle(isDark),),
+                                              textStyle:
+                                                  getSubtitleTextStyle(isDark),
+                                            ),
                                     ],
                                   ),
                                   onTap: () {},
                                 ),
                                 if (widget.estate.publishedAt != null)
                                   RowInformation2(
-                                    isDark:isDark,
+                                    isDark: isDark,
                                     title:
                                         "${AppLocalizations.of(context)!.adding_date} :",
                                     content: DateHelper.getDateByFormat(
@@ -252,7 +259,7 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                         ],
                                       )
                                     : RowInformation2(
-                                      isDark: isDark,
+                                        isDark: isDark,
                                         title:
                                             "${AppLocalizations.of(context)!.estate_price} :",
                                         content: NumbersHelper.getMoneyFormat(
@@ -320,18 +327,98 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                       }
                       if (saveAndUnSaveState is EstateUnSaved) {
                         widget.estate.isSaved = false;
+                        if (widget.onRemove != null) {
+                          widget.onRemove!();
+                        }
                       }
                     },
                     builder: (_, saveAndUnSaveState) {
                       return IconButton(
                         onPressed: () {
-                          if (saveAndUnSaveState is EstateSaved) {
-                            _saveAndUnSaveEstateBloc.add(UnSaveEventStarted(
-                                token: userToken, estateId: widget.estate.id!));
-                          }
                           if (saveAndUnSaveState is EstateUnSaved) {
                             _saveAndUnSaveEstateBloc.add(EstateSaveStarted(
                                 token: userToken, estateId: widget.estate.id!));
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 200,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    // padding:
+                                    //     EdgeInsets.fromLTRB(20, 50, 20, 20),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        // Text(
+                                        //   AppLocalizations.of(context)!
+                                        //       .have_not_recent_orders,
+                                        //   style: Theme.of(context)
+                                        //       .textTheme
+                                        //       .headline4!
+                                        //       .copyWith(fontSize: 16),
+                                        //   textAlign: TextAlign.center,
+                                        // ),
+                                        SizedBox(
+                                          height: 30,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+
+                                                if (saveAndUnSaveState
+                                                    is EstateSaved) {
+                                                  _saveAndUnSaveEstateBloc.add(
+                                                      UnSaveEventStarted(
+                                                          token: userToken,
+                                                          estateId: widget
+                                                              .estate.id!));
+                                                }
+                                              },
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .yes,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline4!
+                                                    .copyWith(fontSize: 16),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 50,
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .no,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline4!
+                                                    .copyWith(fontSize: 16),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
                           }
                         },
                         icon: (saveAndUnSaveState
