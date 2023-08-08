@@ -281,6 +281,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
               }),
           buildLocation(),
           EstateTypeWidget(
+            isForSearch: true,
             searchData: searchData,
             isPressTypeCubit: isPressTypeCubit,
             removeSelect: true,

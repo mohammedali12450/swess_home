@@ -47,7 +47,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   ChannelCubit locationErrorCubit = ChannelCubit(null);
   ChannelCubit noteErrorCubit = ChannelCubit(null);
   ChannelCubit startPriceCubit = ChannelCubit(0);
-  ChannelCubit endPriceCubit = ChannelCubit(0);
+  ChannelCubit endPriceCubit = ChannelCubit(4);
   ChannelCubit isRentCubit = ChannelCubit(false);
   ChannelCubit reversedscroll = ChannelCubit(false);
   ChannelCubit isTextFormFieldPressed = ChannelCubit(false);
@@ -215,6 +215,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                 kHe16,
                                 buildLocation(),
                                 EstateTypeWidget(
+                                  isForSearch: false,
                                   searchData: estateOrder,
                                   isPressTypeCubit: isPressTypeCubit,
                                   removeSelect: false,
