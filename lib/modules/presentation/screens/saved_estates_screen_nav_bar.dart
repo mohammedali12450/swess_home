@@ -247,15 +247,16 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
               return EstateHorizonCard(
                 estate: mostViewEstates.elementAt(index),
                 closeButton: false,
+                onRemove: () {
+                  _savedEstatesBloc.add(
+                    SavedEstatesFetchStarted(
+                        token: UserSharedPreferences.getAccessToken()!),
+                  );
+                },
               );
             },
           );
-        } else if (state is EstateFetchError) {
-          Center(
-            child: Text('Erorrrrrrrrrrrrrrrrrrrr'),
-          );
         }
-
         return Container();
       },
     );
@@ -269,6 +270,12 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
       itemBuilder: (_, index) {
         return EstateHorizonCard(
           estate: estates.elementAt(index),
+          onRemove: () {
+            _savedEstatesBloc.add(
+              SavedEstatesFetchStarted(
+                  token: UserSharedPreferences.getAccessToken()!),
+            );
+          },
           closeButton: false,
         );
       },
