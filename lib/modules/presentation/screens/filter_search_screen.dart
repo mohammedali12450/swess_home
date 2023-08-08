@@ -4,13 +4,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/constants/design_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_event.dart';
+import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_types_by_location/estate_types_by_location_bloc.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_types_by_location/estate_types_by_location_event.dart';
 import 'package:swesshome/modules/data/repositories/estate_types_repository.dart';
+import '../../../constants/application_constants.dart';
 import '../../../constants/colors.dart';
+import '../../../core/storage/shared_preferences/application_shared_preferences.dart';
 import '../../../core/storage/shared_preferences/user_shared_preferences.dart';
 import '../../business_logic_components/bloc/estate_bloc/estate_event.dart';
 import '../../business_logic_components/bloc/estate_types_bloc/estate_types_bloc.dart';
+import '../../business_logic_components/bloc/estate_types_by_location/estate_types_by_location_bloc.dart';
+import '../../business_logic_components/bloc/estate_types_by_location/estate_types_by_location_bloc.dart';
+import '../../business_logic_components/bloc/estate_types_by_location/estate_types_by_location_bloc.dart';
 import '../../business_logic_components/bloc/location_bloc/locations_bloc.dart';
 import '../../business_logic_components/bloc/regions_bloc/regions_bloc.dart';
 import '../../business_logic_components/bloc/user_login_bloc/user_login_bloc.dart';
@@ -24,6 +31,7 @@ import '../widgets/choice_container.dart';
 import '../widgets/estate_type.dart';
 import '../widgets/price_domain.dart';
 import '../widgets/res_text.dart';
+import '../widgets/wonderful_alert_dialog.dart';
 import 'estates_screen.dart';
 import 'search_location_screen.dart';
 import 'search_region_screen.dart';
@@ -89,7 +97,6 @@ class _SearchScreenState extends State<FilterSearchScreen> {
   @override
   void initState() {
     super.initState();
-
     // Fetch lists :
     estatesTypes = BlocProvider.of<EstateTypesBloc>(context).estateTypes!;
 
@@ -164,63 +171,85 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                   children: [
                     Expanded(
                       flex: 3,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            primary: isDark ? AppColors.primaryColor : null,
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size(20.w, 60.h),
-                            maximumSize: Size(20.w, 60.h),
-                            backgroundColor: isDark
-                                ? AppColors.lightblue
-                                : AppColors.primaryColor),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ResText(
-                              AppLocalizations.of(context)!.search,
-                              textStyle:
-                              const TextStyle(color: AppColors.white),
-                            ),
-                            kWi16,
-                            const Icon(
-                              Icons.search,
-                              color: AppColors.white,
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          if (widget.id != null) {
-                            searchData.locationId = widget.id;
-                          }
-                          if (searchData.locationId == 0) {
-                            searchData.locationId = null;
-                          }
-                          if (searchData.priceMin == 0) {
-                            searchData.priceMin = 1;
-                          }
-                          print("ghina : "
-                              "${searchData.estateOfferTypeId}\n"
-                              "${searchData.estateTypeId}\n"
-                              "${searchData.locationId}\n"
-                              "${searchData.priceMin}\n"
-                              "${searchData.priceMax}");
+                      child: BlocBuilder<EstateTypesByLocationBloc,EstateTypesState>(
+                        bloc: estateTypesByLocationBloc,
+                        builder: (context, estateType) =>ElevatedButton(
+                          style: estateTypesByLocationBloc.estateTypes != null ? ElevatedButton.styleFrom(
+                              primary: isDark ? AppColors.primaryColor : null,
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size(20.w, 60.h),
+                              maximumSize: Size(20.w, 60.h),
+                              backgroundColor: isDark
+                                  ? AppColors.lightblue
+                                  : AppColors.primaryColor)
+                              : ElevatedButton.styleFrom(
+                              primary: isDark ? AppColors.primaryColor : null,
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size(20.w, 60.h),
+                              maximumSize: Size(20.w, 60.h),
+                              backgroundColor: isDark
+                                  ? AppColors.lightGreyColor
+                                  : AppColors.lightGreyColor),
 
-                          searchData.sortType = "desc";
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => EstatesScreen(
-                                searchData: searchData,
-                                locationName: locationNameCubit.state,
-                                eventSearch: EstatesFetchStarted(
-                                  searchData: searchData,
-                                  isAdvanced: false,
-                                  token: UserSharedPreferences.getAccessToken(),
-                                ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ResText(
+                                AppLocalizations.of(context)!.search,
+                                textStyle:
+                                const TextStyle(color: AppColors.white),
                               ),
-                            ),
-                          );
-                        },
+                              kWi16,
+                              const Icon(
+                                Icons.search,
+                                color: AppColors.white,
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            if(estateTypesByLocationBloc.estateTypes != null){
+                              if (widget.id != null) {
+                                searchData.locationId = widget.id;
+                              }
+                              if (searchData.locationId == 0) {
+                                searchData.locationId = null;
+                              }
+                              if (searchData.priceMin == 0) {
+                                searchData.priceMin = 1;
+                              }
+                              print("ghina : "
+                                  "${searchData.estateOfferTypeId}\n"
+                                  "${searchData.estateTypeId}\n"
+                                  "${searchData.locationId}\n"
+                                  "${searchData.priceMin}\n"
+                                  "${searchData.priceMax}");
+
+                              searchData.sortType = "desc";
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => EstatesScreen(
+                                    searchData: searchData,
+                                    locationName: locationNameCubit.state,
+                                    eventSearch: EstatesFetchStarted(
+                                      searchData: searchData,
+                                      isAdvanced: false,
+                                      token: UserSharedPreferences.getAccessToken(),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                            else
+                              {
+                                showWonderfulAlertDialog(
+                                  context,
+                                  AppLocalizations.of(context)!.error,
+                                  ApplicationSharedPreferences.getLanguageCode() == "en"?"Please enter location":"من فضلك أدخل اسم الحي",
+                                );
+                              }
+                          },
+                        ),
                       ),
                     ),
                     kWi4,
