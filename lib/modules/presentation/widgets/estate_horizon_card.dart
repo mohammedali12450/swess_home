@@ -355,15 +355,15 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        // Text(
-                                        //   AppLocalizations.of(context)!
-                                        //       .have_not_recent_orders,
-                                        //   style: Theme.of(context)
-                                        //       .textTheme
-                                        //       .headline4!
-                                        //       .copyWith(fontSize: 16),
-                                        //   textAlign: TextAlign.center,
-                                        // ),
+                                        Text(
+                                          AppLocalizations.of(context)!
+                                              .are_you_sure,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline4!
+                                              .copyWith(fontSize: 16),
+                                          textAlign: TextAlign.center,
+                                        ),
                                         SizedBox(
                                           height: 30,
                                         ),
