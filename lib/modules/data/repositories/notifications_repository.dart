@@ -20,12 +20,12 @@ class NotificationRepository {
       throw GeneralException(errorMessage: "حدث أثناء الاتصال بالسيرفر");
     }
 
-    var jsonNotifications = jsonDecode(response.toString())["data"]["data"] as List;
+    var jsonNotifications =
+        jsonDecode(response.toString())["notifications"]["data"] as List;
 
     List<MyNotification> notifications =
         jsonNotifications.map((e) => MyNotification.fromJson(e)).toList();
 
     return notifications;
   }
-
 }

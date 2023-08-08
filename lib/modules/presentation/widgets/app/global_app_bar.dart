@@ -17,7 +17,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class GlobalAppbarWidget extends StatelessWidget {
   const GlobalAppbarWidget({
     super.key,
-    required this.isDark, required this.title,
+    required this.isDark,
+    required this.title,
   });
 
   final bool isDark;
@@ -26,11 +27,9 @@ class GlobalAppbarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      iconTheme:
-      IconThemeData(color: isDark ? Colors.white : AppColors.black),
+      iconTheme: IconThemeData(color: isDark ? Colors.white : AppColors.black),
       centerTitle: true,
-      backgroundColor:
-      isDark ? const Color(0xff26282B) : AppColors.white,
+      backgroundColor: isDark ? const Color(0xff26282B) : AppColors.white,
       title: Text(
         title,
         style: GoogleFonts.cairo(
@@ -52,7 +51,7 @@ class GlobalAppbarWidget extends StatelessWidget {
                     height: 25,
                     color: isDark ? Colors.white : AppColors.black,
                   ),
-                  itemCount: 2,
+                  itemCount: notificationsCount,
                   right: 0,
                   top: 10.h,
                   badgeColor: Color(0xff2A84D1),
@@ -66,8 +65,7 @@ class GlobalAppbarWidget extends StatelessWidget {
               await showWonderfulAlertDialog(
                   context,
                   AppLocalizations.of(context)!.confirmation,
-                  AppLocalizations.of(context)!
-                      .this_features_require_login,
+                  AppLocalizations.of(context)!.this_features_require_login,
                   removeDefaultButton: true,
                   dialogButtons: [
                     ElevatedButton(
