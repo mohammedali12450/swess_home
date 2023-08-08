@@ -43,6 +43,8 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
         );
       }
     });
+    on<ReviewPostBeforeTimer>((event, emit) => emit(ReviewInit())
+    );
   }
 
   final GlobalKey<FormState> formStateKey = GlobalKey<FormState>();
