@@ -17,3 +17,4 @@ class ReviewPostEvent extends ReviewEvent {
     required this.notes,
   });
 }
+class ReviewPostBeforeTimer extends ReviewEvent {}
