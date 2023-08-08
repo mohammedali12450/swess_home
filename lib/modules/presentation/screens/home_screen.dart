@@ -85,8 +85,10 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PreviousSearchResultsBloc>(context)
+    if (UserSharedPreferences.getAccessToken() != null) {
+      BlocProvider.of<PreviousSearchResultsBloc>(context)
         .add(PreviousSearchResultsFetchStarted());
+    }
     automaticShowReview();
     getEstateSearch();
     RecentSearchesSharedPreferences.setDateRefreshRecent(
@@ -562,6 +564,18 @@ class HomeScreenState extends State<HomeScreen> {
           /// new Api
           BlocBuilder<PreviousSearchResultsBloc, PreviousSearchResultsState>(
             builder: (context, state) {
+              if(state is PreviousSearchResultsFetchProgress)
+                {
+                  return Container(
+                    margin: EdgeInsets.only(
+                      top: 12.h,
+                    ),
+                    child: SpinKitWave(
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 40.w,
+                    ),
+                  );
+                }
               if (state is PreviousSearchResultsFetchComplete) {
                 return ListView.builder(
                     shrinkWrap: true,

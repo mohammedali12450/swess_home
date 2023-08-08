@@ -126,8 +126,10 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       ..addAll(estateFetchState.estateSearch.identicalEstates);
 
                 if (!estateBloc.isFetching) {
-                  BlocProvider.of<PreviousSearchResultsBloc>(context)
-                      .add(PreviousSearchResultsFetchStarted());
+                  if (UserSharedPreferences.getAccessToken() != null) {
+                    BlocProvider.of<PreviousSearchResultsBloc>(context)
+                        .add(PreviousSearchResultsFetchStarted());
+                  }
                   await RecentSearchesSharedPreferences.removeSearches();
                   RecentSearchesSharedPreferences.setSearches(
                       allEstates.take(5).toList());
