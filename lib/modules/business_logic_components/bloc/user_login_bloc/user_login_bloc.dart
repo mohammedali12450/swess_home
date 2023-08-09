@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
 import 'package:swesshome/core/exceptions/failed_password_exception.dart';
 import 'package:swesshome/core/exceptions/fields_exception.dart';
@@ -89,5 +90,32 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
     //some code here...
   }
 
-  Future<void> loginFacebook() async {}
+  Future<void> loginFacebook() async {
+    var accessToken = await FacebookAuth.instance.accessToken;
+
+    bool isLogged = accessToken != null;
+
+    if (isLogged) {
+      log("You alrady login by google");
+      return;
+    }
+
+    final LoginResult loginResult = await FacebookAuth.instance.login();
+
+    if (loginResult.status == LoginStatus.success) {
+      accessToken = loginResult.accessToken;
+      // final userInfo = await FacebookAuth.instance.getUserData();
+      // _userData = userInfo;
+    } else {
+      print('ResultStatus: ${loginResult.status}');
+      print('Message: ${loginResult.message}');
+    }
+
+    if (accessToken == null) {
+      log("You Can't login by facebook");
+      return;
+    }
+
+    userAuthenticationRepository.socialLogin("facebook", accessToken.token);
+  }
 }

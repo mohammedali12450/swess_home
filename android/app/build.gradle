@@ -30,7 +30,7 @@ apply plugin: 'com.google.gms.google-services'
 dependencies {
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:31.0.2')
-
+    implementation 'com.facebook.android:facebook-android-sdk:latest.release'
 
     // Add the dependency for the Firebase SDK for Google Analytics
     // When using the BoM, don't specify versions in Firebase dependencies
