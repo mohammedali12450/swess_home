@@ -34,7 +34,8 @@ class UserAuthenticationProvider {
 
   Future resendRegisterConfirmationLink(String phone) async {
     NetworkHelper helper = NetworkHelper();
-    Response response = await helper.post(resendRegisterConfirmationLinkURL, {"authentication": phone});
+    Response response = await helper
+        .post(resendRegisterConfirmationLinkURL, {"authentication": phone});
     return response;
   }
 
@@ -96,6 +97,7 @@ class UserAuthenticationProvider {
       String oldPassword, String newPassword, String token) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
+    print("Token = : ${token}");
     try {
       response = await helper.post(
           changePasswordURL,

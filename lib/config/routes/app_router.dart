@@ -133,10 +133,10 @@ class AppRouter {
                     return const UpdateVersionScreen();
                   }
                   // Fetch BaseUrl :
-                  await fetchBaseUrl();
+                  //await fetchBaseUrl();
                   // Fetch application data :
                   fetchApplicationData(context);
-                  downloadUrl();
+                  //downloadUrl();
                   int seconds = 0;
                   while (true) {
                     await Future.delayed(const Duration(seconds: 1));
@@ -362,22 +362,22 @@ class AppRouter {
     }
   }
 
-  Future fetchBaseUrl() async {
-    NetworkHelper helper = NetworkHelper();
-    Response response;
-    try {
-      response = await helper.get(fetchBaseUrlUrl);
-    } catch (e) {
-      rethrow;
-    }
-    //0 if you want to connect to pronet
-    //1 if you want to connect to hostinger
-    if (response.data == "\n0") {
-      print("PPPRRRROOOOO");
-      baseUrl = proNetBaseUrl;
-      imagesBaseUrl = proNetImagesUrl;
-    }
-  }
+  // Future fetchBaseUrl() async {
+  //   NetworkHelper helper = NetworkHelper();
+  //   Response response;
+  //   try {
+  //     response = await helper.get(fetchBaseUrlUrl);
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  //   //0 if you want to connect to pronet
+  //   //1 if you want to connect to hostinger
+  //   if (response.data == "\n0") {
+  //     print("PPPRRRROOOOO");
+  //     baseUrl = proNetBaseUrl;
+  //     imagesBaseUrl = proNetImagesUrl;
+  //   }
+  // }
 
   Future isUpdateApp(String version, context) async {
     NetworkHelper helper = NetworkHelper();
@@ -399,7 +399,7 @@ class AppRouter {
     return response;
   }
 
-  Future downloadUrl() async {
+  /*Future downloadUrl() async {
     NetworkHelper helper = NetworkHelper();
     Response response;
     try {
@@ -412,5 +412,5 @@ class AppRouter {
     ApplicationSharedPreferences.setDownloadUrl(
         jsonDecode(response.toString())["data"]);
     return response;
-  }
+  }*/
 }

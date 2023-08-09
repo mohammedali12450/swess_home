@@ -219,8 +219,9 @@ class UserAuthenticationRepository {
 
     if (response.statusCode != 200) {
       throw GeneralException(
-          errorMessage: jsonDecode(response.toString())["message"]);
+          errorMessage: jsonDecode(response.toString())["data"]);
     }
+    return jsonDecode(response.toString())["message"];
 
     // User user = User.fromJson(jsonDecode(response.toString())["data"]);
     // return user;

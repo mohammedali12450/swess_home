@@ -21,7 +21,7 @@ class ChangePasswordBloc
     on<ChangePasswordStarted>((event, emit) async {
       emit(ChangePasswordProgress());
       try {
-        dynamic message = await userAuthenticationRepository.changePassword(
+        String message = await userAuthenticationRepository.changePassword(
           event.oldPassword,
           event.newPassword,
           event.token,
