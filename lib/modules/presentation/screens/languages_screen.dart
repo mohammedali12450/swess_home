@@ -186,8 +186,8 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
                 int.tryParse(estateSearchFilterCubit.state.elementAt(3)),
             estateOfferTypeId:
                 int.tryParse(estateSearchFilterCubit.state.elementAt(4)),
-            priceMax: (estateSearchFilterCubit.state.elementAt(1)),
-            priceMin: (estateSearchFilterCubit.state.elementAt(2)),
+            priceMax: int.tryParse(estateSearchFilterCubit.state.elementAt(1)),
+            priceMin: int.tryParse(estateSearchFilterCubit.state.elementAt(2)),
             sortType: "desc"),
         token: UserSharedPreferences.getAccessToken(),
         isAdvanced: false));
