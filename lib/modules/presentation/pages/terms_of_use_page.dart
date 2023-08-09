@@ -27,7 +27,7 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
   void initState() {
     _termsConditionBloc = TermsConditionBloc(TermsAndConditionsRepository());
     _termsConditionBloc
-        .add(TermsConditionFetchStarted(termsType: "home-terms-use"));
+        .add(TermsConditionFetchStarted(termsType: "terms-of-use"));
     super.initState();
   }
 
@@ -67,17 +67,22 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
                     child: const Center(child: CircularProgressIndicator()));
               }
               if (propertiesFetchState is TermsConditionFetchComplete) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    22.verticalSpace,
-                    Text(
-                      _termsConditionBloc.termsCondition!.title,
-                      style: Theme.of(context).textTheme.headline3,
-                    ),
-                    22.verticalSpace,
-                    Text(_termsConditionBloc.termsCondition!.body),
-                  ],
+                return Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      Center(
+                        child: Text(
+                          _termsConditionBloc.termsCondition!.title,
+                          style: Theme.of(context).textTheme.headline3,
+                        ),
+                      ),
+                      22.verticalSpace,
+                      Text(_termsConditionBloc.termsCondition!.body.replaceAll(RegExp(r' {2,}'), ' ')),
+                    ],
+                  ),
                 );
               } else {
                 return Container();

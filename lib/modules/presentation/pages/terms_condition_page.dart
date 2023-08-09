@@ -28,7 +28,7 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
   void initState() {
     _termsConditionBloc = TermsConditionBloc(TermsAndConditionsRepository());
     _termsConditionBloc
-        .add(TermsConditionFetchStarted(termsType: "terms-home"));
+        .add(TermsConditionFetchStarted(termsType: "terms-and-condations-policy"));
     super.initState();
   }
 
@@ -69,18 +69,24 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
               }
               if (propertiesFetchState is TermsConditionFetchComplete) {
                 return SizedBox(
+
                   width: getScreenWidth(context),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      22.verticalSpace,
-                      Text(
-                        _termsConditionBloc.termsCondition!.title,
-                        style: Theme.of(context).textTheme.headline3,
-                      ),
-                      22.verticalSpace,
-                      Text(_termsConditionBloc.termsCondition!.body),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        
+                        Center(
+                          child: Text(
+                            _termsConditionBloc.termsCondition!.title,
+                            style: Theme.of(context).textTheme.headline3,
+                          ),
+                        ),
+                        22.verticalSpace,
+                        Text(_termsConditionBloc.termsCondition!.body.replaceAll(RegExp(r' {2,}'), ' ')),
+                      ],
+                    ),
                   ),
                 );
               } else {

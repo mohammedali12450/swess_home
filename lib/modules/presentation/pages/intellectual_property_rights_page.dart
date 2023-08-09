@@ -30,7 +30,7 @@ class _IntellectualPropertyRightsPageState
   void initState() {
     _termsConditionBloc = TermsConditionBloc(TermsAndConditionsRepository());
     _termsConditionBloc
-        .add(TermsConditionFetchStarted(termsType: "copy-rights"));
+        .add(TermsConditionFetchStarted(termsType: "intellectual-property-rights"));
     super.initState();
   }
 
@@ -70,10 +70,11 @@ class _IntellectualPropertyRightsPageState
                     child: const Center(child: CircularProgressIndicator()));
               }
               if (propertiesFetchState is TermsConditionFetchComplete) {
-                return Center(
+                return Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      22.verticalSpace,
+
                       Text(
                         _termsConditionBloc.termsCondition!.title,
                         style: Theme.of(context).textTheme.headline3,
@@ -81,7 +82,7 @@ class _IntellectualPropertyRightsPageState
                       22.verticalSpace,
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(_termsConditionBloc.termsCondition!.body),
+                        child: Text(_termsConditionBloc.termsCondition!.body.replaceAll(RegExp(r' {2,}'), ' ')),
                       ),
                     ],
                   ),
