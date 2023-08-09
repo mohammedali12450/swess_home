@@ -641,5 +641,6 @@
   "add_offer":"add offer",
   "between":"between",
   "add_order":"add order",
-  "wrong_old_password":"old password is not correct"
+  "wrong_old_password":"old password is not correct",
+  "cancel_save_estate":"Are you sure you want to remove this estate from the saved list?"
 }

@@ -248,6 +248,9 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
                 estate: mostViewEstates.elementAt(index),
                 closeButton: false,
                 onRemove: () {
+                  estateViewBloc.add(
+                    MostViewEstatesFetchStarted(),
+                  );
                   _savedEstatesBloc.add(
                     SavedEstatesFetchStarted(
                         token: UserSharedPreferences.getAccessToken()!),
