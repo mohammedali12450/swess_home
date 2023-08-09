@@ -324,6 +324,9 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                       }
                       if (saveAndUnSaveState is EstateSaved) {
                         widget.estate.isSaved = true;
+                        if (widget.onRemove != null) {
+                          widget.onRemove!();
+                        }
                       }
                       if (saveAndUnSaveState is EstateUnSaved) {
                         widget.estate.isSaved = false;
@@ -357,7 +360,7 @@ class _EstateHorizonCardState extends State<EstateHorizonCard> {
                                       children: [
                                         Text(
                                           AppLocalizations.of(context)!
-                                              .are_you_sure,
+                                              .cancel_save_estate,
                                           style: Theme.of(context)
                                               .textTheme
                                               .headline4!
