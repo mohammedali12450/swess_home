@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_types_bloc/estate_types_state.dart';
 import 'package:swesshome/modules/business_logic_components/bloc/estate_types_by_location/estate_types_by_location_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:swesshome/modules/data/models/estate_type.dart';
 import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../constants/application_constants.dart';
 import '../../../constants/assets_paths.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
@@ -71,9 +73,15 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                     return SizedBox();
                   }
                   if (estateType is EstateTypesFetchError) {
-                    return SizedBox();
+                    return SpinKitWave(
+                      color: AppColors.blue,
+                      size: 20.w,
+                    );
                   } else if (estateType is EstateTypesFetchProgress) {
-                    return SizedBox();
+                    return SpinKitWave(
+                      color: AppColors.blue,
+                      size: 20.w,
+                    );
                   } else if (estateType is EstateTypesFetchComplete) {
                     if (estateType.estateTypes!.isEmpty) {
                       return SizedBox();
@@ -125,6 +133,7 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                                   if (widget.removeSelect &&
                                       pressState < 5 &&
                                       pressState == index) {
+
                                     widget.isPressTypeCubit.setState(5);
                                     widget.searchData.estateTypeId = 5;
                                   } else {
