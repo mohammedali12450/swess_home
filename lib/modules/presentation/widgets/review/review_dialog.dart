@@ -152,25 +152,30 @@ class RatingDialogState extends State<RatingDialog> {
                             ReviewButton(
                               onPresses: () async {
                                 if (_remainingSeconds > 0){
-                                  print("remaining seconds is $_remainingSeconds");
-                                  reviewBloc.add(ReviewPostBeforeTimer());
-                                  showWonderfulAlertDialog(
-                                    context,
-                                    AppLocalizations.of(context)!.error,
-                                    Provider.of<LocaleProvider>(context,listen: false).getLocale().languageCode == "ar"?
-                                    "لقد تجاوزت الحد المسموح به لتقييم التطبيق" :
-                                    "You have Reached the limit to rate the app",
-                                  );
+                                  if(reviewBloc.formStateKey.currentState!.validate())
+                                    {
+                                      reviewBloc.add(ReviewPostBeforeTimer());
+                                      showWonderfulAlertDialog(
+                                        context,
+                                        AppLocalizations.of(context)!.error,
+                                        Provider.of<LocaleProvider>(context,listen: false).getLocale().languageCode == "ar"?
+                                        "لقد تجاوزت الحد المسموح به لتقييم التطبيق" :
+                                        "You have Reached the limit to rate the app",
+                                      );
+                                    }
                                 }
                                 else
                                 {
-                                  reviewBloc.sendReview();
-                                  _isTimerActive ? null : await _savePreferences();
-                                  setState(() {
-                                    _remainingSeconds = 900;
-                                    _startTimer();
-                                  });
-                                  FocusScope.of(context).unfocus();
+                                  if(reviewBloc.formStateKey.currentState!.validate())
+                                  {
+                                    reviewBloc.sendReview();
+                                    _isTimerActive ? null : await _savePreferences();
+                                    setState(() {
+                                      _remainingSeconds = 900;
+                                      _startTimer();
+                                    });
+                                    FocusScope.of(context).unfocus();
+                                  }
                                 }
                               },
                               text: AppLocalizations.of(context)!.send,
