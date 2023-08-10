@@ -207,7 +207,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                             ],
                           ),
                           onPressed: () {
-                            if(estateTypesByLocationBloc.estateTypes != null && estateTypesByLocationBloc.estateTypes!.isNotEmpty){
+                            if(estateType is EstateTypesFetchComplete && estateTypesByLocationBloc.estateTypes!.isNotEmpty){
                               if (widget.id != null) {
                                 searchData.locationId = widget.id;
                               }
