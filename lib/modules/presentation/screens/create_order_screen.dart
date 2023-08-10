@@ -96,7 +96,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           await buildSignInRequiredDialog();
         }
       },
-      child: BackHomeScreen(
+      child: WillPopWidget(
         child: SafeArea(
           child: Scaffold(
             resizeToAvoidBottomInset: true,

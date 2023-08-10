@@ -137,7 +137,7 @@ class _RecentEstateOrdersScreenNavBarState
     if (widget.estateId != null) {
       initAnimation(context);
     }
-    return BackHomeScreen(
+    return WillPopWidget(
       child: SafeArea(
         child: Scaffold(
           floatingActionButton: UserSharedPreferences.getAccessToken() == null
