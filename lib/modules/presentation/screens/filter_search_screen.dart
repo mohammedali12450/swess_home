@@ -174,7 +174,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       child: BlocBuilder<EstateTypesByLocationBloc,EstateTypesState>(
                         bloc: estateTypesByLocationBloc,
                         builder: (context, estateType) =>ElevatedButton(
-                          style: estateTypesByLocationBloc.estateTypes != null ? ElevatedButton.styleFrom(
+                          style: (estateTypesByLocationBloc.estateTypes != null && estateTypesByLocationBloc.estateTypes!.isNotEmpty) ? ElevatedButton.styleFrom(
                               primary: isDark ? AppColors.primaryColor : null,
                               padding: EdgeInsets.zero,
                               minimumSize: Size(20.w, 60.h),
@@ -207,7 +207,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                             ],
                           ),
                           onPressed: () {
-                            if(estateTypesByLocationBloc.estateTypes != null){
+                            if(estateTypesByLocationBloc.estateTypes != null && estateTypesByLocationBloc.estateTypes!.isNotEmpty){
                               if (widget.id != null) {
                                 searchData.locationId = widget.id;
                               }
@@ -271,7 +271,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                         onPressed: () {
                           locationNameCubit.setState(
                               AppLocalizations.of(context)!
-                                  .enter_location_name);
+                                  .enter_neighborhood_name);
                           isRentCubit.setState(false);
                           isAreaSearchCubit.setState(false);
                           //searchData = SearchData.init();
@@ -347,6 +347,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
         buildChoiceContainer(
             context: context,
             cubit: isAreaSearchCubit,
+            estateTypesByLocationBloc: estateTypesByLocationBloc,
             textLeft: AppLocalizations.of(context)!.search_by_area,
             textRight: AppLocalizations.of(context)!.search_neighborhood,
             onTapLeft: () {
@@ -392,6 +393,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                         searchData.locationId = selectedRegion!.id;
                         locationNameCubit
                             .setState(selectedRegion!.getLocationName());
+                        isPressTypeCubit.setState(0);
                         estateTypesByLocationBloc.add(
                             EstateTypeFetchByLocation(searchData.locationId!));
                       }
@@ -402,13 +404,14 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                         MaterialPageRoute(
                           builder: (_) => const SearchLocationScreen(),
                         ),
-                      ) as LocationViewer;
+                      );
                       // unfocused text field :
                       FocusScope.of(context).unfocus();
                       if (selectedLocation != null) {
                         searchData.locationId = selectedLocation!.id;
                         locationNameCubit
                             .setState(selectedLocation!.getLocationName());
+                        isPressTypeCubit.setState(0);
                         estateTypesByLocationBloc.add(
                             EstateTypeFetchByLocation(searchData.locationId!));
                       }

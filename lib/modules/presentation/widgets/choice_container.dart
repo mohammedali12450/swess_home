@@ -6,6 +6,8 @@ import 'package:swesshome/modules/presentation/widgets/res_text.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/design_constants.dart';
+import '../../business_logic_components/bloc/estate_types_by_location/estate_types_by_location_bloc.dart';
+import '../../business_logic_components/bloc/estate_types_by_location/estate_types_by_location_event.dart';
 import '../../business_logic_components/cubits/channel_cubit.dart';
 import '../../data/providers/theme_provider.dart';
 
@@ -16,6 +18,7 @@ Widget buildChoiceContainer({
   required String textRight,
   required Function() onTapLeft,
   required Function() onTapRight,
+  EstateTypesByLocationBloc? estateTypesByLocationBloc,
   double? paddingVertical,
   double? paddingHorizontal,
 }) {
@@ -69,6 +72,9 @@ Widget buildChoiceContainer({
                     onTap: () {
                       onTapRight();
                       cubit.setState(false);
+                      if(estateTypesByLocationBloc!=null) {
+                        estateTypesByLocationBloc.add(EstateTypeReset());
+                      }
                     },
                   ),
                 ),
@@ -103,6 +109,10 @@ Widget buildChoiceContainer({
                     onTap: () {
                       onTapLeft();
                       cubit.setState(true);
+                      if(estateTypesByLocationBloc!=null) {
+                       estateTypesByLocationBloc.add(EstateTypeReset());
+                      }
+
                     },
                   ),
                 ),

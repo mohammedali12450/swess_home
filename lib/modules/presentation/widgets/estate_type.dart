@@ -84,7 +84,11 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                     );
                   } else if (estateType is EstateTypesFetchComplete) {
                     if (estateType.estateTypes!.isEmpty) {
-                      return SizedBox();
+                      return Center(child: ResText(
+                        AppLocalizations.of(context)!.no_estates,
+                        textStyle: Theme.of(context).textTheme.headline6,
+                      ),
+                      );
                     }
                     return SizedBox(
                       height: 110.h,
@@ -127,96 +131,94 @@ class _EstateTypeWidgetState extends State<EstateTypeWidget> {
                                 ? landIconPath
                                 : villaIconPath;
 
-                            return Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  if (widget.removeSelect &&
-                                      pressState < 5 &&
-                                      pressState == index) {
+                            return InkWell(
+                              onTap: () {
+                                if (widget.removeSelect &&
+                                    pressState < 5 &&
+                                    pressState == index) {
 
-                                    widget.isPressTypeCubit.setState(5);
-                                    widget.searchData.estateTypeId = 5;
-                                  } else {
-                                    widget.isPressTypeCubit.setState(index);
-                                    widget.searchData.estateTypeId = index + 1;
-                                  }
-                                },
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      padding: kSmallAllPadding,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.white,
-                                        borderRadius: circularBorderRadius,
-                                        border: Border.all(
-                                            color: pressState == index
-                                                ? AppColors.lightblue
-                                                : isDark
-                                                ? AppColors.lightGrey2Color
-                                                : AppColors.primaryColor),
-                                      ),
-                                      child: CircleAvatar(
-                                        backgroundColor: Colors.transparent,
-                                        child: Image.asset(iconPath,
-                                            color: AppColors.primaryColor),
-                                      ),
-                                      /*child: Image.asset(iconPath,
-                                          color: AppColors.primaryColor),*/
-                                    ),
-                                    ResText(
-                                      estateType.estateTypes![index].name.toString().split("|").first ==
-                                          "House" ||
-                                          estateType.estateTypes![index].name
-                                              .toString()
-                                              .split("|")
-                                              .first ==
-                                              "بيت"
-                                          ? AppLocalizations.of(context)!.house
-                                          : estateType.estateTypes![index].name
-                                          .toString()
-                                          .split("|")
-                                          .first ==
-                                          "Shop" ||
-                                          estateType.estateTypes![index].name
-                                              .toString()
-                                              .split("|")
-                                              .first ==
-                                              "محل"
-                                          ? AppLocalizations.of(context)!
-                                          .shop
-                                          : estateType.estateTypes![index].name
-                                          .toString()
-                                          .split("|")
-                                          .first ==
-                                          "Farm" ||
-                                          estateType
-                                              .estateTypes![index]
-                                              .name
-                                              .toString()
-                                              .split("|")
-                                              .first ==
-                                              "مزرعة"
-                                          ? AppLocalizations.of(context)!.farm
-                                          : estateType.estateTypes![index].name.toString().split("|").first == "Land" || estateType.estateTypes![index].name.toString().split("|").first == "أرض"
-                                          ? AppLocalizations.of(context)!.land
-                                          : AppLocalizations.of(context)!.villa,
-                                      textStyle: TextStyle(
-                                          color: !isDark
-                                              ? pressState == index
+
+
+                                } else {
+                                  widget.isPressTypeCubit.setState(index);
+                                  widget.searchData.estateTypeId = index + 1;
+                                }
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: kSmallAllPadding,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.white,
+                                      borderRadius: circularBorderRadius,
+                                      border: Border.all(
+                                          color: pressState == index
                                               ? AppColors.lightblue
                                               : isDark
-                                              ? AppColors
-                                              .lightGrey2Color
-                                              : AppColors.primaryColor
-                                              : pressState == index
-                                              ? AppColors.lightblue
-                                              : isDark
-                                              ? AppColors
-                                              .lightGrey2Color
+                                              ? AppColors.lightGrey2Color
                                               : AppColors.primaryColor),
                                     ),
-                                  ],
-                                ),
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.transparent,
+                                      child: Image.asset(iconPath,
+                                          color: AppColors.primaryColor),
+                                    ),
+                                    /*child: Image.asset(iconPath,
+                                        color: AppColors.primaryColor),*/
+                                  ),
+                                  ResText(
+                                    estateType.estateTypes![index].name.toString().split("|").first ==
+                                        "House" ||
+                                        estateType.estateTypes![index].name
+                                            .toString()
+                                            .split("|")
+                                            .first ==
+                                            "بيت"
+                                        ? AppLocalizations.of(context)!.house
+                                        : estateType.estateTypes![index].name
+                                        .toString()
+                                        .split("|")
+                                        .first ==
+                                        "Shop" ||
+                                        estateType.estateTypes![index].name
+                                            .toString()
+                                            .split("|")
+                                            .first ==
+                                            "محل"
+                                        ? AppLocalizations.of(context)!
+                                        .shop
+                                        : estateType.estateTypes![index].name
+                                        .toString()
+                                        .split("|")
+                                        .first ==
+                                        "Farm" ||
+                                        estateType
+                                            .estateTypes![index]
+                                            .name
+                                            .toString()
+                                            .split("|")
+                                            .first ==
+                                            "مزرعة"
+                                        ? AppLocalizations.of(context)!.farm
+                                        : estateType.estateTypes![index].name.toString().split("|").first == "Land" || estateType.estateTypes![index].name.toString().split("|").first == "أرض"
+                                        ? AppLocalizations.of(context)!.land
+                                        : AppLocalizations.of(context)!.villa,
+                                    textStyle: TextStyle(
+                                        color: !isDark
+                                            ? pressState == index
+                                            ? AppColors.lightblue
+                                            : isDark
+                                            ? AppColors
+                                            .lightGrey2Color
+                                            : AppColors.primaryColor
+                                            : pressState == index
+                                            ? AppColors.lightblue
+                                            : isDark
+                                            ? AppColors
+                                            .lightGrey2Color
+                                            : AppColors.primaryColor),
+                                  ),
+                                ],
                               ),
                             );
                           }),
