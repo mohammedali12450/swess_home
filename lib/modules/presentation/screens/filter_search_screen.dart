@@ -174,7 +174,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                       child: BlocBuilder<EstateTypesByLocationBloc,EstateTypesState>(
                         bloc: estateTypesByLocationBloc,
                         builder: (context, estateType) =>ElevatedButton(
-                          style: (estateTypesByLocationBloc.estateTypes != null && estateTypesByLocationBloc.estateTypes!.isNotEmpty) ? ElevatedButton.styleFrom(
+                          style: (estateType is EstateTypesFetchComplete && estateTypesByLocationBloc.estateTypes!.isNotEmpty) ? ElevatedButton.styleFrom(
                               primary: isDark ? AppColors.primaryColor : null,
                               padding: EdgeInsets.zero,
                               minimumSize: Size(20.w, 60.h),
@@ -394,6 +394,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                         locationNameCubit
                             .setState(selectedRegion!.getLocationName());
                         isPressTypeCubit.setState(0);
+                        searchData.estateTypeId=1;
                         estateTypesByLocationBloc.add(
                             EstateTypeFetchByLocation(searchData.locationId!));
                       }
@@ -412,6 +413,7 @@ class _SearchScreenState extends State<FilterSearchScreen> {
                         locationNameCubit
                             .setState(selectedLocation!.getLocationName());
                         isPressTypeCubit.setState(0);
+                        searchData.estateTypeId=1;
                         estateTypesByLocationBloc.add(
                             EstateTypeFetchByLocation(searchData.locationId!));
                       }
