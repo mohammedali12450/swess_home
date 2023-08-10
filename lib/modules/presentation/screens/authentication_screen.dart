@@ -592,7 +592,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           //   },
           // ),
         ],
-        child: WillPopWidget(
+        child: BackHomeScreen(
           child: SafeArea(
             child: Scaffold(
               resizeToAvoidBottomInset: true,
