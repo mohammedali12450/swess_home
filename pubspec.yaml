@@ -1,10 +1,9 @@
 name: swesshome
 description: A new Flutter application.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 2.0.0
-
 
 environment:
   sdk: ">=2.19.6 <3.0.0"
@@ -15,16 +14,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-
-
-
-
-
-
   #UI
   another_flushbar: ^1.12.30
   fluentui_system_icons: ^1.1.200
-  loader_overlay: ^2.2.0  
+  loader_overlay: ^2.2.0
   flutter_rating_bar: ^4.0.1
   progress_indicators: ^1.0.0
   flutter_svg: ^1.0.0
@@ -60,24 +53,20 @@ dependencies:
   reorderables: ^0.6.0
   tutorial_coach_mark: ^1.2.8
 
-
   #state managemnt
   get_it: ^7.6.0
-  rxdart: ^0.27.5  
+  rxdart: ^0.27.5
   bloc: ^8.0.1
   flutter_bloc: ^8.0.0
   provider: ^6.0.2
-
 
   #Firebase
   firebase_core: ^2.9.0
   firebase_messaging: ^14.4.0
   firebase_auth: ^4.4.0
 
-
   #Fetch APIs
   dio: ^5.1.1
-
 
   #Cashing
   shared_preferences: ^2.0.11
@@ -85,9 +74,11 @@ dependencies:
   #Map
   google_maps_flutter: ^2.1.1
   google_maps_webservice: ^0.0.19
+  
+  #facebook
+  flutter_facebook_auth: ^6.0.1
 
-
-  #Tools  
+  #Tools
   google_sign_in: ^6.1.0
   flutter_local_notifications: ^13.0.0
   youtube_player_iframe: ^4.0.4
@@ -107,17 +98,15 @@ dependencies:
   hexcolor: ^3.0.1
   #package_info_plus: ^1.0.6
 
-
-
   #flutter_windowmanager: ^0.2.0
 #-------------------------------
 #
-#dependency_overrides:
+dependency_overrides:
+  http: 1.0.0
 #  photo_view:
-#    git:
+#    git:11
 #      url: https://github.com/bluefireteam/photo_view
 #      ref: master
-
 
 flutter_datetime_picker:
   git:
@@ -128,18 +117,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.13.0  
+  flutter_launcher_icons: ^0.13.0
   flutter_native_splash: ^2.2.19
   flutter_lints: ^2.0.1
-
 
 flutter_native_splash:
   color: "#DBE2EF"
   image: assets/images/swesshome_logo.png
   android: true
-  ios : true
-
-
+  ios: true
 
 flutter_icons:
   android: true
@@ -148,9 +134,7 @@ flutter_icons:
   adaptive_icon_background: "#ffffff"
   remove_alpha_ios: true
 
-
 flutter:
-
   uses-material-design: true
   generate: true
   fonts:
