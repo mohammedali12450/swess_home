@@ -126,24 +126,27 @@ class _EstatesScreenState extends State<EstatesScreen> {
                       ..addAll(estateFetchState.estateSearch.identicalEstates);
 
                 if (!estateBloc.isFetching) {
-                  if (UserSharedPreferences.getAccessToken() != null) {
-                    BlocProvider.of<PreviousSearchResultsBloc>(context)
-                        .add(PreviousSearchResultsFetchStarted());
-                  }
-                  await RecentSearchesSharedPreferences.removeSearches();
-                  RecentSearchesSharedPreferences.setSearches(
-                      allEstates.take(5).toList());
+                  if(estateFetchState.estateSearch.similarEstates.isNotEmpty ||
+                      estateSearch.similarEstates.isNotEmpty){
+                    if (UserSharedPreferences.getAccessToken() != null) {
+                      BlocProvider.of<PreviousSearchResultsBloc>(context)
+                          .add(PreviousSearchResultsFetchStarted());
+                    }
+                    await RecentSearchesSharedPreferences.removeSearches();
+                    RecentSearchesSharedPreferences.setSearches(
+                        allEstates.take(5).toList());
 
-                  await RecentSearchesSharedPreferences
-                      .removeRecentSearchesFilter();
-                  RecentSearchesSharedPreferences.setRecentSearchesFilter([
-                    widget.locationName,
-                    widget.searchData.priceMax.toString(),
-                    widget.searchData.priceMin.toString(),
-                    widget.searchData.estateTypeId.toString(),
-                    widget.searchData.estateOfferTypeId.toString(),
-                    widget.searchData.locationId.toString(),
-                  ]);
+                    await RecentSearchesSharedPreferences
+                        .removeRecentSearchesFilter();
+                    RecentSearchesSharedPreferences.setRecentSearchesFilter([
+                      widget.locationName,
+                      widget.searchData.priceMax.toString(),
+                      widget.searchData.priceMin.toString(),
+                      widget.searchData.estateTypeId.toString(),
+                      widget.searchData.estateOfferTypeId.toString(),
+                      widget.searchData.locationId.toString(),
+                    ]);
+                  }
                   getEstateSearch();
                 }
               }

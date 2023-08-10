@@ -406,26 +406,26 @@ class Estate {
 
   static Map<String, dynamic> toMap(Estate estate) {
     return {
-      "floor": estate.floor == null ? "" : estate.floor!,
+      "floor": estate.floor == null ? null : estate.floor!,
       "published_at": estate.publishedAt,
       'first_image': estate.firstImage,
       'id': estate.id,
       'locationS': estate.locationS,
       'office':
-          estate.estateOffice == null ? "" : estate.estateOffice!.toJson(),
+          estate.estateOffice == null ? null : estate.estateOffice!.toJson(),
       'images': estate.images!.isEmpty
-          ? ""
+          ? null
           : estate.images!.map((e) => e.toJson()).toList(),
       'is_saved': estate.isSaved,
       'estate_type': estate.estateType,
       'estate_offer_type': estate.estateOfferType == null
-          ? ""
+          ? null
           : estate.estateOfferType!.toJson(),
 
       'area': estate.area,
       'area_unit': estate.areaUnit!.toJson(),
       'ownership_type':
-          estate.ownershipType == null ? "" : estate.ownershipType!.toJson(),
+          estate.ownershipType == null ? null : estate.ownershipType!.toJson(),
       'price': estate.price,
 
       "nearby_places": estate.nearbyPlaces,
@@ -433,13 +433,13 @@ class Estate {
 
       "description": estate.description,
       "interior_status":
-          estate.interiorStatus == null ? "" : estate.interiorStatus!.toJson(),
+          estate.interiorStatus == null ? null : estate.interiorStatus!.toJson(),
       "is_furnished": estate.isFurnished,
-      "rooms_count": estate.roomsCount == null ? "" : estate.roomsCount!,
-      "longitude": estate.longitude == null ? "" : estate.longitude!,
-      "latitude": estate.latitude == null ? "" : estate.latitude!,
+      "rooms_count": estate.roomsCount == null ? null : estate.roomsCount!,
+      "longitude": estate.longitude == null ? null : estate.longitude!,
+      "latitude": estate.latitude == null ? null : estate.latitude!,
       "swimming_pool":
-          estate.hasSwimmingPool == null ? "" : estate.hasSwimmingPool!,
+          estate.hasSwimmingPool == null ? null : estate.hasSwimmingPool!,
 
       //"location":estate.location == null ? "" : estate.location!.toJson(),
     };
