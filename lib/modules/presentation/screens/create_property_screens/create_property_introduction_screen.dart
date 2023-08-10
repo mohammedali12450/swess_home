@@ -9,6 +9,8 @@ import 'package:swesshome/modules/data/providers/locale_provider.dart';
 import 'package:swesshome/modules/presentation/screens/create_property_screens/create_property_screen1.dart';
 
 import '../../widgets/res_text.dart';
+import '../../widgets/will-pop-scope.dart';
+import '../navigation_bar_screen.dart';
 
 class CreatePropertyIntroductionScreen extends StatefulWidget {
   static const String id = "CreatePropertyIntroductionScreen";
@@ -28,109 +30,116 @@ class _CreatePropertyIntroductionScreenState
   Widget build(BuildContext context) {
     bool isArabic = Provider.of<LocaleProvider>(context).isArabic();
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            width: 1.sw,
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.95),
-              image: const DecorationImage(
-                  image: AssetImage(flatImagePath),
-                  fit: BoxFit.cover,
-                  opacity: 0.32),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 0.5.sw,
-                  child: Stack(
-                    children: [
-                      Opacity(
-                        child: Image.asset(
-                          swessHomeIconPath,
-                          color: Colors.white,
-                        ),
-                        opacity: 0.3,
-                      ),
-                      ClipRect(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
-                          child: Image.asset(swessHomeIconPath),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                40.verticalSpace,
-                ResText(
-                  AppLocalizations.of(context)!.estate_offer_creating,
-                  textStyle: Theme.of(context).textTheme.headline4!.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-                16.verticalSpace,
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: ResText(
-                    AppLocalizations.of(context)!.create_estate_introduction,
-                    maxLines: 10,
-                    textAlign: TextAlign.center,
-                    textStyle: Theme.of(context)
-                        .textTheme
-                        .bodyText2!
-                        .copyWith(color: Colors.white),
-                  ),
-                ),
-                40.verticalSpace,
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(220.w, 50.h),
-                    primary: AppColors.secondaryColor,
-                  ),
-                  child: ResText(
-                    AppLocalizations.of(context)!.start_now,
-                    textStyle: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: Colors.black),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            CreatePropertyScreen1(officeId: widget.officeId),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 42.h,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+    return WillPopWidget(
+      pageNumber: 1,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Container(
               width: 1.sw,
-              alignment:
-                  isArabic ? Alignment.centerRight : Alignment.centerLeft,
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: AppColors.white,
-                  size: 28.w,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.95),
+                image: const DecorationImage(
+                    image: AssetImage(flatImagePath),
+                    fit: BoxFit.cover,
+                    opacity: 0.32),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 0.5.sw,
+                    child: Stack(
+                      children: [
+                        Opacity(
+                          child: Image.asset(
+                            swessHomeIconPath,
+                            color: Colors.white,
+                          ),
+                          opacity: 0.3,
+                        ),
+                        ClipRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                            child: Image.asset(swessHomeIconPath),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  40.verticalSpace,
+                  ResText(
+                    AppLocalizations.of(context)!.estate_offer_creating,
+                    textStyle: Theme.of(context).textTheme.headline4!.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  16.verticalSpace,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: ResText(
+                      AppLocalizations.of(context)!.create_estate_introduction,
+                      maxLines: 10,
+                      textAlign: TextAlign.center,
+                      textStyle: Theme.of(context)
+                          .textTheme
+                          .bodyText2!
+                          .copyWith(color: Colors.white),
+                    ),
+                  ),
+                  40.verticalSpace,
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: Size(220.w, 50.h),
+                      primary: AppColors.secondaryColor,
+                    ),
+                    child: ResText(
+                      AppLocalizations.of(context)!.start_now,
+                      textStyle: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(color: Colors.black),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              CreatePropertyScreen1(officeId: widget.officeId),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Positioned(
+              top: 42.h,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                width: 1.sw,
+                alignment:
+                    isArabic ? Alignment.centerRight : Alignment.centerLeft,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: AppColors.white,
+                    size: 28.w,
+                  ),
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => NavigationBarScreen(pageNumber: 1)),
+                        (route) => false
+                    );
+                    },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
