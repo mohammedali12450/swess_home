@@ -159,37 +159,35 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
         onRefresh: () async {
           _onRefresh();
         },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: SizedBox(
-            width: 1.sw,
-            height: 1.sh - 100.h,
-            child: BlocConsumer<CreatedEstatesBloc, CreatedEstatesState>(
-              bloc: _createdEstatesBloc,
-              listener: (_, createdEstatesFetchState) async {
-                if (createdEstatesFetchState is CreatedEstatesFetchError) {
-                  var error = createdEstatesFetchState.isConnectionError
-                      ? AppLocalizations.of(context)!.no_internet_connection
-                      : createdEstatesFetchState.error;
-                  await showWonderfulAlertDialog(
-                      context, AppLocalizations.of(context)!.error, error);
-                }
-              },
-              builder: (_, createdEstatesFetchState) {
-                // if (createdEstatesFetchState is CreatedEstatesFetchNone) {
-                //   return FetchResult(
-                //       content: AppLocalizations.of(context)!
-                //           .have_not_created_estates);
-                // }
-                if (createdEstatesFetchState is CreatedEstatesFetchProgress) {
-                  return const CreatedEstatesShimmer();
-                }
-                if (createdEstatesFetchState is! CreatedEstatesFetchComplete) {
-                  return buildSignInRequired(context);
-                  // return FetchResult(
-                  //     content: AppLocalizations.of(context)!
-                  //         .error_happened_when_executing_operation);
-                }
+        child: SizedBox(
+          width: 1.sw,
+          height: 1.sh - 75.h,
+          child: BlocConsumer<CreatedEstatesBloc, CreatedEstatesState>(
+            bloc: _createdEstatesBloc,
+            listener: (_, createdEstatesFetchState) async {
+              if (createdEstatesFetchState is CreatedEstatesFetchError) {
+                var error = createdEstatesFetchState.isConnectionError
+                    ? AppLocalizations.of(context)!.no_internet_connection
+                    : createdEstatesFetchState.error;
+                await showWonderfulAlertDialog(
+                    context, AppLocalizations.of(context)!.error, error);
+              }
+            },
+            builder: (_, createdEstatesFetchState) {
+              // if (createdEstatesFetchState is CreatedEstatesFetchNone) {
+              //   return FetchResult(
+              //       content: AppLocalizations.of(context)!
+              //           .have_not_created_estates);
+              // }
+              if (createdEstatesFetchState is CreatedEstatesFetchProgress) {
+                return const CreatedEstatesShimmer();
+              }
+              if (createdEstatesFetchState is! CreatedEstatesFetchComplete) {
+                return buildSignInRequired(context);
+                // return FetchResult(
+                //     content: AppLocalizations.of(context)!
+                //         .error_happened_when_executing_operation);
+              }
 
                 estates = createdEstatesFetchState.createdEstates;
 
@@ -261,70 +259,44 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                   }
                 }
 
-                return RefreshIndicator(
-                  color: Theme.of(context).colorScheme.primary,
-                  onRefresh: () async {
-                    _onRefresh();
-                  },
-                  child: ScrollablePositionedList.builder(
-                    itemScrollController: scrollController,
-                    itemPositionsListener: itemPositionsListener,
-                    physics: const ClampingScrollPhysics(),
-                    // shrinkWrap: true,
-                    itemCount: estates.length,
-                    itemBuilder: (_, index) {
-                      int estateStatusId =
-                          estates.elementAt(index).estateStatus! == 3
-                              ? 1
-                              : estates.elementAt(index).estateStatus! == 1
-                                  ? 3
-                                  : 2;
-                      return (widget.estateId != null && find)
-                          ? AnimatedBuilder(
-                              animation: _colorTween,
-                              builder: (context, child) => Card(
-                                elevation: 5,
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 10),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Column(
-                                    children: [
-                                      kHe12,
-                                      EstateHorizonCard(
-                                        color: (int.parse(widget.estateId!) ==
-                                                estates.elementAt(index).id)
-                                            ? _colorTween.value
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .background,
-                                        estate: estates.elementAt(index),
-                                        onClosePressed: () async {
-                                          await onClosePressed(index);
-                                        },
-                                        closeButton: true,
-                                      ),
-                                      buildEstateStatus(index),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Card(
+              return RefreshIndicator(
+                color: Theme.of(context).colorScheme.primary,
+                onRefresh: () async {
+                  _onRefresh();
+                },
+                child: ScrollablePositionedList.builder(
+                  itemScrollController: scrollController,
+                  itemPositionsListener: itemPositionsListener,
+                  physics: const ClampingScrollPhysics(),
+                  // shrinkWrap: true,
+                  itemCount: estates.length,
+                  itemBuilder: (_, index) {
+                    int estateStatusId =
+                        estates.elementAt(index).estateStatus! == 3
+                            ? 1
+                            : estates.elementAt(index).estateStatus! == 1
+                                ? 3
+                                : 2;
+                    return (widget.estateId != null && find)
+                        ? AnimatedBuilder(
+                            animation: _colorTween,
+                            builder: (context, child) => Card(
                               elevation: 5,
                               margin: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 10),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10),
                                 child: Column(
                                   children: [
                                     kHe12,
                                     EstateHorizonCard(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .background,
+                                      color: (int.parse(widget.estateId!) ==
+                                              estates.elementAt(index).id)
+                                          ? _colorTween.value
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .background,
                                       estate: estates.elementAt(index),
                                       onClosePressed: () async {
                                         await onClosePressed(index);
@@ -332,25 +304,60 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                                       closeButton: true,
                                     ),
                                     buildEstateStatus(index),
-                                    // Padding(
-                                    //   padding: EdgeInsets.only(
-                                    //       bottom: 8.h, left: 8.w, right: 8.w),
-                                    //   child: SizedBox(
-                                    //       height: 70.h,
-                                    //       width: getScreenWidth(context),
-                                    //       child: ProcessTimelinePage(
-                                    //         estateStatusId: estateStatusId,
-                                    //       )),
-                                    // ),
+                                    if (index ==
+                                        estates.length - 1)
+                                      kHe60
                                   ],
                                 ),
                               ),
-                            );
-                    },
-                  ),
-                );
-              },
-            ),
+                            ),
+                          )
+                        : Column(
+                          children: [
+                            Card(
+                                elevation: 5,
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  child: Column(
+                                    children: [
+                                      kHe12,
+                                      EstateHorizonCard(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .background,
+                                        estate: estates.elementAt(index),
+                                        onClosePressed: () async {
+                                          await onClosePressed(index);
+                                        },
+                                        closeButton: true,
+                                      ),
+                                      buildEstateStatus(index),
+                                      // Padding(
+                                      //   padding: EdgeInsets.only(
+                                      //       bottom: 8.h, left: 8.w, right: 8.w),
+                                      //   child: SizedBox(
+                                      //       height: 70.h,
+                                      //       width: getScreenWidth(context),
+                                      //       child: ProcessTimelinePage(
+                                      //         estateStatusId: estateStatusId,
+                                      //       )),
+                                      // ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            if (index ==
+                                estates.length - 1)
+                              kHe60
+                          ],
+                        );
+                  },
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -422,20 +429,27 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                     ),
           const Text(" | "),
           estates.elementAt(index).officeStatus! == 1
-              ? Text(
-                  AppLocalizations.of(context)!.accepted_from_office,
-                  style: const TextStyle(color: Colors.green, fontSize: 12),
-                )
+              ? Expanded(
+                child: Text(
+                    AppLocalizations.of(context)!.accepted_from_office,
+                    style: const TextStyle(color: Colors.green, fontSize: 12),
+                  overflow: TextOverflow.ellipsis,
+                  ),
+              )
               : estates.elementAt(index).officeStatus! == 2
-                  ? Text(
+                  ? Expanded(child:Text(
                       AppLocalizations.of(context)!.rejected_from_office,
                       style: const TextStyle(color: Colors.red, fontSize: 12),
-                    )
-                  : Text(
-                      AppLocalizations.of(context)!.on_progress_from_office,
-                      style: TextStyle(
-                          color: AppColors.yellowDarkColor, fontSize: 12),
-                    ),
+            overflow: TextOverflow.ellipsis,
+                    ))
+                  : Expanded(
+                    child: Text(
+                        AppLocalizations.of(context)!.on_progress_from_office,
+                        style: TextStyle(
+                            color: AppColors.yellowDarkColor, fontSize: 12),
+                      overflow: TextOverflow.ellipsis,
+                      ),
+                  ),
         ],
       ),
     );
