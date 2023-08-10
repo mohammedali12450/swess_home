@@ -45,12 +45,12 @@ class UserAuthenticationRepository {
     return user;
   }
 
-  Future login(String authentication, String password) async {
+  Future login(String authentication, String password , String fcmToken) async {
     Response response;
 
     try {
       response =
-          await userAuthenticationProvider.login(authentication, password);
+          await userAuthenticationProvider.login(authentication, password , fcmToken);
     } catch (_) {
       rethrow;
     }

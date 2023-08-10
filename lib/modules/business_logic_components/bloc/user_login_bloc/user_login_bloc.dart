@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:swesshome/core/exceptions/connection_exception.dart';
@@ -23,12 +24,16 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
     on<UserLoginStarted>((event, emit) async {
       emit(UserLoginProgress());
       try {
-        dynamic message = await userAuthenticationRepository.login(
-          event.authentication,
-          event.password,
-        );
-
-        emit(UserLoginComplete(successMessage: message));
+        FirebaseMessaging fireBase = FirebaseMessaging.instance;
+        String? fcmToken = await fireBase.getToken();
+        if(fcmToken != null){
+          dynamic message = await userAuthenticationRepository.login(
+            event.authentication,
+            event.password,
+            fcmToken
+          );
+          emit(UserLoginComplete(successMessage: message));
+        }
       } on ConnectionException catch (e) {
         emit(
           UserLoginError(errorMessage: e.errorMessage, isConnectionError: true),

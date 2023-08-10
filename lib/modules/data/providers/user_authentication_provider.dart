@@ -16,7 +16,7 @@ class UserAuthenticationProvider {
     return response;
   }
 
-  Future login(String authentication, String password) async {
+  Future login(String authentication, String password , String fcmToken) async {
     NetworkHelper helper = NetworkHelper();
     Response response;
 
@@ -24,6 +24,7 @@ class UserAuthenticationProvider {
       response = await helper.post(userLoginURL, {
         "authentication": authentication,
         "password": password,
+        "FCM_token": fcmToken,
       });
     } catch (_) {
       rethrow;
