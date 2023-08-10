@@ -38,7 +38,6 @@ import '../widgets/app/global_app_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/estate_horizon_card.dart';
 import '../widgets/time_line.dart';
-import '../widgets/will-pop-scope.dart';
 
 class CreatedEstatesScreen extends StatefulWidget {
   static const String id = "CreatedEstatesScreen";
@@ -127,120 +126,28 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
     if (widget.estateId != null) {
       initAnimation(context);
     }
-    return WillPopWidget(
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(46.0),
-          child: GlobalAppbarWidget(
-              isDark: isDark,
-              title: AppLocalizations.of(context)!.recent_created_estates),
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(46.0),
+        child: GlobalAppbarWidget(
+            isDark: isDark,
+            title: AppLocalizations.of(context)!.recent_created_estates),
+      ),
+      drawer: SizedBox(
+        width: getScreenWidth(context) * (75 / 100),
+        child: const Drawer(
+          child: MyDrawer(),
         ),
-        drawer: SizedBox(
-          width: getScreenWidth(context) * (75 / 100),
-          child: const Drawer(
-            child: MyDrawer(),
-          ),
-        ),
-        floatingActionButton: UserSharedPreferences.getAccessToken() == null
-            ? null
-            : BlocBuilder<CreatedEstatesBloc, CreatedEstatesState>(
-                bloc: _createdEstatesBloc,
-                builder: (context, state) {
-                  if (state is CreatedEstatesFetchComplete) {
-                    if (state.createdEstates.isNotEmpty) {
-                      return AddNewOffer(
-                        estateId: widget.estateId,
-                      );
-                    }
-                  }
-                  return SizedBox();
-                },
-              ),
-        body: RefreshIndicator(
-          color: Theme.of(context).colorScheme.primary,
-          onRefresh: () async {
-            _onRefresh();
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: SizedBox(
-              width: 1.sw,
-              height: 1.sh - 100.h,
-              child: BlocConsumer<CreatedEstatesBloc, CreatedEstatesState>(
-                bloc: _createdEstatesBloc,
-                listener: (_, createdEstatesFetchState) async {
-                  if (createdEstatesFetchState is CreatedEstatesFetchError) {
-                    var error = createdEstatesFetchState.isConnectionError
-                        ? AppLocalizations.of(context)!.no_internet_connection
-                        : createdEstatesFetchState.error;
-                    await showWonderfulAlertDialog(
-                        context, AppLocalizations.of(context)!.error, error);
-                  }
-                },
-                builder: (_, createdEstatesFetchState) {
-                  // if (createdEstatesFetchState is CreatedEstatesFetchNone) {
-                  //   return FetchResult(
-                  //       content: AppLocalizations.of(context)!
-                  //           .have_not_created_estates);
-                  // }
-                  if (createdEstatesFetchState is CreatedEstatesFetchProgress) {
-                    return const CreatedEstatesShimmer();
-                  }
-                  if (createdEstatesFetchState is! CreatedEstatesFetchComplete) {
-                    return buildSignInRequired(context);
-                    // return FetchResult(
-                    //     content: AppLocalizations.of(context)!
-                    //         .error_happened_when_executing_operation);
-                  }
-
-                  estates = createdEstatesFetchState.createdEstates;
-
-                  if (estates.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            size: 0.3.sw,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          kHe24,
-                          Text(
-                            AppLocalizations.of(context)!
-                                .have_not_created_estates,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline4!
-                                .copyWith(fontSize: 16),
-                            textAlign: TextAlign.center,
-                          ),
-                          kHe24,
-                          Center(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: Size(180.w, 50.h),
-                                maximumSize: Size(200.w, 50.h),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  AppLocalizations.of(context)!.post_estate,
-                                  style: const TextStyle(fontSize: 18),
-                                ),
-                              ),
-                              onPressed: () async {
-                                FocusScope.of(context).unfocus();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            CreatePropertyIntroductionScreen(
-                                                officeId: 0)));
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+      ),
+      floatingActionButton: UserSharedPreferences.getAccessToken() == null
+          ? null
+          : BlocBuilder<CreatedEstatesBloc, CreatedEstatesState>(
+              bloc: _createdEstatesBloc,
+              builder: (context, state) {
+                if (state is CreatedEstatesFetchComplete) {
+                  if (state.createdEstates.isNotEmpty) {
+                    return AddNewOffer(
+                      estateId: widget.estateId,
                     );
                   }
                 }
@@ -282,13 +189,63 @@ class _CreatedEstatesScreenState extends State<CreatedEstatesScreen>
                 //         .error_happened_when_executing_operation);
               }
 
-                    if (find) {
-                      SchedulerBinding.instance.addPostFrameCallback((_) {
-                        jumpToOrder(estates);
-                      });
-                    } else {
-                      Fluttertoast.showToast(
-                          msg: AppLocalizations.of(context)!.delete_estate_order);
+                estates = createdEstatesFetchState.createdEstates;
+
+                if (estates.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 0.3.sw,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        kHe24,
+                        Text(
+                          AppLocalizations.of(context)!
+                              .have_not_created_estates,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(fontSize: 16),
+                          textAlign: TextAlign.center,
+                        ),
+                        kHe24,
+                        Center(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: Size(180.w, 50.h),
+                              maximumSize: Size(200.w, 50.h),
+                            ),
+                            child: Center(
+                              child: Text(
+                                AppLocalizations.of(context)!.post_estate,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CreatePropertyIntroductionScreen(
+                                              officeId: 0)));
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                bool find = false;
+                if (widget.estateId != null) {
+                  for (int i = 0; i < estates.length; i++) {
+                    if (estates.elementAt(i).id ==
+                        int.parse(widget.estateId!)) {
+                      find = true;
+                      break;
                     }
                   }
 
