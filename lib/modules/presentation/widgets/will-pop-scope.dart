@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import '../screens/navigation_bar_screen.dart';
 
 // ignore: must_be_immutable
-class BackHomeScreen extends StatelessWidget {
+class WillPopWidget extends StatelessWidget {
   Widget child;
+  int? pageNumber = 0;
 
-  BackHomeScreen({super.key, required this.child});
+  WillPopWidget({super.key,this.pageNumber, required this.child});
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => NavigationBarScreen()),
-            (route) => false);
+            MaterialPageRoute(builder: (_) => NavigationBarScreen(pageNumber: pageNumber)),);
         return true;
       },
       child: child,
