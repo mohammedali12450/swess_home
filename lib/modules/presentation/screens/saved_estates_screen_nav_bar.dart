@@ -69,7 +69,7 @@ class _SavedEstatesScreenNavBarState extends State<SavedEstatesScreenNavBar> {
   Widget build(BuildContext context) {
     isArabic = Provider.of<LocaleProvider>(context).isArabic();
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return BackHomeScreen(
+    return WillPopWidget(
       child: SafeArea(
         child: Scaffold(
           drawer: SizedBox(

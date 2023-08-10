@@ -88,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     isEnglish = ApplicationSharedPreferences.getLanguageCode() == "en";
     isDark = Provider.of<ThemeProvider>(context).isDarkMode(context);
-    return BackHomeScreen(
+    return WillPopWidget(
         child: Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(46.0),
