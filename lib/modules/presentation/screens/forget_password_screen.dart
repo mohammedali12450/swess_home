@@ -325,7 +325,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               ),
             ),
           );
-        }),
+        }, stream: null,),
         30.verticalSpace,
         StreamBuilder<int>(builder: (context, snapshot) {
           if (_remainingSeconds > 0) {
@@ -333,7 +333,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           } else {
             return const Center();
           }
-        }),
+        }, stream: null,),
       ],
     );
   }
@@ -380,7 +380,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           } else {
             return Container();
           }
-        });
+        }, stream: null,);
   }
 
   getButtonsBorderRadius(bool isLeft) {
